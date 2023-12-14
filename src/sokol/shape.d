@@ -1,8 +1,7 @@
 // machine generated, do not edit
 
 module sokol.shape;
-import sokol.gfx;
-alias sg = sokol.gfx;
+import sg = sokol.gfx;
 
 // helper function to convert a C string to a D string
 string cStrToDString(const(char*) c_str) {
