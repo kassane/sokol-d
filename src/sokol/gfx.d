@@ -25,29 +25,29 @@ Range asRange(T)(T val) {
 
 struct Buffer {
     uint id;
-};
+}
 struct Image {
     uint id;
-};
+}
 struct Sampler {
     uint id;
-};
+}
 struct Shader {
     uint id;
-};
+}
 struct Pipeline {
     uint id;
-};
+}
 struct Pass {
     uint id;
-};
+}
 struct Context {
     uint id;
-};
+}
 struct Range {
     const void* ptr;
     size_t size;
-};
+}
 enum invalid_id = 0;
 enum num_shader_stages = 2;
 enum num_inflight_frames = 2;
@@ -66,7 +66,7 @@ struct Color {
     float g;
     float b;
     float a;
-};
+}
 enum Backend {
     GLCORE33,
     GLES3,
@@ -76,7 +76,7 @@ enum Backend {
     METAL_SIMULATOR,
     WGPU,
     DUMMY,
-};
+}
 enum PixelFormat {
     DEFAULT,
     NONE,
@@ -143,7 +143,7 @@ enum PixelFormat {
     ETC2_RG11SN,
     RGB9E5,
     NUM,
-};
+}
 struct PixelformatInfo {
     bool sample;
     bool filter;
@@ -151,13 +151,13 @@ struct PixelformatInfo {
     bool blend;
     bool msaa;
     bool depth;
-};
+}
 struct Features {
     bool origin_top_left;
     bool image_clamp_to_border;
     bool mrt_independent_blend_state;
     bool mrt_independent_write_mask;
-};
+}
 struct Limits {
     int max_image_size_2d;
     int max_image_size_cube;
@@ -167,34 +167,34 @@ struct Limits {
     int max_vertex_attrs;
     int gl_max_vertex_uniform_vectors;
     int gl_max_combined_texture_image_units;
-};
+}
 enum ResourceState {
     INITIAL,
     ALLOC,
     VALID,
     FAILED,
     INVALID,
-};
+}
 enum Usage {
     DEFAULT,
     IMMUTABLE,
     DYNAMIC,
     STREAM,
     NUM,
-};
+}
 enum BufferType {
     DEFAULT,
     VERTEXBUFFER,
     INDEXBUFFER,
     NUM,
-};
+}
 enum IndexType {
     DEFAULT,
     NONE,
     UINT16,
     UINT32,
     NUM,
-};
+}
 enum ImageType {
     DEFAULT,
     _2D,
@@ -202,7 +202,7 @@ enum ImageType {
     _3D,
     ARRAY,
     NUM,
-};
+}
 enum ImageSampleType {
     DEFAULT,
     FLOAT,
@@ -211,14 +211,14 @@ enum ImageSampleType {
     UINT,
     UNFILTERABLE_FLOAT,
     NUM,
-};
+}
 enum SamplerType {
     DEFAULT,
     FILTERING,
     NONFILTERING,
     COMPARISON,
     NUM,
-};
+}
 enum CubeFace {
     POS_X,
     NEG_X,
@@ -227,11 +227,11 @@ enum CubeFace {
     POS_Z,
     NEG_Z,
     NUM,
-};
+}
 enum ShaderStage {
     VS,
     FS,
-};
+}
 enum PrimitiveType {
     DEFAULT,
     POINTS,
@@ -240,14 +240,14 @@ enum PrimitiveType {
     TRIANGLES,
     TRIANGLE_STRIP,
     NUM,
-};
+}
 enum Filter {
     DEFAULT,
     NONE,
     NEAREST,
     LINEAR,
     NUM,
-};
+}
 enum Wrap {
     DEFAULT,
     REPEAT,
@@ -255,14 +255,14 @@ enum Wrap {
     CLAMP_TO_BORDER,
     MIRRORED_REPEAT,
     NUM,
-};
+}
 enum BorderColor {
     DEFAULT,
     TRANSPARENT_BLACK,
     OPAQUE_BLACK,
     OPAQUE_WHITE,
     NUM,
-};
+}
 enum VertexFormat {
     INVALID,
     FLOAT,
@@ -283,13 +283,13 @@ enum VertexFormat {
     HALF2,
     HALF4,
     NUM,
-};
+}
 enum VertexStep {
     DEFAULT,
     PER_VERTEX,
     PER_INSTANCE,
     NUM,
-};
+}
 enum UniformType {
     INVALID,
     FLOAT,
@@ -302,26 +302,26 @@ enum UniformType {
     INT4,
     MAT4,
     NUM,
-};
+}
 enum UniformLayout {
     DEFAULT,
     NATIVE,
     STD140,
     NUM,
-};
+}
 enum CullMode {
     DEFAULT,
     NONE,
     FRONT,
     BACK,
     NUM,
-};
+}
 enum FaceWinding {
     DEFAULT,
     CCW,
     CW,
     NUM,
-};
+}
 enum CompareFunc {
     DEFAULT,
     NEVER,
@@ -333,7 +333,7 @@ enum CompareFunc {
     GREATER_EQUAL,
     ALWAYS,
     NUM,
-};
+}
 enum StencilOp {
     DEFAULT,
     KEEP,
@@ -345,7 +345,7 @@ enum StencilOp {
     INCR_WRAP,
     DECR_WRAP,
     NUM,
-};
+}
 enum BlendFactor {
     DEFAULT,
     ZERO,
@@ -364,14 +364,14 @@ enum BlendFactor {
     BLEND_ALPHA,
     ONE_MINUS_BLEND_ALPHA,
     NUM,
-};
+}
 enum BlendOp {
     DEFAULT,
     ADD,
     SUBTRACT,
     REVERSE_SUBTRACT,
     NUM,
-};
+}
 enum ColorMask {
     DEFAULT = 0,
     NONE = 16,
@@ -390,44 +390,44 @@ enum ColorMask {
     RBA = 13,
     GBA = 14,
     RGBA = 15,
-};
+}
 enum LoadAction {
     DEFAULT,
     CLEAR,
     LOAD,
     DONTCARE,
-};
+}
 enum StoreAction {
     DEFAULT,
     STORE,
     DONTCARE,
-};
+}
 struct ColorAttachmentAction {
     LoadAction load_action;
     StoreAction store_action;
     Color clear_value;
-};
+}
 struct DepthAttachmentAction {
     LoadAction load_action;
     StoreAction store_action;
     float clear_value;
-};
+}
 struct StencilAttachmentAction {
     LoadAction load_action;
     StoreAction store_action;
     ubyte clear_value;
-};
+}
 struct PassAction {
     uint _start_canary;
     ColorAttachmentAction[4] colors;
     DepthAttachmentAction depth;
     StencilAttachmentAction stencil;
     uint _end_canary;
-};
+}
 struct StageBindings {
     Image[12] images;
     Sampler[8] samplers;
-};
+}
 struct Bindings {
     uint _start_canary;
     Buffer[8] vertex_buffers;
@@ -437,7 +437,7 @@ struct Bindings {
     StageBindings vs;
     StageBindings fs;
     uint _end_canary;
-};
+}
 struct BufferDesc {
     uint _start_canary;
     size_t size;
@@ -450,10 +450,10 @@ struct BufferDesc {
     const void* d3d11_buffer;
     const void* wgpu_buffer;
     uint _end_canary;
-};
+}
 struct ImageData {
     Range[6][16] subimage;
-};
+}
 struct ImageDesc {
     uint _start_canary;
     ImageType type;
@@ -475,7 +475,7 @@ struct ImageDesc {
     const void* wgpu_texture;
     const void* wgpu_texture_view;
     uint _end_canary;
-};
+}
 struct SamplerDesc {
     uint _start_canary;
     Filter min_filter;
@@ -495,38 +495,38 @@ struct SamplerDesc {
     const void* d3d11_sampler;
     const void* wgpu_sampler;
     uint _end_canary;
-};
+}
 struct ShaderAttrDesc {
     const (char*) name;
     const (char*) sem_name;
     int sem_index;
-};
+}
 struct ShaderUniformDesc {
     const (char*) name;
     UniformType type;
     int array_count;
-};
+}
 struct ShaderUniformBlockDesc {
     size_t size;
     UniformLayout layout;
     ShaderUniformDesc[16] uniforms;
-};
+}
 struct ShaderImageDesc {
     bool used;
     bool multisampled;
     ImageType image_type;
     ImageSampleType sample_type;
-};
+}
 struct ShaderSamplerDesc {
     bool used;
     SamplerType sampler_type;
-};
+}
 struct ShaderImageSamplerPairDesc {
     bool used;
     int image_slot;
     int sampler_slot;
     const (char*) glsl_name;
-};
+}
 struct ShaderStageDesc {
     const (char*) source;
     Range bytecode;
@@ -536,7 +536,7 @@ struct ShaderStageDesc {
     ShaderImageDesc[12] images;
     ShaderSamplerDesc[8] samplers;
     ShaderImageSamplerPairDesc[12] image_sampler_pairs;
-};
+}
 struct ShaderDesc {
     uint _start_canary;
     ShaderAttrDesc[16] attrs;
@@ -544,27 +544,27 @@ struct ShaderDesc {
     ShaderStageDesc fs;
     const (char*) label;
     uint _end_canary;
-};
+}
 struct VertexBufferLayoutState {
     int stride;
     VertexStep step_func;
     int step_rate;
-};
+}
 struct VertexAttrState {
     int buffer_index;
     int offset;
     VertexFormat format;
-};
+}
 struct VertexLayoutState {
     VertexBufferLayoutState[8] buffers;
     VertexAttrState[16] attrs;
-};
+}
 struct StencilFaceState {
     CompareFunc compare;
     StencilOp fail_op;
     StencilOp depth_fail_op;
     StencilOp pass_op;
-};
+}
 struct StencilState {
     bool enabled;
     StencilFaceState front;
@@ -572,7 +572,7 @@ struct StencilState {
     ubyte read_mask;
     ubyte write_mask;
     ubyte reference;
-};
+}
 struct DepthState {
     PixelFormat pixel_format;
     CompareFunc compare;
@@ -580,7 +580,7 @@ struct DepthState {
     float bias;
     float bias_slope_scale;
     float bias_clamp;
-};
+}
 struct BlendState {
     bool enabled;
     BlendFactor src_factor_rgb;
@@ -589,12 +589,12 @@ struct BlendState {
     BlendFactor src_factor_alpha;
     BlendFactor dst_factor_alpha;
     BlendOp op_alpha;
-};
+}
 struct ColorTargetState {
     PixelFormat pixel_format;
     ColorMask write_mask;
     BlendState blend;
-};
+}
 struct PipelineDesc {
     uint _start_canary;
     Shader shader;
@@ -612,12 +612,12 @@ struct PipelineDesc {
     bool alpha_to_coverage_enabled;
     const (char*) label;
     uint _end_canary;
-};
+}
 struct PassAttachmentDesc {
     Image image;
     int mip_level;
     int slice;
-};
+}
 struct PassDesc {
     uint _start_canary;
     PassAttachmentDesc[4] color_attachments;
@@ -625,12 +625,12 @@ struct PassDesc {
     PassAttachmentDesc depth_stencil_attachment;
     const (char*) label;
     uint _end_canary;
-};
+}
 struct SlotInfo {
     ResourceState state;
     uint res_id;
     uint ctx_id;
-};
+}
 struct BufferInfo {
     SlotInfo slot;
     uint update_frame_index;
@@ -639,25 +639,25 @@ struct BufferInfo {
     bool append_overflow;
     int num_slots;
     int active_slot;
-};
+}
 struct ImageInfo {
     SlotInfo slot;
     uint upd_frame_index;
     int num_slots;
     int active_slot;
-};
+}
 struct SamplerInfo {
     SlotInfo slot;
-};
+}
 struct ShaderInfo {
     SlotInfo slot;
-};
+}
 struct PipelineInfo {
     SlotInfo slot;
-};
+}
 struct PassInfo {
     SlotInfo slot;
-};
+}
 struct FrameStatsGl {
     uint num_bind_buffer;
     uint num_active_texture;
@@ -670,13 +670,13 @@ struct FrameStatsGl {
     uint num_enable_vertex_attrib_array;
     uint num_disable_vertex_attrib_array;
     uint num_uniform;
-};
+}
 struct FrameStatsD3d11Pass {
     uint num_om_set_render_targets;
     uint num_clear_render_target_view;
     uint num_clear_depth_stencil_view;
     uint num_resolve_subresource;
-};
+}
 struct FrameStatsD3d11Pipeline {
     uint num_rs_set_state;
     uint num_om_set_depth_stencil_state;
@@ -687,7 +687,7 @@ struct FrameStatsD3d11Pipeline {
     uint num_vs_set_constant_buffers;
     uint num_ps_set_shader;
     uint num_ps_set_constant_buffers;
-};
+}
 struct FrameStatsD3d11Bindings {
     uint num_ia_set_vertex_buffers;
     uint num_ia_set_index_buffer;
@@ -695,16 +695,16 @@ struct FrameStatsD3d11Bindings {
     uint num_ps_set_shader_resources;
     uint num_vs_set_samplers;
     uint num_ps_set_samplers;
-};
+}
 struct FrameStatsD3d11Uniforms {
     uint num_update_subresource;
-};
+}
 struct FrameStatsD3d11Draw {
     uint num_draw_indexed_instanced;
     uint num_draw_indexed;
     uint num_draw_instanced;
     uint num_draw;
-};
+}
 struct FrameStatsD3d11 {
     FrameStatsD3d11Pass pass;
     FrameStatsD3d11Pipeline pipeline;
@@ -713,12 +713,12 @@ struct FrameStatsD3d11 {
     FrameStatsD3d11Draw draw;
     uint num_map;
     uint num_unmap;
-};
+}
 struct FrameStatsMetalIdpool {
     uint num_added;
     uint num_released;
     uint num_garbage_collected;
-};
+}
 struct FrameStatsMetalPipeline {
     uint num_set_blend_color;
     uint num_set_cull_mode;
@@ -727,28 +727,28 @@ struct FrameStatsMetalPipeline {
     uint num_set_depth_bias;
     uint num_set_render_pipeline_state;
     uint num_set_depth_stencil_state;
-};
+}
 struct FrameStatsMetalBindings {
     uint num_set_vertex_buffer;
     uint num_set_vertex_texture;
     uint num_set_vertex_sampler_state;
     uint num_set_fragment_texture;
     uint num_set_fragment_sampler_state;
-};
+}
 struct FrameStatsMetalUniforms {
     uint num_set_vertex_buffer_offset;
     uint num_set_fragment_buffer_offset;
-};
+}
 struct FrameStatsMetal {
     FrameStatsMetalIdpool idpool;
     FrameStatsMetalPipeline pipeline;
     FrameStatsMetalBindings bindings;
     FrameStatsMetalUniforms uniforms;
-};
+}
 struct FrameStatsWgpuUniforms {
     uint num_set_bindgroup;
     uint size_write_buffer;
-};
+}
 struct FrameStatsWgpuBindings {
     uint num_set_vertex_buffer;
     uint num_skip_redundant_vertex_buffer;
@@ -762,11 +762,11 @@ struct FrameStatsWgpuBindings {
     uint num_bindgroup_cache_misses;
     uint num_bindgroup_cache_collisions;
     uint num_bindgroup_cache_hash_vs_key_mismatch;
-};
+}
 struct FrameStatsWgpu {
     FrameStatsWgpuUniforms uniforms;
     FrameStatsWgpuBindings bindings;
-};
+}
 struct FrameStats {
     uint frame_index;
     uint num_passes;
@@ -787,7 +787,7 @@ struct FrameStats {
     FrameStatsD3d11 d3d11;
     FrameStatsMetal metal;
     FrameStatsWgpu wgpu;
-};
+}
 enum LogItem {
     OK,
     MALLOC_FAILED,
@@ -1048,7 +1048,7 @@ enum LogItem {
     VALIDATE_UPDIMG_USAGE,
     VALIDATE_UPDIMG_ONCE,
     VALIDATION_FAILED,
-};
+}
 struct MetalContextDesc {
     const void* device;
     const void* function() renderpass_descriptor_cb;
@@ -1056,7 +1056,7 @@ struct MetalContextDesc {
     const void* function() drawable_cb;
     const void* function(void*) drawable_userdata_cb;
     void* user_data;
-};
+}
 struct D3d11ContextDesc {
     const void* device;
     const void* device_context;
@@ -1065,7 +1065,7 @@ struct D3d11ContextDesc {
     const void* function() depth_stencil_view_cb;
     const void* function(void*) depth_stencil_view_userdata_cb;
     void* user_data;
-};
+}
 struct WgpuContextDesc {
     const void* device;
     const void* function() render_view_cb;
@@ -1075,12 +1075,12 @@ struct WgpuContextDesc {
     const void* function() depth_stencil_view_cb;
     const void* function(void*) depth_stencil_view_userdata_cb;
     void* user_data;
-};
+}
 struct GlContextDesc {
     uint function() default_framebuffer_cb;
     uint function(void*) default_framebuffer_userdata_cb;
     void* user_data;
-};
+}
 struct ContextDesc {
     int color_format;
     int depth_format;
@@ -1089,20 +1089,20 @@ struct ContextDesc {
     D3d11ContextDesc d3d11;
     WgpuContextDesc wgpu;
     GlContextDesc gl;
-};
+}
 struct CommitListener {
     void function(void*) func;
     void* user_data;
-};
+}
 struct Allocator {
     void* function(size_t, void*) alloc_fn;
     void function(void*, void*) free_fn;
     void* user_data;
-};
+}
 struct Logger {
     void function(const (char*), uint, uint, const (char*), uint, const (char*), void*) func;
     void* user_data;
-};
+}
 struct Desc {
     uint _start_canary;
     int buffer_pool_size;
@@ -1122,7 +1122,7 @@ struct Desc {
     Logger logger;
     ContextDesc context;
     uint _end_canary;
-};
+}
 void sg_setup(const Desc *);
 void setup(Desc desc) {
     sg_setup(&desc);
@@ -1541,97 +1541,97 @@ void discardContext(Context ctx_id) {
 }
 struct D3d11BufferInfo {
     const void* buf;
-};
+}
 struct D3d11ImageInfo {
     const void* tex2d;
     const void* tex3d;
     const void* res;
     const void* srv;
-};
+}
 struct D3d11SamplerInfo {
     const void* smp;
-};
+}
 struct D3d11ShaderInfo {
     const void*[4] vs_cbufs;
     const void*[4] fs_cbufs;
     const void* vs;
     const void* fs;
-};
+}
 struct D3d11PipelineInfo {
     const void* il;
     const void* rs;
     const void* dss;
     const void* bs;
-};
+}
 struct D3d11PassInfo {
     const void*[4] color_rtv;
     const void*[4] resolve_rtv;
     const void* dsv;
-};
+}
 struct MtlBufferInfo {
     const void*[2] buf;
     int active_slot;
-};
+}
 struct MtlImageInfo {
     const void*[2] tex;
     int active_slot;
-};
+}
 struct MtlSamplerInfo {
     const void* smp;
-};
+}
 struct MtlShaderInfo {
     const void* vs_lib;
     const void* fs_lib;
     const void* vs_func;
     const void* fs_func;
-};
+}
 struct MtlPipelineInfo {
     const void* rps;
     const void* dss;
-};
+}
 struct WgpuBufferInfo {
     const void* buf;
-};
+}
 struct WgpuImageInfo {
     const void* tex;
     const void* view;
-};
+}
 struct WgpuSamplerInfo {
     const void* smp;
-};
+}
 struct WgpuShaderInfo {
     const void* vs_mod;
     const void* fs_mod;
     const void* bgl;
-};
+}
 struct WgpuPipelineInfo {
     const void* pip;
-};
+}
 struct WgpuPassInfo {
     const void*[4] color_view;
     const void*[4] resolve_view;
     const void* ds_view;
-};
+}
 struct GlBufferInfo {
     uint[2] buf;
     int active_slot;
-};
+}
 struct GlImageInfo {
     uint[2] tex;
     uint tex_target;
     uint msaa_render_buffer;
     int active_slot;
-};
+}
 struct GlSamplerInfo {
     uint smp;
-};
+}
 struct GlShaderInfo {
     uint prog;
-};
+}
 struct GlPassInfo {
     uint frame_buffer;
     uint[4] msaa_resolve_framebuffer;
-};
+}
 const void* sg_d3d11_device();
 const void* d3d11Device() {
     return sg_d3d11_device();

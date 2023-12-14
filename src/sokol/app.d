@@ -37,7 +37,7 @@ enum EventType {
     CLIPBOARD_PASTED,
     FILES_DROPPED,
     NUM,
-};
+}
 enum Keycode {
     INVALID = 0,
     SPACE = 32,
@@ -160,26 +160,26 @@ enum Keycode {
     RIGHT_ALT = 346,
     RIGHT_SUPER = 347,
     MENU = 348,
-};
+}
 enum AndroidTooltype {
     UNKNOWN = 0,
     FINGER = 1,
     STYLUS = 2,
     MOUSE = 3,
-};
+}
 struct Touchpoint {
     size_t identifier;
     float pos_x;
     float pos_y;
     AndroidTooltype android_tooltype;
     bool changed;
-};
+}
 enum Mousebutton {
     LEFT = 0,
     RIGHT = 1,
     MIDDLE = 2,
     INVALID = 256,
-};
+}
 enum modifier_shift = 1;
 enum modifier_ctrl = 2;
 enum modifier_alt = 4;
@@ -207,25 +207,25 @@ struct Event {
     int window_height;
     int framebuffer_width;
     int framebuffer_height;
-};
+}
 struct Range {
     const void* ptr;
     size_t size;
-};
+}
 struct ImageDesc {
     int width;
     int height;
     Range pixels;
-};
+}
 struct IconDesc {
     bool sokol_default;
     ImageDesc[8] images;
-};
+}
 struct Allocator {
     void* function(size_t, void*) alloc_fn;
     void function(void*, void*) free_fn;
     void* user_data;
-};
+}
 enum LogItem {
     OK,
     MALLOC_FAILED,
@@ -325,11 +325,11 @@ enum LogItem {
     IMAGE_DATA_SIZE_MISMATCH,
     DROPPED_FILE_PATH_TOO_LONG,
     CLIPBOARD_STRING_TOO_BIG,
-};
+}
 struct Logger {
     void function(const (char*), uint, uint, const (char*), uint, const (char*), void*) func;
     void* user_data;
-};
+}
 struct Desc {
     void function() init_cb;
     void function() frame_cb;
@@ -367,12 +367,12 @@ struct Desc {
     bool html5_premultiplied_alpha;
     bool html5_ask_leave_site;
     bool ios_keyboard_resizes_canvas;
-};
+}
 enum Html5FetchError {
     FETCH_ERROR_NO_ERROR,
     FETCH_ERROR_BUFFER_TOO_SMALL,
     FETCH_ERROR_OTHER,
-};
+}
 struct Html5FetchResponse {
     bool succeeded;
     Html5FetchError error_code;
@@ -380,13 +380,13 @@ struct Html5FetchResponse {
     Range data;
     Range buffer;
     void* user_data;
-};
+}
 struct Html5FetchRequest {
     int dropped_file_index;
     void function(const Html5FetchResponse *) callback;
     Range buffer;
     void* user_data;
-};
+}
 enum MouseCursor {
     DEFAULT = 0,
     ARROW,
@@ -400,7 +400,7 @@ enum MouseCursor {
     RESIZE_ALL,
     NOT_ALLOWED,
     NUM,
-};
+}
 bool sapp_isvalid();
 bool isvalid() {
     return sapp_isvalid();

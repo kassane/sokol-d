@@ -1,7 +1,5 @@
 
-Auto-generated D bindings for the [sokol headers](https://github.com/floooh/sokol).
-
-For D version
+Auto-generated [D](https://dlang.org) bindings for the [sokol headers](https://github.com/floooh/sokol).
 
 ## BUILD
 

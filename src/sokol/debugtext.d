@@ -50,23 +50,23 @@ enum LogItem {
     COMMAND_BUFFER_FULL,
     CONTEXT_POOL_EXHAUSTED,
     CANNOT_DESTROY_DEFAULT_CONTEXT,
-};
+}
 struct Logger {
     void function(const (char*), uint, uint, const (char*), uint, const (char*), void*) func;
     void* user_data;
-};
+}
 struct Context {
     uint id;
-};
+}
 struct Range {
     const void* ptr;
     size_t size;
-};
+}
 struct FontDesc {
     Range data;
     ubyte first_char;
     ubyte last_char;
-};
+}
 struct ContextDesc {
     int max_commands;
     int char_buf_size;
@@ -76,12 +76,12 @@ struct ContextDesc {
     sg.PixelFormat color_format;
     sg.PixelFormat depth_format;
     int sample_count;
-};
+}
 struct Allocator {
     void* function(size_t, void*) alloc_fn;
     void function(void*, void*) free_fn;
     void* user_data;
-};
+}
 struct Desc {
     int context_pool_size;
     int printf_buf_size;
@@ -89,7 +89,7 @@ struct Desc {
     ContextDesc context;
     Allocator allocator;
     Logger logger;
-};
+}
 void sdtx_setup(const Desc *);
 void setup(Desc desc) {
     sdtx_setup(&desc);

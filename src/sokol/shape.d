@@ -27,10 +27,10 @@ Range asRange(T)(T val) {
 struct Range {
     const void* ptr;
     size_t size;
-};
+}
 struct Mat4 {
     float[4][4] m;
-};
+}
 struct Vertex {
     float x;
     float y;
@@ -39,29 +39,29 @@ struct Vertex {
     ushort u;
     ushort v;
     uint color;
-};
+}
 struct ElementRange {
     uint base_element;
     uint num_elements;
-};
+}
 struct SizesItem {
     uint num;
     uint size;
-};
+}
 struct Sizes {
     SizesItem vertices;
     SizesItem indices;
-};
+}
 struct BufferItem {
     Range buffer;
     size_t data_size;
     size_t shape_offset;
-};
+}
 struct Buffer {
     bool valid;
     BufferItem vertices;
     BufferItem indices;
-};
+}
 struct Plane {
     float width;
     float depth;
@@ -70,7 +70,7 @@ struct Plane {
     bool random_colors;
     bool merge;
     Mat4 transform;
-};
+}
 struct Box {
     float width;
     float height;
@@ -80,7 +80,7 @@ struct Box {
     bool random_colors;
     bool merge;
     Mat4 transform;
-};
+}
 struct Sphere {
     float radius;
     ushort slices;
@@ -89,7 +89,7 @@ struct Sphere {
     bool random_colors;
     bool merge;
     Mat4 transform;
-};
+}
 struct Cylinder {
     float radius;
     float height;
@@ -99,7 +99,7 @@ struct Cylinder {
     bool random_colors;
     bool merge;
     Mat4 transform;
-};
+}
 struct Torus {
     float radius;
     float ring_radius;
@@ -109,7 +109,7 @@ struct Torus {
     bool random_colors;
     bool merge;
     Mat4 transform;
-};
+}
 Buffer sshape_build_plane(const Buffer *, const Plane *);
 Buffer buildPlane(Buffer buf, Plane params) {
     return sshape_build_plane(&buf, &params);

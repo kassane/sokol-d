@@ -44,16 +44,16 @@ enum LogItem {
     COREAUDIO_ALLOCATE_BUFFER_FAILED,
     COREAUDIO_START_FAILED,
     BACKEND_BUFFER_SIZE_ISNT_MULTIPLE_OF_PACKET_SIZE,
-};
+}
 struct Logger {
     void function(const (char*), uint, uint, const (char*), uint, const (char*), void*) func;
     void* user_data;
-};
+}
 struct Allocator {
     void* function(size_t, void*) alloc_fn;
     void function(void*, void*) free_fn;
     void* user_data;
-};
+}
 struct Desc {
     int sample_rate;
     int num_channels;
@@ -65,7 +65,7 @@ struct Desc {
     void* user_data;
     Allocator allocator;
     Logger logger;
-};
+}
 void saudio_setup(const Desc *);
 void setup(Desc desc) {
     saudio_setup(&desc);

@@ -16,17 +16,17 @@ enum LogItem {
     ADD_COMMIT_LISTENER_FAILED,
     CONTEXT_POOL_EXHAUSTED,
     CANNOT_DESTROY_DEFAULT_CONTEXT,
-};
+}
 struct Logger {
     void function(const (char*), uint, uint, const (char*), uint, const (char*), void*) func;
     void* user_data;
-};
+}
 struct Pipeline {
     uint id;
-};
+}
 struct Context {
     uint id;
-};
+}
 enum Error {
     NO_ERROR = 0,
     VERTICES_FULL,
@@ -35,19 +35,19 @@ enum Error {
     STACK_OVERFLOW,
     STACK_UNDERFLOW,
     NO_CONTEXT,
-};
+}
 struct ContextDesc {
     int max_vertices;
     int max_commands;
     sg.PixelFormat color_format;
     sg.PixelFormat depth_format;
     int sample_count;
-};
+}
 struct Allocator {
     void* function(size_t, void*) alloc_fn;
     void function(void*, void*) free_fn;
     void* user_data;
-};
+}
 struct Desc {
     int max_vertices;
     int max_commands;
@@ -59,7 +59,7 @@ struct Desc {
     sg.FaceWinding face_winding;
     Allocator allocator;
     Logger logger;
-};
+}
 void sgl_setup(const Desc *);
 void setup(Desc desc) {
     sgl_setup(&desc);
