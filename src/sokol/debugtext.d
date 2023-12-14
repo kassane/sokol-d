@@ -1,7 +1,8 @@
 // machine generated, do not edit
 
+module sokol.debugtext;
 extern(C):
-import gfx.sg;
+import sokol.gfx;
 
 // helper function to convert a C string to a D string
 string cStrToDString(const(char*) c_str) {
@@ -58,10 +59,6 @@ struct Logger {
 struct Context {
     uint id;
 }
-struct Range {
-    const void* ptr;
-    size_t size;
-}
 struct FontDesc {
     Range data;
     ubyte first_char;
@@ -73,8 +70,8 @@ struct ContextDesc {
     float canvas_width;
     float canvas_height;
     int tab_width;
-    sg.PixelFormat color_format;
-    sg.PixelFormat depth_format;
+    sokol.gfx.PixelFormat color_format;
+    sokol.gfx.PixelFormat depth_format;
     int sample_count;
 }
 struct Allocator {

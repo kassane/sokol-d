@@ -1,7 +1,8 @@
 // machine generated, do not edit
 
+module sokol.shape;
 extern(C):
-import gfx.sg;
+import sokol.gfx;
 
 // helper function to convert a C string to a D string
 string cStrToDString(const(char*) c_str) {
@@ -24,13 +25,10 @@ Range asRange(T)(T val) {
     }
 }
 
-struct Range {
-    const void* ptr;
-    size_t size;
-}
 struct Mat4 {
     float[4][4] m;
 }
+
 struct Vertex {
     float x;
     float y;
@@ -154,32 +152,32 @@ ElementRange sshape_element_range(const Buffer *);
 ElementRange elementRange(Buffer buf) {
     return sshape_element_range(&buf);
 }
-sg.BufferDesc sshape_vertex_buffer_desc(const Buffer *);
-sg.BufferDesc vertexBufferDesc(Buffer buf) {
+sokol.gfx.BufferDesc sshape_vertex_buffer_desc(const Buffer *);
+sokol.gfx.BufferDesc vertexBufferDesc(Buffer buf) {
     return sshape_vertex_buffer_desc(&buf);
 }
-sg.BufferDesc sshape_index_buffer_desc(const Buffer *);
-sg.BufferDesc indexBufferDesc(Buffer buf) {
+sokol.gfx.BufferDesc sshape_index_buffer_desc(const Buffer *);
+sokol.gfx.BufferDesc indexBufferDesc(Buffer buf) {
     return sshape_index_buffer_desc(&buf);
 }
-sg.VertexBufferLayoutState sshape_vertex_buffer_layout_state();
-sg.VertexBufferLayoutState vertexBufferLayoutState() {
+sokol.gfx.VertexBufferLayoutState sshape_vertex_buffer_layout_state();
+sokol.gfx.VertexBufferLayoutState vertexBufferLayoutState() {
     return sshape_vertex_buffer_layout_state();
 }
-sg.VertexAttrState sshape_position_vertex_attr_state();
-sg.VertexAttrState positionVertexAttrState() {
+sokol.gfx.VertexAttrState sshape_position_vertex_attr_state();
+sokol.gfx.VertexAttrState positionVertexAttrState() {
     return sshape_position_vertex_attr_state();
 }
-sg.VertexAttrState sshape_normal_vertex_attr_state();
-sg.VertexAttrState normalVertexAttrState() {
+sokol.gfx.VertexAttrState sshape_normal_vertex_attr_state();
+sokol.gfx.VertexAttrState normalVertexAttrState() {
     return sshape_normal_vertex_attr_state();
 }
-sg.VertexAttrState sshape_texcoord_vertex_attr_state();
-sg.VertexAttrState texcoordVertexAttrState() {
+sokol.gfx.VertexAttrState sshape_texcoord_vertex_attr_state();
+sokol.gfx.VertexAttrState texcoordVertexAttrState() {
     return sshape_texcoord_vertex_attr_state();
 }
-sg.VertexAttrState sshape_color_vertex_attr_state();
-sg.VertexAttrState colorVertexAttrState() {
+sokol.gfx.VertexAttrState sshape_color_vertex_attr_state();
+sokol.gfx.VertexAttrState colorVertexAttrState() {
     return sshape_color_vertex_attr_state();
 }
 uint sshape_color_4f(float, float, float, float);

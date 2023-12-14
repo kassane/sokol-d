@@ -1,5 +1,6 @@
 // machine generated, do not edit
 
+module sokol.audio;
 extern(C):
 
 // helper function to convert a C string to a D string

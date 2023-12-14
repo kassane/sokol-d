@@ -1,5 +1,6 @@
 // machine generated, do not edit
 
+module sokol.gfx;
 extern(C):
 
 // helper function to convert a C string to a D string
@@ -43,10 +44,6 @@ struct Pass {
 }
 struct Context {
     uint id;
-}
-struct Range {
-    const void* ptr;
-    size_t size;
 }
 enum invalid_id = 0;
 enum num_shader_stages = 2;
@@ -1632,12 +1629,12 @@ struct GlPassInfo {
     uint frame_buffer;
     uint[4] msaa_resolve_framebuffer;
 }
-const void* sg_d3d11_device();
-const void* d3d11Device() {
+void* sg_d3d11_device();
+void* d3d11Device() {
     return sg_d3d11_device();
 }
-const void* sg_d3d11_device_context();
-const void* d3d11DeviceContext() {
+void* sg_d3d11_device_context();
+void* d3d11DeviceContext() {
     return sg_d3d11_device_context();
 }
 D3d11BufferInfo sg_d3d11_query_buffer_info(Buffer);
@@ -1664,12 +1661,12 @@ D3d11PassInfo sg_d3d11_query_pass_info(Pass);
 D3d11PassInfo d3d11QueryPassInfo(Pass pass) {
     return sg_d3d11_query_pass_info(pass);
 }
-const void* sg_mtl_device();
-const void* mtlDevice() {
+void* sg_mtl_device();
+void* mtlDevice() {
     return sg_mtl_device();
 }
-const void* sg_mtl_render_command_encoder();
-const void* mtlRenderCommandEncoder() {
+void* sg_mtl_render_command_encoder();
+void* mtlRenderCommandEncoder() {
     return sg_mtl_render_command_encoder();
 }
 MtlBufferInfo sg_mtl_query_buffer_info(Buffer);
@@ -1692,20 +1689,20 @@ MtlPipelineInfo sg_mtl_query_pipeline_info(Pipeline);
 MtlPipelineInfo mtlQueryPipelineInfo(Pipeline pip) {
     return sg_mtl_query_pipeline_info(pip);
 }
-const void* sg_wgpu_device();
-const void* wgpuDevice() {
+void* sg_wgpu_device();
+void* wgpuDevice() {
     return sg_wgpu_device();
 }
-const void* sg_wgpu_queue();
-const void* wgpuQueue() {
+void* sg_wgpu_queue();
+void* wgpuQueue() {
     return sg_wgpu_queue();
 }
-const void* sg_wgpu_command_encoder();
-const void* wgpuCommandEncoder() {
+void* sg_wgpu_command_encoder();
+void* wgpuCommandEncoder() {
     return sg_wgpu_command_encoder();
 }
-const void* sg_wgpu_render_pass_encoder();
-const void* wgpuRenderPassEncoder() {
+void* sg_wgpu_render_pass_encoder();
+void* wgpuRenderPassEncoder() {
     return sg_wgpu_render_pass_encoder();
 }
 WgpuBufferInfo sg_wgpu_query_buffer_info(Buffer);

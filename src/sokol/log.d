@@ -1,5 +1,6 @@
 // machine generated, do not edit
 
+module sokol.log;
 extern(C):
 
 // helper function to convert a C string to a D string

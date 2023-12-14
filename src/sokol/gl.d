@@ -1,7 +1,8 @@
 // machine generated, do not edit
 
+module sokol.gl;
 extern(C):
-import gfx.sg;
+import sokol.gfx;
 
 // helper function to convert a C string to a D string
 string cStrToDString(const(char*) c_str) {
@@ -39,8 +40,8 @@ enum Error {
 struct ContextDesc {
     int max_vertices;
     int max_commands;
-    sg.PixelFormat color_format;
-    sg.PixelFormat depth_format;
+    sokol.gfx.PixelFormat color_format;
+    sokol.gfx.PixelFormat depth_format;
     int sample_count;
 }
 struct Allocator {
@@ -53,10 +54,10 @@ struct Desc {
     int max_commands;
     int context_pool_size;
     int pipeline_pool_size;
-    sg.PixelFormat color_format;
-    sg.PixelFormat depth_format;
+    sokol.gfx.PixelFormat color_format;
+    sokol.gfx.PixelFormat depth_format;
     int sample_count;
-    sg.FaceWinding face_winding;
+    sokol.gfx.FaceWinding face_winding;
     Allocator allocator;
     Logger logger;
 }
@@ -120,12 +121,12 @@ void sgl_context_draw_layer(Context, int);
 void contextDrawLayer(Context ctx, int layer_id) {
     sgl_context_draw_layer(ctx, layer_id);
 }
-Pipeline sgl_make_pipeline(const sg.PipelineDesc *);
-Pipeline makePipeline(sg.PipelineDesc desc) {
+Pipeline sgl_make_pipeline(const sokol.gfx.PipelineDesc *);
+Pipeline makePipeline(sokol.gfx.PipelineDesc desc) {
     return sgl_make_pipeline(&desc);
 }
-Pipeline sgl_context_make_pipeline(Context, const sg.PipelineDesc *);
-Pipeline contextMakePipeline(Context ctx, sg.PipelineDesc desc) {
+Pipeline sgl_context_make_pipeline(Context, const sokol.gfx.PipelineDesc *);
+Pipeline contextMakePipeline(Context ctx, sokol.gfx.PipelineDesc desc) {
     return sgl_context_make_pipeline(ctx, &desc);
 }
 void sgl_destroy_pipeline(Pipeline);
@@ -160,8 +161,8 @@ void sgl_disable_texture();
 void disableTexture() {
     sgl_disable_texture();
 }
-void sgl_texture(sg.Image, sg.Sampler);
-void texture(sg.Image img, sg.Sampler smp) {
+void sgl_texture(sokol.gfx.Image, sokol.gfx.Sampler);
+void texture(sokol.gfx.Image img, sokol.gfx.Sampler smp) {
     sgl_texture(img, smp);
 }
 void sgl_layer(int);
