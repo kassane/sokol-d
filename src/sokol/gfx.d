@@ -1,7 +1,6 @@
 // machine generated, do not edit
 
 module sokol.gfx;
-extern(C):
 
 // helper function to convert a C string to a D string
 string cStrToDString(const(char*) c_str) {
@@ -9,10 +8,6 @@ string cStrToDString(const(char*) c_str) {
     return c_str.to!string;
 }
 // helper function to convert "anything" to a Range struct
-struct Range {
-    const void* ptr;
-    size_t size;
-}
 
 Range asRange(T)(T val) {
     static if (isPointer!T) {
@@ -44,6 +39,10 @@ struct Pass {
 }
 struct Context {
     uint id;
+}
+struct Range {
+    const(void)* ptr;
+    size_t size;
 }
 enum invalid_id = 0;
 enum num_shader_stages = 2;
@@ -443,9 +442,9 @@ struct BufferDesc {
     Range data;
     const (char*) label;
     uint[2] gl_buffers;
-    const void*[2] mtl_buffers;
-    const void* d3d11_buffer;
-    const void* wgpu_buffer;
+    const(void)*[2] mtl_buffers;
+    const(void)* d3d11_buffer;
+    const(void)* wgpu_buffer;
     uint _end_canary;
 }
 struct ImageData {
@@ -466,11 +465,11 @@ struct ImageDesc {
     const (char*) label;
     uint[2] gl_textures;
     uint gl_texture_target;
-    const void*[2] mtl_textures;
-    const void* d3d11_texture;
-    const void* d3d11_shader_resource_view;
-    const void* wgpu_texture;
-    const void* wgpu_texture_view;
+    const(void)*[2] mtl_textures;
+    const(void)* d3d11_texture;
+    const(void)* d3d11_shader_resource_view;
+    const(void)* wgpu_texture;
+    const(void)* wgpu_texture_view;
     uint _end_canary;
 }
 struct SamplerDesc {
@@ -488,9 +487,9 @@ struct SamplerDesc {
     uint max_anisotropy;
     const (char*) label;
     uint gl_sampler;
-    const void* mtl_sampler;
-    const void* d3d11_sampler;
-    const void* wgpu_sampler;
+    const(void)* mtl_sampler;
+    const(void)* d3d11_sampler;
+    const(void)* wgpu_sampler;
     uint _end_canary;
 }
 struct ShaderAttrDesc {
@@ -1047,30 +1046,30 @@ enum LogItem {
     VALIDATION_FAILED,
 }
 struct MetalContextDesc {
-    const void* device;
-    const void* function() renderpass_descriptor_cb;
-    const void* function(void*) renderpass_descriptor_userdata_cb;
-    const void* function() drawable_cb;
-    const void* function(void*) drawable_userdata_cb;
+    const(void)* device;
+    const(void)* function() renderpass_descriptor_cb;
+    const(void)* function(void*) renderpass_descriptor_userdata_cb;
+    const(void)* function() drawable_cb;
+    const(void)* function(void*) drawable_userdata_cb;
     void* user_data;
 }
 struct D3d11ContextDesc {
-    const void* device;
-    const void* device_context;
-    const void* function() render_target_view_cb;
-    const void* function(void*) render_target_view_userdata_cb;
-    const void* function() depth_stencil_view_cb;
-    const void* function(void*) depth_stencil_view_userdata_cb;
+    const(void)* device;
+    const(void)* device_context;
+    const(void)* function() render_target_view_cb;
+    const(void)* function(void*) render_target_view_userdata_cb;
+    const(void)* function() depth_stencil_view_cb;
+    const(void)* function(void*) depth_stencil_view_userdata_cb;
     void* user_data;
 }
 struct WgpuContextDesc {
-    const void* device;
-    const void* function() render_view_cb;
-    const void* function(void*) render_view_userdata_cb;
-    const void* function() resolve_view_cb;
-    const void* function(void*) resolve_view_userdata_cb;
-    const void* function() depth_stencil_view_cb;
-    const void* function(void*) depth_stencil_view_userdata_cb;
+    const(void)* device;
+    const(void)* function() render_view_cb;
+    const(void)* function(void*) render_view_userdata_cb;
+    const(void)* function() resolve_view_cb;
+    const(void)* function(void*) resolve_view_userdata_cb;
+    const(void)* function() depth_stencil_view_cb;
+    const(void)* function(void*) depth_stencil_view_userdata_cb;
     void* user_data;
 }
 struct GlContextDesc {
@@ -1120,494 +1119,494 @@ struct Desc {
     ContextDesc context;
     uint _end_canary;
 }
-void sg_setup(const Desc *);
+extern(C) void sg_setup(const Desc *);
 void setup(Desc desc) {
     sg_setup(&desc);
 }
-void sg_shutdown();
+extern(C) void sg_shutdown();
 void shutdown() {
     sg_shutdown();
 }
-bool sg_isvalid();
+extern(C) bool sg_isvalid();
 bool isvalid() {
     return sg_isvalid();
 }
-void sg_reset_state_cache();
+extern(C) void sg_reset_state_cache();
 void resetStateCache() {
     sg_reset_state_cache();
 }
-void sg_push_debug_group(const (char*));
+extern(C) void sg_push_debug_group(const (char*));
 void pushDebugGroup(const (char*) name) {
     sg_push_debug_group(name);
 }
-void sg_pop_debug_group();
+extern(C) void sg_pop_debug_group();
 void popDebugGroup() {
     sg_pop_debug_group();
 }
-bool sg_add_commit_listener(CommitListener);
+extern(C) bool sg_add_commit_listener(CommitListener);
 bool addCommitListener(CommitListener listener) {
     return sg_add_commit_listener(listener);
 }
-bool sg_remove_commit_listener(CommitListener);
+extern(C) bool sg_remove_commit_listener(CommitListener);
 bool removeCommitListener(CommitListener listener) {
     return sg_remove_commit_listener(listener);
 }
-Buffer sg_make_buffer(const BufferDesc *);
+extern(C) Buffer sg_make_buffer(const BufferDesc *);
 Buffer makeBuffer(BufferDesc desc) {
     return sg_make_buffer(&desc);
 }
-Image sg_make_image(const ImageDesc *);
+extern(C) Image sg_make_image(const ImageDesc *);
 Image makeImage(ImageDesc desc) {
     return sg_make_image(&desc);
 }
-Sampler sg_make_sampler(const SamplerDesc *);
+extern(C) Sampler sg_make_sampler(const SamplerDesc *);
 Sampler makeSampler(SamplerDesc desc) {
     return sg_make_sampler(&desc);
 }
-Shader sg_make_shader(const ShaderDesc *);
+extern(C) Shader sg_make_shader(const ShaderDesc *);
 Shader makeShader(ShaderDesc desc) {
     return sg_make_shader(&desc);
 }
-Pipeline sg_make_pipeline(const PipelineDesc *);
+extern(C) Pipeline sg_make_pipeline(const PipelineDesc *);
 Pipeline makePipeline(PipelineDesc desc) {
     return sg_make_pipeline(&desc);
 }
-Pass sg_make_pass(const PassDesc *);
+extern(C) Pass sg_make_pass(const PassDesc *);
 Pass makePass(PassDesc desc) {
     return sg_make_pass(&desc);
 }
-void sg_destroy_buffer(Buffer);
+extern(C) void sg_destroy_buffer(Buffer);
 void destroyBuffer(Buffer buf) {
     sg_destroy_buffer(buf);
 }
-void sg_destroy_image(Image);
+extern(C) void sg_destroy_image(Image);
 void destroyImage(Image img) {
     sg_destroy_image(img);
 }
-void sg_destroy_sampler(Sampler);
+extern(C) void sg_destroy_sampler(Sampler);
 void destroySampler(Sampler smp) {
     sg_destroy_sampler(smp);
 }
-void sg_destroy_shader(Shader);
+extern(C) void sg_destroy_shader(Shader);
 void destroyShader(Shader shd) {
     sg_destroy_shader(shd);
 }
-void sg_destroy_pipeline(Pipeline);
+extern(C) void sg_destroy_pipeline(Pipeline);
 void destroyPipeline(Pipeline pip) {
     sg_destroy_pipeline(pip);
 }
-void sg_destroy_pass(Pass);
+extern(C) void sg_destroy_pass(Pass);
 void destroyPass(Pass pass) {
     sg_destroy_pass(pass);
 }
-void sg_update_buffer(Buffer, const Range *);
+extern(C) void sg_update_buffer(Buffer, const Range *);
 void updateBuffer(Buffer buf, Range data) {
     sg_update_buffer(buf, &data);
 }
-void sg_update_image(Image, const ImageData *);
+extern(C) void sg_update_image(Image, const ImageData *);
 void updateImage(Image img, ImageData data) {
     sg_update_image(img, &data);
 }
-int sg_append_buffer(Buffer, const Range *);
+extern(C) int sg_append_buffer(Buffer, const Range *);
 int appendBuffer(Buffer buf, Range data) {
     return sg_append_buffer(buf, &data);
 }
-bool sg_query_buffer_overflow(Buffer);
+extern(C) bool sg_query_buffer_overflow(Buffer);
 bool queryBufferOverflow(Buffer buf) {
     return sg_query_buffer_overflow(buf);
 }
-bool sg_query_buffer_will_overflow(Buffer, size_t);
+extern(C) bool sg_query_buffer_will_overflow(Buffer, size_t);
 bool queryBufferWillOverflow(Buffer buf, size_t size) {
     return sg_query_buffer_will_overflow(buf, size);
 }
-void sg_begin_default_pass(const PassAction *, int, int);
+extern(C) void sg_begin_default_pass(const PassAction *, int, int);
 void beginDefaultPass(PassAction pass_action, int width, int height) {
     sg_begin_default_pass(&pass_action, width, height);
 }
-void sg_begin_default_passf(const PassAction *, float, float);
+extern(C) void sg_begin_default_passf(const PassAction *, float, float);
 void beginDefaultPassf(PassAction pass_action, float width, float height) {
     sg_begin_default_passf(&pass_action, width, height);
 }
-void sg_begin_pass(Pass, const PassAction *);
+extern(C) void sg_begin_pass(Pass, const PassAction *);
 void beginPass(Pass pass, PassAction pass_action) {
     sg_begin_pass(pass, &pass_action);
 }
-void sg_apply_viewport(int, int, int, int, bool);
+extern(C) void sg_apply_viewport(int, int, int, int, bool);
 void applyViewport(int x, int y, int width, int height, bool origin_top_left) {
     sg_apply_viewport(x, y, width, height, origin_top_left);
 }
-void sg_apply_viewportf(float, float, float, float, bool);
+extern(C) void sg_apply_viewportf(float, float, float, float, bool);
 void applyViewportf(float x, float y, float width, float height, bool origin_top_left) {
     sg_apply_viewportf(x, y, width, height, origin_top_left);
 }
-void sg_apply_scissor_rect(int, int, int, int, bool);
+extern(C) void sg_apply_scissor_rect(int, int, int, int, bool);
 void applyScissorRect(int x, int y, int width, int height, bool origin_top_left) {
     sg_apply_scissor_rect(x, y, width, height, origin_top_left);
 }
-void sg_apply_scissor_rectf(float, float, float, float, bool);
+extern(C) void sg_apply_scissor_rectf(float, float, float, float, bool);
 void applyScissorRectf(float x, float y, float width, float height, bool origin_top_left) {
     sg_apply_scissor_rectf(x, y, width, height, origin_top_left);
 }
-void sg_apply_pipeline(Pipeline);
+extern(C) void sg_apply_pipeline(Pipeline);
 void applyPipeline(Pipeline pip) {
     sg_apply_pipeline(pip);
 }
-void sg_apply_bindings(const Bindings *);
+extern(C) void sg_apply_bindings(const Bindings *);
 void applyBindings(Bindings bindings) {
     sg_apply_bindings(&bindings);
 }
-void sg_apply_uniforms(ShaderStage, uint, const Range *);
+extern(C) void sg_apply_uniforms(ShaderStage, uint, const Range *);
 void applyUniforms(ShaderStage stage, uint ub_index, Range data) {
     sg_apply_uniforms(stage, ub_index, &data);
 }
-void sg_draw(uint, uint, uint);
+extern(C) void sg_draw(uint, uint, uint);
 void draw(uint base_element, uint num_elements, uint num_instances) {
     sg_draw(base_element, num_elements, num_instances);
 }
-void sg_end_pass();
+extern(C) void sg_end_pass();
 void endPass() {
     sg_end_pass();
 }
-void sg_commit();
+extern(C) void sg_commit();
 void commit() {
     sg_commit();
 }
-Desc sg_query_desc();
+extern(C) Desc sg_query_desc();
 Desc queryDesc() {
     return sg_query_desc();
 }
-Backend sg_query_backend();
+extern(C) Backend sg_query_backend();
 Backend queryBackend() {
     return sg_query_backend();
 }
-Features sg_query_features();
+extern(C) Features sg_query_features();
 Features queryFeatures() {
     return sg_query_features();
 }
-Limits sg_query_limits();
+extern(C) Limits sg_query_limits();
 Limits queryLimits() {
     return sg_query_limits();
 }
-PixelformatInfo sg_query_pixelformat(PixelFormat);
+extern(C) PixelformatInfo sg_query_pixelformat(PixelFormat);
 PixelformatInfo queryPixelformat(PixelFormat fmt) {
     return sg_query_pixelformat(fmt);
 }
-ResourceState sg_query_buffer_state(Buffer);
+extern(C) ResourceState sg_query_buffer_state(Buffer);
 ResourceState queryBufferState(Buffer buf) {
     return sg_query_buffer_state(buf);
 }
-ResourceState sg_query_image_state(Image);
+extern(C) ResourceState sg_query_image_state(Image);
 ResourceState queryImageState(Image img) {
     return sg_query_image_state(img);
 }
-ResourceState sg_query_sampler_state(Sampler);
+extern(C) ResourceState sg_query_sampler_state(Sampler);
 ResourceState querySamplerState(Sampler smp) {
     return sg_query_sampler_state(smp);
 }
-ResourceState sg_query_shader_state(Shader);
+extern(C) ResourceState sg_query_shader_state(Shader);
 ResourceState queryShaderState(Shader shd) {
     return sg_query_shader_state(shd);
 }
-ResourceState sg_query_pipeline_state(Pipeline);
+extern(C) ResourceState sg_query_pipeline_state(Pipeline);
 ResourceState queryPipelineState(Pipeline pip) {
     return sg_query_pipeline_state(pip);
 }
-ResourceState sg_query_pass_state(Pass);
+extern(C) ResourceState sg_query_pass_state(Pass);
 ResourceState queryPassState(Pass pass) {
     return sg_query_pass_state(pass);
 }
-BufferInfo sg_query_buffer_info(Buffer);
+extern(C) BufferInfo sg_query_buffer_info(Buffer);
 BufferInfo queryBufferInfo(Buffer buf) {
     return sg_query_buffer_info(buf);
 }
-ImageInfo sg_query_image_info(Image);
+extern(C) ImageInfo sg_query_image_info(Image);
 ImageInfo queryImageInfo(Image img) {
     return sg_query_image_info(img);
 }
-SamplerInfo sg_query_sampler_info(Sampler);
+extern(C) SamplerInfo sg_query_sampler_info(Sampler);
 SamplerInfo querySamplerInfo(Sampler smp) {
     return sg_query_sampler_info(smp);
 }
-ShaderInfo sg_query_shader_info(Shader);
+extern(C) ShaderInfo sg_query_shader_info(Shader);
 ShaderInfo queryShaderInfo(Shader shd) {
     return sg_query_shader_info(shd);
 }
-PipelineInfo sg_query_pipeline_info(Pipeline);
+extern(C) PipelineInfo sg_query_pipeline_info(Pipeline);
 PipelineInfo queryPipelineInfo(Pipeline pip) {
     return sg_query_pipeline_info(pip);
 }
-PassInfo sg_query_pass_info(Pass);
+extern(C) PassInfo sg_query_pass_info(Pass);
 PassInfo queryPassInfo(Pass pass) {
     return sg_query_pass_info(pass);
 }
-BufferDesc sg_query_buffer_desc(Buffer);
+extern(C) BufferDesc sg_query_buffer_desc(Buffer);
 BufferDesc queryBufferDesc(Buffer buf) {
     return sg_query_buffer_desc(buf);
 }
-ImageDesc sg_query_image_desc(Image);
+extern(C) ImageDesc sg_query_image_desc(Image);
 ImageDesc queryImageDesc(Image img) {
     return sg_query_image_desc(img);
 }
-SamplerDesc sg_query_sampler_desc(Sampler);
+extern(C) SamplerDesc sg_query_sampler_desc(Sampler);
 SamplerDesc querySamplerDesc(Sampler smp) {
     return sg_query_sampler_desc(smp);
 }
-ShaderDesc sg_query_shader_desc(Shader);
+extern(C) ShaderDesc sg_query_shader_desc(Shader);
 ShaderDesc queryShaderDesc(Shader shd) {
     return sg_query_shader_desc(shd);
 }
-PipelineDesc sg_query_pipeline_desc(Pipeline);
+extern(C) PipelineDesc sg_query_pipeline_desc(Pipeline);
 PipelineDesc queryPipelineDesc(Pipeline pip) {
     return sg_query_pipeline_desc(pip);
 }
-PassDesc sg_query_pass_desc(Pass);
+extern(C) PassDesc sg_query_pass_desc(Pass);
 PassDesc queryPassDesc(Pass pass) {
     return sg_query_pass_desc(pass);
 }
-BufferDesc sg_query_buffer_defaults(const BufferDesc *);
+extern(C) BufferDesc sg_query_buffer_defaults(const BufferDesc *);
 BufferDesc queryBufferDefaults(BufferDesc desc) {
     return sg_query_buffer_defaults(&desc);
 }
-ImageDesc sg_query_image_defaults(const ImageDesc *);
+extern(C) ImageDesc sg_query_image_defaults(const ImageDesc *);
 ImageDesc queryImageDefaults(ImageDesc desc) {
     return sg_query_image_defaults(&desc);
 }
-SamplerDesc sg_query_sampler_defaults(const SamplerDesc *);
+extern(C) SamplerDesc sg_query_sampler_defaults(const SamplerDesc *);
 SamplerDesc querySamplerDefaults(SamplerDesc desc) {
     return sg_query_sampler_defaults(&desc);
 }
-ShaderDesc sg_query_shader_defaults(const ShaderDesc *);
+extern(C) ShaderDesc sg_query_shader_defaults(const ShaderDesc *);
 ShaderDesc queryShaderDefaults(ShaderDesc desc) {
     return sg_query_shader_defaults(&desc);
 }
-PipelineDesc sg_query_pipeline_defaults(const PipelineDesc *);
+extern(C) PipelineDesc sg_query_pipeline_defaults(const PipelineDesc *);
 PipelineDesc queryPipelineDefaults(PipelineDesc desc) {
     return sg_query_pipeline_defaults(&desc);
 }
-PassDesc sg_query_pass_defaults(const PassDesc *);
+extern(C) PassDesc sg_query_pass_defaults(const PassDesc *);
 PassDesc queryPassDefaults(PassDesc desc) {
     return sg_query_pass_defaults(&desc);
 }
-Buffer sg_alloc_buffer();
+extern(C) Buffer sg_alloc_buffer();
 Buffer allocBuffer() {
     return sg_alloc_buffer();
 }
-Image sg_alloc_image();
+extern(C) Image sg_alloc_image();
 Image allocImage() {
     return sg_alloc_image();
 }
-Sampler sg_alloc_sampler();
+extern(C) Sampler sg_alloc_sampler();
 Sampler allocSampler() {
     return sg_alloc_sampler();
 }
-Shader sg_alloc_shader();
+extern(C) Shader sg_alloc_shader();
 Shader allocShader() {
     return sg_alloc_shader();
 }
-Pipeline sg_alloc_pipeline();
+extern(C) Pipeline sg_alloc_pipeline();
 Pipeline allocPipeline() {
     return sg_alloc_pipeline();
 }
-Pass sg_alloc_pass();
+extern(C) Pass sg_alloc_pass();
 Pass allocPass() {
     return sg_alloc_pass();
 }
-void sg_dealloc_buffer(Buffer);
+extern(C) void sg_dealloc_buffer(Buffer);
 void deallocBuffer(Buffer buf) {
     sg_dealloc_buffer(buf);
 }
-void sg_dealloc_image(Image);
+extern(C) void sg_dealloc_image(Image);
 void deallocImage(Image img) {
     sg_dealloc_image(img);
 }
-void sg_dealloc_sampler(Sampler);
+extern(C) void sg_dealloc_sampler(Sampler);
 void deallocSampler(Sampler smp) {
     sg_dealloc_sampler(smp);
 }
-void sg_dealloc_shader(Shader);
+extern(C) void sg_dealloc_shader(Shader);
 void deallocShader(Shader shd) {
     sg_dealloc_shader(shd);
 }
-void sg_dealloc_pipeline(Pipeline);
+extern(C) void sg_dealloc_pipeline(Pipeline);
 void deallocPipeline(Pipeline pip) {
     sg_dealloc_pipeline(pip);
 }
-void sg_dealloc_pass(Pass);
+extern(C) void sg_dealloc_pass(Pass);
 void deallocPass(Pass pass) {
     sg_dealloc_pass(pass);
 }
-void sg_init_buffer(Buffer, const BufferDesc *);
+extern(C) void sg_init_buffer(Buffer, const BufferDesc *);
 void initBuffer(Buffer buf, BufferDesc desc) {
     sg_init_buffer(buf, &desc);
 }
-void sg_init_image(Image, const ImageDesc *);
+extern(C) void sg_init_image(Image, const ImageDesc *);
 void initImage(Image img, ImageDesc desc) {
     sg_init_image(img, &desc);
 }
-void sg_init_sampler(Sampler, const SamplerDesc *);
+extern(C) void sg_init_sampler(Sampler, const SamplerDesc *);
 void initSampler(Sampler smg, SamplerDesc desc) {
     sg_init_sampler(smg, &desc);
 }
-void sg_init_shader(Shader, const ShaderDesc *);
+extern(C) void sg_init_shader(Shader, const ShaderDesc *);
 void initShader(Shader shd, ShaderDesc desc) {
     sg_init_shader(shd, &desc);
 }
-void sg_init_pipeline(Pipeline, const PipelineDesc *);
+extern(C) void sg_init_pipeline(Pipeline, const PipelineDesc *);
 void initPipeline(Pipeline pip, PipelineDesc desc) {
     sg_init_pipeline(pip, &desc);
 }
-void sg_init_pass(Pass, const PassDesc *);
+extern(C) void sg_init_pass(Pass, const PassDesc *);
 void initPass(Pass pass, PassDesc desc) {
     sg_init_pass(pass, &desc);
 }
-void sg_uninit_buffer(Buffer);
+extern(C) void sg_uninit_buffer(Buffer);
 void uninitBuffer(Buffer buf) {
     sg_uninit_buffer(buf);
 }
-void sg_uninit_image(Image);
+extern(C) void sg_uninit_image(Image);
 void uninitImage(Image img) {
     sg_uninit_image(img);
 }
-void sg_uninit_sampler(Sampler);
+extern(C) void sg_uninit_sampler(Sampler);
 void uninitSampler(Sampler smp) {
     sg_uninit_sampler(smp);
 }
-void sg_uninit_shader(Shader);
+extern(C) void sg_uninit_shader(Shader);
 void uninitShader(Shader shd) {
     sg_uninit_shader(shd);
 }
-void sg_uninit_pipeline(Pipeline);
+extern(C) void sg_uninit_pipeline(Pipeline);
 void uninitPipeline(Pipeline pip) {
     sg_uninit_pipeline(pip);
 }
-void sg_uninit_pass(Pass);
+extern(C) void sg_uninit_pass(Pass);
 void uninitPass(Pass pass) {
     sg_uninit_pass(pass);
 }
-void sg_fail_buffer(Buffer);
+extern(C) void sg_fail_buffer(Buffer);
 void failBuffer(Buffer buf) {
     sg_fail_buffer(buf);
 }
-void sg_fail_image(Image);
+extern(C) void sg_fail_image(Image);
 void failImage(Image img) {
     sg_fail_image(img);
 }
-void sg_fail_sampler(Sampler);
+extern(C) void sg_fail_sampler(Sampler);
 void failSampler(Sampler smp) {
     sg_fail_sampler(smp);
 }
-void sg_fail_shader(Shader);
+extern(C) void sg_fail_shader(Shader);
 void failShader(Shader shd) {
     sg_fail_shader(shd);
 }
-void sg_fail_pipeline(Pipeline);
+extern(C) void sg_fail_pipeline(Pipeline);
 void failPipeline(Pipeline pip) {
     sg_fail_pipeline(pip);
 }
-void sg_fail_pass(Pass);
+extern(C) void sg_fail_pass(Pass);
 void failPass(Pass pass) {
     sg_fail_pass(pass);
 }
-void sg_enable_frame_stats();
+extern(C) void sg_enable_frame_stats();
 void enableFrameStats() {
     sg_enable_frame_stats();
 }
-void sg_disable_frame_stats();
+extern(C) void sg_disable_frame_stats();
 void disableFrameStats() {
     sg_disable_frame_stats();
 }
-bool sg_frame_stats_enabled();
+extern(C) bool sg_frame_stats_enabled();
 bool frameStatsEnabled() {
     return sg_frame_stats_enabled();
 }
-FrameStats sg_query_frame_stats();
+extern(C) FrameStats sg_query_frame_stats();
 FrameStats queryFrameStats() {
     return sg_query_frame_stats();
 }
-Context sg_setup_context();
+extern(C) Context sg_setup_context();
 Context setupContext() {
     return sg_setup_context();
 }
-void sg_activate_context(Context);
+extern(C) void sg_activate_context(Context);
 void activateContext(Context ctx_id) {
     sg_activate_context(ctx_id);
 }
-void sg_discard_context(Context);
+extern(C) void sg_discard_context(Context);
 void discardContext(Context ctx_id) {
     sg_discard_context(ctx_id);
 }
 struct D3d11BufferInfo {
-    const void* buf;
+    const(void)* buf;
 }
 struct D3d11ImageInfo {
-    const void* tex2d;
-    const void* tex3d;
-    const void* res;
-    const void* srv;
+    const(void)* tex2d;
+    const(void)* tex3d;
+    const(void)* res;
+    const(void)* srv;
 }
 struct D3d11SamplerInfo {
-    const void* smp;
+    const(void)* smp;
 }
 struct D3d11ShaderInfo {
-    const void*[4] vs_cbufs;
-    const void*[4] fs_cbufs;
-    const void* vs;
-    const void* fs;
+    const(void)*[4] vs_cbufs;
+    const(void)*[4] fs_cbufs;
+    const(void)* vs;
+    const(void)* fs;
 }
 struct D3d11PipelineInfo {
-    const void* il;
-    const void* rs;
-    const void* dss;
-    const void* bs;
+    const(void)* il;
+    const(void)* rs;
+    const(void)* dss;
+    const(void)* bs;
 }
 struct D3d11PassInfo {
-    const void*[4] color_rtv;
-    const void*[4] resolve_rtv;
-    const void* dsv;
+    const(void)*[4] color_rtv;
+    const(void)*[4] resolve_rtv;
+    const(void)* dsv;
 }
 struct MtlBufferInfo {
-    const void*[2] buf;
+    const(void)*[2] buf;
     int active_slot;
 }
 struct MtlImageInfo {
-    const void*[2] tex;
+    const(void)*[2] tex;
     int active_slot;
 }
 struct MtlSamplerInfo {
-    const void* smp;
+    const(void)* smp;
 }
 struct MtlShaderInfo {
-    const void* vs_lib;
-    const void* fs_lib;
-    const void* vs_func;
-    const void* fs_func;
+    const(void)* vs_lib;
+    const(void)* fs_lib;
+    const(void)* vs_func;
+    const(void)* fs_func;
 }
 struct MtlPipelineInfo {
-    const void* rps;
-    const void* dss;
+    const(void)* rps;
+    const(void)* dss;
 }
 struct WgpuBufferInfo {
-    const void* buf;
+    const(void)* buf;
 }
 struct WgpuImageInfo {
-    const void* tex;
-    const void* view;
+    const(void)* tex;
+    const(void)* view;
 }
 struct WgpuSamplerInfo {
-    const void* smp;
+    const(void)* smp;
 }
 struct WgpuShaderInfo {
-    const void* vs_mod;
-    const void* fs_mod;
-    const void* bgl;
+    const(void)* vs_mod;
+    const(void)* fs_mod;
+    const(void)* bgl;
 }
 struct WgpuPipelineInfo {
-    const void* pip;
+    const(void)* pip;
 }
 struct WgpuPassInfo {
-    const void*[4] color_view;
-    const void*[4] resolve_view;
-    const void* ds_view;
+    const(void)*[4] color_view;
+    const(void)*[4] resolve_view;
+    const(void)* ds_view;
 }
 struct GlBufferInfo {
     uint[2] buf;
@@ -1629,123 +1628,123 @@ struct GlPassInfo {
     uint frame_buffer;
     uint[4] msaa_resolve_framebuffer;
 }
-void* sg_d3d11_device();
-void* d3d11Device() {
+extern(C) const(void)* sg_d3d11_device();
+const(void)* d3d11Device() {
     return sg_d3d11_device();
 }
-void* sg_d3d11_device_context();
-void* d3d11DeviceContext() {
+extern(C) const(void)* sg_d3d11_device_context();
+const(void)* d3d11DeviceContext() {
     return sg_d3d11_device_context();
 }
-D3d11BufferInfo sg_d3d11_query_buffer_info(Buffer);
+extern(C) D3d11BufferInfo sg_d3d11_query_buffer_info(Buffer);
 D3d11BufferInfo d3d11QueryBufferInfo(Buffer buf) {
     return sg_d3d11_query_buffer_info(buf);
 }
-D3d11ImageInfo sg_d3d11_query_image_info(Image);
+extern(C) D3d11ImageInfo sg_d3d11_query_image_info(Image);
 D3d11ImageInfo d3d11QueryImageInfo(Image img) {
     return sg_d3d11_query_image_info(img);
 }
-D3d11SamplerInfo sg_d3d11_query_sampler_info(Sampler);
+extern(C) D3d11SamplerInfo sg_d3d11_query_sampler_info(Sampler);
 D3d11SamplerInfo d3d11QuerySamplerInfo(Sampler smp) {
     return sg_d3d11_query_sampler_info(smp);
 }
-D3d11ShaderInfo sg_d3d11_query_shader_info(Shader);
+extern(C) D3d11ShaderInfo sg_d3d11_query_shader_info(Shader);
 D3d11ShaderInfo d3d11QueryShaderInfo(Shader shd) {
     return sg_d3d11_query_shader_info(shd);
 }
-D3d11PipelineInfo sg_d3d11_query_pipeline_info(Pipeline);
+extern(C) D3d11PipelineInfo sg_d3d11_query_pipeline_info(Pipeline);
 D3d11PipelineInfo d3d11QueryPipelineInfo(Pipeline pip) {
     return sg_d3d11_query_pipeline_info(pip);
 }
-D3d11PassInfo sg_d3d11_query_pass_info(Pass);
+extern(C) D3d11PassInfo sg_d3d11_query_pass_info(Pass);
 D3d11PassInfo d3d11QueryPassInfo(Pass pass) {
     return sg_d3d11_query_pass_info(pass);
 }
-void* sg_mtl_device();
-void* mtlDevice() {
+extern(C) const(void)* sg_mtl_device();
+const(void)* mtlDevice() {
     return sg_mtl_device();
 }
-void* sg_mtl_render_command_encoder();
-void* mtlRenderCommandEncoder() {
+extern(C) const(void)* sg_mtl_render_command_encoder();
+const(void)* mtlRenderCommandEncoder() {
     return sg_mtl_render_command_encoder();
 }
-MtlBufferInfo sg_mtl_query_buffer_info(Buffer);
+extern(C) MtlBufferInfo sg_mtl_query_buffer_info(Buffer);
 MtlBufferInfo mtlQueryBufferInfo(Buffer buf) {
     return sg_mtl_query_buffer_info(buf);
 }
-MtlImageInfo sg_mtl_query_image_info(Image);
+extern(C) MtlImageInfo sg_mtl_query_image_info(Image);
 MtlImageInfo mtlQueryImageInfo(Image img) {
     return sg_mtl_query_image_info(img);
 }
-MtlSamplerInfo sg_mtl_query_sampler_info(Sampler);
+extern(C) MtlSamplerInfo sg_mtl_query_sampler_info(Sampler);
 MtlSamplerInfo mtlQuerySamplerInfo(Sampler smp) {
     return sg_mtl_query_sampler_info(smp);
 }
-MtlShaderInfo sg_mtl_query_shader_info(Shader);
+extern(C) MtlShaderInfo sg_mtl_query_shader_info(Shader);
 MtlShaderInfo mtlQueryShaderInfo(Shader shd) {
     return sg_mtl_query_shader_info(shd);
 }
-MtlPipelineInfo sg_mtl_query_pipeline_info(Pipeline);
+extern(C) MtlPipelineInfo sg_mtl_query_pipeline_info(Pipeline);
 MtlPipelineInfo mtlQueryPipelineInfo(Pipeline pip) {
     return sg_mtl_query_pipeline_info(pip);
 }
-void* sg_wgpu_device();
-void* wgpuDevice() {
+extern(C) const(void)* sg_wgpu_device();
+const(void)* wgpuDevice() {
     return sg_wgpu_device();
 }
-void* sg_wgpu_queue();
-void* wgpuQueue() {
+extern(C) const(void)* sg_wgpu_queue();
+const(void)* wgpuQueue() {
     return sg_wgpu_queue();
 }
-void* sg_wgpu_command_encoder();
-void* wgpuCommandEncoder() {
+extern(C) const(void)* sg_wgpu_command_encoder();
+const(void)* wgpuCommandEncoder() {
     return sg_wgpu_command_encoder();
 }
-void* sg_wgpu_render_pass_encoder();
-void* wgpuRenderPassEncoder() {
+extern(C) const(void)* sg_wgpu_render_pass_encoder();
+const(void)* wgpuRenderPassEncoder() {
     return sg_wgpu_render_pass_encoder();
 }
-WgpuBufferInfo sg_wgpu_query_buffer_info(Buffer);
+extern(C) WgpuBufferInfo sg_wgpu_query_buffer_info(Buffer);
 WgpuBufferInfo wgpuQueryBufferInfo(Buffer buf) {
     return sg_wgpu_query_buffer_info(buf);
 }
-WgpuImageInfo sg_wgpu_query_image_info(Image);
+extern(C) WgpuImageInfo sg_wgpu_query_image_info(Image);
 WgpuImageInfo wgpuQueryImageInfo(Image img) {
     return sg_wgpu_query_image_info(img);
 }
-WgpuSamplerInfo sg_wgpu_query_sampler_info(Sampler);
+extern(C) WgpuSamplerInfo sg_wgpu_query_sampler_info(Sampler);
 WgpuSamplerInfo wgpuQuerySamplerInfo(Sampler smp) {
     return sg_wgpu_query_sampler_info(smp);
 }
-WgpuShaderInfo sg_wgpu_query_shader_info(Shader);
+extern(C) WgpuShaderInfo sg_wgpu_query_shader_info(Shader);
 WgpuShaderInfo wgpuQueryShaderInfo(Shader shd) {
     return sg_wgpu_query_shader_info(shd);
 }
-WgpuPipelineInfo sg_wgpu_query_pipeline_info(Pipeline);
+extern(C) WgpuPipelineInfo sg_wgpu_query_pipeline_info(Pipeline);
 WgpuPipelineInfo wgpuQueryPipelineInfo(Pipeline pip) {
     return sg_wgpu_query_pipeline_info(pip);
 }
-WgpuPassInfo sg_wgpu_query_pass_info(Pass);
+extern(C) WgpuPassInfo sg_wgpu_query_pass_info(Pass);
 WgpuPassInfo wgpuQueryPassInfo(Pass pass) {
     return sg_wgpu_query_pass_info(pass);
 }
-GlBufferInfo sg_gl_query_buffer_info(Buffer);
+extern(C) GlBufferInfo sg_gl_query_buffer_info(Buffer);
 GlBufferInfo glQueryBufferInfo(Buffer buf) {
     return sg_gl_query_buffer_info(buf);
 }
-GlImageInfo sg_gl_query_image_info(Image);
+extern(C) GlImageInfo sg_gl_query_image_info(Image);
 GlImageInfo glQueryImageInfo(Image img) {
     return sg_gl_query_image_info(img);
 }
-GlSamplerInfo sg_gl_query_sampler_info(Sampler);
+extern(C) GlSamplerInfo sg_gl_query_sampler_info(Sampler);
 GlSamplerInfo glQuerySamplerInfo(Sampler smp) {
     return sg_gl_query_sampler_info(smp);
 }
-GlShaderInfo sg_gl_query_shader_info(Shader);
+extern(C) GlShaderInfo sg_gl_query_shader_info(Shader);
 GlShaderInfo glQueryShaderInfo(Shader shd) {
     return sg_gl_query_shader_info(shd);
 }
-GlPassInfo sg_gl_query_pass_info(Pass);
+extern(C) GlPassInfo sg_gl_query_pass_info(Pass);
 GlPassInfo glQueryPassInfo(Pass pass) {
     return sg_gl_query_pass_info(pass);
 }

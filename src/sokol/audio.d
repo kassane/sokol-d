@@ -1,7 +1,6 @@
 // machine generated, do not edit
 
 module sokol.audio;
-extern(C):
 
 // helper function to convert a C string to a D string
 string cStrToDString(const(char*) c_str) {
@@ -67,47 +66,47 @@ struct Desc {
     Allocator allocator;
     Logger logger;
 }
-void saudio_setup(const Desc *);
+extern(C) void saudio_setup(const Desc *);
 void setup(Desc desc) {
     saudio_setup(&desc);
 }
-void saudio_shutdown();
+extern(C) void saudio_shutdown();
 void shutdown() {
     saudio_shutdown();
 }
-bool saudio_isvalid();
+extern(C) bool saudio_isvalid();
 bool isvalid() {
     return saudio_isvalid();
 }
-void* saudio_userdata();
+extern(C) void* saudio_userdata();
 void* userdata() {
     return saudio_userdata();
 }
-Desc saudio_query_desc();
+extern(C) Desc saudio_query_desc();
 Desc queryDesc() {
     return saudio_query_desc();
 }
-int saudio_sample_rate();
+extern(C) int saudio_sample_rate();
 int sampleRate() {
     return saudio_sample_rate();
 }
-int saudio_buffer_frames();
+extern(C) int saudio_buffer_frames();
 int bufferFrames() {
     return saudio_buffer_frames();
 }
-int saudio_channels();
+extern(C) int saudio_channels();
 int channels() {
     return saudio_channels();
 }
-bool saudio_suspended();
+extern(C) bool saudio_suspended();
 bool suspended() {
     return saudio_suspended();
 }
-int saudio_expect();
+extern(C) int saudio_expect();
 int expect() {
     return saudio_expect();
 }
-int saudio_push(const float *, int);
+extern(C) int saudio_push(const float *, int);
 int push(const float * frames, int num_frames) {
     return saudio_push(frames, num_frames);
 }

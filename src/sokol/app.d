@@ -1,7 +1,6 @@
 // machine generated, do not edit
 
 module sokol.app;
-extern(C):
 
 // helper function to convert a C string to a D string
 string cStrToDString(const(char*) c_str) {
@@ -210,7 +209,7 @@ struct Event {
     int framebuffer_height;
 }
 struct Range {
-    void* ptr;
+    const(void)* ptr;
     size_t size;
 }
 struct ImageDesc {
@@ -402,95 +401,95 @@ enum MouseCursor {
     NOT_ALLOWED,
     NUM,
 }
-bool sapp_isvalid();
+extern(C) bool sapp_isvalid();
 bool isvalid() {
     return sapp_isvalid();
 }
-int sapp_width();
+extern(C) int sapp_width();
 int width() {
     return sapp_width();
 }
-float sapp_widthf();
+extern(C) float sapp_widthf();
 float widthf() {
     return sapp_widthf();
 }
-int sapp_height();
+extern(C) int sapp_height();
 int height() {
     return sapp_height();
 }
-float sapp_heightf();
+extern(C) float sapp_heightf();
 float heightf() {
     return sapp_heightf();
 }
-int sapp_color_format();
+extern(C) int sapp_color_format();
 int colorFormat() {
     return sapp_color_format();
 }
-int sapp_depth_format();
+extern(C) int sapp_depth_format();
 int depthFormat() {
     return sapp_depth_format();
 }
-int sapp_sample_count();
+extern(C) int sapp_sample_count();
 int sampleCount() {
     return sapp_sample_count();
 }
-bool sapp_high_dpi();
+extern(C) bool sapp_high_dpi();
 bool highDpi() {
     return sapp_high_dpi();
 }
-float sapp_dpi_scale();
+extern(C) float sapp_dpi_scale();
 float dpiScale() {
     return sapp_dpi_scale();
 }
-void sapp_show_keyboard(bool);
+extern(C) void sapp_show_keyboard(bool);
 void showKeyboard(bool show) {
     sapp_show_keyboard(show);
 }
-bool sapp_keyboard_shown();
+extern(C) bool sapp_keyboard_shown();
 bool keyboardShown() {
     return sapp_keyboard_shown();
 }
-bool sapp_is_fullscreen();
+extern(C) bool sapp_is_fullscreen();
 bool isFullscreen() {
     return sapp_is_fullscreen();
 }
-void sapp_toggle_fullscreen();
+extern(C) void sapp_toggle_fullscreen();
 void toggleFullscreen() {
     sapp_toggle_fullscreen();
 }
-void sapp_show_mouse(bool);
+extern(C) void sapp_show_mouse(bool);
 void showMouse(bool show) {
     sapp_show_mouse(show);
 }
-bool sapp_mouse_shown();
+extern(C) bool sapp_mouse_shown();
 bool mouseShown() {
     return sapp_mouse_shown();
 }
-void sapp_lock_mouse(bool);
+extern(C) void sapp_lock_mouse(bool);
 void lockMouse(bool lock) {
     sapp_lock_mouse(lock);
 }
-bool sapp_mouse_locked();
+extern(C) bool sapp_mouse_locked();
 bool mouseLocked() {
     return sapp_mouse_locked();
 }
-void sapp_set_mouse_cursor(MouseCursor);
+extern(C) void sapp_set_mouse_cursor(MouseCursor);
 void setMouseCursor(MouseCursor cursor) {
     sapp_set_mouse_cursor(cursor);
 }
-MouseCursor sapp_get_mouse_cursor();
+extern(C) MouseCursor sapp_get_mouse_cursor();
 MouseCursor getMouseCursor() {
     return sapp_get_mouse_cursor();
 }
-void* sapp_userdata();
+extern(C) void* sapp_userdata();
 void* userdata() {
     return sapp_userdata();
 }
-Desc sapp_query_desc();
+extern(C) Desc sapp_query_desc();
 Desc queryDesc() {
     return sapp_query_desc();
 }
-void sapp_request_quit();
+extern(C) void sapp_request_quit();
 void requestQuit() {
     sapp_request_quit();
 }
@@ -538,91 +537,91 @@ extern(C) const (char*) sapp_get_dropped_file_path(int);
 const (char*) getDroppedFilePath(int index) {
     return cStrTod(sapp_get_dropped_file_path(index));
 }
-void sapp_run(const Desc *);
+extern(C) void sapp_run(const Desc *);
 void run(Desc desc) {
     sapp_run(&desc);
 }
-extern(C) void* sapp_egl_get_display();
-void* eglGetDisplay() {
+extern(C) const(void)* sapp_egl_get_display();
+const(void)* eglGetDisplay() {
     return sapp_egl_get_display();
 }
-extern(C) void* sapp_egl_get_context();
-void* eglGetContext() {
+extern(C) const(void)* sapp_egl_get_context();
+const(void)* eglGetContext() {
     return sapp_egl_get_context();
 }
-void sapp_html5_ask_leave_site(bool);
+extern(C) void sapp_html5_ask_leave_site(bool);
 void html5AskLeaveSite(bool ask) {
     sapp_html5_ask_leave_site(ask);
 }
-uint sapp_html5_get_dropped_file_size(int);
+extern(C) uint sapp_html5_get_dropped_file_size(int);
 uint html5GetDroppedFileSize(int index) {
     return sapp_html5_get_dropped_file_size(index);
 }
-void sapp_html5_fetch_dropped_file(const Html5FetchRequest *);
+extern(C) void sapp_html5_fetch_dropped_file(const Html5FetchRequest *);
 void html5FetchDroppedFile(Html5FetchRequest request) {
     sapp_html5_fetch_dropped_file(&request);
 }
-extern(C) void* sapp_metal_get_device();
-void* metalGetDevice() {
+extern(C) const(void)* sapp_metal_get_device();
+const(void)* metalGetDevice() {
     return sapp_metal_get_device();
 }
-extern(C) void* sapp_metal_get_renderpass_descriptor();
-void* metalGetRenderpassDescriptor() {
+extern(C) const(void)* sapp_metal_get_renderpass_descriptor();
+const(void)* metalGetRenderpassDescriptor() {
     return sapp_metal_get_renderpass_descriptor();
 }
-extern(C) void* sapp_metal_get_drawable();
-void* metalGetDrawable() {
+extern(C) const(void)* sapp_metal_get_drawable();
+const(void)* metalGetDrawable() {
     return sapp_metal_get_drawable();
 }
-extern(C) void* sapp_macos_get_window();
-void* macosGetWindow() {
+extern(C) const(void)* sapp_macos_get_window();
+const(void)* macosGetWindow() {
     return sapp_macos_get_window();
 }
-extern(C) void* sapp_ios_get_window();
-void* iosGetWindow() {
+extern(C) const(void)* sapp_ios_get_window();
+const(void)* iosGetWindow() {
     return sapp_ios_get_window();
 }
-extern(C) void* sapp_d3d11_get_device();
-void* d3d11GetDevice() {
+extern(C) const(void)* sapp_d3d11_get_device();
+const(void)* d3d11GetDevice() {
     return sapp_d3d11_get_device();
 }
-extern(C) void* sapp_d3d11_get_device_context();
-void* d3d11GetDeviceContext() {
+extern(C) const(void)* sapp_d3d11_get_device_context();
+const(void)* d3d11GetDeviceContext() {
     return sapp_d3d11_get_device_context();
 }
-extern(C) void* sapp_d3d11_get_swap_chain();
-void* d3d11GetSwapChain() {
+extern(C) const(void)* sapp_d3d11_get_swap_chain();
+const(void)* d3d11GetSwapChain() {
     return sapp_d3d11_get_swap_chain();
 }
-extern(C) void* sapp_d3d11_get_render_target_view();
-void* d3d11GetRenderTargetView() {
+extern(C) const(void)* sapp_d3d11_get_render_target_view();
+const(void)* d3d11GetRenderTargetView() {
     return sapp_d3d11_get_render_target_view();
 }
-extern(C) void* sapp_d3d11_get_depth_stencil_view();
-void* d3d11GetDepthStencilView() {
+extern(C) const(void)* sapp_d3d11_get_depth_stencil_view();
+const(void)* d3d11GetDepthStencilView() {
     return sapp_d3d11_get_depth_stencil_view();
 }
-extern(C) void* sapp_win32_get_hwnd();
-void* win32GetHwnd() {
+extern(C) const(void)* sapp_win32_get_hwnd();
+const(void)* win32GetHwnd() {
     return sapp_win32_get_hwnd();
 }
-extern(C) void* sapp_wgpu_get_device();
-void* wgpuGetDevice() {
+extern(C) const(void)* sapp_wgpu_get_device();
+const(void)* wgpuGetDevice() {
     return sapp_wgpu_get_device();
 }
-extern(C) void* sapp_wgpu_get_render_view();
-void* wgpuGetRenderView() {
+extern(C) const(void)* sapp_wgpu_get_render_view();
+const(void)* wgpuGetRenderView() {
     return sapp_wgpu_get_render_view();
 }
-extern(C) void* sapp_wgpu_get_resolve_view();
-void* wgpuGetResolveView() {
+extern(C) const(void)* sapp_wgpu_get_resolve_view();
+const(void)* wgpuGetResolveView() {
     return sapp_wgpu_get_resolve_view();
 }
-extern(C) void* sapp_wgpu_get_depth_stencil_view();
-void* wgpuGetDepthStencilView() {
+extern(C) const(void)* sapp_wgpu_get_depth_stencil_view();
+const(void)* wgpuGetDepthStencilView() {
     return sapp_wgpu_get_depth_stencil_view();
 }
-extern(C) void* sapp_android_get_native_activity();
-void* androidGetNativeActivity() {
+extern(C) const(void)* sapp_android_get_native_activity();
+const(void)* androidGetNativeActivity() {
     return sapp_android_get_native_activity();
 }
