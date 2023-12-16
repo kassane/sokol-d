@@ -7,7 +7,6 @@ auto cStrToDString(const(char*) c_str) {
     import std.conv: to;
     return c_str.to!string;
 }
-extern(C):
 enum max_touchpoints = 8;
 enum max_mousebuttons = 3;
 enum max_keycodes = 512;

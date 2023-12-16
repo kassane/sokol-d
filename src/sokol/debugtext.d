@@ -19,7 +19,6 @@ Range asRange(T)(T val) {
        static assert(0, "Cannot convert to range");
     }
 }
-extern(C):
 enum LogItem {
     OK,
     MALLOC_FAILED,

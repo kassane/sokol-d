@@ -11,7 +11,6 @@ extern(C) void stm_setup();
 void setup() {
     stm_setup();
 }
-extern(C):
 extern(C) ulong stm_now();
 ulong now() {
     return stm_now();

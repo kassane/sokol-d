@@ -182,6 +182,7 @@ pub fn build(b: *Builder) !void {
     const sokol = buildSokol(b, target, optimize, config, "");
     b.installArtifact(sokol);
 
+    // WiP: build examples
     const examples = .{
         // "clear",
         // "triangle",
@@ -258,14 +259,20 @@ fn buildShaders(b: *Builder) void {
 
 // Use LDC2 (https://github.com/ldc-developers/ldc) to compile the D examples
 fn buildLDC(b: *Builder, lib: *Builder.CompileStep, config: Config, comptime example: []const u8) !*Builder.RunStep {
-    const ldc = try b.findProgram(&.{"ldc2"}, &.{});
+    const ldc = try b.findProgram(&.{switch (builtin.os.tag) {
+        .windows => "ldc2.exe",
+        else => "ldc2",
+    }}, &.{});
 
     var cmds = std.ArrayList([]const u8).init(b.allocator);
+    defer cmds.deinit();
+
     try cmds.append(ldc);
     switch (lib.optimize) {
         .Debug => {
             try cmds.append("-d-debug");
-            try cmds.append("--gc");
+            try cmds.append("--gc"); // debuginfo for non D dbg
+            try cmds.append("-g"); // debuginfo
             try cmds.append("--O0");
         },
         .ReleaseSafe => {
@@ -276,7 +283,7 @@ fn buildLDC(b: *Builder, lib: *Builder.CompileStep, config: Config, comptime exa
         .ReleaseFast => {
             try cmds.append("--O3");
             try cmds.append("--release");
-            try cmds.append("--betterC");
+            try cmds.append("--enable-inlining");
             try cmds.append("--boundscheck=off");
         },
         .ReleaseSmall => {
@@ -285,7 +292,27 @@ fn buildLDC(b: *Builder, lib: *Builder.CompileStep, config: Config, comptime exa
             try cmds.append("--boundscheck=off");
         },
     }
-    try cmds.append(b.fmt("-I{s}", .{b.pathJoin(&.{ rootPath(), "src/sokol" })}));
+    // warnings
+    try cmds.append("-w");
+
+    // warning obsolete features
+    try cmds.append("--wo");
+
+    // Print character (column) numbers in diagnostics
+    try cmds.append("--vcolumns");
+
+    // object file output (zig-cache/o/{hash_id}/*.o)
+    if (b.cache_root.path) |path|
+        try cmds.append(b.fmt("-od={s}", .{b.pathJoin(&.{ path, "o", b.cache.hash.peek()[0..] })}));
+
+    // object files with fully qualified names
+    try cmds.append("--oq");
+
+    // keep all function bodies in .di files
+    try cmds.append("--Hkeep-all-bodies");
+
+    // sokol D files and include path
+    try cmds.append(b.fmt("-I{s}", .{b.pathJoin(&.{ rootPath(), "src", "sokol" })}));
     const srcs = &.{
         "app",
         "audio",
@@ -298,25 +325,37 @@ fn buildLDC(b: *Builder, lib: *Builder.CompileStep, config: Config, comptime exa
         "debugtext",
     };
     inline for (srcs) |src| {
-        try cmds.append(b.fmt("{s}.d", .{b.pathJoin(&.{ rootPath(), "src/sokol", src })}));
+        try cmds.append(b.fmt("{s}.d", .{b.pathJoin(&.{ rootPath(), "src", "sokol", src })}));
     }
 
-    try cmds.append(b.pathJoin(&.{ rootPath(), "/src/examples", b.fmt("{s}.d", .{example}) }));
+    // example D file
+    try cmds.append(b.pathJoin(&.{ rootPath(), "src", "examples", b.fmt("{s}.d", .{example}) }));
 
+    // library paths
     for (lib.lib_paths.items) |libpath| {
-        if (libpath.path.len > 0)
+        if (libpath.path.len > 0) // skip empty paths
             try cmds.append(b.fmt("-L-L{s}", .{libpath.path}));
     }
 
+    // sokol library path (zig-out/lib/libsokol.{a|lib})
     try cmds.append(b.fmt("-L-L{s}", .{b.pathJoin(&.{ b.install_prefix, "lib" })}));
-    try cmds.append("-L-lsokol");
+    try cmds.append(b.fmt("-L-l{s}", .{lib.name}));
 
+    // link system libs
     for (lib.link_objects.items) |link_object| {
         if (link_object != .system_lib) continue;
         const system_lib = link_object.system_lib;
         try cmds.append(b.fmt("-L-l{s}", .{system_lib.name}));
     }
-
+    // C flags
+    for (lib.link_objects.items) |link_object| {
+        if (link_object != .c_source_file) continue;
+        const c_source_file = link_object.c_source_file;
+        for (c_source_file.flags) |flag|
+            if (flag.len > 0) // skip empty flags
+                try cmds.append(b.fmt("--Xcc={s}", .{flag}));
+    }
+    // Darwin frameworks
     if (lib.target.isDarwin()) {
         var it = lib.frameworks.iterator();
         while (it.next()) |framework| {
@@ -346,25 +385,25 @@ fn buildLDC(b: *Builder, lib: *Builder.CompileStep, config: Config, comptime exa
         else => unreachable,
     };
 
+    // C flags
     try cmds.append(b.fmt("--Xcc={s}", .{backend_option}));
 
-    for (lib.link_objects.items) |link_object| {
-        if (link_object != .c_source_file) continue;
-        const c_source_file = link_object.c_source_file;
-        for (c_source_file.flags) |flag|
-            if (flag.len > 0) // skip empty flags
-                try cmds.append(b.fmt("--Xcc={s}", .{flag}));
-    }
-
-    if (lib.want_lto) |_|
+    // link-time optimization
+    if (lib.want_lto != null)
         try cmds.append("--flto=full");
+
+    // target triple (e.g. "x86_64-linux-gnu")
     if (lib.target.isNative())
+        // ldc2 doesn't support zig native (a.k.a: native-native or native)
         try cmds.append(b.fmt("--mtriple={s}-{s}-{s}", .{ @tagName(lib.target.getCpuArch()), @tagName(lib.target.getOsTag()), @tagName(lib.target.getAbi()) }))
     else
         try cmds.append(b.fmt("--mtriple={s}", .{try lib.target.linuxTriple(b.allocator)}));
 
+    // cpu model (e.g. "generic")
     try cmds.append(b.fmt("--mcpu={s}", .{lib.target.getCpuModel().name}));
+    // output file
     try cmds.append(b.fmt("--of={s}", .{b.pathJoin(&.{ b.install_prefix, "bin", example })}));
 
+    // run the command
     return b.addSystemCommand(cmds.items);
 }
