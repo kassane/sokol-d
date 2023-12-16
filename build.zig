@@ -206,7 +206,7 @@ pub fn build(b: *Builder) !void {
     };
     b.getInstallStep().name = "sokol-d-examples";
     inline for (examples) |example| {
-        const ldc = try buildLDC(b, sokol, config, example);
+        const ldc = try buildLDC(b, sokol, example);
         ldc.step.dependOn(b.getInstallStep());
         const run = b.step(b.fmt("{s}", .{example}), b.fmt("Build example {s}", .{example}));
         run.dependOn(&ldc.step);
@@ -259,7 +259,7 @@ fn buildShaders(b: *Builder) void {
 }
 
 // Use LDC2 (https://github.com/ldc-developers/ldc) to compile the D examples
-fn buildLDC(b: *Builder, lib: *Builder.CompileStep, config: Config, comptime example: []const u8) !*Builder.RunStep {
+fn buildLDC(b: *Builder, lib: *Builder.CompileStep, comptime example: []const u8) !*Builder.RunStep {
     const ldc = try b.findProgram(&.{switch (builtin.os.tag) {
         .windows => "ldc2.exe",
         else => "ldc2",
@@ -331,6 +331,7 @@ fn buildLDC(b: *Builder, lib: *Builder.CompileStep, config: Config, comptime exa
 
     // example D file
     try cmds.append(b.pathJoin(&.{ rootPath(), "src", "examples", b.fmt("{s}.d", .{example}) }));
+    try cmds.append(b.pathJoin(&.{ rootPath(), "src", "examples", b.fmt("math.d", .{}) }));
 
     // library paths
     for (lib.lib_paths.items) |libpath| {
@@ -355,39 +356,16 @@ fn buildLDC(b: *Builder, lib: *Builder.CompileStep, config: Config, comptime exa
         for (c_source_file.flags) |flag|
             if (flag.len > 0) // skip empty flags
                 try cmds.append(b.fmt("--Xcc={s}", .{flag}));
+        break;
     }
     // Darwin frameworks
     if (lib.target.isDarwin()) {
         var it = lib.frameworks.iterator();
         while (it.next()) |framework| {
-            try cmds.append(b.fmt("-L-framework {s}", .{framework.key_ptr.*}));
+            try cmds.append(b.fmt("-L-framework", .{}));
+            try cmds.append(b.fmt("-L{s}", .{framework.key_ptr.*}));
         }
     }
-
-    var _backend = config.backend;
-    if (_backend == .auto) {
-        if (lib.target.isDarwin()) {
-            _backend = .metal;
-        } else if (lib.target.isWindows()) {
-            _backend = .d3d11;
-        } else if (lib.target.getAbi() == .android) {
-            _backend = .gles3;
-        } else {
-            _backend = .gl;
-        }
-    }
-    const backend_option = switch (_backend) {
-        .d3d11 => "-DSOKOL_D3D11",
-        .metal => "-DSOKOL_METAL",
-        .gl => "-DSOKOL_GLCORE33",
-        .gles2 => "-DSOKOL_GLES2",
-        .gles3 => "-DSOKOL_GLES3",
-        .wgpu => "-DSOKOL_WGPU",
-        else => unreachable,
-    };
-
-    // C flags
-    try cmds.append(b.fmt("--Xcc={s}", .{backend_option}));
 
     // link-time optimization
     if (lib.want_lto != null)
@@ -396,7 +374,10 @@ fn buildLDC(b: *Builder, lib: *Builder.CompileStep, config: Config, comptime exa
     // target triple (e.g. "x86_64-linux-gnu")
     if (lib.target.isNative())
         // ldc2 doesn't support zig native (a.k.a: native-native or native)
-        try cmds.append(b.fmt("--mtriple={s}-{s}-{s}", .{ @tagName(lib.target.getCpuArch()), @tagName(lib.target.getOsTag()), @tagName(lib.target.getAbi()) }))
+        if (lib.target.isDarwin())
+            try cmds.append(b.fmt("--mtriple={s}-apple-{s}", .{ @tagName(lib.target.getCpuArch()), @tagName(lib.target.getOsTag()) }))
+        else
+            try cmds.append(b.fmt("--mtriple={s}-{s}-{s}", .{ @tagName(lib.target.getCpuArch()), @tagName(lib.target.getOsTag()), @tagName(lib.target.getAbi()) }))
     else
         try cmds.append(b.fmt("--mtriple={s}", .{try lib.target.linuxTriple(b.allocator)}));
 
