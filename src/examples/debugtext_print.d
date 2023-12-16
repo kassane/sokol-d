@@ -7,16 +7,11 @@ module examples.debugtext_print;
 
 import std.stdio;
 import std.format;
-import sokol.time;
-import sokol.gfx;
-import sokol.gfx_glue;
-import sokol.app;
-import sokol.debugtext;
-
-alias sapp = sokol.app;
-alias sgapp = sokol.gfx_glue;
-alias sdtx = sokol.debugtext;
-alias stm = sokol.time;
+import stm = sokol.time;
+import sg = sokol.gfx;
+import sgapp = sokol.glue;
+import sapp = sokol.app;
+import sdtx = sokol.debugtext;
 
 // Font slots
 enum KC854 = 0;
@@ -30,7 +25,7 @@ struct Color
 
 struct State
 {
-  sokol.gfx.PassAction passAction;
+  sg.PassAction passAction;
   uint frameCount;
   ulong timeStamp;
 
@@ -46,13 +41,15 @@ State state;
 void init()
 {
   stm.setup();
-  sokol.gfx.setup(sokol.gfx.Desc(sgapp.context()));
+  sg.Desc cd;
+  cd.context = sgapp.context();
+  sg.setup(cd);
 
-  sdtx.Desc desc = sdtx.Desc(sdtx.fontKc854, sdtx.fontC64, sdtx.fontOric);
+  sdtx.Desc desc;
+  desc.fonts[0] = sdtx.fontKc854();
+  desc.fonts[1] = sdtx.fontC64();
+  desc.fonts[3] = sdtx.fontOric();
   sdtx.setup(desc);
-
-  state.passAction.colors[0].loadAction = sokol.gfx.LoadAction.CLEAR;
-  state.passAction.colors[0].clearValue = sokol.gfx.Color(0, 0.125, 0.25, 1);
 }
 
 void frame()
@@ -68,37 +65,42 @@ void frame()
   {
     auto color = state.colors[font];
     sdtx.font(font);
-    sdtx.color(color.r, color.g, color.b);
+    sdtx.color3b(color.r, color.g, color.b);
 
     auto worldStr = (state.frameCount & (1 << 7)) ? "Welt" : "World";
 
-    sdtx.print("Hello '%d'!\n", worldStr);
-    sdtx.print("\tFrame Time:\t\t%d ms\n", frameTime);
-    sdtx.print("\tFrame Count:\t%d\t0x{X:0>4}\n", state.frameCount, state.frameCount);
+    writef("Hello '%d'!\n", worldStr);
+    writef("\tFrame Time:\t\t%d ms\n", frameTime);
+    writef("\tFrame Count:\t%d\t0x{X:0>4}\n", state.frameCount, state.frameCount);
     sdtx.moveY(2);
   }
 
   sdtx.font(KC854);
-  sdtx.color(255, 128, 0);
+  sdtx.color3b(255, 128, 0);
 
-  sdtx.Writer writer;
-  formattedWrite(&writer, "using std.format directly (%d)\n", state.frameCount);
+  writef("using std.format directly (%d)\n", state.frameCount);
 
-  sokol.gfx.beginDefaultPass(state.passAction, sapp.width, sapp.height);
+  sg.beginDefaultPass(state.passAction, sapp.width, sapp.height);
   sdtx.draw();
-  sokol.gfx.endPass();
-  sokol.gfx.commit();
+  sg.endPass();
+  sg.commit();
 }
 
 void cleanup()
 {
   sdtx.shutdown();
-  sokol.gfx.shutdown();
+  sg.shutdown();
 }
 
-void main()
+extern(C) void main()
 {
-  sapp.run(sapp.RunConfig(
-      init, frame, cleanup, 640, 480,
-      sapp.Icon(.sokol_default = true), "debugtext_print.d"));
+  sapp.IconDesc icon = {sokol_default: true};
+  sapp.Desc runner = {window_title: "debugtext_print.d"};
+  // runner.init_cb = init;
+  // runner.frame_cb = frame;
+  // runner.cleanup_cb = cleanup;
+  runner.width = 640;
+  runner.height = 480;
+  runner.icon = icon;
+  sapp.run(runner);
 }

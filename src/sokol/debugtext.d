@@ -19,26 +19,7 @@ Range asRange(T)(T val) {
        static assert(0, "Cannot convert to range");
     }
 }
-
-struct Writer {
-    void write(R)(R range) if (isInputRange!R && is(ElementType!R : const(ubyte))) {
-        foreach (b; range) {
-            putc(b);
-        }
-    }
-    void writeMultiple(ubyte b, ulong n) @nogc nothrow {
-        foreach(_; 0..n) {
-            putc(cast(int)b, core.stdc.stdio.stdout);
-        }
-    }
-}
-
-void print(Args...)(const char[] fmt, Args args){
-    import std.format;
-    Writer w;
-    formattedWrite(&w, fmt, args);
-}
-
+extern(C):
 enum LogItem {
     OK,
     MALLOC_FAILED,

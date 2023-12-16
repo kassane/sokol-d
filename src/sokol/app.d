@@ -3,10 +3,11 @@
 module sokol.app;
 
 // helper function to convert a C string to a D string
-string cStrToDString(const(char*) c_str) {
+auto cStrToDString(const(char*) c_str) {
     import std.conv: to;
     return c_str.to!string;
 }
+extern(C):
 enum max_touchpoints = 8;
 enum max_mousebuttons = 3;
 enum max_keycodes = 512;
@@ -518,8 +519,8 @@ void setClipboardString(const (char*) str) {
     sapp_set_clipboard_string(str);
 }
 extern(C) const (char*) sapp_get_clipboard_string();
-const (char*) getClipboardString() {
-    return cStrTod(sapp_get_clipboard_string());
+string getClipboardString() {
+    return cStrToDString(sapp_get_clipboard_string());
 }
 extern(C) void sapp_set_window_title(const (char*));
 void setWindowTitle(const (char*) str) {
@@ -534,8 +535,8 @@ int getNumDroppedFiles() {
     return sapp_get_num_dropped_files();
 }
 extern(C) const (char*) sapp_get_dropped_file_path(int);
-const (char*) getDroppedFilePath(int index) {
-    return cStrTod(sapp_get_dropped_file_path(index));
+string getDroppedFilePath(int index) {
+    return cStrToDString(sapp_get_dropped_file_path(index));
 }
 extern(C) void sapp_run(const Desc *);
 void run(Desc desc) {
