@@ -1,0 +1,29 @@
+name: CI Build
+
+on: [push]
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        runs-on: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.runs-on }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: goto-bus-stop/setup-zig@v2
+      # - uses: lukka/get-cmake@latest
+      - uses: dlang-community/setup-dlang@v1
+        with:
+          compiler: ldc-latest
+      
+      - name: prepare-linux
+        if: runner.os == 'Linux'
+        run: |
+            sudo apt-get update
+            sudo apt-get install libglu1-mesa-dev mesa-common-dev xorg-dev libasound-dev
+      
+      - name: Build
+        run: |
+            zig build debugtext_print --verbose --summary all
+            # && \ zig build cube --verbose --summary all

@@ -3,14 +3,19 @@ Auto-generated [D](https://dlang.org) bindings for the [sokol headers](https://g
 
 ## BUILD
 
+**Required**
+
+- [zig](https://ziglang.org/download) v0.11.0 or master
+- [ldc](https://ldc-developers.github.io) v1.35.0 or latest-CI (nightly)
+
 Supported platforms are: Windows, macOS, Linux (with X11)
 
-On Linux install the following packages: libglu1-mesa-dev, mesa-common-dev, xorg-dev, libasound-dev
-(or generally: the dev packages required for X11, GL and ALSA development)
+On Linux install the following packages: libglu1-mesa-dev, mesa-common-dev, xorg-dev, libasound-dev (or generally: the dev packages required for X11, GL and ALSA development)
 
 ```sh
-# just build:
-> dub build
-# build and run samples:
-# WIP
+# build sokol library only
+zig build
+# build samples [WiP]
+zig build debugtext_print # run, but show black screen
+zig build cube # not building
 ```

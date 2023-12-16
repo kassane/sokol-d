@@ -71,7 +71,7 @@ void frame()
 
     writef("Hello '%d'!\n", worldStr);
     writef("\tFrame Time:\t\t%d ms\n", frameTime);
-    writef("\tFrame Count:\t%d\t0x{X:0>4}\n", state.frameCount, state.frameCount);
+    writef("\tFrame Count:\t%d\t%0.4f\n", state.frameCount, state.frameCount);
     sdtx.moveY(2);
   }
 

@@ -188,7 +188,7 @@ pub fn build(b: *Builder) !void {
         // "triangle",
         // "quad",
         // "bufferoffsets",
-        // "cube",
+        "cube",
         // "noninterleaved",
         // "texcube",
         // "blend",
@@ -204,6 +204,7 @@ pub fn build(b: *Builder) !void {
         // "debugtext-userfont",
         // "shapes",
     };
+    b.getInstallStep().name = "sokol-d-examples";
     inline for (examples) |example| {
         const ldc = try buildLDC(b, sokol, config, example);
         ldc.step.dependOn(b.getInstallStep());
@@ -247,11 +248,11 @@ fn buildShaders(b: *Builder) void {
             "-i",
             shaders_dir ++ shader,
             "-o",
-            shaders_dir ++ shader ++ ".zig",
+            shaders_dir ++ shader ++ ".d",
             "-l",
             "glsl330:metal_macos:hlsl4",
             "-f",
-            "sokol_zig",
+            "sokol_d",
         });
         shdc_step.dependOn(&cmd.step);
     }
