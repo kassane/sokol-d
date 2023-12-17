@@ -14,8 +14,8 @@ On Linux install the following packages: libglu1-mesa-dev, mesa-common-dev, xorg
 
 ```sh
 # build sokol library only
-zig build
+zig build -Doptimize=ReleaseFast
 # build samples [WiP]
-zig build debugtext_print # run, but show black screen
-zig build cube # not building
+zig build debugtext_print -Doptimize=ReleaseFast # run, but show black screen
+zig build cube -Doptimize=ReleaseFast # not building
 ```

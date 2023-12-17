@@ -6,6 +6,7 @@ const Builder = std.build;
 const CompileStep = std.build.CompileStep;
 const CrossTarget = std.zig.CrossTarget;
 const OptimizeMode = std.builtin.OptimizeMode;
+const fmt = std.fmt;
 
 pub const Backend = enum {
     auto, // Windows: D3D11, macOS/iOS: Metal, otherwise: GL
@@ -206,7 +207,14 @@ pub fn build(b: *Builder) !void {
     };
     b.getInstallStep().name = "sokol-d-examples";
     inline for (examples) |example| {
-        const ldc = try buildLDC(b, sokol, example);
+        const ldc = try buildLDC(b, sokol, .{
+            .name = example,
+            .sources = &.{
+                rootPath() ++ fmt.comptimePrint("/src/examples/{s}.d", .{example}),
+                // handmade math
+                rootPath() ++ fmt.comptimePrint("/src/examples/math.d", .{}),
+            },
+        });
         ldc.step.dependOn(b.getInstallStep());
         const run = b.step(b.fmt("{s}", .{example}), b.fmt("Build example {s}", .{example}));
         run.dependOn(&ldc.step);
@@ -259,7 +267,7 @@ fn buildShaders(b: *Builder) void {
 }
 
 // Use LDC2 (https://github.com/ldc-developers/ldc) to compile the D examples
-fn buildLDC(b: *Builder, lib: *Builder.CompileStep, comptime example: []const u8) !*Builder.RunStep {
+fn buildLDC(b: *Builder, lib: *Builder.CompileStep, comptime config: ldcConfig) !*Builder.RunStep {
     const ldc = try b.findProgram(&.{switch (builtin.os.tag) {
         .windows => "ldc2.exe",
         else => "ldc2",
@@ -268,7 +276,33 @@ fn buildLDC(b: *Builder, lib: *Builder.CompileStep, comptime example: []const u8
     var cmds = std.ArrayList([]const u8).init(b.allocator);
     defer cmds.deinit();
 
+    // D compiler
     try cmds.append(ldc);
+
+    // set kind of build
+    switch (config.kind) {
+        .@"test" => try cmds.append("-unittest"),
+        .lib => try cmds.append("-lib"),
+        .obj => try cmds.append("-c"),
+        .exe => {},
+    }
+
+    if (config.kind == .lib) {
+        if (config.linkage == .shared) {
+            try cmds.append("-shared");
+        } else {
+            try cmds.append("-static");
+        }
+    }
+
+    inline for (config.dflags) |dflag| {
+        try cmds.append(dflag);
+    }
+
+    // betterC disable druntime and phobos
+    if (config.betterC == .on)
+        try cmds.append("--betterC");
+
     switch (lib.optimize) {
         .Debug => {
             try cmds.append("-d-debug");
@@ -290,6 +324,7 @@ fn buildLDC(b: *Builder, lib: *Builder.CompileStep, comptime example: []const u8
         .ReleaseSmall => {
             try cmds.append("--Oz");
             try cmds.append("--release");
+            try cmds.append("--enable-inlining");
             try cmds.append("--boundscheck=off");
         },
     }
@@ -330,8 +365,9 @@ fn buildLDC(b: *Builder, lib: *Builder.CompileStep, comptime example: []const u8
     }
 
     // example D file
-    try cmds.append(b.pathJoin(&.{ rootPath(), "src", "examples", b.fmt("{s}.d", .{example}) }));
-    try cmds.append(b.pathJoin(&.{ rootPath(), "src", "examples", b.fmt("math.d", .{}) }));
+    inline for (config.sources) |src| {
+        try cmds.append(src);
+    }
 
     // library paths
     for (lib.lib_paths.items) |libpath| {
@@ -358,6 +394,10 @@ fn buildLDC(b: *Builder, lib: *Builder.CompileStep, comptime example: []const u8
                 try cmds.append(b.fmt("--Xcc={s}", .{flag}));
         break;
     }
+    // link flags
+    if (lib.target.isLinux())
+        try cmds.append("-L--no-as-needed");
+
     // Darwin frameworks
     if (lib.target.isDarwin()) {
         var it = lib.frameworks.iterator();
@@ -367,25 +407,59 @@ fn buildLDC(b: *Builder, lib: *Builder.CompileStep, comptime example: []const u8
         }
     }
 
+    if (lib.verbose_cc)
+        try cmds.append("-v");
+
+    if (lib.sanitize_thread)
+        try cmds.append("--fsanitize=thread");
+
+    // zig enable sanitize=undefined by default
+    if (!lib.disable_sanitize_c)
+        try cmds.append("--fsanitize=address");
+    if (lib.dead_strip_dylibs)
+        try cmds.append("--disable-linker-strip-dead");
+    // if (lib.omit_frame_pointer) |enabled| {
+    //     if (enabled)
+    //         try cmds.append("--frame-pointer=none")
+    //     else
+    //         try cmds.append("--frame-pointer=all");
+    // }
+
     // link-time optimization
-    if (lib.want_lto != null)
-        try cmds.append("--flto=full");
+    if (lib.want_lto) |enabled|
+        if (enabled) try cmds.append("--flto=thin");
 
     // target triple (e.g. "x86_64-linux-gnu")
-    if (lib.target.isNative())
+    if (lib.target.isNative()) {
         // ldc2 doesn't support zig native (a.k.a: native-native or native)
         if (lib.target.isDarwin())
             try cmds.append(b.fmt("--mtriple={s}-apple-{s}", .{ @tagName(lib.target.getCpuArch()), @tagName(lib.target.getOsTag()) }))
         else
-            try cmds.append(b.fmt("--mtriple={s}-{s}-{s}", .{ @tagName(lib.target.getCpuArch()), @tagName(lib.target.getOsTag()), @tagName(lib.target.getAbi()) }))
-    else
-        try cmds.append(b.fmt("--mtriple={s}", .{try lib.target.linuxTriple(b.allocator)}));
+            try cmds.append(b.fmt("--mtriple={s}-{s}-{s}", .{ @tagName(lib.target.getCpuArch()), @tagName(lib.target.getOsTag()), @tagName(lib.target.getAbi()) }));
+    } else {
+        if (lib.target.isDarwin())
+            try cmds.append(b.fmt("--mtriple={s}-apple-{s}", .{ @tagName(lib.target.getCpuArch()), @tagName(lib.target.getOsTag()) }))
+        else
+            try cmds.append(b.fmt("--mtriple={s}", .{try lib.target.linuxTriple(b.allocator)}));
+    }
+
+    // for (lib.target.getCpuArch().allFeaturesList()) |feature|
+    //     try cmds.append(b.fmt("--mattr={s}", .{feature.name}));
 
     // cpu model (e.g. "generic")
     try cmds.append(b.fmt("--mcpu={s}", .{lib.target.getCpuModel().name}));
     // output file
-    try cmds.append(b.fmt("--of={s}", .{b.pathJoin(&.{ b.install_prefix, "bin", example })}));
+    try cmds.append(b.fmt("--of={s}", .{b.pathJoin(&.{ b.install_prefix, "bin", config.name orelse "d_binary" })}));
 
     // run the command
     return b.addSystemCommand(cmds.items);
 }
+
+const ldcConfig = struct {
+    kind: Builder.CompileStep.Kind = .exe,
+    linkage: Builder.CompileStep.Linkage = .static,
+    betterC: enum { on, off } = .off,
+    sources: []const []const u8 = std.mem.zeroes([]const []const u8),
+    dflags: []const []const u8 = std.mem.zeroes([]const []const u8),
+    name: ?[]const u8 = null,
+};
