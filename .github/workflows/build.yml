@@ -12,7 +12,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: goto-bus-stop/setup-zig@v2
-      # - uses: lukka/get-cmake@latest
       - uses: dlang-community/setup-dlang@v1
         with:
           compiler: ldc-latest
@@ -25,5 +24,6 @@ jobs:
       
       - name: Build
         run: |
-            zig build debugtext_print --verbose --summary all
-            # && \ zig build cube --verbose --summary all
+            zig build debugtext_print --summary all
+            zig build clear --summary all
+            # zig build cube --summary all

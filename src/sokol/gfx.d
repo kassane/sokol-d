@@ -1096,7 +1096,7 @@ struct Allocator {
     void* user_data;
 }
 struct Logger {
-    void function(const (char*), uint, uint, const (char*), uint, const (char*), void*) func;
+    extern(C) void function(const (char*), uint, uint, const (char*), uint, const (char*), void*) func;
     void* user_data;
 }
 struct Desc {

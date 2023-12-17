@@ -6,7 +6,6 @@
 module examples.debugtext_print;
 
 import std.stdio;
-import std.format;
 import stm = sokol.time;
 import sg = sokol.gfx;
 import sgapp = sokol.glue;
@@ -36,7 +35,7 @@ struct State
   ];
 }
 
-State state;
+static State state;
 
 void init()
 {
@@ -69,8 +68,8 @@ void frame()
 
     auto worldStr = (state.frameCount & (1 << 7)) ? "Welt" : "World";
 
-    writef("Hello '%d'!\n", worldStr);
-    writef("\tFrame Time:\t\t%d ms\n", frameTime);
+    writeln("Hello ", worldStr," !");
+    writeln("\tFrame Time:\t\t", frameTime,"ms");
     writef("\tFrame Count:\t%d\t%0.4f\n", state.frameCount, state.frameCount);
     sdtx.moveY(2);
   }
@@ -78,7 +77,7 @@ void frame()
   sdtx.font(KC854);
   sdtx.color3b(255, 128, 0);
 
-  writef("using std.format directly (%d)\n", state.frameCount);
+  // writeln("using std.format directly ", state.frameCount);
 
   sg.beginDefaultPass(state.passAction, sapp.width, sapp.height);
   sdtx.draw();
@@ -96,9 +95,9 @@ extern(C) void main()
 {
   sapp.IconDesc icon = {sokol_default: true};
   sapp.Desc runner = {window_title: "debugtext_print.d"};
-  // runner.init_cb = init;
-  // runner.frame_cb = frame;
-  // runner.cleanup_cb = cleanup;
+  runner.init_cb = &init;
+  runner.frame_cb = &frame;
+  runner.cleanup_cb = &cleanup;
   runner.width = 640;
   runner.height = 480;
   runner.icon = icon;

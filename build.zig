@@ -1,4 +1,4 @@
-// based on sokol-zig
+//! based on sokol-zig
 
 const std = @import("std");
 const builtin = @import("builtin");
@@ -185,7 +185,7 @@ pub fn build(b: *Builder) !void {
 
     // WiP: build examples
     const examples = .{
-        // "clear",
+        "clear",
         // "triangle",
         // "quad",
         // "bufferoffsets",
