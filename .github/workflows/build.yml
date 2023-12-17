@@ -26,4 +26,4 @@ jobs:
         run: |
             zig build debugtext_print --summary all
             zig build clear --summary all
-            # zig build cube --summary all
+            zig build sgl_context --summary all

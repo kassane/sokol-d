@@ -198,14 +198,14 @@ pub fn build(b: *Builder) !void {
         // "mrt",
         // "saudio",
         // "sgl",
-        // "sgl-context",
+        "sgl_context",
         // "sgl-points",
         // "debugtext",
         "debugtext_print",
         // "debugtext-userfont",
         // "shapes",
     };
-    b.getInstallStep().name = "sokol-d-examples";
+    b.getInstallStep().name = "sokol library";
     inline for (examples) |example| {
         const ldc = try buildLDC(b, sokol, .{
             .name = example,
@@ -214,7 +214,13 @@ pub fn build(b: *Builder) !void {
                 // handmade math
                 rootPath() ++ fmt.comptimePrint("/src/examples/math.d", .{}),
             },
+            .dflags = &.{
+                "--wi", // warnings only (no error)
+                // "-w", // warnings as error
+                "--wo", // warning of deprecated features
+            },
         });
+        ldc.setName("ldc2");
         ldc.step.dependOn(b.getInstallStep());
         const run = b.step(b.fmt("{s}", .{example}), b.fmt("Build example {s}", .{example}));
         run.dependOn(&ldc.step);
@@ -328,11 +334,6 @@ fn buildLDC(b: *Builder, lib: *Builder.CompileStep, comptime config: ldcConfig) 
             try cmds.append("--boundscheck=off");
         },
     }
-    // warnings
-    try cmds.append("-w");
-
-    // warning obsolete features
-    try cmds.append("--wo");
 
     // Print character (column) numbers in diagnostics
     try cmds.append("--vcolumns");

@@ -46,14 +46,16 @@ void cleanup()
 void main()
 {
     sapp.IconDesc icon = {sokol_default: true};
-    sapp.Desc runner = {window_title: "clear.d"};
-    runner.init_cb = &init;
-    runner.frame_cb = &frame;
-    runner.cleanup_cb = &cleanup;
-    runner.width = 640;
-    runner.height = 480;
+    sapp.Desc runner = {
+        window_title: "clear.d",
+        init_cb: &init,
+        frame_cb: &frame,
+        cleanup_cb: &cleanup,
+        width: 640,
+        height: 480,
+        win32_console_attach: true
+    };
     runner.icon = icon;
-    runner.win32_console_attach = true;
-    runner.logger.func = &log.slog_func;
+    runner.logger.func = &log.func;
     sapp.run(runner);
 }
