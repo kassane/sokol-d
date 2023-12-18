@@ -210,15 +210,16 @@ pub fn build(b: *Builder) !void {
         const ldc = try buildLDC(b, sokol, .{
             .name = example,
             .sources = &.{
-                rootPath() ++ fmt.comptimePrint("/src/examples/{s}.d", .{example}),
+                fmt.comptimePrint("{s}/src/examples/{s}.d", .{ rootPath(), example }),
                 // handmade math
-                rootPath() ++ fmt.comptimePrint("/src/examples/math.d", .{}),
+                fmt.comptimePrint("{s}/src/examples/math.d", .{rootPath()}),
             },
             .dflags = &.{
                 "--wi", // warnings only (no error)
                 // "-w", // warnings as error
                 "--wo", // warning of deprecated features
             },
+            .zig_cc = true, // use zig as cc and linker
         });
         ldc.setName("ldc2");
         ldc.step.dependOn(b.getInstallStep());
@@ -284,6 +285,11 @@ fn buildLDC(b: *Builder, lib: *Builder.CompileStep, comptime config: ldcConfig) 
 
     // D compiler
     try cmds.append(ldc);
+
+    if (config.zig_cc) {
+        try cmds.append(b.fmt("--gcc={s}", .{b.pathJoin(&.{ rootPath(), "scripts", if (lib.target.isWindows()) "zcc.cmd" else "zcc.sh" })}));
+        try cmds.append(b.fmt("--linker={s}", .{b.pathJoin(&.{ rootPath(), "scripts", if (lib.target.isWindows()) "zcc.cmd" else "zcc.sh" })}));
+    }
 
     // set kind of build
     switch (config.kind) {
@@ -396,7 +402,7 @@ fn buildLDC(b: *Builder, lib: *Builder.CompileStep, comptime config: ldcConfig) 
         break;
     }
     // link flags
-    if (lib.target.isLinux())
+    if (lib.target.isLinux() and !config.zig_cc)
         try cmds.append("-L--no-as-needed");
 
     // Darwin frameworks
@@ -463,4 +469,5 @@ const ldcConfig = struct {
     sources: []const []const u8 = std.mem.zeroes([]const []const u8),
     dflags: []const []const u8 = std.mem.zeroes([]const []const u8),
     name: ?[]const u8 = null,
+    zig_cc: bool = false,
 };
