@@ -219,7 +219,8 @@ pub fn build(b: *Builder) !void {
                 // "-w", // warnings as error
                 "--wo", // warning of deprecated features
             },
-            .zig_cc = true, // use zig as cc and linker
+            // fixme: target name conflics (arch-macos-none != arch-apple-macos)
+            .zig_cc = if (builtin.os.tag == .macos) false else true, // use zig as cc and linker
         });
         ldc.setName("ldc2");
         ldc.step.dependOn(b.getInstallStep());

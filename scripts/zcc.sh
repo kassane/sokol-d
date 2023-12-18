@@ -21,4 +21,5 @@ for arg in "$@"; do
   fi
 done
 
+# ldc2 need libunwind for exception
 zig cc -lunwind "${ARGS[@]}"
