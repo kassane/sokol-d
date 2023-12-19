@@ -82,11 +82,8 @@ struct Vec3
 
     static Vec3 cross(Vec3 v0, Vec3 v1)
     {
-        return Vec3(
-            (v0.y * v1.z) - (v0.z * v1.y),
-            (v0.z * v1.x) - (v0.x * v1.z),
-            (v0.x * v1.y) - (v0.y * v1.x)
-        );
+        return Vec3((v0.y * v1.z) - (v0.z * v1.y), (v0.z * v1.x) - (v0.x * v1.z),
+                (v0.x * v1.y) - (v0.y * v1.x));
     }
 
     static float dot(Vec3 v0, Vec3 v1)
@@ -101,22 +98,12 @@ struct Mat4
 
     static Mat4 identity()
     {
-        return Mat4([
-                [1, 0, 0, 0],
-                [0, 1, 0, 0],
-                [0, 0, 1, 0],
-                [0, 0, 0, 1]
-            ]);
+        return Mat4([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]);
     }
 
     static Mat4 zero()
     {
-        return Mat4([
-                [0, 0, 0, 0],
-                [0, 0, 0, 0],
-                [0, 0, 0, 0],
-                [0, 0, 0, 0]
-            ]);
+        return Mat4([[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]);
     }
 
     static Mat4 mul(Mat4 left, Mat4 right)
@@ -127,11 +114,9 @@ struct Mat4
         {
             foreach (col; 0 .. 4)
             {
-                result.m[row][col] =
-                    left.m[row][0] * right.m[0][col] +
-                    left.m[row][1] * right.m[1][col] +
-                    left.m[row][2] * right.m[2][col] +
-                    left.m[row][3] * right.m[3][col];
+                result.m[row][col] = left.m[row][0] * right.m[0][col]
+                    + left.m[row][1] * right.m[1][col] + left.m[row][2]
+                    * right.m[2][col] + left.m[row][3] * right.m[3][col];
             }
         }
 

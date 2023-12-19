@@ -22,11 +22,7 @@ struct State
 
     static Mat4 view()
     {
-        return Mat4.lookAt(
-            Vec3(0.0f, 1.5f, 6.0f),
-            Vec3.zero(),
-            Vec3.up()
-        );
+        return Mat4.lookAt(Vec3(0.0f, 1.5f, 6.0f), Vec3.zero(), Vec3.up());
     }
 }
 
@@ -102,15 +98,15 @@ State state;
 //     sg.commit();
 // }
 
-// void cleanup()
-// {
-//     sg.shutdown();
-// }
+extern (C) void cleanup()
+{
+    sg.shutdown();
+}
 
-// void main()
-// {
-//     // TODO
-// }
+void main()
+{
+    // TODO
+}
 
 // TODO: missing cube.glsl
 // VsParams computeVsParams(float rx, float ry)

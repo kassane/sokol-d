@@ -14,9 +14,9 @@ import log = sokol.log;
 import sgl = sokol.gl;
 import std.math : sin, cos;
 
-struct State
+extern (C) struct State
 {
-    struct Offscreen
+    extern (C) struct Offscreen
     {
         sg.PassAction pass_action;
         sg.Pass pass;
@@ -24,7 +24,7 @@ struct State
         sgl.Context sgl_ctx;
     }
 
-    struct Display
+    extern (C) struct Display
     {
         sg.PassAction pass_action;
         sg.Sampler smp;
@@ -37,10 +37,10 @@ enum offscreen_sample_count = 1;
 enum offscreen_width = 32;
 enum offscreen_height = 32;
 
-State.Offscreen offscreen;
-State.Display display;
+extern (C) __gshared State.Display display;
+extern (C) __gshared State.Offscreen offscreen;
 
-void init()
+extern (C) void init()
 {
     sg.Desc gfxd;
     gfxd.context = sgapp.context();
@@ -76,21 +76,14 @@ void init()
     sgl.ContextDesc ctd;
     ctd.max_vertices = 8;
     ctd.max_commands = 4;
-    ctd.color_format = offscreen_pixel_format,
-    ctd.depth_format = sg.PixelFormat.NONE,
-    ctd.sample_count = offscreen_sample_count,
-
-    offscreen.sgl_ctx = sgl.makeContext(ctd);
+    ctd.color_format = offscreen_pixel_format, ctd.depth_format = sg.PixelFormat.NONE,
+        ctd.sample_count = offscreen_sample_count, offscreen.sgl_ctx = sgl.makeContext(ctd);
 
     // create an offscreen render target texture, pass and pass-action
     sg.ImageDesc imgd;
-    imgd.render_target = true,
-    imgd.width = offscreen_width,
-    imgd.height = offscreen_height,
-    imgd.pixel_format = offscreen_pixel_format,
-    imgd.sample_count = offscreen_sample_count,
-
-    offscreen.img = sg.makeImage(imgd);
+    imgd.render_target = true, imgd.width = offscreen_width, imgd.height = offscreen_height,
+        imgd.pixel_format = offscreen_pixel_format,
+        imgd.sample_count = offscreen_sample_count, offscreen.img = sg.makeImage(imgd);
 
     sg.PassDesc pass_desc;
     pass_desc.color_attachments[0].image = offscreen.img;
@@ -104,14 +97,12 @@ void init()
 
     // sampler for sampling the offscreen render target
     sg.SamplerDesc smd;
-    smd.wrap_u = sg.Wrap.CLAMP_TO_EDGE,
-    smd.wrap_v = sg.Wrap.CLAMP_TO_EDGE,
-    smd.min_filter = sg.Filter.NEAREST,
-    smd.mag_filter = sg.Filter.NEAREST,
-    display.smp = sg.makeSampler(smd);
+    smd.wrap_u = sg.Wrap.CLAMP_TO_EDGE, smd.wrap_v = sg.Wrap.CLAMP_TO_EDGE,
+        smd.min_filter = sg.Filter.NEAREST, smd.mag_filter = sg.Filter.NEAREST,
+        display.smp = sg.makeSampler(smd);
 }
 
-void frame()
+extern (C) void frame()
 {
     const a = sgl.asRadians(sapp.frameCount());
 
@@ -130,11 +121,7 @@ void frame()
     sgl.loadPipeline(display.sgl_pip);
     sgl.matrixModeProjection();
     sgl.perspective(sgl.asRadians(45.0), sapp.widthf() / sapp.heightf(), 0.1, 100.0);
-    const(float)[3] eye = [
-        sin(a) * 6.0,
-        sin(a) * 3.0,
-        cos(a) * 6.0,
-    ];
+    const(float)[3] eye = [sin(a) * 6.0, sin(a) * 3.0, cos(a) * 6.0,];
     sgl.matrixModeModelview();
     sgl.lookat(eye[0], eye[1], eye[2], 0, 0, 0, 0, 1, 0);
     draw_cube();
@@ -149,13 +136,13 @@ void frame()
     sg.commit();
 }
 
-void cleanup()
+extern (C) void cleanup()
 {
     sgl.shutdown();
     sg.shutdown();
 }
 
-void main()
+extern (C) void main()
 {
     sapp.IconDesc icon = {sokol_default: true};
     sapp.Desc runner = {

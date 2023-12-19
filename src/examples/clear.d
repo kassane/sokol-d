@@ -5,7 +5,6 @@
 //------------------------------------------------------------------------------
 module examples.clear;
 
-import std.stdio;
 import sg = sokol.gfx;
 import sgapp = sokol.glue;
 import sapp = sokol.app;
@@ -13,7 +12,7 @@ import log = sokol.log;
 
 static sg.PassAction pass_action;
 
-void init()
+extern (C) void init()
 {
     sg.Desc cd;
     cd.context = sgapp.context();
@@ -26,10 +25,19 @@ void init()
     pass_action.colors[0].clear_value.b = 0;
     pass_action.colors[0].clear_value.a = 1;
 
-    writeln("Backend: ", sg.queryBackend());
+    version (D_BetterC)
+    {
+        import core.stdc.stdio: printf;
+        printf("Backend: %d\n", sg.queryBackend());
+    }
+    else
+    {
+        import std.stdio;
+        writeln("Backend: ", sg.queryBackend());
+    }
 }
 
-void frame()
+extern (C) void frame()
 {
     auto g = pass_action.colors[0].clear_value.g + 0.01;
     pass_action.colors[0].clear_value.g = g > 1.0 ? 0.0 : g;
@@ -38,12 +46,12 @@ void frame()
     sg.endPass();
 }
 
-void cleanup()
+extern (C) void cleanup()
 {
     sg.shutdown();
 }
 
-void main()
+extern(C) void main()
 {
     sapp.IconDesc icon = {sokol_default: true};
     sapp.Desc runner = {
@@ -53,7 +61,7 @@ void main()
         cleanup_cb: &cleanup,
         width: 640,
         height: 480,
-        win32_console_attach: true
+        win32_console_attach: true,
     };
     runner.icon = icon;
     runner.logger.func = &log.func;

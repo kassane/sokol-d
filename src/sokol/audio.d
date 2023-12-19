@@ -3,11 +3,15 @@
 module sokol.audio;
 
 // helper function to convert a C string to a D string
-string cStrToDString(const(char*) c_str) {
-    import std.conv: to;
+string cStrToDString(const(char*) c_str)
+{
+    import std.conv : to;
+
     return c_str.to!string;
 }
-enum LogItem {
+
+enum LogItem
+{
     OK,
     MALLOC_FAILED,
     ALSA_SND_PCM_OPEN_FAILED,
@@ -45,68 +49,96 @@ enum LogItem {
     COREAUDIO_START_FAILED,
     BACKEND_BUFFER_SIZE_ISNT_MULTIPLE_OF_PACKET_SIZE,
 }
-struct Logger {
-    void function(const (char*), uint, uint, const (char*), uint, const (char*), void*) func;
+
+struct Logger
+{
+    void function(const(char*), uint, uint, const(char*), uint, const(char*), void*) func;
     void* user_data;
 }
-struct Allocator {
+
+struct Allocator
+{
     void* function(size_t, void*) alloc_fn;
     void function(void*, void*) free_fn;
     void* user_data;
 }
-struct Desc {
+
+struct Desc
+{
     int sample_rate;
     int num_channels;
     int buffer_frames;
     int packet_frames;
     int num_packets;
-    void function(float *, int, int) stream_cb;
-    void function(float *, int, int, void*) stream_userdata_cb;
+    void function(float*, int, int) stream_cb;
+    void function(float*, int, int, void*) stream_userdata_cb;
     void* user_data;
     Allocator allocator;
     Logger logger;
 }
-extern(C) void saudio_setup(const Desc *);
-void setup(Desc desc) {
+
+extern (C) void saudio_setup(const Desc*);
+void setup(Desc desc)
+{
     saudio_setup(&desc);
 }
-extern(C) void saudio_shutdown();
-void shutdown() {
+
+extern (C) void saudio_shutdown();
+void shutdown()
+{
     saudio_shutdown();
 }
-extern(C) bool saudio_isvalid();
-bool isvalid() {
+
+extern (C) bool saudio_isvalid();
+bool isvalid()
+{
     return saudio_isvalid();
 }
-extern(C) void* saudio_userdata();
-void* userdata() {
+
+extern (C) void* saudio_userdata();
+void* userdata()
+{
     return saudio_userdata();
 }
-extern(C) Desc saudio_query_desc();
-Desc queryDesc() {
+
+extern (C) Desc saudio_query_desc();
+Desc queryDesc()
+{
     return saudio_query_desc();
 }
-extern(C) int saudio_sample_rate();
-int sampleRate() {
+
+extern (C) int saudio_sample_rate();
+int sampleRate()
+{
     return saudio_sample_rate();
 }
-extern(C) int saudio_buffer_frames();
-int bufferFrames() {
+
+extern (C) int saudio_buffer_frames();
+int bufferFrames()
+{
     return saudio_buffer_frames();
 }
-extern(C) int saudio_channels();
-int channels() {
+
+extern (C) int saudio_channels();
+int channels()
+{
     return saudio_channels();
 }
-extern(C) bool saudio_suspended();
-bool suspended() {
+
+extern (C) bool saudio_suspended();
+bool suspended()
+{
     return saudio_suspended();
 }
-extern(C) int saudio_expect();
-int expect() {
+
+extern (C) int saudio_expect();
+int expect()
+{
     return saudio_expect();
 }
-extern(C) int saudio_push(const float *, int);
-int push(const float * frames, int num_frames) {
+
+extern (C) int saudio_push(const float*, int);
+int push(const float* frames, int num_frames)
+{
     return saudio_push(frames, num_frames);
 }

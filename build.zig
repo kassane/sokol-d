@@ -179,7 +179,9 @@ pub fn build(b: *Builder) !void {
     config.force_egl = b.option(bool, "egl", "Use EGL instead of GLX if possible (default: false)") orelse false;
 
     var target = b.standardTargetOptions(.{});
-    if (target.isWindows())
+
+    // ldc2 w/ druntime + phobos2 works on MSVC
+    if (target.isWindows() and target.isNative())
         target.abi = .msvc;
 
     const optimize = b.standardOptimizeOption(.{});
@@ -217,6 +219,7 @@ pub fn build(b: *Builder) !void {
                 // handmade math
                 fmt.comptimePrint("{s}/src/examples/math.d", .{rootPath()}),
             },
+            // .betterC = .on,
             .dflags = &.{
                 "--wi", // warnings only (no error)
                 // "-w", // warnings as error
