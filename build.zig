@@ -178,7 +178,10 @@ pub fn build(b: *Builder) !void {
     config.enable_x11 = b.option(bool, "x11", "Compile with x11-support (default: true)") orelse true;
     config.force_egl = b.option(bool, "egl", "Use EGL instead of GLX if possible (default: false)") orelse false;
 
-    const target = b.standardTargetOptions(.{});
+    var target = b.standardTargetOptions(.{});
+    if (target.isWindows())
+        target.abi = .msvc;
+
     const optimize = b.standardOptimizeOption(.{});
     const sokol = buildSokol(b, target, optimize, config, "");
     b.installArtifact(sokol);
@@ -217,10 +220,9 @@ pub fn build(b: *Builder) !void {
             .dflags = &.{
                 "--wi", // warnings only (no error)
                 // "-w", // warnings as error
-                "--wo", // warning of deprecated features
             },
             // fixme: target name conflics (arch-macos-none != arch-apple-macos)
-            .zig_cc = if (builtin.os.tag == .macos) false else true, // use zig as cc and linker
+            .zig_cc = if (builtin.os.tag == .linux) true else false, // use zig as cc and linker
         });
         ldc.setName("ldc2");
         ldc.step.dependOn(b.getInstallStep());
@@ -276,10 +278,7 @@ fn buildShaders(b: *Builder) void {
 
 // Use LDC2 (https://github.com/ldc-developers/ldc) to compile the D examples
 fn buildLDC(b: *Builder, lib: *Builder.CompileStep, comptime config: ldcConfig) !*Builder.RunStep {
-    const ldc = try b.findProgram(&.{switch (builtin.os.tag) {
-        .windows => "ldc2.exe",
-        else => "ldc2",
-    }}, &.{});
+    const ldc = try b.findProgram(&.{"ldc2"}, &.{});
 
     var cmds = std.ArrayList([]const u8).init(b.allocator);
     defer cmds.deinit();
@@ -437,19 +436,11 @@ fn buildLDC(b: *Builder, lib: *Builder.CompileStep, comptime config: ldcConfig) 
     if (lib.want_lto) |enabled|
         if (enabled) try cmds.append("--flto=thin");
 
-    // target triple (e.g. "x86_64-linux-gnu")
-    if (lib.target.isNative()) {
-        // ldc2 doesn't support zig native (a.k.a: native-native or native)
-        if (lib.target.isDarwin())
-            try cmds.append(b.fmt("--mtriple={s}-apple-{s}", .{ @tagName(lib.target.getCpuArch()), @tagName(lib.target.getOsTag()) }))
-        else
-            try cmds.append(b.fmt("--mtriple={s}-{s}-{s}", .{ @tagName(lib.target.getCpuArch()), @tagName(lib.target.getOsTag()), @tagName(lib.target.getAbi()) }));
-    } else {
-        if (lib.target.isDarwin())
-            try cmds.append(b.fmt("--mtriple={s}-apple-{s}", .{ @tagName(lib.target.getCpuArch()), @tagName(lib.target.getOsTag()) }))
-        else
-            try cmds.append(b.fmt("--mtriple={s}", .{try lib.target.linuxTriple(b.allocator)}));
-    }
+    // ldc2 doesn't support zig native (a.k.a: native-native or native)
+    if (lib.target.isDarwin())
+        try cmds.append(b.fmt("--mtriple={s}-apple-{s}", .{ @tagName(lib.target.getCpuArch()), @tagName(lib.target.getOsTag()) }))
+    else
+        try cmds.append(b.fmt("--mtriple={s}-{s}-{s}", .{ @tagName(lib.target.getCpuArch()), @tagName(lib.target.getOsTag()), @tagName(lib.target.getAbi()) }));
 
     // for (lib.target.getCpuArch().allFeaturesList()) |feature|
     //     try cmds.append(b.fmt("--mattr={s}", .{feature.name}));
