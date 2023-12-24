@@ -225,7 +225,7 @@ pub fn build(b: *Builder) !void {
                 // "-w", // warnings as error
             },
             // fixme: target name conflics (arch-macos-none != arch-apple-macos)
-            .zig_cc = if (builtin.os.tag == .linux) true else false, // use zig as cc and linker
+            .zig_cc = true, // use zig as cc and linker
         });
         ldc.setName("ldc2");
         ldc.step.dependOn(b.getInstallStep());
@@ -290,8 +290,9 @@ fn buildLDC(b: *Builder, lib: *Builder.CompileStep, comptime config: ldcConfig) 
     try cmds.append(ldc);
 
     if (config.zig_cc) {
-        try cmds.append(b.fmt("--gcc={s}", .{b.pathJoin(&.{ rootPath(), "scripts", if (lib.target.isWindows()) "zcc.cmd" else "zcc.sh" })}));
-        try cmds.append(b.fmt("--linker={s}", .{b.pathJoin(&.{ rootPath(), "scripts", if (lib.target.isWindows()) "zcc.cmd" else "zcc.sh" })}));
+        buildZigCC(b, .{ lib.target, lib.optimize });
+        try cmds.append(b.fmt("--gcc={s}", .{b.pathJoin(&.{ b.install_prefix, "bin", if (lib.target.isWindows()) "zcc.exe" else "zcc" })}));
+        try cmds.append(b.fmt("--linker={s}", .{b.pathJoin(&.{ b.install_prefix, "bin", if (lib.target.isWindows()) "zcc.exe" else "zcc" })}));
     }
 
     // set kind of build
@@ -455,6 +456,18 @@ fn buildLDC(b: *Builder, lib: *Builder.CompileStep, comptime config: ldcConfig) 
 
     // run the command
     return b.addSystemCommand(cmds.items);
+}
+
+fn buildZigCC(b: *Builder, opt: anytype) void {
+    const exe = b.addExecutable(.{
+        .name = "zcc",
+        .target = opt[0],
+        .optimize = opt[1],
+        .root_source_file = .{
+            .path = "tools/zigcc.zig",
+        },
+    });
+    b.installArtifact(exe);
 }
 
 const ldcConfig = struct {
