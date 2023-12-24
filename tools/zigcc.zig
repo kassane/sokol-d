@@ -1,6 +1,7 @@
 //! zig-cc wrapper
 
 const std = @import("std");
+const builtin = @import("builtin");
 
 pub fn main() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
@@ -21,15 +22,18 @@ pub fn main() !void {
     try cmds.append("-lunwind");
 
     while (args.next()) |arg| {
-        try cmds.append(arg);
+        if (std.mem.eql(u8, arg, std.fmt.comptimePrint("{s}-apple-{s}", .{ @tagName(builtin.cpu.arch), @tagName(builtin.os.tag) })))
+            try cmds.append(std.fmt.comptimePrint("{s}-{s}-{s}", .{ @tagName(builtin.cpu.arch), @tagName(builtin.os.tag), @tagName(builtin.abi) }))
+        else
+            try cmds.append(arg);
     }
     var proc = std.ChildProcess.init(cmds.items, allocator);
     // proc.stdin_behavior = .Ignore;
     // proc.stderr_behavior = .Ignore;
 
     // See all flags
-    for (cmds.items) |cmd|
-        std.debug.print("{s}\n", .{cmd});
+    // for (cmds.items) |cmd|
+    //     std.debug.print("{s}\n", .{cmd});
 
     _ = try proc.spawnAndWait();
 }
