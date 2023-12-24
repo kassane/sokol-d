@@ -19,7 +19,8 @@ pub fn main() !void {
     try cmds.append("zig");
     try cmds.append("cc");
 
-    try cmds.append("-lunwind");
+    if (builtin.abi != .msvc)
+        try cmds.append("-lunwind");
 
     while (args.next()) |arg| {
         if (std.mem.eql(u8, arg, std.fmt.comptimePrint("{s}-apple-{s}", .{ @tagName(builtin.cpu.arch), @tagName(builtin.os.tag) })))
