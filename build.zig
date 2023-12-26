@@ -231,8 +231,8 @@ pub fn build(b: *Builder) !void {
                 "--wi", // warnings only (no error)
                 // "-w", // warnings as error
             },
-            // fixme: target name conflics (arch-macos-none != arch-apple-macos)
-            .zig_cc = true, // use zig as cc and linker
+            // fixme: https://github.com/kassane/sokol-d/issues/1
+            .zig_cc = if (builtin.os.tag == .macos) false else true, // use zig as cc and linker
         });
         ldc.setName("ldc2");
         ldc.step.dependOn(b.getInstallStep());
