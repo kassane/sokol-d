@@ -39,6 +39,7 @@ pub fn main() !void {
         if (std.mem.eql(u8, arg, std.fmt.comptimePrint("{s}-apple-{s}", .{ @tagName(builtin.cpu.arch), @tagName(builtin.os.tag) }))) {
             try cmds.append("native-native");
             try cmds.append("-lunwind");
+            try cmds.append("-fapple-link-rtlib");
         } else try cmds.append(arg);
     }
     var proc = std.ChildProcess.init(cmds.items, allocator);

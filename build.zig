@@ -85,6 +85,7 @@ pub fn buildSokol(b: *Builder, target: CrossTarget, optimize: OptimizeMode, conf
                 .flags = &[_][]const u8{ "-ObjC", "-DIMPL", backend_option },
             });
         }
+        lib.dead_strip_dylibs = true;
         lib.linkFramework("Foundation");
         lib.linkFramework("AudioToolbox");
         if (.metal == _backend) {
@@ -423,7 +424,7 @@ fn buildLDC(b: *Builder, lib: *Builder.CompileStep, comptime config: ldcConfig) 
         }
     }
 
-    if (lib.verbose_cc)
+    if (b.verbose)
         try cmds.append("-v");
 
     if (lib.sanitize_thread)
