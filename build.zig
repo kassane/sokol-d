@@ -290,14 +290,17 @@ fn buildLDC(b: *Builder, lib: *Builder.CompileStep, comptime config: ldcConfig) 
     try cmds.append(ldc);
 
     if (config.zig_cc) {
-        buildZigCC(b, .{ lib.target, lib.optimize });
+        buildZigCC(b);
         try cmds.append(b.fmt("--gcc={s}", .{b.pathJoin(&.{ b.install_prefix, "bin", if (lib.target.isWindows()) "zcc.exe" else "zcc" })}));
         try cmds.append(b.fmt("--linker={s}", .{b.pathJoin(&.{ b.install_prefix, "bin", if (lib.target.isWindows()) "zcc.exe" else "zcc" })}));
     }
 
     // set kind of build
     switch (config.kind) {
-        .@"test" => try cmds.append("-unittest"),
+        .@"test" => {
+            try cmds.append("-unittest");
+            try cmds.append("-main");
+        },
         .lib => try cmds.append("-lib"),
         .obj => try cmds.append("-c"),
         .exe => {},
@@ -371,6 +374,7 @@ fn buildLDC(b: *Builder, lib: *Builder.CompileStep, comptime config: ldcConfig) 
         "time",
         "debugtext",
     };
+    try cmds.append("-i");
     inline for (srcs) |src| {
         try cmds.append(b.fmt("{s}.d", .{b.pathJoin(&.{ rootPath(), "src", "sokol", src })}));
     }
@@ -458,11 +462,11 @@ fn buildLDC(b: *Builder, lib: *Builder.CompileStep, comptime config: ldcConfig) 
     return b.addSystemCommand(cmds.items);
 }
 
-fn buildZigCC(b: *Builder, opt: anytype) void {
+fn buildZigCC(b: *Builder) void {
     const exe = b.addExecutable(.{
         .name = "zcc",
-        .target = opt[0],
-        .optimize = opt[1],
+        .target = .{}, // native (host)
+        .optimize = .ReleaseSafe,
         .root_source_file = .{
             .path = "tools/zigcc.zig",
         },

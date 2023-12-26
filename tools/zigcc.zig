@@ -1,4 +1,6 @@
 //! zig-cc wrapper
+//! Copyright (c) 2023 Matheus Catarino França <matheus-catarino@hotmail.com>
+//! Zlib license
 
 const std = @import("std");
 const builtin = @import("builtin");
@@ -19,22 +21,32 @@ pub fn main() !void {
     try cmds.append("zig");
     try cmds.append("cc");
 
-    if (builtin.abi != .msvc)
-        try cmds.append("-lunwind");
+    // LDC2 not set triple targets to cc/linker, except Apple (Why?)
+    switch (builtin.os.tag) {
+        .windows => {
+            try cmds.append("-target");
+            try cmds.append("native-native-msvc"); // msvc only
+        },
+        .macos, .ios => {},
+        else => {
+            try cmds.append("-target");
+            try cmds.append("native-native");
+            try cmds.append("-lunwind");
+        },
+    }
 
     while (args.next()) |arg| {
-        if (std.mem.eql(u8, arg, std.fmt.comptimePrint("{s}-apple-{s}", .{ @tagName(builtin.cpu.arch), @tagName(builtin.os.tag) })))
-            try cmds.append(std.fmt.comptimePrint("{s}-{s}-{s}", .{ @tagName(builtin.cpu.arch), @tagName(builtin.os.tag), @tagName(builtin.abi) }))
-        else
-            try cmds.append(arg);
+        if (std.mem.eql(u8, arg, std.fmt.comptimePrint("{s}-apple-{s}", .{ @tagName(builtin.cpu.arch), @tagName(builtin.os.tag) }))) {
+            try cmds.append("native-native");
+            try cmds.append("-lunwind");
+        } else try cmds.append(arg);
     }
     var proc = std.ChildProcess.init(cmds.items, allocator);
-    // proc.stdin_behavior = .Ignore;
-    // proc.stderr_behavior = .Ignore;
 
     // See all flags
-    // for (cmds.items) |cmd|
-    //     std.debug.print("{s}\n", .{cmd});
+    std.debug.print("debug flags: ", .{});
+    for (cmds.items) |cmd|
+        std.debug.print("{s} ", .{cmd});
 
     _ = try proc.spawnAndWait();
 }
