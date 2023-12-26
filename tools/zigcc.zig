@@ -44,9 +44,9 @@ pub fn main() !void {
     var proc = std.ChildProcess.init(cmds.items, allocator);
 
     // See all flags
-    std.debug.print("debug flags: ", .{});
-    for (cmds.items) |cmd|
-        std.debug.print("{s} ", .{cmd});
+    // std.debug.print("debug flags: ", .{});
+    // for (cmds.items) |cmd|
+    //     std.debug.print("{s} ", .{cmd});
 
     _ = try proc.spawnAndWait();
 }

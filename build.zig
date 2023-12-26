@@ -36,10 +36,11 @@ pub fn buildSokol(b: *Builder, target: CrossTarget, optimize: OptimizeMode, conf
         .target = target,
         .optimize = optimize,
     });
+    lib.disable_sanitize_c = true;
     switch (optimize) {
         // zig have custom compiler-rt and another toolchains not include it (fix: unknown ref zig_stack_protector)
         .Debug, .ReleaseSafe => lib.bundle_compiler_rt = true,
-        else => lib.disable_sanitize_c = true,
+        else => lib.strip = true,
     }
     lib.pie = true;
     lib.linkLibC();
