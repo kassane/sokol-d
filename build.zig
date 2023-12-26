@@ -31,7 +31,12 @@ fn rootPath() []const u8 {
 
 // build sokol into a static library
 pub fn buildSokol(b: *Builder, target: CrossTarget, optimize: OptimizeMode, config: Config, comptime prefix_path: []const u8) *CompileStep {
-    const lib = b.addStaticLibrary(.{
+    const sharedlib = b.option(bool, "Shared", "Build sokol dynamic library [default: static]") orelse false;
+    const lib = if (sharedlib) b.addSharedLibrary(.{
+        .name = "sokol",
+        .target = target,
+        .optimize = optimize,
+    }) else b.addStaticLibrary(.{
         .name = "sokol",
         .target = target,
         .optimize = optimize,
@@ -42,7 +47,8 @@ pub fn buildSokol(b: *Builder, target: CrossTarget, optimize: OptimizeMode, conf
         .Debug, .ReleaseSafe => lib.bundle_compiler_rt = true,
         else => lib.strip = true,
     }
-    lib.pie = true;
+    if (!sharedlib)
+        lib.pie = true;
     lib.linkLibC();
     const sokol_path = prefix_path ++ "src/sokol/c/";
     const csources = [_][]const u8{
@@ -85,7 +91,6 @@ pub fn buildSokol(b: *Builder, target: CrossTarget, optimize: OptimizeMode, conf
                 .flags = &[_][]const u8{ "-ObjC", "-DIMPL", backend_option },
             });
         }
-        lib.dead_strip_dylibs = true;
         lib.linkFramework("Foundation");
         lib.linkFramework("AudioToolbox");
         if (.metal == _backend) {
@@ -424,8 +429,10 @@ fn buildLDC(b: *Builder, lib: *Builder.CompileStep, comptime config: ldcConfig) 
         }
     }
 
-    if (b.verbose)
+    if (b.verbose) {
         try cmds.append("-v");
+        try cmds.append("-Xcc=-v");
+    }
 
     if (lib.sanitize_thread)
         try cmds.append("--fsanitize=thread");
