@@ -88,7 +88,10 @@ pub fn buildSokol(b: *Builder, target: CrossTarget, optimize: OptimizeMode, conf
         inline for (csources) |csrc| {
             lib.addCSourceFile(.{
                 .file = .{ .path = sokol_path ++ csrc },
-                .flags = &[_][]const u8{ "-ObjC", "-DIMPL", backend_option },
+                .flags = switch (target.getOsTag()) {
+                    .macos => &.{ "-ObjC", "-DIMPL", "-mmacos-version-min=12", backend_option },
+                    else => &.{ "-ObjC", "-DIMPL", backend_option },
+                },
             });
         }
         lib.linkFramework("Foundation");
@@ -195,6 +198,13 @@ pub fn build(b: *Builder) !void {
     const sokol = buildSokol(b, target, optimize, config, "");
     b.installArtifact(sokol);
 
+    // LDC-config options
+    const enable_betterC = b.option(bool, "BetterC", "Omit generating some runtime information and helper functions. [default: false]") orelse false;
+    const enable_zigcc = b.option(bool, "ZigCC", "Use zig cc as compiler and linker. [default: false]") orelse false;
+
+    if (enable_zigcc)
+        buildZigCC(b);
+
     // WiP: build examples
     const examples = .{
         "clear",
@@ -221,18 +231,23 @@ pub fn build(b: *Builder) !void {
     inline for (examples) |example| {
         const ldc = try buildLDC(b, sokol, .{
             .name = example,
-            .sources = &.{
-                fmt.comptimePrint("{s}/src/examples/{s}.d", .{ rootPath(), example }),
-                // handmade math
-                fmt.comptimePrint("{s}/src/examples/math.d", .{rootPath()}),
-            },
-            // .betterC = .on,
+            .sources = if (!std.mem.eql(u8, example, "clear"))
+                &.{
+                    try fmt.allocPrint(b.allocator, "{s}/src/examples/{s}.d", .{ rootPath(), example }),
+                    try fmt.allocPrint(b.allocator, "{s}/src/examples/math.d", .{rootPath()}),
+                }
+            else
+                &.{
+                    try fmt.allocPrint(b.allocator, "{s}/src/examples/{s}.d", .{ rootPath(), example }),
+                },
+            .betterC = enable_betterC,
             .dflags = &.{
                 "--wi", // warnings only (no error)
                 // "-w", // warnings as error
             },
             // fixme: https://github.com/kassane/sokol-d/issues/1
-            .zig_cc = if (builtin.os.tag == .macos) false else true, // use zig as cc and linker
+            // use zig as cc and linker
+            .zig_cc = if (target.isDarwin()) false else enable_zigcc,
         });
         ldc.setName("ldc2");
         ldc.step.dependOn(b.getInstallStep());
@@ -287,7 +302,7 @@ fn buildShaders(b: *Builder) void {
 }
 
 // Use LDC2 (https://github.com/ldc-developers/ldc) to compile the D examples
-fn buildLDC(b: *Builder, lib: *Builder.CompileStep, comptime config: ldcConfig) !*Builder.RunStep {
+fn buildLDC(b: *Builder, lib: *Builder.CompileStep, config: ldcConfig) !*Builder.RunStep {
     const ldc = try b.findProgram(&.{"ldc2"}, &.{});
 
     var cmds = std.ArrayList([]const u8).init(b.allocator);
@@ -297,7 +312,6 @@ fn buildLDC(b: *Builder, lib: *Builder.CompileStep, comptime config: ldcConfig) 
     try cmds.append(ldc);
 
     if (config.zig_cc) {
-        buildZigCC(b);
         try cmds.append(b.fmt("--gcc={s}", .{b.pathJoin(&.{ b.install_prefix, "bin", if (lib.target.isWindows()) "zcc.exe" else "zcc" })}));
         try cmds.append(b.fmt("--linker={s}", .{b.pathJoin(&.{ b.install_prefix, "bin", if (lib.target.isWindows()) "zcc.exe" else "zcc" })}));
     }
@@ -314,19 +328,19 @@ fn buildLDC(b: *Builder, lib: *Builder.CompileStep, comptime config: ldcConfig) 
     }
 
     if (config.kind == .lib) {
-        if (config.linkage == .shared) {
+        if (config.linkage == .dynamic) {
             try cmds.append("-shared");
         } else {
             try cmds.append("-static");
         }
     }
 
-    inline for (config.dflags) |dflag| {
+    for (config.dflags) |dflag| {
         try cmds.append(dflag);
     }
 
     // betterC disable druntime and phobos
-    if (config.betterC == .on)
+    if (config.betterC)
         try cmds.append("--betterC");
 
     switch (lib.optimize) {
@@ -387,7 +401,7 @@ fn buildLDC(b: *Builder, lib: *Builder.CompileStep, comptime config: ldcConfig) 
     }
 
     // example D file
-    inline for (config.sources) |src| {
+    for (config.sources) |src| {
         try cmds.append(src);
     }
 
@@ -486,7 +500,7 @@ fn buildZigCC(b: *Builder) void {
 const ldcConfig = struct {
     kind: Builder.CompileStep.Kind = .exe,
     linkage: Builder.CompileStep.Linkage = .static,
-    betterC: enum { on, off } = .off,
+    betterC: bool = false,
     sources: []const []const u8 = std.mem.zeroes([]const []const u8),
     dflags: []const []const u8 = std.mem.zeroes([]const []const u8),
     name: ?[]const u8 = null,

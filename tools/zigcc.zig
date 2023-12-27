@@ -1,4 +1,4 @@
-//! zig-cc wrapper
+//! zig-cc wrapper for ldc2
 //! Copyright (c) 2023 Matheus Catarino França <matheus-catarino@hotmail.com>
 //! Zlib license
 
