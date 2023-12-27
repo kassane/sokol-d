@@ -401,227 +401,227 @@ enum MouseCursor {
     NOT_ALLOWED,
     NUM,
 }
-extern(C) bool sapp_isvalid();
-bool isvalid() {
+extern(C) bool sapp_isvalid() @system @nogc nothrow;
+bool isvalid() @trusted @nogc nothrow {
     return sapp_isvalid();
 }
-extern(C) int sapp_width();
-int width() {
+extern(C) int sapp_width() @system @nogc nothrow;
+int width() @trusted @nogc nothrow {
     return sapp_width();
 }
-extern(C) float sapp_widthf();
-float widthf() {
+extern(C) float sapp_widthf() @system @nogc nothrow;
+float widthf() @trusted @nogc nothrow {
     return sapp_widthf();
 }
-extern(C) int sapp_height();
-int height() {
+extern(C) int sapp_height() @system @nogc nothrow;
+int height() @trusted @nogc nothrow {
     return sapp_height();
 }
-extern(C) float sapp_heightf();
-float heightf() {
+extern(C) float sapp_heightf() @system @nogc nothrow;
+float heightf() @trusted @nogc nothrow {
     return sapp_heightf();
 }
-extern(C) int sapp_color_format();
-int colorFormat() {
+extern(C) int sapp_color_format() @system @nogc nothrow;
+int colorFormat() @trusted @nogc nothrow {
     return sapp_color_format();
 }
-extern(C) int sapp_depth_format();
-int depthFormat() {
+extern(C) int sapp_depth_format() @system @nogc nothrow;
+int depthFormat() @trusted @nogc nothrow {
     return sapp_depth_format();
 }
-extern(C) int sapp_sample_count();
-int sampleCount() {
+extern(C) int sapp_sample_count() @system @nogc nothrow;
+int sampleCount() @trusted @nogc nothrow {
     return sapp_sample_count();
 }
-extern(C) bool sapp_high_dpi();
-bool highDpi() {
+extern(C) bool sapp_high_dpi() @system @nogc nothrow;
+bool highDpi() @trusted @nogc nothrow {
     return sapp_high_dpi();
 }
-extern(C) float sapp_dpi_scale();
-float dpiScale() {
+extern(C) float sapp_dpi_scale() @system @nogc nothrow;
+float dpiScale() @trusted @nogc nothrow {
     return sapp_dpi_scale();
 }
-extern(C) void sapp_show_keyboard(bool);
-void showKeyboard(bool show) {
+extern(C) void sapp_show_keyboard(bool) @system @nogc nothrow;
+void showKeyboard(bool show) @trusted @nogc nothrow {
     sapp_show_keyboard(show);
 }
-extern(C) bool sapp_keyboard_shown();
-bool keyboardShown() {
+extern(C) bool sapp_keyboard_shown() @system @nogc nothrow;
+bool keyboardShown() @trusted @nogc nothrow {
     return sapp_keyboard_shown();
 }
-extern(C) bool sapp_is_fullscreen();
-bool isFullscreen() {
+extern(C) bool sapp_is_fullscreen() @system @nogc nothrow;
+bool isFullscreen() @trusted @nogc nothrow {
     return sapp_is_fullscreen();
 }
-extern(C) void sapp_toggle_fullscreen();
-void toggleFullscreen() {
+extern(C) void sapp_toggle_fullscreen() @system @nogc nothrow;
+void toggleFullscreen() @trusted @nogc nothrow {
     sapp_toggle_fullscreen();
 }
-extern(C) void sapp_show_mouse(bool);
-void showMouse(bool show) {
+extern(C) void sapp_show_mouse(bool) @system @nogc nothrow;
+void showMouse(bool show) @trusted @nogc nothrow {
     sapp_show_mouse(show);
 }
-extern(C) bool sapp_mouse_shown();
-bool mouseShown() {
+extern(C) bool sapp_mouse_shown() @system @nogc nothrow;
+bool mouseShown() @trusted @nogc nothrow {
     return sapp_mouse_shown();
 }
-extern(C) void sapp_lock_mouse(bool);
-void lockMouse(bool lock) {
+extern(C) void sapp_lock_mouse(bool) @system @nogc nothrow;
+void lockMouse(bool lock) @trusted @nogc nothrow {
     sapp_lock_mouse(lock);
 }
-extern(C) bool sapp_mouse_locked();
-bool mouseLocked() {
+extern(C) bool sapp_mouse_locked() @system @nogc nothrow;
+bool mouseLocked() @trusted @nogc nothrow {
     return sapp_mouse_locked();
 }
-extern(C) void sapp_set_mouse_cursor(MouseCursor);
-void setMouseCursor(MouseCursor cursor) {
+extern(C) void sapp_set_mouse_cursor(MouseCursor) @system @nogc nothrow;
+void setMouseCursor(MouseCursor cursor) @trusted @nogc nothrow {
     sapp_set_mouse_cursor(cursor);
 }
-extern(C) MouseCursor sapp_get_mouse_cursor();
-MouseCursor getMouseCursor() {
+extern(C) MouseCursor sapp_get_mouse_cursor() @system @nogc nothrow;
+MouseCursor getMouseCursor() @trusted @nogc nothrow {
     return sapp_get_mouse_cursor();
 }
-extern(C) void* sapp_userdata();
-void* userdata() {
+extern(C) void* sapp_userdata() @system @nogc nothrow;
+void* userdata() @trusted @nogc nothrow {
     return sapp_userdata();
 }
-extern(C) Desc sapp_query_desc();
-Desc queryDesc() {
+extern(C) Desc sapp_query_desc() @system @nogc nothrow;
+Desc queryDesc() @trusted @nogc nothrow {
     return sapp_query_desc();
 }
-extern(C) void sapp_request_quit();
-void requestQuit() {
+extern(C) void sapp_request_quit() @system @nogc nothrow;
+void requestQuit() @trusted @nogc nothrow {
     sapp_request_quit();
 }
-extern(C) void sapp_cancel_quit();
-void cancelQuit() {
+extern(C) void sapp_cancel_quit() @system @nogc nothrow;
+void cancelQuit() @trusted @nogc nothrow {
     sapp_cancel_quit();
 }
-extern(C) void sapp_quit();
-void quit() {
+extern(C) void sapp_quit() @system @nogc nothrow;
+void quit() @trusted @nogc nothrow {
     sapp_quit();
 }
-extern(C) void sapp_consume_event();
-void consumeEvent() {
+extern(C) void sapp_consume_event() @system @nogc nothrow;
+void consumeEvent() @trusted @nogc nothrow {
     sapp_consume_event();
 }
-extern(C) ulong sapp_frame_count();
-ulong frameCount() {
+extern(C) ulong sapp_frame_count() @system @nogc nothrow;
+ulong frameCount() @trusted @nogc nothrow {
     return sapp_frame_count();
 }
-extern(C) double sapp_frame_duration();
-double frameDuration() {
+extern(C) double sapp_frame_duration() @system @nogc nothrow;
+double frameDuration() @trusted @nogc nothrow {
     return sapp_frame_duration();
 }
-extern(C) void sapp_set_clipboard_string(const(char*));
-void setClipboardString(scope const(char*) str) {
+extern(C) void sapp_set_clipboard_string(const(char*)) @system @nogc nothrow;
+void setClipboardString(scope const(char*) str) @trusted @nogc nothrow {
     sapp_set_clipboard_string(str);
 }
-extern(C) const(char*) sapp_get_clipboard_string();
-scope const(char*) getClipboardString() {
+extern(C) const(char*) sapp_get_clipboard_string() @system @nogc nothrow;
+scope const(char*) getClipboardString() @trusted @nogc nothrow {
     return sapp_get_clipboard_string();
 }
-extern(C) void sapp_set_window_title(const(char*));
-void setWindowTitle(scope const(char*) str) {
+extern(C) void sapp_set_window_title(const(char*)) @system @nogc nothrow;
+void setWindowTitle(scope const(char*) str) @trusted @nogc nothrow {
     sapp_set_window_title(str);
 }
-extern(C) void sapp_set_icon(const IconDesc *);
-void setIcon(IconDesc icon_desc) {
+extern(C) void sapp_set_icon(const IconDesc *) @system @nogc nothrow;
+void setIcon(IconDesc icon_desc) @trusted @nogc nothrow {
     sapp_set_icon(&icon_desc);
 }
-extern(C) int sapp_get_num_dropped_files();
-int getNumDroppedFiles() {
+extern(C) int sapp_get_num_dropped_files() @system @nogc nothrow;
+int getNumDroppedFiles() @trusted @nogc nothrow {
     return sapp_get_num_dropped_files();
 }
-extern(C) const(char*) sapp_get_dropped_file_path(int);
-scope const(char*) getDroppedFilePath(int index) {
+extern(C) const(char*) sapp_get_dropped_file_path(int) @system @nogc nothrow;
+scope const(char*) getDroppedFilePath(int index) @trusted @nogc nothrow {
     return sapp_get_dropped_file_path(index);
 }
-extern(C) void sapp_run(const Desc *);
-void run(Desc desc) {
+extern(C) void sapp_run(const Desc *) @system @nogc nothrow;
+void run(Desc desc) @trusted @nogc nothrow {
     sapp_run(&desc);
 }
-extern(C) const(void)* sapp_egl_get_display();
-const(void)* eglGetDisplay() {
+extern(C) const(void)* sapp_egl_get_display() @system @nogc nothrow;
+const(void)* eglGetDisplay() @trusted @nogc nothrow {
     return sapp_egl_get_display();
 }
-extern(C) const(void)* sapp_egl_get_context();
-const(void)* eglGetContext() {
+extern(C) const(void)* sapp_egl_get_context() @system @nogc nothrow;
+const(void)* eglGetContext() @trusted @nogc nothrow {
     return sapp_egl_get_context();
 }
-extern(C) void sapp_html5_ask_leave_site(bool);
-void html5AskLeaveSite(bool ask) {
+extern(C) void sapp_html5_ask_leave_site(bool) @system @nogc nothrow;
+void html5AskLeaveSite(bool ask) @trusted @nogc nothrow {
     sapp_html5_ask_leave_site(ask);
 }
-extern(C) uint sapp_html5_get_dropped_file_size(int);
-uint html5GetDroppedFileSize(int index) {
+extern(C) uint sapp_html5_get_dropped_file_size(int) @system @nogc nothrow;
+uint html5GetDroppedFileSize(int index) @trusted @nogc nothrow {
     return sapp_html5_get_dropped_file_size(index);
 }
-extern(C) void sapp_html5_fetch_dropped_file(const Html5FetchRequest *);
-void html5FetchDroppedFile(Html5FetchRequest request) {
+extern(C) void sapp_html5_fetch_dropped_file(const Html5FetchRequest *) @system @nogc nothrow;
+void html5FetchDroppedFile(Html5FetchRequest request) @trusted @nogc nothrow {
     sapp_html5_fetch_dropped_file(&request);
 }
-extern(C) const(void)* sapp_metal_get_device();
-const(void)* metalGetDevice() {
+extern(C) const(void)* sapp_metal_get_device() @system @nogc nothrow;
+const(void)* metalGetDevice() @trusted @nogc nothrow {
     return sapp_metal_get_device();
 }
-extern(C) const(void)* sapp_metal_get_renderpass_descriptor();
-const(void)* metalGetRenderpassDescriptor() {
+extern(C) const(void)* sapp_metal_get_renderpass_descriptor() @system @nogc nothrow;
+const(void)* metalGetRenderpassDescriptor() @trusted @nogc nothrow {
     return sapp_metal_get_renderpass_descriptor();
 }
-extern(C) const(void)* sapp_metal_get_drawable();
-const(void)* metalGetDrawable() {
+extern(C) const(void)* sapp_metal_get_drawable() @system @nogc nothrow;
+const(void)* metalGetDrawable() @trusted @nogc nothrow {
     return sapp_metal_get_drawable();
 }
-extern(C) const(void)* sapp_macos_get_window();
-const(void)* macosGetWindow() {
+extern(C) const(void)* sapp_macos_get_window() @system @nogc nothrow;
+const(void)* macosGetWindow() @trusted @nogc nothrow {
     return sapp_macos_get_window();
 }
-extern(C) const(void)* sapp_ios_get_window();
-const(void)* iosGetWindow() {
+extern(C) const(void)* sapp_ios_get_window() @system @nogc nothrow;
+const(void)* iosGetWindow() @trusted @nogc nothrow {
     return sapp_ios_get_window();
 }
-extern(C) const(void)* sapp_d3d11_get_device();
-const(void)* d3d11GetDevice() {
+extern(C) const(void)* sapp_d3d11_get_device() @system @nogc nothrow;
+const(void)* d3d11GetDevice() @trusted @nogc nothrow {
     return sapp_d3d11_get_device();
 }
-extern(C) const(void)* sapp_d3d11_get_device_context();
-const(void)* d3d11GetDeviceContext() {
+extern(C) const(void)* sapp_d3d11_get_device_context() @system @nogc nothrow;
+const(void)* d3d11GetDeviceContext() @trusted @nogc nothrow {
     return sapp_d3d11_get_device_context();
 }
-extern(C) const(void)* sapp_d3d11_get_swap_chain();
-const(void)* d3d11GetSwapChain() {
+extern(C) const(void)* sapp_d3d11_get_swap_chain() @system @nogc nothrow;
+const(void)* d3d11GetSwapChain() @trusted @nogc nothrow {
     return sapp_d3d11_get_swap_chain();
 }
-extern(C) const(void)* sapp_d3d11_get_render_target_view();
-const(void)* d3d11GetRenderTargetView() {
+extern(C) const(void)* sapp_d3d11_get_render_target_view() @system @nogc nothrow;
+const(void)* d3d11GetRenderTargetView() @trusted @nogc nothrow {
     return sapp_d3d11_get_render_target_view();
 }
-extern(C) const(void)* sapp_d3d11_get_depth_stencil_view();
-const(void)* d3d11GetDepthStencilView() {
+extern(C) const(void)* sapp_d3d11_get_depth_stencil_view() @system @nogc nothrow;
+const(void)* d3d11GetDepthStencilView() @trusted @nogc nothrow {
     return sapp_d3d11_get_depth_stencil_view();
 }
-extern(C) const(void)* sapp_win32_get_hwnd();
-const(void)* win32GetHwnd() {
+extern(C) const(void)* sapp_win32_get_hwnd() @system @nogc nothrow;
+const(void)* win32GetHwnd() @trusted @nogc nothrow {
     return sapp_win32_get_hwnd();
 }
-extern(C) const(void)* sapp_wgpu_get_device();
-const(void)* wgpuGetDevice() {
+extern(C) const(void)* sapp_wgpu_get_device() @system @nogc nothrow;
+const(void)* wgpuGetDevice() @trusted @nogc nothrow {
     return sapp_wgpu_get_device();
 }
-extern(C) const(void)* sapp_wgpu_get_render_view();
-const(void)* wgpuGetRenderView() {
+extern(C) const(void)* sapp_wgpu_get_render_view() @system @nogc nothrow;
+const(void)* wgpuGetRenderView() @trusted @nogc nothrow {
     return sapp_wgpu_get_render_view();
 }
-extern(C) const(void)* sapp_wgpu_get_resolve_view();
-const(void)* wgpuGetResolveView() {
+extern(C) const(void)* sapp_wgpu_get_resolve_view() @system @nogc nothrow;
+const(void)* wgpuGetResolveView() @trusted @nogc nothrow {
     return sapp_wgpu_get_resolve_view();
 }
-extern(C) const(void)* sapp_wgpu_get_depth_stencil_view();
-const(void)* wgpuGetDepthStencilView() {
+extern(C) const(void)* sapp_wgpu_get_depth_stencil_view() @system @nogc nothrow;
+const(void)* wgpuGetDepthStencilView() @trusted @nogc nothrow {
     return sapp_wgpu_get_depth_stencil_view();
 }
-extern(C) const(void)* sapp_android_get_native_activity();
-const(void)* androidGetNativeActivity() {
+extern(C) const(void)* sapp_android_get_native_activity() @system @nogc nothrow;
+const(void)* androidGetNativeActivity() @trusted @nogc nothrow {
     return sapp_android_get_native_activity();
 }

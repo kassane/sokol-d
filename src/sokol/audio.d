@@ -66,47 +66,47 @@ struct Desc {
     Allocator allocator;
     Logger logger;
 }
-extern(C) void saudio_setup(const Desc *);
-void setup(Desc desc) {
+extern(C) void saudio_setup(const Desc *) @system @nogc nothrow;
+void setup(Desc desc) @trusted @nogc nothrow {
     saudio_setup(&desc);
 }
-extern(C) void saudio_shutdown();
-void shutdown() {
+extern(C) void saudio_shutdown() @system @nogc nothrow;
+void shutdown() @trusted @nogc nothrow {
     saudio_shutdown();
 }
-extern(C) bool saudio_isvalid();
-bool isvalid() {
+extern(C) bool saudio_isvalid() @system @nogc nothrow;
+bool isvalid() @trusted @nogc nothrow {
     return saudio_isvalid();
 }
-extern(C) void* saudio_userdata();
-void* userdata() {
+extern(C) void* saudio_userdata() @system @nogc nothrow;
+void* userdata() @trusted @nogc nothrow {
     return saudio_userdata();
 }
-extern(C) Desc saudio_query_desc();
-Desc queryDesc() {
+extern(C) Desc saudio_query_desc() @system @nogc nothrow;
+Desc queryDesc() @trusted @nogc nothrow {
     return saudio_query_desc();
 }
-extern(C) int saudio_sample_rate();
-int sampleRate() {
+extern(C) int saudio_sample_rate() @system @nogc nothrow;
+int sampleRate() @trusted @nogc nothrow {
     return saudio_sample_rate();
 }
-extern(C) int saudio_buffer_frames();
-int bufferFrames() {
+extern(C) int saudio_buffer_frames() @system @nogc nothrow;
+int bufferFrames() @trusted @nogc nothrow {
     return saudio_buffer_frames();
 }
-extern(C) int saudio_channels();
-int channels() {
+extern(C) int saudio_channels() @system @nogc nothrow;
+int channels() @trusted @nogc nothrow {
     return saudio_channels();
 }
-extern(C) bool saudio_suspended();
-bool suspended() {
+extern(C) bool saudio_suspended() @system @nogc nothrow;
+bool suspended() @trusted @nogc nothrow {
     return saudio_suspended();
 }
-extern(C) int saudio_expect();
-int expect() {
+extern(C) int saudio_expect() @system @nogc nothrow;
+int expect() @trusted @nogc nothrow {
     return saudio_expect();
 }
-extern(C) int saudio_push(const float *, int);
-int push(const float * frames, int num_frames) {
+extern(C) int saudio_push(const float *, int) @system @nogc nothrow;
+int push(const float * frames, int num_frames) @trusted @nogc nothrow {
     return saudio_push(frames, num_frames);
 }

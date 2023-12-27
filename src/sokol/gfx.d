@@ -1180,424 +1180,424 @@ struct Desc {
     ContextDesc context;
     uint _end_canary;
 }
-extern(C) void sg_setup(const Desc *);
-void setup(Desc desc) {
+extern(C) void sg_setup(const Desc *) @system @nogc nothrow;
+void setup(Desc desc) @trusted @nogc nothrow {
     sg_setup(&desc);
 }
-extern(C) void sg_shutdown();
-void shutdown() {
+extern(C) void sg_shutdown() @system @nogc nothrow;
+void shutdown() @trusted @nogc nothrow {
     sg_shutdown();
 }
-extern(C) bool sg_isvalid();
-bool isvalid() {
+extern(C) bool sg_isvalid() @system @nogc nothrow;
+bool isvalid() @trusted @nogc nothrow {
     return sg_isvalid();
 }
-extern(C) void sg_reset_state_cache();
-void resetStateCache() {
+extern(C) void sg_reset_state_cache() @system @nogc nothrow;
+void resetStateCache() @trusted @nogc nothrow {
     sg_reset_state_cache();
 }
-extern(C) TraceHooks sg_install_trace_hooks(const TraceHooks *);
-TraceHooks installTraceHooks(TraceHooks trace_hooks) {
+extern(C) TraceHooks sg_install_trace_hooks(const TraceHooks *) @system @nogc nothrow;
+TraceHooks installTraceHooks(TraceHooks trace_hooks) @trusted @nogc nothrow {
     return sg_install_trace_hooks(&trace_hooks);
 }
-extern(C) void sg_push_debug_group(const(char*));
-void pushDebugGroup(scope const(char*) name) {
+extern(C) void sg_push_debug_group(const(char*)) @system @nogc nothrow;
+void pushDebugGroup(scope const(char*) name) @trusted @nogc nothrow {
     sg_push_debug_group(name);
 }
-extern(C) void sg_pop_debug_group();
-void popDebugGroup() {
+extern(C) void sg_pop_debug_group() @system @nogc nothrow;
+void popDebugGroup() @trusted @nogc nothrow {
     sg_pop_debug_group();
 }
-extern(C) bool sg_add_commit_listener(CommitListener);
-bool addCommitListener(CommitListener listener) {
+extern(C) bool sg_add_commit_listener(CommitListener) @system @nogc nothrow;
+bool addCommitListener(CommitListener listener) @trusted @nogc nothrow {
     return sg_add_commit_listener(listener);
 }
-extern(C) bool sg_remove_commit_listener(CommitListener);
-bool removeCommitListener(CommitListener listener) {
+extern(C) bool sg_remove_commit_listener(CommitListener) @system @nogc nothrow;
+bool removeCommitListener(CommitListener listener) @trusted @nogc nothrow {
     return sg_remove_commit_listener(listener);
 }
-extern(C) Buffer sg_make_buffer(const BufferDesc *);
-Buffer makeBuffer(BufferDesc desc) {
+extern(C) Buffer sg_make_buffer(const BufferDesc *) @system @nogc nothrow;
+Buffer makeBuffer(BufferDesc desc) @trusted @nogc nothrow {
     return sg_make_buffer(&desc);
 }
-extern(C) Image sg_make_image(const ImageDesc *);
-Image makeImage(ImageDesc desc) {
+extern(C) Image sg_make_image(const ImageDesc *) @system @nogc nothrow;
+Image makeImage(ImageDesc desc) @trusted @nogc nothrow {
     return sg_make_image(&desc);
 }
-extern(C) Sampler sg_make_sampler(const SamplerDesc *);
-Sampler makeSampler(SamplerDesc desc) {
+extern(C) Sampler sg_make_sampler(const SamplerDesc *) @system @nogc nothrow;
+Sampler makeSampler(SamplerDesc desc) @trusted @nogc nothrow {
     return sg_make_sampler(&desc);
 }
-extern(C) Shader sg_make_shader(const ShaderDesc *);
-Shader makeShader(ShaderDesc desc) {
+extern(C) Shader sg_make_shader(const ShaderDesc *) @system @nogc nothrow;
+Shader makeShader(ShaderDesc desc) @trusted @nogc nothrow {
     return sg_make_shader(&desc);
 }
-extern(C) Pipeline sg_make_pipeline(const PipelineDesc *);
-Pipeline makePipeline(PipelineDesc desc) {
+extern(C) Pipeline sg_make_pipeline(const PipelineDesc *) @system @nogc nothrow;
+Pipeline makePipeline(PipelineDesc desc) @trusted @nogc nothrow {
     return sg_make_pipeline(&desc);
 }
-extern(C) Pass sg_make_pass(const PassDesc *);
-Pass makePass(PassDesc desc) {
+extern(C) Pass sg_make_pass(const PassDesc *) @system @nogc nothrow;
+Pass makePass(PassDesc desc) @trusted @nogc nothrow {
     return sg_make_pass(&desc);
 }
-extern(C) void sg_destroy_buffer(Buffer);
-void destroyBuffer(Buffer buf) {
+extern(C) void sg_destroy_buffer(Buffer) @system @nogc nothrow;
+void destroyBuffer(Buffer buf) @trusted @nogc nothrow {
     sg_destroy_buffer(buf);
 }
-extern(C) void sg_destroy_image(Image);
-void destroyImage(Image img) {
+extern(C) void sg_destroy_image(Image) @system @nogc nothrow;
+void destroyImage(Image img) @trusted @nogc nothrow {
     sg_destroy_image(img);
 }
-extern(C) void sg_destroy_sampler(Sampler);
-void destroySampler(Sampler smp) {
+extern(C) void sg_destroy_sampler(Sampler) @system @nogc nothrow;
+void destroySampler(Sampler smp) @trusted @nogc nothrow {
     sg_destroy_sampler(smp);
 }
-extern(C) void sg_destroy_shader(Shader);
-void destroyShader(Shader shd) {
+extern(C) void sg_destroy_shader(Shader) @system @nogc nothrow;
+void destroyShader(Shader shd) @trusted @nogc nothrow {
     sg_destroy_shader(shd);
 }
-extern(C) void sg_destroy_pipeline(Pipeline);
-void destroyPipeline(Pipeline pip) {
+extern(C) void sg_destroy_pipeline(Pipeline) @system @nogc nothrow;
+void destroyPipeline(Pipeline pip) @trusted @nogc nothrow {
     sg_destroy_pipeline(pip);
 }
-extern(C) void sg_destroy_pass(Pass);
-void destroyPass(Pass pass) {
+extern(C) void sg_destroy_pass(Pass) @system @nogc nothrow;
+void destroyPass(Pass pass) @trusted @nogc nothrow {
     sg_destroy_pass(pass);
 }
-extern(C) void sg_update_buffer(Buffer, const Range *);
-void updateBuffer(Buffer buf, Range data) {
+extern(C) void sg_update_buffer(Buffer, const Range *) @system @nogc nothrow;
+void updateBuffer(Buffer buf, Range data) @trusted @nogc nothrow {
     sg_update_buffer(buf, &data);
 }
-extern(C) void sg_update_image(Image, const ImageData *);
-void updateImage(Image img, ImageData data) {
+extern(C) void sg_update_image(Image, const ImageData *) @system @nogc nothrow;
+void updateImage(Image img, ImageData data) @trusted @nogc nothrow {
     sg_update_image(img, &data);
 }
-extern(C) int sg_append_buffer(Buffer, const Range *);
-int appendBuffer(Buffer buf, Range data) {
+extern(C) int sg_append_buffer(Buffer, const Range *) @system @nogc nothrow;
+int appendBuffer(Buffer buf, Range data) @trusted @nogc nothrow {
     return sg_append_buffer(buf, &data);
 }
-extern(C) bool sg_query_buffer_overflow(Buffer);
-bool queryBufferOverflow(Buffer buf) {
+extern(C) bool sg_query_buffer_overflow(Buffer) @system @nogc nothrow;
+bool queryBufferOverflow(Buffer buf) @trusted @nogc nothrow {
     return sg_query_buffer_overflow(buf);
 }
-extern(C) bool sg_query_buffer_will_overflow(Buffer, size_t);
-bool queryBufferWillOverflow(Buffer buf, size_t size) {
+extern(C) bool sg_query_buffer_will_overflow(Buffer, size_t) @system @nogc nothrow;
+bool queryBufferWillOverflow(Buffer buf, size_t size) @trusted @nogc nothrow {
     return sg_query_buffer_will_overflow(buf, size);
 }
-extern(C) void sg_begin_default_pass(const PassAction *, int, int);
-void beginDefaultPass(PassAction pass_action, int width, int height) {
+extern(C) void sg_begin_default_pass(const PassAction *, int, int) @system @nogc nothrow;
+void beginDefaultPass(PassAction pass_action, int width, int height) @trusted @nogc nothrow {
     sg_begin_default_pass(&pass_action, width, height);
 }
-extern(C) void sg_begin_default_passf(const PassAction *, float, float);
-void beginDefaultPassf(PassAction pass_action, float width, float height) {
+extern(C) void sg_begin_default_passf(const PassAction *, float, float) @system @nogc nothrow;
+void beginDefaultPassf(PassAction pass_action, float width, float height) @trusted @nogc nothrow {
     sg_begin_default_passf(&pass_action, width, height);
 }
-extern(C) void sg_begin_pass(Pass, const PassAction *);
-void beginPass(Pass pass, PassAction pass_action) {
+extern(C) void sg_begin_pass(Pass, const PassAction *) @system @nogc nothrow;
+void beginPass(Pass pass, PassAction pass_action) @trusted @nogc nothrow {
     sg_begin_pass(pass, &pass_action);
 }
-extern(C) void sg_apply_viewport(int, int, int, int, bool);
-void applyViewport(int x, int y, int width, int height, bool origin_top_left) {
+extern(C) void sg_apply_viewport(int, int, int, int, bool) @system @nogc nothrow;
+void applyViewport(int x, int y, int width, int height, bool origin_top_left) @trusted @nogc nothrow {
     sg_apply_viewport(x, y, width, height, origin_top_left);
 }
-extern(C) void sg_apply_viewportf(float, float, float, float, bool);
-void applyViewportf(float x, float y, float width, float height, bool origin_top_left) {
+extern(C) void sg_apply_viewportf(float, float, float, float, bool) @system @nogc nothrow;
+void applyViewportf(float x, float y, float width, float height, bool origin_top_left) @trusted @nogc nothrow {
     sg_apply_viewportf(x, y, width, height, origin_top_left);
 }
-extern(C) void sg_apply_scissor_rect(int, int, int, int, bool);
-void applyScissorRect(int x, int y, int width, int height, bool origin_top_left) {
+extern(C) void sg_apply_scissor_rect(int, int, int, int, bool) @system @nogc nothrow;
+void applyScissorRect(int x, int y, int width, int height, bool origin_top_left) @trusted @nogc nothrow {
     sg_apply_scissor_rect(x, y, width, height, origin_top_left);
 }
-extern(C) void sg_apply_scissor_rectf(float, float, float, float, bool);
-void applyScissorRectf(float x, float y, float width, float height, bool origin_top_left) {
+extern(C) void sg_apply_scissor_rectf(float, float, float, float, bool) @system @nogc nothrow;
+void applyScissorRectf(float x, float y, float width, float height, bool origin_top_left) @trusted @nogc nothrow {
     sg_apply_scissor_rectf(x, y, width, height, origin_top_left);
 }
-extern(C) void sg_apply_pipeline(Pipeline);
-void applyPipeline(Pipeline pip) {
+extern(C) void sg_apply_pipeline(Pipeline) @system @nogc nothrow;
+void applyPipeline(Pipeline pip) @trusted @nogc nothrow {
     sg_apply_pipeline(pip);
 }
-extern(C) void sg_apply_bindings(const Bindings *);
-void applyBindings(Bindings bindings) {
+extern(C) void sg_apply_bindings(const Bindings *) @system @nogc nothrow;
+void applyBindings(Bindings bindings) @trusted @nogc nothrow {
     sg_apply_bindings(&bindings);
 }
-extern(C) void sg_apply_uniforms(ShaderStage, uint, const Range *);
-void applyUniforms(ShaderStage stage, uint ub_index, Range data) {
+extern(C) void sg_apply_uniforms(ShaderStage, uint, const Range *) @system @nogc nothrow;
+void applyUniforms(ShaderStage stage, uint ub_index, Range data) @trusted @nogc nothrow {
     sg_apply_uniforms(stage, ub_index, &data);
 }
-extern(C) void sg_draw(uint, uint, uint);
-void draw(uint base_element, uint num_elements, uint num_instances) {
+extern(C) void sg_draw(uint, uint, uint) @system @nogc nothrow;
+void draw(uint base_element, uint num_elements, uint num_instances) @trusted @nogc nothrow {
     sg_draw(base_element, num_elements, num_instances);
 }
-extern(C) void sg_end_pass();
-void endPass() {
+extern(C) void sg_end_pass() @system @nogc nothrow;
+void endPass() @trusted @nogc nothrow {
     sg_end_pass();
 }
-extern(C) void sg_commit();
-void commit() {
+extern(C) void sg_commit() @system @nogc nothrow;
+void commit() @trusted @nogc nothrow {
     sg_commit();
 }
-extern(C) Desc sg_query_desc();
-Desc queryDesc() {
+extern(C) Desc sg_query_desc() @system @nogc nothrow;
+Desc queryDesc() @trusted @nogc nothrow {
     return sg_query_desc();
 }
-extern(C) Backend sg_query_backend();
-Backend queryBackend() {
+extern(C) Backend sg_query_backend() @system @nogc nothrow;
+Backend queryBackend() @trusted @nogc nothrow {
     return sg_query_backend();
 }
-extern(C) Features sg_query_features();
-Features queryFeatures() {
+extern(C) Features sg_query_features() @system @nogc nothrow;
+Features queryFeatures() @trusted @nogc nothrow {
     return sg_query_features();
 }
-extern(C) Limits sg_query_limits();
-Limits queryLimits() {
+extern(C) Limits sg_query_limits() @system @nogc nothrow;
+Limits queryLimits() @trusted @nogc nothrow {
     return sg_query_limits();
 }
-extern(C) PixelformatInfo sg_query_pixelformat(PixelFormat);
-PixelformatInfo queryPixelformat(PixelFormat fmt) {
+extern(C) PixelformatInfo sg_query_pixelformat(PixelFormat) @system @nogc nothrow;
+PixelformatInfo queryPixelformat(PixelFormat fmt) @trusted @nogc nothrow {
     return sg_query_pixelformat(fmt);
 }
-extern(C) ResourceState sg_query_buffer_state(Buffer);
-ResourceState queryBufferState(Buffer buf) {
+extern(C) ResourceState sg_query_buffer_state(Buffer) @system @nogc nothrow;
+ResourceState queryBufferState(Buffer buf) @trusted @nogc nothrow {
     return sg_query_buffer_state(buf);
 }
-extern(C) ResourceState sg_query_image_state(Image);
-ResourceState queryImageState(Image img) {
+extern(C) ResourceState sg_query_image_state(Image) @system @nogc nothrow;
+ResourceState queryImageState(Image img) @trusted @nogc nothrow {
     return sg_query_image_state(img);
 }
-extern(C) ResourceState sg_query_sampler_state(Sampler);
-ResourceState querySamplerState(Sampler smp) {
+extern(C) ResourceState sg_query_sampler_state(Sampler) @system @nogc nothrow;
+ResourceState querySamplerState(Sampler smp) @trusted @nogc nothrow {
     return sg_query_sampler_state(smp);
 }
-extern(C) ResourceState sg_query_shader_state(Shader);
-ResourceState queryShaderState(Shader shd) {
+extern(C) ResourceState sg_query_shader_state(Shader) @system @nogc nothrow;
+ResourceState queryShaderState(Shader shd) @trusted @nogc nothrow {
     return sg_query_shader_state(shd);
 }
-extern(C) ResourceState sg_query_pipeline_state(Pipeline);
-ResourceState queryPipelineState(Pipeline pip) {
+extern(C) ResourceState sg_query_pipeline_state(Pipeline) @system @nogc nothrow;
+ResourceState queryPipelineState(Pipeline pip) @trusted @nogc nothrow {
     return sg_query_pipeline_state(pip);
 }
-extern(C) ResourceState sg_query_pass_state(Pass);
-ResourceState queryPassState(Pass pass) {
+extern(C) ResourceState sg_query_pass_state(Pass) @system @nogc nothrow;
+ResourceState queryPassState(Pass pass) @trusted @nogc nothrow {
     return sg_query_pass_state(pass);
 }
-extern(C) BufferInfo sg_query_buffer_info(Buffer);
-BufferInfo queryBufferInfo(Buffer buf) {
+extern(C) BufferInfo sg_query_buffer_info(Buffer) @system @nogc nothrow;
+BufferInfo queryBufferInfo(Buffer buf) @trusted @nogc nothrow {
     return sg_query_buffer_info(buf);
 }
-extern(C) ImageInfo sg_query_image_info(Image);
-ImageInfo queryImageInfo(Image img) {
+extern(C) ImageInfo sg_query_image_info(Image) @system @nogc nothrow;
+ImageInfo queryImageInfo(Image img) @trusted @nogc nothrow {
     return sg_query_image_info(img);
 }
-extern(C) SamplerInfo sg_query_sampler_info(Sampler);
-SamplerInfo querySamplerInfo(Sampler smp) {
+extern(C) SamplerInfo sg_query_sampler_info(Sampler) @system @nogc nothrow;
+SamplerInfo querySamplerInfo(Sampler smp) @trusted @nogc nothrow {
     return sg_query_sampler_info(smp);
 }
-extern(C) ShaderInfo sg_query_shader_info(Shader);
-ShaderInfo queryShaderInfo(Shader shd) {
+extern(C) ShaderInfo sg_query_shader_info(Shader) @system @nogc nothrow;
+ShaderInfo queryShaderInfo(Shader shd) @trusted @nogc nothrow {
     return sg_query_shader_info(shd);
 }
-extern(C) PipelineInfo sg_query_pipeline_info(Pipeline);
-PipelineInfo queryPipelineInfo(Pipeline pip) {
+extern(C) PipelineInfo sg_query_pipeline_info(Pipeline) @system @nogc nothrow;
+PipelineInfo queryPipelineInfo(Pipeline pip) @trusted @nogc nothrow {
     return sg_query_pipeline_info(pip);
 }
-extern(C) PassInfo sg_query_pass_info(Pass);
-PassInfo queryPassInfo(Pass pass) {
+extern(C) PassInfo sg_query_pass_info(Pass) @system @nogc nothrow;
+PassInfo queryPassInfo(Pass pass) @trusted @nogc nothrow {
     return sg_query_pass_info(pass);
 }
-extern(C) BufferDesc sg_query_buffer_desc(Buffer);
-BufferDesc queryBufferDesc(Buffer buf) {
+extern(C) BufferDesc sg_query_buffer_desc(Buffer) @system @nogc nothrow;
+BufferDesc queryBufferDesc(Buffer buf) @trusted @nogc nothrow {
     return sg_query_buffer_desc(buf);
 }
-extern(C) ImageDesc sg_query_image_desc(Image);
-ImageDesc queryImageDesc(Image img) {
+extern(C) ImageDesc sg_query_image_desc(Image) @system @nogc nothrow;
+ImageDesc queryImageDesc(Image img) @trusted @nogc nothrow {
     return sg_query_image_desc(img);
 }
-extern(C) SamplerDesc sg_query_sampler_desc(Sampler);
-SamplerDesc querySamplerDesc(Sampler smp) {
+extern(C) SamplerDesc sg_query_sampler_desc(Sampler) @system @nogc nothrow;
+SamplerDesc querySamplerDesc(Sampler smp) @trusted @nogc nothrow {
     return sg_query_sampler_desc(smp);
 }
-extern(C) ShaderDesc sg_query_shader_desc(Shader);
-ShaderDesc queryShaderDesc(Shader shd) {
+extern(C) ShaderDesc sg_query_shader_desc(Shader) @system @nogc nothrow;
+ShaderDesc queryShaderDesc(Shader shd) @trusted @nogc nothrow {
     return sg_query_shader_desc(shd);
 }
-extern(C) PipelineDesc sg_query_pipeline_desc(Pipeline);
-PipelineDesc queryPipelineDesc(Pipeline pip) {
+extern(C) PipelineDesc sg_query_pipeline_desc(Pipeline) @system @nogc nothrow;
+PipelineDesc queryPipelineDesc(Pipeline pip) @trusted @nogc nothrow {
     return sg_query_pipeline_desc(pip);
 }
-extern(C) PassDesc sg_query_pass_desc(Pass);
-PassDesc queryPassDesc(Pass pass) {
+extern(C) PassDesc sg_query_pass_desc(Pass) @system @nogc nothrow;
+PassDesc queryPassDesc(Pass pass) @trusted @nogc nothrow {
     return sg_query_pass_desc(pass);
 }
-extern(C) BufferDesc sg_query_buffer_defaults(const BufferDesc *);
-BufferDesc queryBufferDefaults(BufferDesc desc) {
+extern(C) BufferDesc sg_query_buffer_defaults(const BufferDesc *) @system @nogc nothrow;
+BufferDesc queryBufferDefaults(BufferDesc desc) @trusted @nogc nothrow {
     return sg_query_buffer_defaults(&desc);
 }
-extern(C) ImageDesc sg_query_image_defaults(const ImageDesc *);
-ImageDesc queryImageDefaults(ImageDesc desc) {
+extern(C) ImageDesc sg_query_image_defaults(const ImageDesc *) @system @nogc nothrow;
+ImageDesc queryImageDefaults(ImageDesc desc) @trusted @nogc nothrow {
     return sg_query_image_defaults(&desc);
 }
-extern(C) SamplerDesc sg_query_sampler_defaults(const SamplerDesc *);
-SamplerDesc querySamplerDefaults(SamplerDesc desc) {
+extern(C) SamplerDesc sg_query_sampler_defaults(const SamplerDesc *) @system @nogc nothrow;
+SamplerDesc querySamplerDefaults(SamplerDesc desc) @trusted @nogc nothrow {
     return sg_query_sampler_defaults(&desc);
 }
-extern(C) ShaderDesc sg_query_shader_defaults(const ShaderDesc *);
-ShaderDesc queryShaderDefaults(ShaderDesc desc) {
+extern(C) ShaderDesc sg_query_shader_defaults(const ShaderDesc *) @system @nogc nothrow;
+ShaderDesc queryShaderDefaults(ShaderDesc desc) @trusted @nogc nothrow {
     return sg_query_shader_defaults(&desc);
 }
-extern(C) PipelineDesc sg_query_pipeline_defaults(const PipelineDesc *);
-PipelineDesc queryPipelineDefaults(PipelineDesc desc) {
+extern(C) PipelineDesc sg_query_pipeline_defaults(const PipelineDesc *) @system @nogc nothrow;
+PipelineDesc queryPipelineDefaults(PipelineDesc desc) @trusted @nogc nothrow {
     return sg_query_pipeline_defaults(&desc);
 }
-extern(C) PassDesc sg_query_pass_defaults(const PassDesc *);
-PassDesc queryPassDefaults(PassDesc desc) {
+extern(C) PassDesc sg_query_pass_defaults(const PassDesc *) @system @nogc nothrow;
+PassDesc queryPassDefaults(PassDesc desc) @trusted @nogc nothrow {
     return sg_query_pass_defaults(&desc);
 }
-extern(C) Buffer sg_alloc_buffer();
-Buffer allocBuffer() {
+extern(C) Buffer sg_alloc_buffer() @system @nogc nothrow;
+Buffer allocBuffer() @trusted @nogc nothrow {
     return sg_alloc_buffer();
 }
-extern(C) Image sg_alloc_image();
-Image allocImage() {
+extern(C) Image sg_alloc_image() @system @nogc nothrow;
+Image allocImage() @trusted @nogc nothrow {
     return sg_alloc_image();
 }
-extern(C) Sampler sg_alloc_sampler();
-Sampler allocSampler() {
+extern(C) Sampler sg_alloc_sampler() @system @nogc nothrow;
+Sampler allocSampler() @trusted @nogc nothrow {
     return sg_alloc_sampler();
 }
-extern(C) Shader sg_alloc_shader();
-Shader allocShader() {
+extern(C) Shader sg_alloc_shader() @system @nogc nothrow;
+Shader allocShader() @trusted @nogc nothrow {
     return sg_alloc_shader();
 }
-extern(C) Pipeline sg_alloc_pipeline();
-Pipeline allocPipeline() {
+extern(C) Pipeline sg_alloc_pipeline() @system @nogc nothrow;
+Pipeline allocPipeline() @trusted @nogc nothrow {
     return sg_alloc_pipeline();
 }
-extern(C) Pass sg_alloc_pass();
-Pass allocPass() {
+extern(C) Pass sg_alloc_pass() @system @nogc nothrow;
+Pass allocPass() @trusted @nogc nothrow {
     return sg_alloc_pass();
 }
-extern(C) void sg_dealloc_buffer(Buffer);
-void deallocBuffer(Buffer buf) {
+extern(C) void sg_dealloc_buffer(Buffer) @system @nogc nothrow;
+void deallocBuffer(Buffer buf) @trusted @nogc nothrow {
     sg_dealloc_buffer(buf);
 }
-extern(C) void sg_dealloc_image(Image);
-void deallocImage(Image img) {
+extern(C) void sg_dealloc_image(Image) @system @nogc nothrow;
+void deallocImage(Image img) @trusted @nogc nothrow {
     sg_dealloc_image(img);
 }
-extern(C) void sg_dealloc_sampler(Sampler);
-void deallocSampler(Sampler smp) {
+extern(C) void sg_dealloc_sampler(Sampler) @system @nogc nothrow;
+void deallocSampler(Sampler smp) @trusted @nogc nothrow {
     sg_dealloc_sampler(smp);
 }
-extern(C) void sg_dealloc_shader(Shader);
-void deallocShader(Shader shd) {
+extern(C) void sg_dealloc_shader(Shader) @system @nogc nothrow;
+void deallocShader(Shader shd) @trusted @nogc nothrow {
     sg_dealloc_shader(shd);
 }
-extern(C) void sg_dealloc_pipeline(Pipeline);
-void deallocPipeline(Pipeline pip) {
+extern(C) void sg_dealloc_pipeline(Pipeline) @system @nogc nothrow;
+void deallocPipeline(Pipeline pip) @trusted @nogc nothrow {
     sg_dealloc_pipeline(pip);
 }
-extern(C) void sg_dealloc_pass(Pass);
-void deallocPass(Pass pass) {
+extern(C) void sg_dealloc_pass(Pass) @system @nogc nothrow;
+void deallocPass(Pass pass) @trusted @nogc nothrow {
     sg_dealloc_pass(pass);
 }
-extern(C) void sg_init_buffer(Buffer, const BufferDesc *);
-void initBuffer(Buffer buf, BufferDesc desc) {
+extern(C) void sg_init_buffer(Buffer, const BufferDesc *) @system @nogc nothrow;
+void initBuffer(Buffer buf, BufferDesc desc) @trusted @nogc nothrow {
     sg_init_buffer(buf, &desc);
 }
-extern(C) void sg_init_image(Image, const ImageDesc *);
-void initImage(Image img, ImageDesc desc) {
+extern(C) void sg_init_image(Image, const ImageDesc *) @system @nogc nothrow;
+void initImage(Image img, ImageDesc desc) @trusted @nogc nothrow {
     sg_init_image(img, &desc);
 }
-extern(C) void sg_init_sampler(Sampler, const SamplerDesc *);
-void initSampler(Sampler smg, SamplerDesc desc) {
+extern(C) void sg_init_sampler(Sampler, const SamplerDesc *) @system @nogc nothrow;
+void initSampler(Sampler smg, SamplerDesc desc) @trusted @nogc nothrow {
     sg_init_sampler(smg, &desc);
 }
-extern(C) void sg_init_shader(Shader, const ShaderDesc *);
-void initShader(Shader shd, ShaderDesc desc) {
+extern(C) void sg_init_shader(Shader, const ShaderDesc *) @system @nogc nothrow;
+void initShader(Shader shd, ShaderDesc desc) @trusted @nogc nothrow {
     sg_init_shader(shd, &desc);
 }
-extern(C) void sg_init_pipeline(Pipeline, const PipelineDesc *);
-void initPipeline(Pipeline pip, PipelineDesc desc) {
+extern(C) void sg_init_pipeline(Pipeline, const PipelineDesc *) @system @nogc nothrow;
+void initPipeline(Pipeline pip, PipelineDesc desc) @trusted @nogc nothrow {
     sg_init_pipeline(pip, &desc);
 }
-extern(C) void sg_init_pass(Pass, const PassDesc *);
-void initPass(Pass pass, PassDesc desc) {
+extern(C) void sg_init_pass(Pass, const PassDesc *) @system @nogc nothrow;
+void initPass(Pass pass, PassDesc desc) @trusted @nogc nothrow {
     sg_init_pass(pass, &desc);
 }
-extern(C) void sg_uninit_buffer(Buffer);
-void uninitBuffer(Buffer buf) {
+extern(C) void sg_uninit_buffer(Buffer) @system @nogc nothrow;
+void uninitBuffer(Buffer buf) @trusted @nogc nothrow {
     sg_uninit_buffer(buf);
 }
-extern(C) void sg_uninit_image(Image);
-void uninitImage(Image img) {
+extern(C) void sg_uninit_image(Image) @system @nogc nothrow;
+void uninitImage(Image img) @trusted @nogc nothrow {
     sg_uninit_image(img);
 }
-extern(C) void sg_uninit_sampler(Sampler);
-void uninitSampler(Sampler smp) {
+extern(C) void sg_uninit_sampler(Sampler) @system @nogc nothrow;
+void uninitSampler(Sampler smp) @trusted @nogc nothrow {
     sg_uninit_sampler(smp);
 }
-extern(C) void sg_uninit_shader(Shader);
-void uninitShader(Shader shd) {
+extern(C) void sg_uninit_shader(Shader) @system @nogc nothrow;
+void uninitShader(Shader shd) @trusted @nogc nothrow {
     sg_uninit_shader(shd);
 }
-extern(C) void sg_uninit_pipeline(Pipeline);
-void uninitPipeline(Pipeline pip) {
+extern(C) void sg_uninit_pipeline(Pipeline) @system @nogc nothrow;
+void uninitPipeline(Pipeline pip) @trusted @nogc nothrow {
     sg_uninit_pipeline(pip);
 }
-extern(C) void sg_uninit_pass(Pass);
-void uninitPass(Pass pass) {
+extern(C) void sg_uninit_pass(Pass) @system @nogc nothrow;
+void uninitPass(Pass pass) @trusted @nogc nothrow {
     sg_uninit_pass(pass);
 }
-extern(C) void sg_fail_buffer(Buffer);
-void failBuffer(Buffer buf) {
+extern(C) void sg_fail_buffer(Buffer) @system @nogc nothrow;
+void failBuffer(Buffer buf) @trusted @nogc nothrow {
     sg_fail_buffer(buf);
 }
-extern(C) void sg_fail_image(Image);
-void failImage(Image img) {
+extern(C) void sg_fail_image(Image) @system @nogc nothrow;
+void failImage(Image img) @trusted @nogc nothrow {
     sg_fail_image(img);
 }
-extern(C) void sg_fail_sampler(Sampler);
-void failSampler(Sampler smp) {
+extern(C) void sg_fail_sampler(Sampler) @system @nogc nothrow;
+void failSampler(Sampler smp) @trusted @nogc nothrow {
     sg_fail_sampler(smp);
 }
-extern(C) void sg_fail_shader(Shader);
-void failShader(Shader shd) {
+extern(C) void sg_fail_shader(Shader) @system @nogc nothrow;
+void failShader(Shader shd) @trusted @nogc nothrow {
     sg_fail_shader(shd);
 }
-extern(C) void sg_fail_pipeline(Pipeline);
-void failPipeline(Pipeline pip) {
+extern(C) void sg_fail_pipeline(Pipeline) @system @nogc nothrow;
+void failPipeline(Pipeline pip) @trusted @nogc nothrow {
     sg_fail_pipeline(pip);
 }
-extern(C) void sg_fail_pass(Pass);
-void failPass(Pass pass) {
+extern(C) void sg_fail_pass(Pass) @system @nogc nothrow;
+void failPass(Pass pass) @trusted @nogc nothrow {
     sg_fail_pass(pass);
 }
-extern(C) void sg_enable_frame_stats();
-void enableFrameStats() {
+extern(C) void sg_enable_frame_stats() @system @nogc nothrow;
+void enableFrameStats() @trusted @nogc nothrow {
     sg_enable_frame_stats();
 }
-extern(C) void sg_disable_frame_stats();
-void disableFrameStats() {
+extern(C) void sg_disable_frame_stats() @system @nogc nothrow;
+void disableFrameStats() @trusted @nogc nothrow {
     sg_disable_frame_stats();
 }
-extern(C) bool sg_frame_stats_enabled();
-bool frameStatsEnabled() {
+extern(C) bool sg_frame_stats_enabled() @system @nogc nothrow;
+bool frameStatsEnabled() @trusted @nogc nothrow {
     return sg_frame_stats_enabled();
 }
-extern(C) FrameStats sg_query_frame_stats();
-FrameStats queryFrameStats() {
+extern(C) FrameStats sg_query_frame_stats() @system @nogc nothrow;
+FrameStats queryFrameStats() @trusted @nogc nothrow {
     return sg_query_frame_stats();
 }
-extern(C) Context sg_setup_context();
-Context setupContext() {
+extern(C) Context sg_setup_context() @system @nogc nothrow;
+Context setupContext() @trusted @nogc nothrow {
     return sg_setup_context();
 }
-extern(C) void sg_activate_context(Context);
-void activateContext(Context ctx_id) {
+extern(C) void sg_activate_context(Context) @system @nogc nothrow;
+void activateContext(Context ctx_id) @trusted @nogc nothrow {
     sg_activate_context(ctx_id);
 }
-extern(C) void sg_discard_context(Context);
-void discardContext(Context ctx_id) {
+extern(C) void sg_discard_context(Context) @system @nogc nothrow;
+void discardContext(Context ctx_id) @trusted @nogc nothrow {
     sg_discard_context(ctx_id);
 }
 struct D3d11BufferInfo {
@@ -1693,123 +1693,123 @@ struct GlPassInfo {
     uint frame_buffer;
     uint[4] msaa_resolve_framebuffer;
 }
-extern(C) const(void)* sg_d3d11_device();
-const(void)* d3d11Device() {
+extern(C) const(void)* sg_d3d11_device() @system @nogc nothrow;
+const(void)* d3d11Device() @trusted @nogc nothrow {
     return sg_d3d11_device();
 }
-extern(C) const(void)* sg_d3d11_device_context();
-const(void)* d3d11DeviceContext() {
+extern(C) const(void)* sg_d3d11_device_context() @system @nogc nothrow;
+const(void)* d3d11DeviceContext() @trusted @nogc nothrow {
     return sg_d3d11_device_context();
 }
-extern(C) D3d11BufferInfo sg_d3d11_query_buffer_info(Buffer);
-D3d11BufferInfo d3d11QueryBufferInfo(Buffer buf) {
+extern(C) D3d11BufferInfo sg_d3d11_query_buffer_info(Buffer) @system @nogc nothrow;
+D3d11BufferInfo d3d11QueryBufferInfo(Buffer buf) @trusted @nogc nothrow {
     return sg_d3d11_query_buffer_info(buf);
 }
-extern(C) D3d11ImageInfo sg_d3d11_query_image_info(Image);
-D3d11ImageInfo d3d11QueryImageInfo(Image img) {
+extern(C) D3d11ImageInfo sg_d3d11_query_image_info(Image) @system @nogc nothrow;
+D3d11ImageInfo d3d11QueryImageInfo(Image img) @trusted @nogc nothrow {
     return sg_d3d11_query_image_info(img);
 }
-extern(C) D3d11SamplerInfo sg_d3d11_query_sampler_info(Sampler);
-D3d11SamplerInfo d3d11QuerySamplerInfo(Sampler smp) {
+extern(C) D3d11SamplerInfo sg_d3d11_query_sampler_info(Sampler) @system @nogc nothrow;
+D3d11SamplerInfo d3d11QuerySamplerInfo(Sampler smp) @trusted @nogc nothrow {
     return sg_d3d11_query_sampler_info(smp);
 }
-extern(C) D3d11ShaderInfo sg_d3d11_query_shader_info(Shader);
-D3d11ShaderInfo d3d11QueryShaderInfo(Shader shd) {
+extern(C) D3d11ShaderInfo sg_d3d11_query_shader_info(Shader) @system @nogc nothrow;
+D3d11ShaderInfo d3d11QueryShaderInfo(Shader shd) @trusted @nogc nothrow {
     return sg_d3d11_query_shader_info(shd);
 }
-extern(C) D3d11PipelineInfo sg_d3d11_query_pipeline_info(Pipeline);
-D3d11PipelineInfo d3d11QueryPipelineInfo(Pipeline pip) {
+extern(C) D3d11PipelineInfo sg_d3d11_query_pipeline_info(Pipeline) @system @nogc nothrow;
+D3d11PipelineInfo d3d11QueryPipelineInfo(Pipeline pip) @trusted @nogc nothrow {
     return sg_d3d11_query_pipeline_info(pip);
 }
-extern(C) D3d11PassInfo sg_d3d11_query_pass_info(Pass);
-D3d11PassInfo d3d11QueryPassInfo(Pass pass) {
+extern(C) D3d11PassInfo sg_d3d11_query_pass_info(Pass) @system @nogc nothrow;
+D3d11PassInfo d3d11QueryPassInfo(Pass pass) @trusted @nogc nothrow {
     return sg_d3d11_query_pass_info(pass);
 }
-extern(C) const(void)* sg_mtl_device();
-const(void)* mtlDevice() {
+extern(C) const(void)* sg_mtl_device() @system @nogc nothrow;
+const(void)* mtlDevice() @trusted @nogc nothrow {
     return sg_mtl_device();
 }
-extern(C) const(void)* sg_mtl_render_command_encoder();
-const(void)* mtlRenderCommandEncoder() {
+extern(C) const(void)* sg_mtl_render_command_encoder() @system @nogc nothrow;
+const(void)* mtlRenderCommandEncoder() @trusted @nogc nothrow {
     return sg_mtl_render_command_encoder();
 }
-extern(C) MtlBufferInfo sg_mtl_query_buffer_info(Buffer);
-MtlBufferInfo mtlQueryBufferInfo(Buffer buf) {
+extern(C) MtlBufferInfo sg_mtl_query_buffer_info(Buffer) @system @nogc nothrow;
+MtlBufferInfo mtlQueryBufferInfo(Buffer buf) @trusted @nogc nothrow {
     return sg_mtl_query_buffer_info(buf);
 }
-extern(C) MtlImageInfo sg_mtl_query_image_info(Image);
-MtlImageInfo mtlQueryImageInfo(Image img) {
+extern(C) MtlImageInfo sg_mtl_query_image_info(Image) @system @nogc nothrow;
+MtlImageInfo mtlQueryImageInfo(Image img) @trusted @nogc nothrow {
     return sg_mtl_query_image_info(img);
 }
-extern(C) MtlSamplerInfo sg_mtl_query_sampler_info(Sampler);
-MtlSamplerInfo mtlQuerySamplerInfo(Sampler smp) {
+extern(C) MtlSamplerInfo sg_mtl_query_sampler_info(Sampler) @system @nogc nothrow;
+MtlSamplerInfo mtlQuerySamplerInfo(Sampler smp) @trusted @nogc nothrow {
     return sg_mtl_query_sampler_info(smp);
 }
-extern(C) MtlShaderInfo sg_mtl_query_shader_info(Shader);
-MtlShaderInfo mtlQueryShaderInfo(Shader shd) {
+extern(C) MtlShaderInfo sg_mtl_query_shader_info(Shader) @system @nogc nothrow;
+MtlShaderInfo mtlQueryShaderInfo(Shader shd) @trusted @nogc nothrow {
     return sg_mtl_query_shader_info(shd);
 }
-extern(C) MtlPipelineInfo sg_mtl_query_pipeline_info(Pipeline);
-MtlPipelineInfo mtlQueryPipelineInfo(Pipeline pip) {
+extern(C) MtlPipelineInfo sg_mtl_query_pipeline_info(Pipeline) @system @nogc nothrow;
+MtlPipelineInfo mtlQueryPipelineInfo(Pipeline pip) @trusted @nogc nothrow {
     return sg_mtl_query_pipeline_info(pip);
 }
-extern(C) const(void)* sg_wgpu_device();
-const(void)* wgpuDevice() {
+extern(C) const(void)* sg_wgpu_device() @system @nogc nothrow;
+const(void)* wgpuDevice() @trusted @nogc nothrow {
     return sg_wgpu_device();
 }
-extern(C) const(void)* sg_wgpu_queue();
-const(void)* wgpuQueue() {
+extern(C) const(void)* sg_wgpu_queue() @system @nogc nothrow;
+const(void)* wgpuQueue() @trusted @nogc nothrow {
     return sg_wgpu_queue();
 }
-extern(C) const(void)* sg_wgpu_command_encoder();
-const(void)* wgpuCommandEncoder() {
+extern(C) const(void)* sg_wgpu_command_encoder() @system @nogc nothrow;
+const(void)* wgpuCommandEncoder() @trusted @nogc nothrow {
     return sg_wgpu_command_encoder();
 }
-extern(C) const(void)* sg_wgpu_render_pass_encoder();
-const(void)* wgpuRenderPassEncoder() {
+extern(C) const(void)* sg_wgpu_render_pass_encoder() @system @nogc nothrow;
+const(void)* wgpuRenderPassEncoder() @trusted @nogc nothrow {
     return sg_wgpu_render_pass_encoder();
 }
-extern(C) WgpuBufferInfo sg_wgpu_query_buffer_info(Buffer);
-WgpuBufferInfo wgpuQueryBufferInfo(Buffer buf) {
+extern(C) WgpuBufferInfo sg_wgpu_query_buffer_info(Buffer) @system @nogc nothrow;
+WgpuBufferInfo wgpuQueryBufferInfo(Buffer buf) @trusted @nogc nothrow {
     return sg_wgpu_query_buffer_info(buf);
 }
-extern(C) WgpuImageInfo sg_wgpu_query_image_info(Image);
-WgpuImageInfo wgpuQueryImageInfo(Image img) {
+extern(C) WgpuImageInfo sg_wgpu_query_image_info(Image) @system @nogc nothrow;
+WgpuImageInfo wgpuQueryImageInfo(Image img) @trusted @nogc nothrow {
     return sg_wgpu_query_image_info(img);
 }
-extern(C) WgpuSamplerInfo sg_wgpu_query_sampler_info(Sampler);
-WgpuSamplerInfo wgpuQuerySamplerInfo(Sampler smp) {
+extern(C) WgpuSamplerInfo sg_wgpu_query_sampler_info(Sampler) @system @nogc nothrow;
+WgpuSamplerInfo wgpuQuerySamplerInfo(Sampler smp) @trusted @nogc nothrow {
     return sg_wgpu_query_sampler_info(smp);
 }
-extern(C) WgpuShaderInfo sg_wgpu_query_shader_info(Shader);
-WgpuShaderInfo wgpuQueryShaderInfo(Shader shd) {
+extern(C) WgpuShaderInfo sg_wgpu_query_shader_info(Shader) @system @nogc nothrow;
+WgpuShaderInfo wgpuQueryShaderInfo(Shader shd) @trusted @nogc nothrow {
     return sg_wgpu_query_shader_info(shd);
 }
-extern(C) WgpuPipelineInfo sg_wgpu_query_pipeline_info(Pipeline);
-WgpuPipelineInfo wgpuQueryPipelineInfo(Pipeline pip) {
+extern(C) WgpuPipelineInfo sg_wgpu_query_pipeline_info(Pipeline) @system @nogc nothrow;
+WgpuPipelineInfo wgpuQueryPipelineInfo(Pipeline pip) @trusted @nogc nothrow {
     return sg_wgpu_query_pipeline_info(pip);
 }
-extern(C) WgpuPassInfo sg_wgpu_query_pass_info(Pass);
-WgpuPassInfo wgpuQueryPassInfo(Pass pass) {
+extern(C) WgpuPassInfo sg_wgpu_query_pass_info(Pass) @system @nogc nothrow;
+WgpuPassInfo wgpuQueryPassInfo(Pass pass) @trusted @nogc nothrow {
     return sg_wgpu_query_pass_info(pass);
 }
-extern(C) GlBufferInfo sg_gl_query_buffer_info(Buffer);
-GlBufferInfo glQueryBufferInfo(Buffer buf) {
+extern(C) GlBufferInfo sg_gl_query_buffer_info(Buffer) @system @nogc nothrow;
+GlBufferInfo glQueryBufferInfo(Buffer buf) @trusted @nogc nothrow {
     return sg_gl_query_buffer_info(buf);
 }
-extern(C) GlImageInfo sg_gl_query_image_info(Image);
-GlImageInfo glQueryImageInfo(Image img) {
+extern(C) GlImageInfo sg_gl_query_image_info(Image) @system @nogc nothrow;
+GlImageInfo glQueryImageInfo(Image img) @trusted @nogc nothrow {
     return sg_gl_query_image_info(img);
 }
-extern(C) GlSamplerInfo sg_gl_query_sampler_info(Sampler);
-GlSamplerInfo glQuerySamplerInfo(Sampler smp) {
+extern(C) GlSamplerInfo sg_gl_query_sampler_info(Sampler) @system @nogc nothrow;
+GlSamplerInfo glQuerySamplerInfo(Sampler smp) @trusted @nogc nothrow {
     return sg_gl_query_sampler_info(smp);
 }
-extern(C) GlShaderInfo sg_gl_query_shader_info(Shader);
-GlShaderInfo glQueryShaderInfo(Shader shd) {
+extern(C) GlShaderInfo sg_gl_query_shader_info(Shader) @system @nogc nothrow;
+GlShaderInfo glQueryShaderInfo(Shader shd) @trusted @nogc nothrow {
     return sg_gl_query_shader_info(shd);
 }
-extern(C) GlPassInfo sg_gl_query_pass_info(Pass);
-GlPassInfo glQueryPassInfo(Pass pass) {
+extern(C) GlPassInfo sg_gl_query_pass_info(Pass) @system @nogc nothrow;
+GlPassInfo glQueryPassInfo(Pass pass) @trusted @nogc nothrow {
     return sg_gl_query_pass_info(pass);
 }

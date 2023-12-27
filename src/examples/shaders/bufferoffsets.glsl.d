@@ -1,6 +1,6 @@
 module examples.shaders.bufferoffsets.glsl;
 
-import sg = gfx.gfx;
+import sg = sokol.gfx;
 
 @nogc nothrow:
 extern(C): __gshared:
@@ -296,7 +296,7 @@ ubyte[315] fs_source_metal_macos = [
 ];
 
 sg.ShaderDesc bufferoffsetsShaderDesc(sg.Backend backend) {
-    sg.ShaderDesc desc = {};
+    sg.ShaderDesc desc;
     switch (backend) {
         case sg.Backend.GL_CORE33:
             desc.attrs[0].name = "position";

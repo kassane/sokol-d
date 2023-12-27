@@ -244,9 +244,10 @@ pub fn build(b: *Builder) !void {
             .dflags = &.{
                 "--wi", // warnings only (no error)
                 // "-w", // warnings as error
+                "--vgc", // list all gc alloc
+                "--preview=dip1000",
             },
             // fixme: https://github.com/kassane/sokol-d/issues/1
-            // use zig as cc and linker
             .zig_cc = if (target.isDarwin()) false else enable_zigcc,
         });
         ldc.setName("ldc2");

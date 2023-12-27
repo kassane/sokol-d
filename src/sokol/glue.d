@@ -8,7 +8,7 @@ string cStrTod(const(char*) c_str) {
     import std.conv: to;
     return c_str.to!string;
 }
-extern(C) sg.ContextDesc sapp_sgcontext();
-sg.ContextDesc context() {
+extern(C) sg.ContextDesc sapp_sgcontext() @system @nogc nothrow;
+sg.ContextDesc context() @trusted @nogc nothrow {
     return sapp_sgcontext();
 }

@@ -695,7 +695,7 @@ sg.ShaderDesc bgShaderDesc(sg.Backend backend) {
 }
 
 sg.ShaderDesc quadShaderDesc(sg.Backend backend) {
-    sg.ShaderDesc desc = {};
+    sg.ShaderDesc desc;
     switch (backend) {
         case sg.Backend.GL_CORE33:
             desc.attrs[0].name = "position";

@@ -87,151 +87,151 @@ struct Desc {
     Allocator allocator;
     Logger logger;
 }
-extern(C) void sdtx_setup(const Desc *);
-void setup(Desc desc) {
+extern(C) void sdtx_setup(const Desc *) @system @nogc nothrow;
+void setup(Desc desc) @trusted @nogc nothrow {
     sdtx_setup(&desc);
 }
-extern(C) void sdtx_shutdown();
-void shutdown() {
+extern(C) void sdtx_shutdown() @system @nogc nothrow;
+void shutdown() @trusted @nogc nothrow {
     sdtx_shutdown();
 }
-extern(C) FontDesc sdtx_font_kc853();
-FontDesc fontKc853() {
+extern(C) FontDesc sdtx_font_kc853() @system @nogc nothrow;
+FontDesc fontKc853() @trusted @nogc nothrow {
     return sdtx_font_kc853();
 }
-extern(C) FontDesc sdtx_font_kc854();
-FontDesc fontKc854() {
+extern(C) FontDesc sdtx_font_kc854() @system @nogc nothrow;
+FontDesc fontKc854() @trusted @nogc nothrow {
     return sdtx_font_kc854();
 }
-extern(C) FontDesc sdtx_font_z1013();
-FontDesc fontZ1013() {
+extern(C) FontDesc sdtx_font_z1013() @system @nogc nothrow;
+FontDesc fontZ1013() @trusted @nogc nothrow {
     return sdtx_font_z1013();
 }
-extern(C) FontDesc sdtx_font_cpc();
-FontDesc fontCpc() {
+extern(C) FontDesc sdtx_font_cpc() @system @nogc nothrow;
+FontDesc fontCpc() @trusted @nogc nothrow {
     return sdtx_font_cpc();
 }
-extern(C) FontDesc sdtx_font_c64();
-FontDesc fontC64() {
+extern(C) FontDesc sdtx_font_c64() @system @nogc nothrow;
+FontDesc fontC64() @trusted @nogc nothrow {
     return sdtx_font_c64();
 }
-extern(C) FontDesc sdtx_font_oric();
-FontDesc fontOric() {
+extern(C) FontDesc sdtx_font_oric() @system @nogc nothrow;
+FontDesc fontOric() @trusted @nogc nothrow {
     return sdtx_font_oric();
 }
-extern(C) Context sdtx_make_context(const ContextDesc *);
-Context makeContext(ContextDesc desc) {
+extern(C) Context sdtx_make_context(const ContextDesc *) @system @nogc nothrow;
+Context makeContext(ContextDesc desc) @trusted @nogc nothrow {
     return sdtx_make_context(&desc);
 }
-extern(C) void sdtx_destroy_context(Context);
-void destroyContext(Context ctx) {
+extern(C) void sdtx_destroy_context(Context) @system @nogc nothrow;
+void destroyContext(Context ctx) @trusted @nogc nothrow {
     sdtx_destroy_context(ctx);
 }
-extern(C) void sdtx_set_context(Context);
-void setContext(Context ctx) {
+extern(C) void sdtx_set_context(Context) @system @nogc nothrow;
+void setContext(Context ctx) @trusted @nogc nothrow {
     sdtx_set_context(ctx);
 }
-extern(C) Context sdtx_get_context();
-Context getContext() {
+extern(C) Context sdtx_get_context() @system @nogc nothrow;
+Context getContext() @trusted @nogc nothrow {
     return sdtx_get_context();
 }
-extern(C) Context sdtx_default_context();
-Context defaultContext() {
+extern(C) Context sdtx_default_context() @system @nogc nothrow;
+Context defaultContext() @trusted @nogc nothrow {
     return sdtx_default_context();
 }
-extern(C) void sdtx_draw();
-void draw() {
+extern(C) void sdtx_draw() @system @nogc nothrow;
+void draw() @trusted @nogc nothrow {
     sdtx_draw();
 }
-extern(C) void sdtx_context_draw(Context);
-void contextDraw(Context ctx) {
+extern(C) void sdtx_context_draw(Context) @system @nogc nothrow;
+void contextDraw(Context ctx) @trusted @nogc nothrow {
     sdtx_context_draw(ctx);
 }
-extern(C) void sdtx_draw_layer(int);
-void drawLayer(int layer_id) {
+extern(C) void sdtx_draw_layer(int) @system @nogc nothrow;
+void drawLayer(int layer_id) @trusted @nogc nothrow {
     sdtx_draw_layer(layer_id);
 }
-extern(C) void sdtx_context_draw_layer(Context, int);
-void contextDrawLayer(Context ctx, int layer_id) {
+extern(C) void sdtx_context_draw_layer(Context, int) @system @nogc nothrow;
+void contextDrawLayer(Context ctx, int layer_id) @trusted @nogc nothrow {
     sdtx_context_draw_layer(ctx, layer_id);
 }
-extern(C) void sdtx_layer(int);
-void layer(int layer_id) {
+extern(C) void sdtx_layer(int) @system @nogc nothrow;
+void layer(int layer_id) @trusted @nogc nothrow {
     sdtx_layer(layer_id);
 }
-extern(C) void sdtx_font(uint);
-void font(uint font_index) {
+extern(C) void sdtx_font(uint) @system @nogc nothrow;
+void font(uint font_index) @trusted @nogc nothrow {
     sdtx_font(font_index);
 }
-extern(C) void sdtx_canvas(float, float);
-void canvas(float w, float h) {
+extern(C) void sdtx_canvas(float, float) @system @nogc nothrow;
+void canvas(float w, float h) @trusted @nogc nothrow {
     sdtx_canvas(w, h);
 }
-extern(C) void sdtx_origin(float, float);
-void origin(float x, float y) {
+extern(C) void sdtx_origin(float, float) @system @nogc nothrow;
+void origin(float x, float y) @trusted @nogc nothrow {
     sdtx_origin(x, y);
 }
-extern(C) void sdtx_home();
-void home() {
+extern(C) void sdtx_home() @system @nogc nothrow;
+void home() @trusted @nogc nothrow {
     sdtx_home();
 }
-extern(C) void sdtx_pos(float, float);
-void pos(float x, float y) {
+extern(C) void sdtx_pos(float, float) @system @nogc nothrow;
+void pos(float x, float y) @trusted @nogc nothrow {
     sdtx_pos(x, y);
 }
-extern(C) void sdtx_pos_x(float);
-void posX(float x) {
+extern(C) void sdtx_pos_x(float) @system @nogc nothrow;
+void posX(float x) @trusted @nogc nothrow {
     sdtx_pos_x(x);
 }
-extern(C) void sdtx_pos_y(float);
-void posY(float y) {
+extern(C) void sdtx_pos_y(float) @system @nogc nothrow;
+void posY(float y) @trusted @nogc nothrow {
     sdtx_pos_y(y);
 }
-extern(C) void sdtx_move(float, float);
-void move(float dx, float dy) {
+extern(C) void sdtx_move(float, float) @system @nogc nothrow;
+void move(float dx, float dy) @trusted @nogc nothrow {
     sdtx_move(dx, dy);
 }
-extern(C) void sdtx_move_x(float);
-void moveX(float dx) {
+extern(C) void sdtx_move_x(float) @system @nogc nothrow;
+void moveX(float dx) @trusted @nogc nothrow {
     sdtx_move_x(dx);
 }
-extern(C) void sdtx_move_y(float);
-void moveY(float dy) {
+extern(C) void sdtx_move_y(float) @system @nogc nothrow;
+void moveY(float dy) @trusted @nogc nothrow {
     sdtx_move_y(dy);
 }
-extern(C) void sdtx_crlf();
-void crlf() {
+extern(C) void sdtx_crlf() @system @nogc nothrow;
+void crlf() @trusted @nogc nothrow {
     sdtx_crlf();
 }
-extern(C) void sdtx_color3b(ubyte, ubyte, ubyte);
-void color3b(ubyte r, ubyte g, ubyte b) {
+extern(C) void sdtx_color3b(ubyte, ubyte, ubyte) @system @nogc nothrow;
+void color3b(ubyte r, ubyte g, ubyte b) @trusted @nogc nothrow {
     sdtx_color3b(r, g, b);
 }
-extern(C) void sdtx_color3f(float, float, float);
-void color3f(float r, float g, float b) {
+extern(C) void sdtx_color3f(float, float, float) @system @nogc nothrow;
+void color3f(float r, float g, float b) @trusted @nogc nothrow {
     sdtx_color3f(r, g, b);
 }
-extern(C) void sdtx_color4b(ubyte, ubyte, ubyte, ubyte);
-void color4b(ubyte r, ubyte g, ubyte b, ubyte a) {
+extern(C) void sdtx_color4b(ubyte, ubyte, ubyte, ubyte) @system @nogc nothrow;
+void color4b(ubyte r, ubyte g, ubyte b, ubyte a) @trusted @nogc nothrow {
     sdtx_color4b(r, g, b, a);
 }
-extern(C) void sdtx_color4f(float, float, float, float);
-void color4f(float r, float g, float b, float a) {
+extern(C) void sdtx_color4f(float, float, float, float) @system @nogc nothrow;
+void color4f(float r, float g, float b, float a) @trusted @nogc nothrow {
     sdtx_color4f(r, g, b, a);
 }
-extern(C) void sdtx_color1i(uint);
-void color1i(uint rgba) {
+extern(C) void sdtx_color1i(uint) @system @nogc nothrow;
+void color1i(uint rgba) @trusted @nogc nothrow {
     sdtx_color1i(rgba);
 }
-extern(C) void sdtx_putc(char);
-void putc(char c) {
+extern(C) void sdtx_putc(char) @system @nogc nothrow;
+void putc(char c) @trusted @nogc nothrow {
     sdtx_putc(c);
 }
-extern(C) void sdtx_puts(const(char*));
-void puts(scope const(char*) str) {
+extern(C) void sdtx_puts(const(char*)) @system @nogc nothrow;
+void puts(scope const(char*) str) @trusted @nogc nothrow {
     sdtx_puts(str);
 }
-extern(C) void sdtx_putr(const(char*), int);
-void putr(scope const(char*) str, int len) {
+extern(C) void sdtx_putr(const(char*), int) @system @nogc nothrow;
+void putr(scope const(char*) str, int len) @trusted @nogc nothrow {
     sdtx_putr(str, len);
 }
