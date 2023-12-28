@@ -61,7 +61,7 @@ extern (C) void init()
     desc.fonts[3] = sdtx.fontOric();
     sdtx.setup(desc);
 
-    state.passAction.colors[0].load_action = sg.LoadAction.CLEAR;
+    state.passAction.colors[0].load_action = sg.LoadAction.Clear;
     state.passAction.colors[0].clear_value.r = 0;
     state.passAction.colors[0].clear_value.g = 0.125;
     state.passAction.colors[0].clear_value.b = 0.25;

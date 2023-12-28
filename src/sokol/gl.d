@@ -9,13 +9,13 @@ string cStrTod(const(char*) c_str) {
     return c_str.to!string;
 }
 enum LogItem {
-    OK,
-    MALLOC_FAILED,
-    MAKE_PIPELINE_FAILED,
-    PIPELINE_POOL_EXHAUSTED,
-    ADD_COMMIT_LISTENER_FAILED,
-    CONTEXT_POOL_EXHAUSTED,
-    CANNOT_DESTROY_DEFAULT_CONTEXT,
+    Ok,
+    Malloc_failed,
+    Make_pipeline_failed,
+    Pipeline_pool_exhausted,
+    Add_commit_listener_failed,
+    Context_pool_exhausted,
+    Cannot_destroy_default_context,
 }
 struct Logger {
     extern(C) void function(const(char*), uint, uint, const(char*), uint, const(char*), void*) func;
@@ -28,13 +28,13 @@ struct Context {
     uint id;
 }
 enum Error {
-    NO_ERROR = 0,
-    VERTICES_FULL,
-    UNIFORMS_FULL,
-    COMMANDS_FULL,
-    STACK_OVERFLOW,
-    STACK_UNDERFLOW,
-    NO_CONTEXT,
+    No_error = 0,
+    Vertices_full,
+    Uniforms_full,
+    Commands_full,
+    Stack_overflow,
+    Stack_underflow,
+    No_context,
 }
 struct ContextDesc {
     int max_vertices;

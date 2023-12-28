@@ -19,7 +19,7 @@ extern (C) void init()
     cd.logger.func = &log.slog_func;
     sg.setup(cd);
 
-    pass_action.colors[0].load_action = sg.LoadAction.CLEAR;
+    pass_action.colors[0].load_action = sg.LoadAction.Clear;
     pass_action.colors[0].clear_value.r = 1;
     pass_action.colors[0].clear_value.g = 1;
     pass_action.colors[0].clear_value.b = 0;

@@ -12,40 +12,40 @@ enum max_mousebuttons = 3;
 enum max_keycodes = 512;
 enum max_iconimages = 8;
 enum EventType {
-    INVALID,
-    KEY_DOWN,
-    KEY_UP,
-    CHAR,
-    MOUSE_DOWN,
-    MOUSE_UP,
-    MOUSE_SCROLL,
-    MOUSE_MOVE,
-    MOUSE_ENTER,
-    MOUSE_LEAVE,
-    TOUCHES_BEGAN,
-    TOUCHES_MOVED,
-    TOUCHES_ENDED,
-    TOUCHES_CANCELLED,
-    RESIZED,
-    ICONIFIED,
-    RESTORED,
-    FOCUSED,
-    UNFOCUSED,
-    SUSPENDED,
-    RESUMED,
-    QUIT_REQUESTED,
-    CLIPBOARD_PASTED,
-    FILES_DROPPED,
-    NUM,
+    Invalid,
+    Key_down,
+    Key_up,
+    Char,
+    Mouse_down,
+    Mouse_up,
+    Mouse_scroll,
+    Mouse_move,
+    Mouse_enter,
+    Mouse_leave,
+    Touches_began,
+    Touches_moved,
+    Touches_ended,
+    Touches_cancelled,
+    Resized,
+    Iconified,
+    Restored,
+    Focused,
+    Unfocused,
+    Suspended,
+    Resumed,
+    Quit_requested,
+    Clipboard_pasted,
+    Files_dropped,
+    Num,
 }
 enum Keycode {
-    INVALID = 0,
-    SPACE = 32,
-    APOSTROPHE = 39,
-    COMMA = 44,
-    MINUS = 45,
-    PERIOD = 46,
-    SLASH = 47,
+    Invalid = 0,
+    Space = 32,
+    Apostrophe = 39,
+    Comma = 44,
+    Minus = 45,
+    Period = 46,
+    Slash = 47,
     _0 = 48,
     _1 = 49,
     _2 = 50,
@@ -56,8 +56,8 @@ enum Keycode {
     _7 = 55,
     _8 = 56,
     _9 = 57,
-    SEMICOLON = 59,
-    EQUAL = 61,
+    Semicolon = 59,
+    Equal = 61,
     A = 65,
     B = 66,
     C = 67,
@@ -84,31 +84,31 @@ enum Keycode {
     X = 88,
     Y = 89,
     Z = 90,
-    LEFT_BRACKET = 91,
-    BACKSLASH = 92,
-    RIGHT_BRACKET = 93,
-    GRAVE_ACCENT = 96,
-    WORLD_1 = 161,
-    WORLD_2 = 162,
-    ESCAPE = 256,
-    ENTER = 257,
-    TAB = 258,
-    BACKSPACE = 259,
-    INSERT = 260,
-    DELETE = 261,
-    RIGHT = 262,
-    LEFT = 263,
-    DOWN = 264,
-    UP = 265,
-    PAGE_UP = 266,
-    PAGE_DOWN = 267,
-    HOME = 268,
-    END = 269,
-    CAPS_LOCK = 280,
-    SCROLL_LOCK = 281,
-    NUM_LOCK = 282,
-    PRINT_SCREEN = 283,
-    PAUSE = 284,
+    Left_bracket = 91,
+    Backslash = 92,
+    Right_bracket = 93,
+    Grave_accent = 96,
+    World_1 = 161,
+    World_2 = 162,
+    Escape = 256,
+    Enter = 257,
+    Tab = 258,
+    Backspace = 259,
+    Insert = 260,
+    Delete = 261,
+    Right = 262,
+    Left = 263,
+    Down = 264,
+    Up = 265,
+    Page_up = 266,
+    Page_down = 267,
+    Home = 268,
+    End = 269,
+    Caps_lock = 280,
+    Scroll_lock = 281,
+    Num_lock = 282,
+    Print_screen = 283,
+    Pause = 284,
     F1 = 290,
     F2 = 291,
     F3 = 292,
@@ -134,38 +134,38 @@ enum Keycode {
     F23 = 312,
     F24 = 313,
     F25 = 314,
-    KP_0 = 320,
-    KP_1 = 321,
-    KP_2 = 322,
-    KP_3 = 323,
-    KP_4 = 324,
-    KP_5 = 325,
-    KP_6 = 326,
-    KP_7 = 327,
-    KP_8 = 328,
-    KP_9 = 329,
-    KP_DECIMAL = 330,
-    KP_DIVIDE = 331,
-    KP_MULTIPLY = 332,
-    KP_SUBTRACT = 333,
-    KP_ADD = 334,
-    KP_ENTER = 335,
-    KP_EQUAL = 336,
-    LEFT_SHIFT = 340,
-    LEFT_CONTROL = 341,
-    LEFT_ALT = 342,
-    LEFT_SUPER = 343,
-    RIGHT_SHIFT = 344,
-    RIGHT_CONTROL = 345,
-    RIGHT_ALT = 346,
-    RIGHT_SUPER = 347,
-    MENU = 348,
+    Kp_0 = 320,
+    Kp_1 = 321,
+    Kp_2 = 322,
+    Kp_3 = 323,
+    Kp_4 = 324,
+    Kp_5 = 325,
+    Kp_6 = 326,
+    Kp_7 = 327,
+    Kp_8 = 328,
+    Kp_9 = 329,
+    Kp_decimal = 330,
+    Kp_divide = 331,
+    Kp_multiply = 332,
+    Kp_subtract = 333,
+    Kp_add = 334,
+    Kp_enter = 335,
+    Kp_equal = 336,
+    Left_shift = 340,
+    Left_control = 341,
+    Left_alt = 342,
+    Left_super = 343,
+    Right_shift = 344,
+    Right_control = 345,
+    Right_alt = 346,
+    Right_super = 347,
+    Menu = 348,
 }
 enum AndroidTooltype {
-    UNKNOWN = 0,
-    FINGER = 1,
-    STYLUS = 2,
-    MOUSE = 3,
+    Unknown = 0,
+    Finger = 1,
+    Stylus = 2,
+    Mouse = 3,
 }
 struct Touchpoint {
     size_t identifier;
@@ -175,10 +175,10 @@ struct Touchpoint {
     bool changed;
 }
 enum Mousebutton {
-    LEFT = 0,
-    RIGHT = 1,
-    MIDDLE = 2,
-    INVALID = 256,
+    Left = 0,
+    Right = 1,
+    Middle = 2,
+    Invalid = 256,
 }
 enum modifier_shift = 1;
 enum modifier_ctrl = 2;
@@ -227,104 +227,104 @@ struct Allocator {
     void* user_data;
 }
 enum LogItem {
-    OK,
-    MALLOC_FAILED,
-    MACOS_INVALID_NSOPENGL_PROFILE,
-    WIN32_LOAD_OPENGL32_DLL_FAILED,
-    WIN32_CREATE_HELPER_WINDOW_FAILED,
-    WIN32_HELPER_WINDOW_GETDC_FAILED,
-    WIN32_DUMMY_CONTEXT_SET_PIXELFORMAT_FAILED,
-    WIN32_CREATE_DUMMY_CONTEXT_FAILED,
-    WIN32_DUMMY_CONTEXT_MAKE_CURRENT_FAILED,
-    WIN32_GET_PIXELFORMAT_ATTRIB_FAILED,
-    WIN32_WGL_FIND_PIXELFORMAT_FAILED,
-    WIN32_WGL_DESCRIBE_PIXELFORMAT_FAILED,
-    WIN32_WGL_SET_PIXELFORMAT_FAILED,
-    WIN32_WGL_ARB_CREATE_CONTEXT_REQUIRED,
-    WIN32_WGL_ARB_CREATE_CONTEXT_PROFILE_REQUIRED,
-    WIN32_WGL_OPENGL_3_2_NOT_SUPPORTED,
-    WIN32_WGL_OPENGL_PROFILE_NOT_SUPPORTED,
-    WIN32_WGL_INCOMPATIBLE_DEVICE_CONTEXT,
-    WIN32_WGL_CREATE_CONTEXT_ATTRIBS_FAILED_OTHER,
-    WIN32_D3D11_CREATE_DEVICE_AND_SWAPCHAIN_WITH_DEBUG_FAILED,
-    WIN32_D3D11_GET_IDXGIFACTORY_FAILED,
-    WIN32_D3D11_GET_IDXGIADAPTER_FAILED,
-    WIN32_D3D11_QUERY_INTERFACE_IDXGIDEVICE1_FAILED,
-    WIN32_REGISTER_RAW_INPUT_DEVICES_FAILED_MOUSE_LOCK,
-    WIN32_REGISTER_RAW_INPUT_DEVICES_FAILED_MOUSE_UNLOCK,
-    WIN32_GET_RAW_INPUT_DATA_FAILED,
-    LINUX_GLX_LOAD_LIBGL_FAILED,
-    LINUX_GLX_LOAD_ENTRY_POINTS_FAILED,
-    LINUX_GLX_EXTENSION_NOT_FOUND,
-    LINUX_GLX_QUERY_VERSION_FAILED,
-    LINUX_GLX_VERSION_TOO_LOW,
-    LINUX_GLX_NO_GLXFBCONFIGS,
-    LINUX_GLX_NO_SUITABLE_GLXFBCONFIG,
-    LINUX_GLX_GET_VISUAL_FROM_FBCONFIG_FAILED,
-    LINUX_GLX_REQUIRED_EXTENSIONS_MISSING,
-    LINUX_GLX_CREATE_CONTEXT_FAILED,
-    LINUX_GLX_CREATE_WINDOW_FAILED,
-    LINUX_X11_CREATE_WINDOW_FAILED,
-    LINUX_EGL_BIND_OPENGL_API_FAILED,
-    LINUX_EGL_BIND_OPENGL_ES_API_FAILED,
-    LINUX_EGL_GET_DISPLAY_FAILED,
-    LINUX_EGL_INITIALIZE_FAILED,
-    LINUX_EGL_NO_CONFIGS,
-    LINUX_EGL_NO_NATIVE_VISUAL,
-    LINUX_EGL_GET_VISUAL_INFO_FAILED,
-    LINUX_EGL_CREATE_WINDOW_SURFACE_FAILED,
-    LINUX_EGL_CREATE_CONTEXT_FAILED,
-    LINUX_EGL_MAKE_CURRENT_FAILED,
-    LINUX_X11_OPEN_DISPLAY_FAILED,
-    LINUX_X11_QUERY_SYSTEM_DPI_FAILED,
-    LINUX_X11_DROPPED_FILE_URI_WRONG_SCHEME,
-    ANDROID_UNSUPPORTED_INPUT_EVENT_INPUT_CB,
-    ANDROID_UNSUPPORTED_INPUT_EVENT_MAIN_CB,
-    ANDROID_READ_MSG_FAILED,
-    ANDROID_WRITE_MSG_FAILED,
-    ANDROID_MSG_CREATE,
-    ANDROID_MSG_RESUME,
-    ANDROID_MSG_PAUSE,
-    ANDROID_MSG_FOCUS,
-    ANDROID_MSG_NO_FOCUS,
-    ANDROID_MSG_SET_NATIVE_WINDOW,
-    ANDROID_MSG_SET_INPUT_QUEUE,
-    ANDROID_MSG_DESTROY,
-    ANDROID_UNKNOWN_MSG,
-    ANDROID_LOOP_THREAD_STARTED,
-    ANDROID_LOOP_THREAD_DONE,
-    ANDROID_NATIVE_ACTIVITY_ONSTART,
-    ANDROID_NATIVE_ACTIVITY_ONRESUME,
-    ANDROID_NATIVE_ACTIVITY_ONSAVEINSTANCESTATE,
-    ANDROID_NATIVE_ACTIVITY_ONWINDOWFOCUSCHANGED,
-    ANDROID_NATIVE_ACTIVITY_ONPAUSE,
-    ANDROID_NATIVE_ACTIVITY_ONSTOP,
-    ANDROID_NATIVE_ACTIVITY_ONNATIVEWINDOWCREATED,
-    ANDROID_NATIVE_ACTIVITY_ONNATIVEWINDOWDESTROYED,
-    ANDROID_NATIVE_ACTIVITY_ONINPUTQUEUECREATED,
-    ANDROID_NATIVE_ACTIVITY_ONINPUTQUEUEDESTROYED,
-    ANDROID_NATIVE_ACTIVITY_ONCONFIGURATIONCHANGED,
-    ANDROID_NATIVE_ACTIVITY_ONLOWMEMORY,
-    ANDROID_NATIVE_ACTIVITY_ONDESTROY,
-    ANDROID_NATIVE_ACTIVITY_DONE,
-    ANDROID_NATIVE_ACTIVITY_ONCREATE,
-    ANDROID_CREATE_THREAD_PIPE_FAILED,
-    ANDROID_NATIVE_ACTIVITY_CREATE_SUCCESS,
-    WGPU_SWAPCHAIN_CREATE_SURFACE_FAILED,
-    WGPU_SWAPCHAIN_CREATE_SWAPCHAIN_FAILED,
-    WGPU_SWAPCHAIN_CREATE_DEPTH_STENCIL_TEXTURE_FAILED,
-    WGPU_SWAPCHAIN_CREATE_DEPTH_STENCIL_VIEW_FAILED,
-    WGPU_SWAPCHAIN_CREATE_MSAA_TEXTURE_FAILED,
-    WGPU_SWAPCHAIN_CREATE_MSAA_VIEW_FAILED,
-    WGPU_REQUEST_DEVICE_STATUS_ERROR,
-    WGPU_REQUEST_DEVICE_STATUS_UNKNOWN,
-    WGPU_REQUEST_ADAPTER_STATUS_UNAVAILABLE,
-    WGPU_REQUEST_ADAPTER_STATUS_ERROR,
-    WGPU_REQUEST_ADAPTER_STATUS_UNKNOWN,
-    WGPU_CREATE_INSTANCE_FAILED,
-    IMAGE_DATA_SIZE_MISMATCH,
-    DROPPED_FILE_PATH_TOO_LONG,
-    CLIPBOARD_STRING_TOO_BIG,
+    Ok,
+    Malloc_failed,
+    Macos_invalid_nsopengl_profile,
+    Win32_load_opengl32_dll_failed,
+    Win32_create_helper_window_failed,
+    Win32_helper_window_getdc_failed,
+    Win32_dummy_context_set_pixelformat_failed,
+    Win32_create_dummy_context_failed,
+    Win32_dummy_context_make_current_failed,
+    Win32_get_pixelformat_attrib_failed,
+    Win32_wgl_find_pixelformat_failed,
+    Win32_wgl_describe_pixelformat_failed,
+    Win32_wgl_set_pixelformat_failed,
+    Win32_wgl_arb_create_context_required,
+    Win32_wgl_arb_create_context_profile_required,
+    Win32_wgl_opengl_3_2_not_supported,
+    Win32_wgl_opengl_profile_not_supported,
+    Win32_wgl_incompatible_device_context,
+    Win32_wgl_create_context_attribs_failed_other,
+    Win32_d3d11_create_device_and_swapchain_with_debug_failed,
+    Win32_d3d11_get_idxgifactory_failed,
+    Win32_d3d11_get_idxgiadapter_failed,
+    Win32_d3d11_query_interface_idxgidevice1_failed,
+    Win32_register_raw_input_devices_failed_mouse_lock,
+    Win32_register_raw_input_devices_failed_mouse_unlock,
+    Win32_get_raw_input_data_failed,
+    Linux_glx_load_libgl_failed,
+    Linux_glx_load_entry_points_failed,
+    Linux_glx_extension_not_found,
+    Linux_glx_query_version_failed,
+    Linux_glx_version_too_low,
+    Linux_glx_no_glxfbconfigs,
+    Linux_glx_no_suitable_glxfbconfig,
+    Linux_glx_get_visual_from_fbconfig_failed,
+    Linux_glx_required_extensions_missing,
+    Linux_glx_create_context_failed,
+    Linux_glx_create_window_failed,
+    Linux_x11_create_window_failed,
+    Linux_egl_bind_opengl_api_failed,
+    Linux_egl_bind_opengl_es_api_failed,
+    Linux_egl_get_display_failed,
+    Linux_egl_initialize_failed,
+    Linux_egl_no_configs,
+    Linux_egl_no_native_visual,
+    Linux_egl_get_visual_info_failed,
+    Linux_egl_create_window_surface_failed,
+    Linux_egl_create_context_failed,
+    Linux_egl_make_current_failed,
+    Linux_x11_open_display_failed,
+    Linux_x11_query_system_dpi_failed,
+    Linux_x11_dropped_file_uri_wrong_scheme,
+    Android_unsupported_input_event_input_cb,
+    Android_unsupported_input_event_main_cb,
+    Android_read_msg_failed,
+    Android_write_msg_failed,
+    Android_msg_create,
+    Android_msg_resume,
+    Android_msg_pause,
+    Android_msg_focus,
+    Android_msg_no_focus,
+    Android_msg_set_native_window,
+    Android_msg_set_input_queue,
+    Android_msg_destroy,
+    Android_unknown_msg,
+    Android_loop_thread_started,
+    Android_loop_thread_done,
+    Android_native_activity_onstart,
+    Android_native_activity_onresume,
+    Android_native_activity_onsaveinstancestate,
+    Android_native_activity_onwindowfocuschanged,
+    Android_native_activity_onpause,
+    Android_native_activity_onstop,
+    Android_native_activity_onnativewindowcreated,
+    Android_native_activity_onnativewindowdestroyed,
+    Android_native_activity_oninputqueuecreated,
+    Android_native_activity_oninputqueuedestroyed,
+    Android_native_activity_onconfigurationchanged,
+    Android_native_activity_onlowmemory,
+    Android_native_activity_ondestroy,
+    Android_native_activity_done,
+    Android_native_activity_oncreate,
+    Android_create_thread_pipe_failed,
+    Android_native_activity_create_success,
+    Wgpu_swapchain_create_surface_failed,
+    Wgpu_swapchain_create_swapchain_failed,
+    Wgpu_swapchain_create_depth_stencil_texture_failed,
+    Wgpu_swapchain_create_depth_stencil_view_failed,
+    Wgpu_swapchain_create_msaa_texture_failed,
+    Wgpu_swapchain_create_msaa_view_failed,
+    Wgpu_request_device_status_error,
+    Wgpu_request_device_status_unknown,
+    Wgpu_request_adapter_status_unavailable,
+    Wgpu_request_adapter_status_error,
+    Wgpu_request_adapter_status_unknown,
+    Wgpu_create_instance_failed,
+    Image_data_size_mismatch,
+    Dropped_file_path_too_long,
+    Clipboard_string_too_big,
 }
 struct Logger {
     extern(C) void function(const(char*), uint, uint, const(char*), uint, const(char*), void*) func;
@@ -369,9 +369,9 @@ struct Desc {
     bool ios_keyboard_resizes_canvas;
 }
 enum Html5FetchError {
-    FETCH_ERROR_NO_ERROR,
-    FETCH_ERROR_BUFFER_TOO_SMALL,
-    FETCH_ERROR_OTHER,
+    Fetch_error_no_error,
+    Fetch_error_buffer_too_small,
+    Fetch_error_other,
 }
 struct Html5FetchResponse {
     bool succeeded;
@@ -388,18 +388,18 @@ struct Html5FetchRequest {
     void* user_data;
 }
 enum MouseCursor {
-    DEFAULT = 0,
-    ARROW,
-    IBEAM,
-    CROSSHAIR,
-    POINTING_HAND,
-    RESIZE_EW,
-    RESIZE_NS,
-    RESIZE_NWSE,
-    RESIZE_NESW,
-    RESIZE_ALL,
-    NOT_ALLOWED,
-    NUM,
+    Default = 0,
+    Arrow,
+    Ibeam,
+    Crosshair,
+    Pointing_hand,
+    Resize_ew,
+    Resize_ns,
+    Resize_nwse,
+    Resize_nesw,
+    Resize_all,
+    Not_allowed,
+    Num,
 }
 extern(C) bool sapp_isvalid() @system @nogc nothrow;
 bool isvalid() @trusted @nogc nothrow {
@@ -482,7 +482,7 @@ MouseCursor getMouseCursor() @trusted @nogc nothrow {
     return sapp_get_mouse_cursor();
 }
 extern(C) void* sapp_userdata() @system @nogc nothrow;
-void* userdata() @trusted @nogc nothrow {
+scope void* userdata() @trusted @nogc nothrow {
     return sapp_userdata();
 }
 extern(C) Desc sapp_query_desc() @system @nogc nothrow;
@@ -542,11 +542,11 @@ void run(Desc desc) @trusted @nogc nothrow {
     sapp_run(&desc);
 }
 extern(C) const(void)* sapp_egl_get_display() @system @nogc nothrow;
-const(void)* eglGetDisplay() @trusted @nogc nothrow {
+scope const(void*) eglGetDisplay() @trusted @nogc nothrow {
     return sapp_egl_get_display();
 }
 extern(C) const(void)* sapp_egl_get_context() @system @nogc nothrow;
-const(void)* eglGetContext() @trusted @nogc nothrow {
+scope const(void*) eglGetContext() @trusted @nogc nothrow {
     return sapp_egl_get_context();
 }
 extern(C) void sapp_html5_ask_leave_site(bool) @system @nogc nothrow;
@@ -562,66 +562,66 @@ void html5FetchDroppedFile(Html5FetchRequest request) @trusted @nogc nothrow {
     sapp_html5_fetch_dropped_file(&request);
 }
 extern(C) const(void)* sapp_metal_get_device() @system @nogc nothrow;
-const(void)* metalGetDevice() @trusted @nogc nothrow {
+scope const(void*) metalGetDevice() @trusted @nogc nothrow {
     return sapp_metal_get_device();
 }
 extern(C) const(void)* sapp_metal_get_renderpass_descriptor() @system @nogc nothrow;
-const(void)* metalGetRenderpassDescriptor() @trusted @nogc nothrow {
+scope const(void*) metalGetRenderpassDescriptor() @trusted @nogc nothrow {
     return sapp_metal_get_renderpass_descriptor();
 }
 extern(C) const(void)* sapp_metal_get_drawable() @system @nogc nothrow;
-const(void)* metalGetDrawable() @trusted @nogc nothrow {
+scope const(void*) metalGetDrawable() @trusted @nogc nothrow {
     return sapp_metal_get_drawable();
 }
 extern(C) const(void)* sapp_macos_get_window() @system @nogc nothrow;
-const(void)* macosGetWindow() @trusted @nogc nothrow {
+scope const(void*) macosGetWindow() @trusted @nogc nothrow {
     return sapp_macos_get_window();
 }
 extern(C) const(void)* sapp_ios_get_window() @system @nogc nothrow;
-const(void)* iosGetWindow() @trusted @nogc nothrow {
+scope const(void*) iosGetWindow() @trusted @nogc nothrow {
     return sapp_ios_get_window();
 }
 extern(C) const(void)* sapp_d3d11_get_device() @system @nogc nothrow;
-const(void)* d3d11GetDevice() @trusted @nogc nothrow {
+scope const(void*) d3d11GetDevice() @trusted @nogc nothrow {
     return sapp_d3d11_get_device();
 }
 extern(C) const(void)* sapp_d3d11_get_device_context() @system @nogc nothrow;
-const(void)* d3d11GetDeviceContext() @trusted @nogc nothrow {
+scope const(void*) d3d11GetDeviceContext() @trusted @nogc nothrow {
     return sapp_d3d11_get_device_context();
 }
 extern(C) const(void)* sapp_d3d11_get_swap_chain() @system @nogc nothrow;
-const(void)* d3d11GetSwapChain() @trusted @nogc nothrow {
+scope const(void*) d3d11GetSwapChain() @trusted @nogc nothrow {
     return sapp_d3d11_get_swap_chain();
 }
 extern(C) const(void)* sapp_d3d11_get_render_target_view() @system @nogc nothrow;
-const(void)* d3d11GetRenderTargetView() @trusted @nogc nothrow {
+scope const(void*) d3d11GetRenderTargetView() @trusted @nogc nothrow {
     return sapp_d3d11_get_render_target_view();
 }
 extern(C) const(void)* sapp_d3d11_get_depth_stencil_view() @system @nogc nothrow;
-const(void)* d3d11GetDepthStencilView() @trusted @nogc nothrow {
+scope const(void*) d3d11GetDepthStencilView() @trusted @nogc nothrow {
     return sapp_d3d11_get_depth_stencil_view();
 }
 extern(C) const(void)* sapp_win32_get_hwnd() @system @nogc nothrow;
-const(void)* win32GetHwnd() @trusted @nogc nothrow {
+scope const(void*) win32GetHwnd() @trusted @nogc nothrow {
     return sapp_win32_get_hwnd();
 }
 extern(C) const(void)* sapp_wgpu_get_device() @system @nogc nothrow;
-const(void)* wgpuGetDevice() @trusted @nogc nothrow {
+scope const(void*) wgpuGetDevice() @trusted @nogc nothrow {
     return sapp_wgpu_get_device();
 }
 extern(C) const(void)* sapp_wgpu_get_render_view() @system @nogc nothrow;
-const(void)* wgpuGetRenderView() @trusted @nogc nothrow {
+scope const(void*) wgpuGetRenderView() @trusted @nogc nothrow {
     return sapp_wgpu_get_render_view();
 }
 extern(C) const(void)* sapp_wgpu_get_resolve_view() @system @nogc nothrow;
-const(void)* wgpuGetResolveView() @trusted @nogc nothrow {
+scope const(void*) wgpuGetResolveView() @trusted @nogc nothrow {
     return sapp_wgpu_get_resolve_view();
 }
 extern(C) const(void)* sapp_wgpu_get_depth_stencil_view() @system @nogc nothrow;
-const(void)* wgpuGetDepthStencilView() @trusted @nogc nothrow {
+scope const(void*) wgpuGetDepthStencilView() @trusted @nogc nothrow {
     return sapp_wgpu_get_depth_stencil_view();
 }
 extern(C) const(void)* sapp_android_get_native_activity() @system @nogc nothrow;
-const(void)* androidGetNativeActivity() @trusted @nogc nothrow {
+scope const(void*) androidGetNativeActivity() @trusted @nogc nothrow {
     return sapp_android_get_native_activity();
 }

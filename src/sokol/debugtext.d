@@ -41,12 +41,12 @@ void print(Args...)(const char[] fmt, Args args) @safe {
 }
 
 enum LogItem {
-    OK,
-    MALLOC_FAILED,
-    ADD_COMMIT_LISTENER_FAILED,
-    COMMAND_BUFFER_FULL,
-    CONTEXT_POOL_EXHAUSTED,
-    CANNOT_DESTROY_DEFAULT_CONTEXT,
+    Ok,
+    Malloc_failed,
+    Add_commit_listener_failed,
+    Command_buffer_full,
+    Context_pool_exhausted,
+    Cannot_destroy_default_context,
 }
 struct Logger {
     extern(C) void function(const(char*), uint, uint, const(char*), uint, const(char*), void*) func;

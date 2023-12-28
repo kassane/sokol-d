@@ -32,7 +32,7 @@ extern (C) struct State
     }
 }
 
-enum offscreen_pixel_format = sg.PixelFormat.RGBA8;
+enum offscreen_pixel_format = sg.PixelFormat.Rgba8;
 enum offscreen_sample_count = 1;
 enum offscreen_width = 32;
 enum offscreen_height = 32;
@@ -58,7 +58,7 @@ extern (C) void init()
     sgl.setup(gld);
 
     // initialize a pass action struct for the default pass to clear to a light-blue color
-    display.pass_action.colors[0].load_action = sg.LoadAction.CLEAR;
+    display.pass_action.colors[0].load_action = sg.LoadAction.Clear;
     display.pass_action.colors[0].clear_value.r = 0.5;
     display.pass_action.colors[0].clear_value.g = 0.7;
     display.pass_action.colors[0].clear_value.b = 1;
@@ -66,9 +66,9 @@ extern (C) void init()
 
     // create a sokol-gl pipeline object for 3D rendering into the default pass
     sg.PipelineDesc pld;
-    pld.cull_mode = sg.CullMode.BACK;
+    pld.cull_mode = sg.CullMode.Back;
     pld.depth.write_enabled = true;
-    pld.depth.compare = sg.CompareFunc.LESS_EQUAL;
+    pld.depth.compare = sg.CompareFunc.Less_equal;
     display.sgl_pip = sgl.contextMakePipeline(sgl.defaultContext, pld);
 
     // create a sokol-gl context compatible with the offscreen render pass
@@ -76,7 +76,7 @@ extern (C) void init()
     sgl.ContextDesc ctd;
     ctd.max_vertices = 8;
     ctd.max_commands = 4;
-    ctd.color_format = offscreen_pixel_format, ctd.depth_format = sg.PixelFormat.NONE,
+    ctd.color_format = offscreen_pixel_format, ctd.depth_format = sg.PixelFormat.None,
         ctd.sample_count = offscreen_sample_count, offscreen.sgl_ctx = sgl.makeContext(ctd);
 
     // create an offscreen render target texture, pass and pass-action
@@ -89,7 +89,7 @@ extern (C) void init()
     pass_desc.color_attachments[0].image = offscreen.img;
     offscreen.pass = sg.makePass(pass_desc);
 
-    offscreen.pass_action.colors[0].load_action = sg.LoadAction.CLEAR;
+    offscreen.pass_action.colors[0].load_action = sg.LoadAction.Clear;
     offscreen.pass_action.colors[0].clear_value.r = 0;
     offscreen.pass_action.colors[0].clear_value.g = 0;
     offscreen.pass_action.colors[0].clear_value.b = 0;
@@ -97,8 +97,8 @@ extern (C) void init()
 
     // sampler for sampling the offscreen render target
     sg.SamplerDesc smd;
-    smd.wrap_u = sg.Wrap.CLAMP_TO_EDGE, smd.wrap_v = sg.Wrap.CLAMP_TO_EDGE,
-        smd.min_filter = sg.Filter.NEAREST, smd.mag_filter = sg.Filter.NEAREST,
+    smd.wrap_u = sg.Wrap.Clamp_to_edge, smd.wrap_v = sg.Wrap.Clamp_to_edge,
+        smd.min_filter = sg.Filter.Nearest, smd.mag_filter = sg.Filter.Nearest,
         display.smp = sg.makeSampler(smd);
 }
 
