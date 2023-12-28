@@ -1,3 +1,4 @@
+module shaders.offscreen;
 import sg = sokol.gfx;
 
 /*

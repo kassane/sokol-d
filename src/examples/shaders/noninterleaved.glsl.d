@@ -1,3 +1,4 @@
+module shaders.noninterleaved;
 import sg = sokol.gfx;
 
 /*

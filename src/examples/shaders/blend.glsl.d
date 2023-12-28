@@ -1,3 +1,4 @@
+module shaders.blend;
 import sg = sokol.gfx;
 
 /*

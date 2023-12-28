@@ -1,3 +1,4 @@
+module shaders.mrt;
 import sg = sokol.gfx;
 
 /*

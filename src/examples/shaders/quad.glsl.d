@@ -1,3 +1,4 @@
+module shaders.quad;
 import sg = sokol.gfx;
 
 /*

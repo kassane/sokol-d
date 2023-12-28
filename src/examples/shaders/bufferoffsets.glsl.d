@@ -1,3 +1,4 @@
+module shaders.bufferoffsets;
 import sg = sokol.gfx;
 
 /*

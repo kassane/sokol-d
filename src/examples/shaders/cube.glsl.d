@@ -1,3 +1,4 @@
+module shaders.cube;
 import sg = sokol.gfx;
 
 /*

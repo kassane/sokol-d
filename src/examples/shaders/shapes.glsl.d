@@ -1,3 +1,4 @@
+module shaders.shapes;
 import sg = sokol.gfx;
 
 /*

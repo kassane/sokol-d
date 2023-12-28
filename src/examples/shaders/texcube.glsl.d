@@ -1,3 +1,4 @@
+module shaders.texcube;
 import sg = sokol.gfx;
 
 /*

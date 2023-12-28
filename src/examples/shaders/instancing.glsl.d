@@ -1,3 +1,4 @@
+module shaders.instancing;
 import sg = sokol.gfx;
 
 /*
