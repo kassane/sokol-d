@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
 //  shaders for offscreen-sapp sample
 //------------------------------------------------------------------------------
-@header const m = @import("../math.zig")
+@header import m = handmade.math
 @ctype mat4 m.Mat4
 
 // shared code for all shaders

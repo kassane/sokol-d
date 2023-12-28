@@ -6,7 +6,7 @@
 //
 //  Ported from HandmadeMath.h
 //------------------------------------------------------------------------------
-module hmath;
+module handmade.math;
 
 import std.math : PI, sqrt, sin, cos, tan, isClose;
 

@@ -8,7 +8,7 @@ module examples.cube;
 import sg = sokol.gfx;
 import app = sokol.app;
 import log = sokol.log;
-import hmath : Mat4, Vec3;
+import handmade.math : Mat4, Vec3;
 import sgapp = sokol.glue;
 
 struct State

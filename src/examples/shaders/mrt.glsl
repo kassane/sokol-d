@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
 //  shaders for mrt-sapp sample
 //------------------------------------------------------------------------------
-@header const m = @import("../math.zig")
+@header import m = handmade.math
 @ctype mat4 m.Mat4
 @ctype vec2 m.Vec2
 
