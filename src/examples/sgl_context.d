@@ -14,9 +14,12 @@ import log = sokol.log;
 import sgl = sokol.gl;
 import std.math : sin, cos;
 
-extern (C) struct State
+extern (C):
+@safe:
+
+struct State
 {
-    extern (C) struct Offscreen
+    struct Offscreen
     {
         sg.PassAction pass_action;
         sg.Pass pass;
@@ -24,7 +27,7 @@ extern (C) struct State
         sgl.Context sgl_ctx;
     }
 
-    extern (C) struct Display
+    struct Display
     {
         sg.PassAction pass_action;
         sg.Sampler smp;
@@ -37,10 +40,10 @@ enum offscreen_sample_count = 1;
 enum offscreen_width = 32;
 enum offscreen_height = 32;
 
-extern (C) __gshared State.Display display;
-extern (C) __gshared State.Offscreen offscreen;
+State.Display display;
+State.Offscreen offscreen;
 
-extern (C) void init()
+void init()
 {
     sg.Desc gfxd;
     gfxd.context = sgapp.context();
@@ -108,7 +111,7 @@ extern (C) void init()
     display.smp = sg.makeSampler(smd);
 }
 
-extern (C) void frame()
+void frame()
 {
     const a = sgl.asRadians(sapp.frameCount());
 
@@ -142,13 +145,13 @@ extern (C) void frame()
     sg.commit();
 }
 
-extern (C) void cleanup()
+void cleanup()
 {
     sgl.shutdown();
     sg.shutdown();
 }
 
-extern (C) void main()
+void main()
 {
     sapp.IconDesc icon = {sokol_default: true};
     sapp.Desc runner = {

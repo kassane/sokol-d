@@ -10,9 +10,12 @@ import sgapp = sokol.glue;
 import sapp = sokol.app;
 import log = sokol.log;
 
+extern (C):
+@safe:
+
 static sg.PassAction pass_action;
 
-extern (C) void init()
+void init()
 {
     sg.Desc cd;
     cd.context = sgapp.context();
@@ -37,7 +40,7 @@ extern (C) void init()
     }
 }
 
-extern (C) void frame()
+void frame()
 {
     auto g = pass_action.colors[0].clear_value.g + 0.01;
     pass_action.colors[0].clear_value.g = g > 1.0 ? 0.0 : g;
@@ -46,12 +49,12 @@ extern (C) void frame()
     sg.endPass();
 }
 
-extern (C) void cleanup()
+void cleanup()
 {
     sg.shutdown();
 }
 
-extern(C) void main()
+void main()
 {
     sapp.IconDesc icon = {sokol_default: true};
     sapp.Desc runner = {

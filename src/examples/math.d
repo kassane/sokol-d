@@ -207,7 +207,7 @@ float radians(float deg)
     return deg * (PI / 180.0);
 }
 
-unittest
+@safe pure unittest
 {
 
     // Vec3.zero test
@@ -220,7 +220,7 @@ unittest
 
 }
 
-unittest
+@safe pure unittest
 {
 
     // Vec3.new test
@@ -233,7 +233,7 @@ unittest
 
 }
 
-unittest
+@safe pure unittest
 {
 
     // Mat4.identity test

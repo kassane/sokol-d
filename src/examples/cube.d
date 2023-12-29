@@ -11,6 +11,9 @@ import log = sokol.log;
 import handmade.math : Mat4, Vec3;
 import sgapp = sokol.glue;
 
+extern(C):
+@safe:
+
 struct State
 {
     float rx = 0.0f;
@@ -98,7 +101,7 @@ State state;
 //     sg.commit();
 // }
 
-extern (C) void cleanup()
+void cleanup()
 {
     sg.shutdown();
 }

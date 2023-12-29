@@ -167,6 +167,7 @@ enum AndroidTooltype {
     Stylus = 2,
     Mouse = 3,
 }
+extern(C)
 struct Touchpoint {
     size_t identifier;
     float pos_x;
@@ -187,6 +188,7 @@ enum modifier_super = 8;
 enum modifier_lmb = 256;
 enum modifier_rmb = 512;
 enum modifier_mmb = 1024;
+extern(C)
 struct Event {
     ulong frame_count;
     EventType type;
@@ -208,19 +210,23 @@ struct Event {
     int framebuffer_width;
     int framebuffer_height;
 }
+extern(C)
 struct Range {
     const(void)* ptr;
     size_t size;
 }
+extern(C)
 struct ImageDesc {
     int width;
     int height;
     Range pixels;
 }
+extern(C)
 struct IconDesc {
     bool sokol_default;
     ImageDesc[8] images;
 }
+extern(C)
 struct Allocator {
     extern(C) void* function(size_t, void*) alloc_fn;
     extern(C) void function(void*, void*) free_fn;
@@ -326,10 +332,12 @@ enum LogItem {
     Dropped_file_path_too_long,
     Clipboard_string_too_big,
 }
+extern(C)
 struct Logger {
     extern(C) void function(const(char*), uint, uint, const(char*), uint, const(char*), void*) func;
     void* user_data;
 }
+extern(C)
 struct Desc {
     extern(C) void function() init_cb;
     extern(C) void function() frame_cb;
@@ -373,6 +381,7 @@ enum Html5FetchError {
     Fetch_error_buffer_too_small,
     Fetch_error_other,
 }
+extern(C)
 struct Html5FetchResponse {
     bool succeeded;
     Html5FetchError error_code;
@@ -381,6 +390,7 @@ struct Html5FetchResponse {
     Range buffer;
     void* user_data;
 }
+extern(C)
 struct Html5FetchRequest {
     int dropped_file_index;
     extern(C) void function(const Html5FetchResponse *) callback;

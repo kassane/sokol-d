@@ -17,13 +17,16 @@ enum LogItem {
     Context_pool_exhausted,
     Cannot_destroy_default_context,
 }
+extern(C)
 struct Logger {
     extern(C) void function(const(char*), uint, uint, const(char*), uint, const(char*), void*) func;
     void* user_data;
 }
+extern(C)
 struct Pipeline {
     uint id;
 }
+extern(C)
 struct Context {
     uint id;
 }
@@ -36,6 +39,7 @@ enum Error {
     Stack_underflow,
     No_context,
 }
+extern(C)
 struct ContextDesc {
     int max_vertices;
     int max_commands;
@@ -43,11 +47,13 @@ struct ContextDesc {
     sg.PixelFormat depth_format;
     int sample_count;
 }
+extern(C)
 struct Allocator {
     extern(C) void* function(size_t, void*) alloc_fn;
     extern(C) void function(void*, void*) free_fn;
     void* user_data;
 }
+extern(C)
 struct Desc {
     int max_vertices;
     int max_commands;

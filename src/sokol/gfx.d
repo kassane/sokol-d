@@ -19,27 +19,35 @@ Range asRange(T)(T val) {
     }
 }
 
+extern(C)
 struct Buffer {
     uint id;
 }
+extern(C)
 struct Image {
     uint id;
 }
+extern(C)
 struct Sampler {
     uint id;
 }
+extern(C)
 struct Shader {
     uint id;
 }
+extern(C)
 struct Pipeline {
     uint id;
 }
+extern(C)
 struct Pass {
     uint id;
 }
+extern(C)
 struct Context {
     uint id;
 }
+extern(C)
 struct Range {
     const(void)* ptr;
     size_t size;
@@ -57,6 +65,7 @@ enum max_ub_members = 16;
 enum max_vertex_attributes = 16;
 enum max_mipmaps = 16;
 enum max_texturearray_layers = 128;
+extern(C)
 struct Color {
     float r;
     float g;
@@ -140,6 +149,7 @@ enum PixelFormat {
     Rgb9e5,
     Num,
 }
+extern(C)
 struct PixelformatInfo {
     bool sample;
     bool filter;
@@ -148,12 +158,14 @@ struct PixelformatInfo {
     bool msaa;
     bool depth;
 }
+extern(C)
 struct Features {
     bool origin_top_left;
     bool image_clamp_to_border;
     bool mrt_independent_blend_state;
     bool mrt_independent_write_mask;
 }
+extern(C)
 struct Limits {
     int max_image_size_2d;
     int max_image_size_cube;
@@ -398,21 +410,25 @@ enum StoreAction {
     Store,
     Dontcare,
 }
+extern(C)
 struct ColorAttachmentAction {
     LoadAction load_action;
     StoreAction store_action;
     Color clear_value;
 }
+extern(C)
 struct DepthAttachmentAction {
     LoadAction load_action;
     StoreAction store_action;
     float clear_value;
 }
+extern(C)
 struct StencilAttachmentAction {
     LoadAction load_action;
     StoreAction store_action;
     ubyte clear_value;
 }
+extern(C)
 struct PassAction {
     uint _start_canary;
     ColorAttachmentAction[4] colors;
@@ -420,10 +436,12 @@ struct PassAction {
     StencilAttachmentAction stencil;
     uint _end_canary;
 }
+extern(C)
 struct StageBindings {
     Image[12] images;
     Sampler[8] samplers;
 }
+extern(C)
 struct Bindings {
     uint _start_canary;
     Buffer[8] vertex_buffers;
@@ -434,6 +452,7 @@ struct Bindings {
     StageBindings fs;
     uint _end_canary;
 }
+extern(C)
 struct BufferDesc {
     uint _start_canary;
     size_t size;
@@ -447,9 +466,11 @@ struct BufferDesc {
     const(void)* wgpu_buffer;
     uint _end_canary;
 }
+extern(C)
 struct ImageData {
     Range[6][16] subimage;
 }
+extern(C)
 struct ImageDesc {
     uint _start_canary;
     ImageType type;
@@ -472,6 +493,7 @@ struct ImageDesc {
     const(void)* wgpu_texture_view;
     uint _end_canary;
 }
+extern(C)
 struct SamplerDesc {
     uint _start_canary;
     Filter min_filter;
@@ -492,37 +514,44 @@ struct SamplerDesc {
     const(void)* wgpu_sampler;
     uint _end_canary;
 }
+extern(C)
 struct ShaderAttrDesc {
     const(char*) name;
     const(char*) sem_name;
     int sem_index;
 }
+extern(C)
 struct ShaderUniformDesc {
     const(char*) name;
     UniformType type;
     int array_count;
 }
+extern(C)
 struct ShaderUniformBlockDesc {
     size_t size;
     UniformLayout layout;
     ShaderUniformDesc[16] uniforms;
 }
+extern(C)
 struct ShaderImageDesc {
     bool used;
     bool multisampled;
     ImageType image_type;
     ImageSampleType sample_type;
 }
+extern(C)
 struct ShaderSamplerDesc {
     bool used;
     SamplerType sampler_type;
 }
+extern(C)
 struct ShaderImageSamplerPairDesc {
     bool used;
     int image_slot;
     int sampler_slot;
     const(char*) glsl_name;
 }
+extern(C)
 struct ShaderStageDesc {
     const(char*) source;
     Range bytecode;
@@ -533,6 +562,7 @@ struct ShaderStageDesc {
     ShaderSamplerDesc[8] samplers;
     ShaderImageSamplerPairDesc[12] image_sampler_pairs;
 }
+extern(C)
 struct ShaderDesc {
     uint _start_canary;
     ShaderAttrDesc[16] attrs;
@@ -541,26 +571,31 @@ struct ShaderDesc {
     const(char*) label;
     uint _end_canary;
 }
+extern(C)
 struct VertexBufferLayoutState {
     int stride;
     VertexStep step_func;
     int step_rate;
 }
+extern(C)
 struct VertexAttrState {
     int buffer_index;
     int offset;
     VertexFormat format;
 }
+extern(C)
 struct VertexLayoutState {
     VertexBufferLayoutState[8] buffers;
     VertexAttrState[16] attrs;
 }
+extern(C)
 struct StencilFaceState {
     CompareFunc compare;
     StencilOp fail_op;
     StencilOp depth_fail_op;
     StencilOp pass_op;
 }
+extern(C)
 struct StencilState {
     bool enabled;
     StencilFaceState front;
@@ -569,6 +604,7 @@ struct StencilState {
     ubyte write_mask;
     ubyte _ref;
 }
+extern(C)
 struct DepthState {
     PixelFormat pixel_format;
     CompareFunc compare;
@@ -577,6 +613,7 @@ struct DepthState {
     float bias_slope_scale;
     float bias_clamp;
 }
+extern(C)
 struct BlendState {
     bool enabled;
     BlendFactor src_factor_rgb;
@@ -586,11 +623,13 @@ struct BlendState {
     BlendFactor dst_factor_alpha;
     BlendOp op_alpha;
 }
+extern(C)
 struct ColorTargetState {
     PixelFormat pixel_format;
     ColorMask write_mask;
     BlendState blend;
 }
+extern(C)
 struct PipelineDesc {
     uint _start_canary;
     Shader shader;
@@ -609,11 +648,13 @@ struct PipelineDesc {
     const(char*) label;
     uint _end_canary;
 }
+extern(C)
 struct PassAttachmentDesc {
     Image image;
     int mip_level;
     int slice;
 }
+extern(C)
 struct PassDesc {
     uint _start_canary;
     PassAttachmentDesc[4] color_attachments;
@@ -622,6 +663,7 @@ struct PassDesc {
     const(char*) label;
     uint _end_canary;
 }
+extern(C)
 struct TraceHooks {
     void* user_data;
     extern(C) void function(void*) reset_state_cache;
@@ -683,11 +725,13 @@ struct TraceHooks {
     extern(C) void function(const(char*), void*) push_debug_group;
     extern(C) void function(void*) pop_debug_group;
 }
+extern(C)
 struct SlotInfo {
     ResourceState state;
     uint res_id;
     uint ctx_id;
 }
+extern(C)
 struct BufferInfo {
     SlotInfo slot;
     uint update_frame_index;
@@ -697,24 +741,30 @@ struct BufferInfo {
     int num_slots;
     int active_slot;
 }
+extern(C)
 struct ImageInfo {
     SlotInfo slot;
     uint upd_frame_index;
     int num_slots;
     int active_slot;
 }
+extern(C)
 struct SamplerInfo {
     SlotInfo slot;
 }
+extern(C)
 struct ShaderInfo {
     SlotInfo slot;
 }
+extern(C)
 struct PipelineInfo {
     SlotInfo slot;
 }
+extern(C)
 struct PassInfo {
     SlotInfo slot;
 }
+extern(C)
 struct FrameStatsGl {
     uint num_bind_buffer;
     uint num_active_texture;
@@ -728,12 +778,14 @@ struct FrameStatsGl {
     uint num_disable_vertex_attrib_array;
     uint num_uniform;
 }
+extern(C)
 struct FrameStatsD3d11Pass {
     uint num_om_set_render_targets;
     uint num_clear_render_target_view;
     uint num_clear_depth_stencil_view;
     uint num_resolve_subresource;
 }
+extern(C)
 struct FrameStatsD3d11Pipeline {
     uint num_rs_set_state;
     uint num_om_set_depth_stencil_state;
@@ -745,6 +797,7 @@ struct FrameStatsD3d11Pipeline {
     uint num_ps_set_shader;
     uint num_ps_set_constant_buffers;
 }
+extern(C)
 struct FrameStatsD3d11Bindings {
     uint num_ia_set_vertex_buffers;
     uint num_ia_set_index_buffer;
@@ -753,15 +806,18 @@ struct FrameStatsD3d11Bindings {
     uint num_vs_set_samplers;
     uint num_ps_set_samplers;
 }
+extern(C)
 struct FrameStatsD3d11Uniforms {
     uint num_update_subresource;
 }
+extern(C)
 struct FrameStatsD3d11Draw {
     uint num_draw_indexed_instanced;
     uint num_draw_indexed;
     uint num_draw_instanced;
     uint num_draw;
 }
+extern(C)
 struct FrameStatsD3d11 {
     FrameStatsD3d11Pass pass;
     FrameStatsD3d11Pipeline pipeline;
@@ -771,11 +827,13 @@ struct FrameStatsD3d11 {
     uint num_map;
     uint num_unmap;
 }
+extern(C)
 struct FrameStatsMetalIdpool {
     uint num_added;
     uint num_released;
     uint num_garbage_collected;
 }
+extern(C)
 struct FrameStatsMetalPipeline {
     uint num_set_blend_color;
     uint num_set_cull_mode;
@@ -785,6 +843,7 @@ struct FrameStatsMetalPipeline {
     uint num_set_render_pipeline_state;
     uint num_set_depth_stencil_state;
 }
+extern(C)
 struct FrameStatsMetalBindings {
     uint num_set_vertex_buffer;
     uint num_set_vertex_texture;
@@ -792,20 +851,24 @@ struct FrameStatsMetalBindings {
     uint num_set_fragment_texture;
     uint num_set_fragment_sampler_state;
 }
+extern(C)
 struct FrameStatsMetalUniforms {
     uint num_set_vertex_buffer_offset;
     uint num_set_fragment_buffer_offset;
 }
+extern(C)
 struct FrameStatsMetal {
     FrameStatsMetalIdpool idpool;
     FrameStatsMetalPipeline pipeline;
     FrameStatsMetalBindings bindings;
     FrameStatsMetalUniforms uniforms;
 }
+extern(C)
 struct FrameStatsWgpuUniforms {
     uint num_set_bindgroup;
     uint size_write_buffer;
 }
+extern(C)
 struct FrameStatsWgpuBindings {
     uint num_set_vertex_buffer;
     uint num_skip_redundant_vertex_buffer;
@@ -820,10 +883,12 @@ struct FrameStatsWgpuBindings {
     uint num_bindgroup_cache_collisions;
     uint num_bindgroup_cache_hash_vs_key_mismatch;
 }
+extern(C)
 struct FrameStatsWgpu {
     FrameStatsWgpuUniforms uniforms;
     FrameStatsWgpuBindings bindings;
 }
+extern(C)
 struct FrameStats {
     uint frame_index;
     uint num_passes;
@@ -1106,6 +1171,7 @@ enum LogItem {
     Validate_updimg_once,
     Validation_failed,
 }
+extern(C)
 struct MetalContextDesc {
     const(void)* device;
     extern(C) const(void)* function() renderpass_descriptor_cb;
@@ -1114,6 +1180,7 @@ struct MetalContextDesc {
     extern(C) const(void)* function(void*) drawable_userdata_cb;
     void* user_data;
 }
+extern(C)
 struct D3d11ContextDesc {
     const(void)* device;
     const(void)* device_context;
@@ -1123,6 +1190,7 @@ struct D3d11ContextDesc {
     extern(C) const(void)* function(void*) depth_stencil_view_userdata_cb;
     void* user_data;
 }
+extern(C)
 struct WgpuContextDesc {
     const(void)* device;
     extern(C) const(void)* function() render_view_cb;
@@ -1133,11 +1201,13 @@ struct WgpuContextDesc {
     extern(C) const(void)* function(void*) depth_stencil_view_userdata_cb;
     void* user_data;
 }
+extern(C)
 struct GlContextDesc {
     extern(C) uint function() default_framebuffer_cb;
     extern(C) uint function(void*) default_framebuffer_userdata_cb;
     void* user_data;
 }
+extern(C)
 struct ContextDesc {
     int color_format;
     int depth_format;
@@ -1147,19 +1217,23 @@ struct ContextDesc {
     WgpuContextDesc wgpu;
     GlContextDesc gl;
 }
+extern(C)
 struct CommitListener {
     extern(C) void function(void*) func;
     void* user_data;
 }
+extern(C)
 struct Allocator {
     extern(C) void* function(size_t, void*) alloc_fn;
     extern(C) void function(void*, void*) free_fn;
     void* user_data;
 }
+extern(C)
 struct Logger {
     extern(C) void function(const(char*), uint, uint, const(char*), uint, const(char*), void*) func;
     void* user_data;
 }
+extern(C)
 struct Desc {
     uint _start_canary;
     int buffer_pool_size;
@@ -1600,95 +1674,117 @@ extern(C) void sg_discard_context(Context) @system @nogc nothrow;
 void discardContext(Context ctx_id) @trusted @nogc nothrow {
     sg_discard_context(ctx_id);
 }
+extern(C)
 struct D3d11BufferInfo {
     const(void)* buf;
 }
+extern(C)
 struct D3d11ImageInfo {
     const(void)* tex2d;
     const(void)* tex3d;
     const(void)* res;
     const(void)* srv;
 }
+extern(C)
 struct D3d11SamplerInfo {
     const(void)* smp;
 }
+extern(C)
 struct D3d11ShaderInfo {
     const(void)*[4] vs_cbufs;
     const(void)*[4] fs_cbufs;
     const(void)* vs;
     const(void)* fs;
 }
+extern(C)
 struct D3d11PipelineInfo {
     const(void)* il;
     const(void)* rs;
     const(void)* dss;
     const(void)* bs;
 }
+extern(C)
 struct D3d11PassInfo {
     const(void)*[4] color_rtv;
     const(void)*[4] resolve_rtv;
     const(void)* dsv;
 }
+extern(C)
 struct MtlBufferInfo {
     const(void)*[2] buf;
     int active_slot;
 }
+extern(C)
 struct MtlImageInfo {
     const(void)*[2] tex;
     int active_slot;
 }
+extern(C)
 struct MtlSamplerInfo {
     const(void)* smp;
 }
+extern(C)
 struct MtlShaderInfo {
     const(void)* vs_lib;
     const(void)* fs_lib;
     const(void)* vs_func;
     const(void)* fs_func;
 }
+extern(C)
 struct MtlPipelineInfo {
     const(void)* rps;
     const(void)* dss;
 }
+extern(C)
 struct WgpuBufferInfo {
     const(void)* buf;
 }
+extern(C)
 struct WgpuImageInfo {
     const(void)* tex;
     const(void)* view;
 }
+extern(C)
 struct WgpuSamplerInfo {
     const(void)* smp;
 }
+extern(C)
 struct WgpuShaderInfo {
     const(void)* vs_mod;
     const(void)* fs_mod;
     const(void)* bgl;
 }
+extern(C)
 struct WgpuPipelineInfo {
     const(void)* pip;
 }
+extern(C)
 struct WgpuPassInfo {
     const(void)*[4] color_view;
     const(void)*[4] resolve_view;
     const(void)* ds_view;
 }
+extern(C)
 struct GlBufferInfo {
     uint[2] buf;
     int active_slot;
 }
+extern(C)
 struct GlImageInfo {
     uint[2] tex;
     uint tex_target;
     uint msaa_render_buffer;
     int active_slot;
 }
+extern(C)
 struct GlSamplerInfo {
     uint smp;
 }
+extern(C)
 struct GlShaderInfo {
     uint prog;
 }
+extern(C)
 struct GlPassInfo {
     uint frame_buffer;
     uint[4] msaa_resolve_framebuffer;

@@ -12,12 +12,14 @@ import sapp = sokol.app;
 import sdtx = sokol.debugtext;
 import log = sokol.log;
 
+extern(C):
+@safe:
+
 // Font slots
 enum KC854 = 0;
 enum C64 = 1;
 enum ORIC = 2;
 
-extern(C)
 struct Color
 {
     @disable this();
@@ -29,7 +31,6 @@ struct Color
     ubyte r, g, b;
 }
 
-extern(C)
 struct State
 {
     @disable this();
@@ -44,9 +45,9 @@ struct State
     ];
 }
 
-__gshared State state = {};
+State state = {};
 
-extern (C) void init()
+void init()
 {
     stm.setup();
     sg.Desc cd;
@@ -68,7 +69,7 @@ extern (C) void init()
     state.passAction.colors[0].clear_value.a = 1;
 }
 
-extern (C) void frame()
+void frame()
 {
     state.frameCount++;
 
@@ -100,7 +101,7 @@ extern (C) void frame()
     sg.commit();
 }
 
-extern (C) void cleanup()
+void cleanup()
 {
     sdtx.shutdown();
     sg.shutdown();

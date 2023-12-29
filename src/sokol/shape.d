@@ -20,13 +20,16 @@ Range asRange(T)(T val) {
     }
 }
 
+extern(C)
 struct Range {
     const(void)* ptr;
     size_t size;
 }
+extern(C)
 struct Mat4 {
     float[4][4] m;
 }
+extern(C)
 struct Vertex {
     float x;
     float y;
@@ -36,28 +39,34 @@ struct Vertex {
     ushort v;
     uint color;
 }
+extern(C)
 struct ElementRange {
     uint base_element;
     uint num_elements;
 }
+extern(C)
 struct SizesItem {
     uint num;
     uint size;
 }
+extern(C)
 struct Sizes {
     SizesItem vertices;
     SizesItem indices;
 }
+extern(C)
 struct BufferItem {
     Range buffer;
     size_t data_size;
     size_t shape_offset;
 }
+extern(C)
 struct Buffer {
     bool valid;
     BufferItem vertices;
     BufferItem indices;
 }
+extern(C)
 struct Plane {
     float width;
     float depth;
@@ -67,6 +76,7 @@ struct Plane {
     bool merge;
     Mat4 transform;
 }
+extern(C)
 struct Box {
     float width;
     float height;
@@ -77,6 +87,7 @@ struct Box {
     bool merge;
     Mat4 transform;
 }
+extern(C)
 struct Sphere {
     float radius;
     ushort slices;
@@ -86,6 +97,7 @@ struct Sphere {
     bool merge;
     Mat4 transform;
 }
+extern(C)
 struct Cylinder {
     float radius;
     float height;
@@ -96,6 +108,7 @@ struct Cylinder {
     bool merge;
     Mat4 transform;
 }
+extern(C)
 struct Torus {
     float radius;
     float ring_radius;

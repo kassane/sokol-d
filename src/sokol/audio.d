@@ -45,15 +45,18 @@ enum LogItem {
     Coreaudio_start_failed,
     Backend_buffer_size_isnt_multiple_of_packet_size,
 }
+extern(C)
 struct Logger {
     extern(C) void function(const(char*), uint, uint, const(char*), uint, const(char*), void*) func;
     void* user_data;
 }
+extern(C)
 struct Allocator {
     extern(C) void* function(size_t, void*) alloc_fn;
     extern(C) void function(void*, void*) free_fn;
     void* user_data;
 }
+extern(C)
 struct Desc {
     int sample_rate;
     int num_channels;

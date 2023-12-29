@@ -48,22 +48,27 @@ enum LogItem {
     Context_pool_exhausted,
     Cannot_destroy_default_context,
 }
+extern(C)
 struct Logger {
     extern(C) void function(const(char*), uint, uint, const(char*), uint, const(char*), void*) func;
     void* user_data;
 }
+extern(C)
 struct Context {
     uint id;
 }
+extern(C)
 struct Range {
     const(void)* ptr;
     size_t size;
 }
+extern(C)
 struct FontDesc {
     Range data;
     ubyte first_char;
     ubyte last_char;
 }
+extern(C)
 struct ContextDesc {
     int max_commands;
     int char_buf_size;
@@ -74,11 +79,13 @@ struct ContextDesc {
     sg.PixelFormat depth_format;
     int sample_count;
 }
+extern(C)
 struct Allocator {
     extern(C) void* function(size_t, void*) alloc_fn;
     extern(C) void function(void*, void*) free_fn;
     void* user_data;
 }
+extern(C)
 struct Desc {
     int context_pool_size;
     int printf_buf_size;
