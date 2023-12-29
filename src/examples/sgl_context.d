@@ -76,14 +76,18 @@ extern (C) void init()
     sgl.ContextDesc ctd;
     ctd.max_vertices = 8;
     ctd.max_commands = 4;
-    ctd.color_format = offscreen_pixel_format, ctd.depth_format = sg.PixelFormat.None,
-        ctd.sample_count = offscreen_sample_count, offscreen.sgl_ctx = sgl.makeContext(ctd);
+    ctd.color_format = offscreen_pixel_format;
+    ctd.depth_format = sg.PixelFormat.None;
+    ctd.sample_count = offscreen_sample_count;
+    offscreen.sgl_ctx = sgl.makeContext(ctd);
 
     // create an offscreen render target texture, pass and pass-action
     sg.ImageDesc imgd;
-    imgd.render_target = true, imgd.width = offscreen_width, imgd.height = offscreen_height,
-        imgd.pixel_format = offscreen_pixel_format,
-        imgd.sample_count = offscreen_sample_count, offscreen.img = sg.makeImage(imgd);
+    imgd.render_target = true, imgd.width = offscreen_width;
+    imgd.height = offscreen_height;
+    imgd.pixel_format = offscreen_pixel_format;
+    imgd.sample_count = offscreen_sample_count;
+    offscreen.img = sg.makeImage(imgd);
 
     sg.PassDesc pass_desc;
     pass_desc.color_attachments[0].image = offscreen.img;
@@ -97,9 +101,11 @@ extern (C) void init()
 
     // sampler for sampling the offscreen render target
     sg.SamplerDesc smd;
-    smd.wrap_u = sg.Wrap.Clamp_to_edge, smd.wrap_v = sg.Wrap.Clamp_to_edge,
-        smd.min_filter = sg.Filter.Nearest, smd.mag_filter = sg.Filter.Nearest,
-        display.smp = sg.makeSampler(smd);
+    smd.wrap_u = sg.Wrap.Clamp_to_edge;
+    smd.wrap_v = sg.Wrap.Clamp_to_edge;
+    smd.min_filter = sg.Filter.Nearest;
+    smd.mag_filter = sg.Filter.Nearest;
+    display.smp = sg.makeSampler(smd);
 }
 
 extern (C) void frame()
