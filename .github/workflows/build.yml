@@ -27,3 +27,4 @@ jobs:
             zig build debugtext_print -DZigCC --summary all
             zig build clear -DZigCC --summary all
             zig build sgl_context -DZigCC --summary all
+            zig build cube -DZigCC --summary all

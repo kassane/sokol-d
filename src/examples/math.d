@@ -123,7 +123,7 @@ struct Mat4
         return result;
     }
 
-    static Mat4 persp(float fov, float aspect, float near, float far)
+    static Mat4 perspective(float fov, float aspect, float near, float far)
     {
         Mat4 result = Mat4.identity;
 

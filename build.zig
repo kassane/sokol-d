@@ -231,14 +231,15 @@ pub fn build(b: *Builder) !void {
     inline for (examples) |example| {
         const ldc = try buildLDC(b, sokol, .{
             .name = example,
-            .sources = if (!std.mem.eql(u8, example, "clear"))
+            .sources = if (std.mem.eql(u8, example, "cube"))
                 &.{
-                    try fmt.allocPrint(b.allocator, "{s}/src/examples/{s}.d", .{ rootPath(), example }),
-                    try fmt.allocPrint(b.allocator, "{s}/src/examples/math.d", .{rootPath()}),
+                    b.fmt("{s}/src/examples/{s}.d", .{ rootPath(), example }),
+                    b.fmt("{s}/src/examples/math.d", .{rootPath()}),
+                    b.fmt("{s}/src/examples/shaders/cube.glsl.d", .{rootPath()}),
                 }
             else
                 &.{
-                    try fmt.allocPrint(b.allocator, "{s}/src/examples/{s}.d", .{ rootPath(), example }),
+                    b.fmt("{s}/src/examples/{s}.d", .{ rootPath(), example }),
                 },
             .betterC = enable_betterC,
             .dflags = &.{

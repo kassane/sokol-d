@@ -17,10 +17,11 @@ static sg.PassAction pass_action;
 
 void init()
 {
-    sg.Desc cd;
-    cd.context = sgapp.context();
-    cd.logger.func = &log.slog_func;
-    sg.setup(cd);
+    sg.Desc gfx = {
+        context: sgapp.context(),
+        logger: {func: &log.slog_func}
+    };
+    sg.setup(gfx);
 
     pass_action.colors[0].load_action = sg.LoadAction.Clear;
     pass_action.colors[0].clear_value.r = 1;
@@ -42,7 +43,7 @@ void init()
 
 void frame()
 {
-    auto g = pass_action.colors[0].clear_value.g + 0.01;
+    const g = pass_action.colors[0].clear_value.g + 0.01;
     pass_action.colors[0].clear_value.g = g > 1.0 ? 0.0 : g;
     sg.beginDefaultPass(pass_action, sapp.width(), sapp.height());
     sg.commit();
@@ -56,7 +57,6 @@ void cleanup()
 
 void main()
 {
-    sapp.IconDesc icon = {sokol_default: true};
     sapp.Desc runner = {
         window_title: "clear.d",
         init_cb: &init,
@@ -65,8 +65,8 @@ void main()
         width: 640,
         height: 480,
         win32_console_attach: true,
+        icon: {sokol_default: true},
+        logger: {func: &log.func}
     };
-    runner.icon = icon;
-    runner.logger.func = &log.func;
     sapp.run(runner);
 }

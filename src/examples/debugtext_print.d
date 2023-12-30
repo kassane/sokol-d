@@ -34,7 +34,7 @@ struct Color
 struct State
 {
     @disable this();
-    sg.PassAction passAction;
+    sg.PassAction passAction = {};
     uint frameCount;
     ulong timeStamp;
 
@@ -45,21 +45,21 @@ struct State
     ];
 }
 
-State state = {};
+static State state = {};
 
 void init()
 {
     stm.setup();
-    sg.Desc cd;
-    cd.context = sgapp.context();
-    cd.logger.func = &log.func;
-    sg.setup(cd);
+    sg.Desc gfx = {
+        context: sgapp.context(),
+        logger: {func: &log.func}
+    };
+    sg.setup(gfx);
 
-    sdtx.Desc desc;
-    desc.logger.func = &log.func;
-    desc.fonts[0] = sdtx.fontKc854();
-    desc.fonts[1] = sdtx.fontC64();
-    desc.fonts[3] = sdtx.fontOric();
+    sdtx.Desc desc = {
+        logger: {func: &log.func},
+        fonts: [sdtx.fontKc854(), sdtx.fontC64(), sdtx.fontOric()]
+    };
     sdtx.setup(desc);
 
     state.passAction.colors[0].load_action = sg.LoadAction.Clear;
@@ -109,16 +109,15 @@ void cleanup()
 
 void main()
 {
-    sapp.IconDesc icon = {sokol_default: true};
     sapp.Desc runner = {
         window_title: "debugtext_print.d",
         init_cb: &init,
         frame_cb: &frame,
         cleanup_cb: &cleanup,
         width: 640,
-        height: 480
+        height: 480,
+        icon: {sokol_default: true},
+        logger:{func: &log.func}
     };
-    runner.icon = icon;
-    runner.logger.func = &log.func;
     sapp.run(runner);
 }

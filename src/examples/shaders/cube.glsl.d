@@ -353,14 +353,14 @@ sg.ShaderDesc cube_shader_desc(sg.Backend backend) {
 		case sg.Backend.Glcore33:
 			desc.attrs[0].name = "position";
 			desc.attrs[1].name = "color0";
-			desc.vs.source = &VS_SOURCE_GLSL330;
+			desc.vs.source = sg.cStrTod(VS_SOURCE_GLSL330);
 			desc.vs.entry = "main";
 			desc.vs.uniform_blocks[0].size = 64;
 			desc.vs.uniform_blocks[0].layout = sg.UniformLayout.Std140;
 			desc.vs.uniform_blocks[0].uniforms[0].name = "vs_params";
-			desc.vs.uniform_blocks[0].uniforms[0]._type = sg.UniformType.Float4;
+			desc.vs.uniform_blocks[0].uniforms[0].type = sg.UniformType.Float4;
 			desc.vs.uniform_blocks[0].uniforms[0].array_count = 4;
-			desc.fs.source = &FS_SOURCE_GLSL330;
+			desc.fs.source = sg.cStrTod(FS_SOURCE_GLSL330);
 			desc.fs.entry = "main";
 			desc.label = "cube_shader";
 			break;
@@ -369,22 +369,22 @@ sg.ShaderDesc cube_shader_desc(sg.Backend backend) {
 			desc.attrs[0].sem_index = 0;
 			desc.attrs[1].sem_name = "TEXCOORD";
 			desc.attrs[1].sem_index = 1;
-			desc.vs.source = &VS_SOURCE_HLSL4;
+			desc.vs.source = sg.cStrTod(VS_SOURCE_HLSL4);
 			desc.vs.d3d11_target = "vs_4_0";
 			desc.vs.entry = "main";
 			desc.vs.uniform_blocks[0].size = 64;
 			desc.vs.uniform_blocks[0].layout = sg.UniformLayout.Std140;
-			desc.fs.source = &FS_SOURCE_HLSL4;
+			desc.fs.source = sg.cStrTod(FS_SOURCE_HLSL4);
 			desc.fs.d3d11_target = "ps_4_0";
 			desc.fs.entry = "main";
 			desc.label = "cube_shader";
 			break;
-		case sg.Backend.MetalMacos:
-			desc.vs.source = &VS_SOURCE_METAL_MACOS;
+		case sg.Backend.Metal_macos:
+			desc.vs.source = sg.cStrTod(VS_SOURCE_METAL_MACOS);
 			desc.vs.entry = "main0";
 			desc.vs.uniform_blocks[0].size = 64;
 			desc.vs.uniform_blocks[0].layout = sg.UniformLayout.Std140;
-			desc.fs.source = &FS_SOURCE_METAL_MACOS;
+			desc.fs.source = sg.cStrTod(FS_SOURCE_METAL_MACOS);
 			desc.fs.entry = "main0";
 			desc.label = "cube_shader";
 			break;

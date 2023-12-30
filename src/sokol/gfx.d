@@ -3,7 +3,7 @@
 module sokol.gfx;
 
 // helper function to convert a C string to a D string
-string cStrTod(const(char*) c_str) {
+string cStrTod(T)(T c_str) {
     import std.conv: to;
     return c_str.to!string;
 }
@@ -459,7 +459,7 @@ struct BufferDesc {
     BufferType type;
     Usage usage;
     Range data;
-    const(char*) label;
+    string label;
     uint[2] gl_buffers;
     const(void)*[2] mtl_buffers;
     const(void)* d3d11_buffer;
@@ -483,7 +483,7 @@ struct ImageDesc {
     PixelFormat pixel_format;
     int sample_count;
     ImageData data;
-    const(char*) label;
+    string label;
     uint[2] gl_textures;
     uint gl_texture_target;
     const(void)*[2] mtl_textures;
@@ -507,7 +507,7 @@ struct SamplerDesc {
     BorderColor border_color;
     CompareFunc compare;
     uint max_anisotropy;
-    const(char*) label;
+    string label;
     uint gl_sampler;
     const(void)* mtl_sampler;
     const(void)* d3d11_sampler;
@@ -516,13 +516,13 @@ struct SamplerDesc {
 }
 extern(C)
 struct ShaderAttrDesc {
-    const(char*) name;
-    const(char*) sem_name;
+    string name;
+    string sem_name;
     int sem_index;
 }
 extern(C)
 struct ShaderUniformDesc {
-    const(char*) name;
+    string name;
     UniformType type;
     int array_count;
 }
@@ -549,14 +549,14 @@ struct ShaderImageSamplerPairDesc {
     bool used;
     int image_slot;
     int sampler_slot;
-    const(char*) glsl_name;
+    string glsl_name;
 }
 extern(C)
 struct ShaderStageDesc {
-    const(char*) source;
+    string source;
     Range bytecode;
-    const(char*) entry;
-    const(char*) d3d11_target;
+    string entry;
+    string d3d11_target;
     ShaderUniformBlockDesc[4] uniform_blocks;
     ShaderImageDesc[12] images;
     ShaderSamplerDesc[8] samplers;
@@ -568,7 +568,7 @@ struct ShaderDesc {
     ShaderAttrDesc[16] attrs;
     ShaderStageDesc vs;
     ShaderStageDesc fs;
-    const(char*) label;
+    string label;
     uint _end_canary;
 }
 extern(C)
@@ -645,7 +645,7 @@ struct PipelineDesc {
     int sample_count;
     Color blend_color;
     bool alpha_to_coverage_enabled;
-    const(char*) label;
+    string label;
     uint _end_canary;
 }
 extern(C)
@@ -660,7 +660,7 @@ struct PassDesc {
     PassAttachmentDesc[4] color_attachments;
     PassAttachmentDesc[4] resolve_attachments;
     PassAttachmentDesc depth_stencil_attachment;
-    const(char*) label;
+    string label;
     uint _end_canary;
 }
 extern(C)

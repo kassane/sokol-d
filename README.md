@@ -21,11 +21,25 @@ zig build -Doptimize=ReleaseFast -DShared
 
 # build samples [WiP]
 zig build clear -Doptimize=ReleaseFast # works (optional: add -DBetterC)
-zig build debugtext_print -Doptimize=ReleaseFast # run, but show gray screen
-zig build sgl_context -Doptimize=ReleaseFast # run, but show gray screen
-zig build cube -Doptimize=ReleaseFast # not building
+zig build debugtext_print -Doptimize=ReleaseFast # run, but no anims (fixme)
+zig build sgl_context -Doptimize=ReleaseFast # run, but no anims (fixme)
+zig build cube -Doptimize=ReleaseFast # (fixme)
 
 # custom options:
 # -DZigCC (use zig cc as compiler and linker),
 # -DBetterC (disable D runtime on ldc2)
 ```
+
+## Shaders
+Checkout [sokol-tools](https://github.com/floooh/sokol-tools) for a sokol shader pipeline! It supports these D bindings and all shaders in the examples folder
+here have been compiled using it with `-f sokol_d`!
+
+```bash
+zig build shaders # (re-)generate D bindings from shaders.
+```
+
+## License and attributinos
+This code is released under the zlib license (see `LICENSE` for info). Parts of `gen_d.py` have been copied and modified from
+the zig-bindings (https://github.com/floooh/sokol-zig/) and rust-bindings (https://github.com/floooh/sokol-rust/) for sokol.
+
+The sokol headers are created by Andre Weissflog (floooh) and sokol is released under its own license here: https://github.com/floooh/sokol/blob/master/LICENSE
