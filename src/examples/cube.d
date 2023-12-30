@@ -25,7 +25,7 @@ struct State
     sg.Bindings bind;
     sg.PassAction passAction;
 
-    static Mat4 view() @trusted
+    static Mat4 view()
     {
         return Mat4.lookAt(Vec3(0.0f, 1.5f, 6.0f), Vec3.zero(), Vec3.up());
     }
@@ -102,6 +102,9 @@ void init()
     state.passAction.colors[0].clear_value.a = 1;
 }
 
+sg.Range ranging(ref shd.VsParams params) @trusted{
+    return cast(sg.Range)&params;
+}
 void frame()
 {
     float dt = cast(float) app.frameDuration() * 60;
@@ -115,7 +118,7 @@ void frame()
 
     sg.applyPipeline(state.pip);
     sg.applyBindings(state.bind);
-    // sg.applyUniforms(sg.ShaderStage.Vs, shd.SLOT_VS_PARAMS, sg.asRange(&vsParams));
+    sg.applyUniforms(sg.ShaderStage.Vs, shd.SLOT_VS_PARAMS, ranging(vsParams));
 
     sg.draw(0, 36, 1);
 
@@ -144,7 +147,7 @@ void main()
     app.run(runner);
 }
 
-shd.VsParams computeVsParams(float rx, float ry) @trusted
+shd.VsParams computeVsParams(float rx, float ry) 
 {
     auto rxm = Mat4.rotate(rx, Vec3(1, 0, 0));
     auto rym = Mat4.rotate(ry, Vec3(0, 1, 0));

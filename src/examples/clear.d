@@ -46,8 +46,8 @@ void frame()
     const g = pass_action.colors[0].clear_value.g + 0.01;
     pass_action.colors[0].clear_value.g = g > 1.0 ? 0.0 : g;
     sg.beginDefaultPass(pass_action, sapp.width(), sapp.height());
-    sg.commit();
     sg.endPass();
+    sg.commit();
 }
 
 void cleanup()

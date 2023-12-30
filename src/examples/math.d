@@ -10,6 +10,8 @@ module handmade.math;
 
 import std.math : PI, sqrt, sin, cos, tan, isClose;
 
+@safe:
+
 struct Vec2
 {
     float x, y;
