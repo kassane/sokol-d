@@ -26,3 +26,6 @@ docs/
 
 # Zig build
 zig-*/
+
+#VScode
+.vscode/

@@ -155,7 +155,7 @@ void frame()
     sg.commit();
 }
 
-static void cleanup()
+void cleanup()
 {
     sgl.shutdown();
     sg.shutdown();

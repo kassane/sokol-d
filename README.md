@@ -25,9 +25,23 @@ zig build debugtext_print -Doptimize=ReleaseFast # run, but no anims (fixme)
 zig build sgl_context -Doptimize=ReleaseFast # run, but no anims (fixme)
 zig build cube -Doptimize=ReleaseFast # (fixme)
 
-# custom options:
-# -DZigCC (use zig cc as compiler and linker),
-# -DBetterC (disable D runtime on ldc2)
+zig build --help
+# Project-Specific Options:
+#   -Dgl=[bool]                  Force GL backend
+#   -Dwayland=[bool]             Compile with wayland-support (default: false)
+#   -Dx11=[bool]                 Compile with x11-support (default: true)
+#   -Degl=[bool]                 Use EGL instead of GLX if possible (default: false)
+#   -Dtarget=[string]            The CPU architecture, OS, and ABI to build for
+#   -Dcpu=[string]               Target CPU features to add or subtract
+#   -Doptimize=[enum]            Prioritize performance, safety, or binary size (-O flag)
+#                                  Supported Values:
+#                                    Debug
+#                                    ReleaseSafe
+#                                    ReleaseFast
+#                                    ReleaseSmall
+#   -DShared=[bool]              Build sokol dynamic library [default: static]
+#   -DBetterC=[bool]             Omit generating some runtime information and helper functions. [default: false]
+#   -DZigCC=[bool]               Use zig cc as compiler and linker. [default: false]
 ```
 
 ## Shaders

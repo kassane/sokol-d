@@ -27,7 +27,7 @@ pub fn main() !void {
             try cmds.append("-target");
             try cmds.append("native-native-msvc"); // msvc only
         },
-        .macos, .ios => {},
+        .ios, .macos, .watchos, .tvos => {},
         else => {
             try cmds.append("-target");
             try cmds.append("native-native");

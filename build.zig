@@ -42,13 +42,6 @@ pub fn buildSokol(b: *Builder, target: CrossTarget, optimize: OptimizeMode, conf
         .optimize = optimize,
     });
     lib.disable_sanitize_c = true;
-    switch (optimize) {
-        // zig have custom compiler-rt and another toolchains not include it (fix: unknown ref zig_stack_protector)
-        .Debug, .ReleaseSafe => lib.bundle_compiler_rt = true,
-        else => lib.strip = true,
-    }
-    if (!sharedlib)
-        lib.pie = true;
     lib.linkLibC();
     const sokol_path = prefix_path ++ "src/sokol/c/";
     const csources = [_][]const u8{
@@ -248,8 +241,8 @@ pub fn build(b: *Builder) !void {
                 "--vgc", // list all gc alloc
                 "--preview=dip1000",
             },
-            // fixme: https://github.com/kassane/sokol-d/issues/1
-            .zig_cc = if (target.isDarwin()) false else enable_zigcc,
+            // fixme: https://github.com/kassane/sokol-d/issues/1 - betterC works on darwin
+            .zig_cc = if (target.isDarwin() and !enable_betterC) false else enable_zigcc,
         });
         ldc.setName("ldc2");
         ldc.step.dependOn(b.getInstallStep());
@@ -304,7 +297,7 @@ fn buildShaders(b: *Builder) void {
 }
 
 // Use LDC2 (https://github.com/ldc-developers/ldc) to compile the D examples
-fn buildLDC(b: *Builder, lib: *Builder.CompileStep, config: ldcConfig) !*Builder.RunStep {
+fn buildLDC(b: *Builder, lib: *CompileStep, config: ldcConfig) !*Builder.RunStep {
     const ldc = try b.findProgram(&.{"ldc2"}, &.{});
 
     var cmds = std.ArrayList([]const u8).init(b.allocator);
@@ -500,8 +493,8 @@ fn buildZigCC(b: *Builder) void {
 }
 
 const ldcConfig = struct {
-    kind: Builder.CompileStep.Kind = .exe,
-    linkage: Builder.CompileStep.Linkage = .static,
+    kind: CompileStep.Kind = .exe,
+    linkage: CompileStep.Linkage = .static,
     betterC: bool = false,
     sources: []const []const u8 = std.mem.zeroes([]const []const u8),
     dflags: []const []const u8 = std.mem.zeroes([]const []const u8),
