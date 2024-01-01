@@ -3,7 +3,7 @@
 module sokol.audio;
 
 // helper function to convert a C string to a D string
-string cStrTod(const(char*) c_str) {
+string cStrTod(T)(scope T c_str) nothrow {
     import std.conv: to;
     return c_str.to!string;
 }
@@ -47,7 +47,7 @@ enum LogItem {
 }
 extern(C)
 struct Logger {
-    extern(C) void function(const(char*), uint, uint, const(char*), uint, const(char*), void*) func;
+    extern(C) void function(scope const(char)*, uint, uint, scope const(char)*, uint, scope const(char)*, void*) func;
     void* user_data;
 }
 extern(C)
@@ -70,46 +70,46 @@ struct Desc {
     Logger logger;
 }
 extern(C) void saudio_setup(const Desc *) @system @nogc nothrow;
-void setup(Desc desc) @trusted @nogc nothrow {
+void setup(Desc desc) @trusted nothrow {
     saudio_setup(&desc);
 }
 extern(C) void saudio_shutdown() @system @nogc nothrow;
-void shutdown() @trusted @nogc nothrow {
+void shutdown() @trusted nothrow {
     saudio_shutdown();
 }
 extern(C) bool saudio_isvalid() @system @nogc nothrow;
-bool isvalid() @trusted @nogc nothrow {
+bool isvalid() @trusted nothrow {
     return saudio_isvalid();
 }
 extern(C) void* saudio_userdata() @system @nogc nothrow;
-scope void* userdata() @trusted @nogc nothrow {
+scope void* userdata() @trusted nothrow {
     return saudio_userdata();
 }
 extern(C) Desc saudio_query_desc() @system @nogc nothrow;
-Desc queryDesc() @trusted @nogc nothrow {
+Desc queryDesc() @trusted nothrow {
     return saudio_query_desc();
 }
 extern(C) int saudio_sample_rate() @system @nogc nothrow;
-int sampleRate() @trusted @nogc nothrow {
+int sampleRate() @trusted nothrow {
     return saudio_sample_rate();
 }
 extern(C) int saudio_buffer_frames() @system @nogc nothrow;
-int bufferFrames() @trusted @nogc nothrow {
+int bufferFrames() @trusted nothrow {
     return saudio_buffer_frames();
 }
 extern(C) int saudio_channels() @system @nogc nothrow;
-int channels() @trusted @nogc nothrow {
+int channels() @trusted nothrow {
     return saudio_channels();
 }
 extern(C) bool saudio_suspended() @system @nogc nothrow;
-bool suspended() @trusted @nogc nothrow {
+bool suspended() @trusted nothrow {
     return saudio_suspended();
 }
 extern(C) int saudio_expect() @system @nogc nothrow;
-int expect() @trusted @nogc nothrow {
+int expect() @trusted nothrow {
     return saudio_expect();
 }
 extern(C) int saudio_push(const float *, int) @system @nogc nothrow;
-int push(const float * frames, int num_frames) @trusted @nogc nothrow {
+int push(const float * frames, int num_frames) @trusted nothrow {
     return saudio_push(frames, num_frames);
 }

@@ -236,10 +236,9 @@ pub fn build(b: *Builder) !void {
                 },
             .betterC = enable_betterC,
             .dflags = &.{
-                "--wi", // warnings only (no error)
+                "-wi", // warnings only (no error)
                 // "-w", // warnings as error
-                "--vgc", // list all gc alloc
-                "--preview=dip1000",
+                "-preview=dip1000",
             },
             // fixme: https://github.com/kassane/sokol-d/issues/1 - betterC works on darwin
             .zig_cc = if (target.isDarwin() and !enable_betterC) false else enable_zigcc,
@@ -298,7 +297,7 @@ fn buildShaders(b: *Builder) void {
 
 // Use LDC2 (https://github.com/ldc-developers/ldc) to compile the D examples
 fn buildLDC(b: *Builder, lib: *CompileStep, config: ldcConfig) !*Builder.RunStep {
-    const ldc = try b.findProgram(&.{"ldc2"}, &.{});
+    const ldc = try b.findProgram(&.{"ldmd2"}, &.{});
 
     var cmds = std.ArrayList([]const u8).init(b.allocator);
     defer cmds.deinit();
@@ -323,11 +322,8 @@ fn buildLDC(b: *Builder, lib: *CompileStep, config: ldcConfig) !*Builder.RunStep
     }
 
     if (config.kind == .lib) {
-        if (config.linkage == .dynamic) {
+        if (config.linkage == .dynamic)
             try cmds.append("-shared");
-        } else {
-            try cmds.append("-static");
-        }
     }
 
     for (config.dflags) |dflag| {
@@ -344,6 +340,9 @@ fn buildLDC(b: *Builder, lib: *CompileStep, config: ldcConfig) !*Builder.RunStep
             try cmds.append("--gc"); // debuginfo for non D dbg
             try cmds.append("-g"); // debuginfo
             try cmds.append("--O0");
+            try cmds.append("-vgc");
+            try cmds.append("-vtls");
+            try cmds.append("-verrors=context");
         },
         .ReleaseSafe => {
             try cmds.append("--O2");
@@ -425,6 +424,12 @@ fn buildLDC(b: *Builder, lib: *CompileStep, config: ldcConfig) !*Builder.RunStep
                 try cmds.append(b.fmt("--Xcc={s}", .{flag}));
         break;
     }
+    for (lib.c_macros.items) |cdefine| {
+        if (cdefine.len > 0) // skip empty cdefines
+            try cmds.append(b.fmt("--Xcc=-D{s}", .{cdefine}));
+        break;
+    }
+
     // link flags
     if (lib.target.isLinux() and !config.zig_cc)
         try cmds.append("-L--no-as-needed");
@@ -439,7 +444,8 @@ fn buildLDC(b: *Builder, lib: *CompileStep, config: ldcConfig) !*Builder.RunStep
     }
 
     if (b.verbose) {
-        try cmds.append("-v");
+        try cmds.append("-vdmd");
+        // try cmds.append("-v");
         try cmds.append("-Xcc=-v");
     }
 
@@ -449,8 +455,10 @@ fn buildLDC(b: *Builder, lib: *CompileStep, config: ldcConfig) !*Builder.RunStep
     // zig enable sanitize=undefined by default
     if (!lib.disable_sanitize_c)
         try cmds.append("--fsanitize=address");
+
     if (lib.dead_strip_dylibs)
         try cmds.append("--disable-linker-strip-dead");
+
     // if (lib.omit_frame_pointer) |enabled| {
     //     if (enabled)
     //         try cmds.append("--frame-pointer=none")
@@ -467,9 +475,6 @@ fn buildLDC(b: *Builder, lib: *CompileStep, config: ldcConfig) !*Builder.RunStep
         try cmds.append(b.fmt("--mtriple={s}-apple-{s}", .{ @tagName(lib.target.getCpuArch()), @tagName(lib.target.getOsTag()) }))
     else
         try cmds.append(b.fmt("--mtriple={s}-{s}-{s}", .{ @tagName(lib.target.getCpuArch()), @tagName(lib.target.getOsTag()), @tagName(lib.target.getAbi()) }));
-
-    // for (lib.target.getCpuArch().allFeaturesList()) |feature|
-    //     try cmds.append(b.fmt("--mattr={s}", .{feature.name}));
 
     // cpu model (e.g. "generic")
     try cmds.append(b.fmt("--mcpu={s}", .{lib.target.getCpuModel().name}));

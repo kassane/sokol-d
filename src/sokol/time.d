@@ -3,47 +3,47 @@
 module sokol.time;
 
 // helper function to convert a C string to a D string
-string cStrTod(const(char*) c_str) {
+string cStrTod(T)(scope T c_str) nothrow {
     import std.conv: to;
     return c_str.to!string;
 }
 extern(C) void stm_setup() @system @nogc nothrow;
-void setup() @trusted @nogc nothrow {
+void setup() @trusted nothrow {
     stm_setup();
 }
 extern(C) ulong stm_now() @system @nogc nothrow;
-ulong now() @trusted @nogc nothrow {
+ulong now() @trusted nothrow {
     return stm_now();
 }
 extern(C) ulong stm_diff(ulong, ulong) @system @nogc nothrow;
-ulong diff(ulong new_ticks, ulong old_ticks) @trusted @nogc nothrow {
+ulong diff(ulong new_ticks, ulong old_ticks) @trusted nothrow {
     return stm_diff(new_ticks, old_ticks);
 }
 extern(C) ulong stm_since(ulong) @system @nogc nothrow;
-ulong since(ulong start_ticks) @trusted @nogc nothrow {
+ulong since(ulong start_ticks) @trusted nothrow {
     return stm_since(start_ticks);
 }
 extern(C) ulong stm_laptime(ulong *) @system @nogc nothrow;
-ulong laptime(ulong * last_time) @trusted @nogc nothrow {
+ulong laptime(ulong * last_time) @trusted nothrow {
     return stm_laptime(last_time);
 }
 extern(C) ulong stm_round_to_common_refresh_rate(ulong) @system @nogc nothrow;
-ulong roundToCommonRefreshRate(ulong frame_ticks) @trusted @nogc nothrow {
+ulong roundToCommonRefreshRate(ulong frame_ticks) @trusted nothrow {
     return stm_round_to_common_refresh_rate(frame_ticks);
 }
 extern(C) double stm_sec(ulong) @system @nogc nothrow;
-double sec(ulong ticks) @trusted @nogc nothrow {
+double sec(ulong ticks) @trusted nothrow {
     return stm_sec(ticks);
 }
 extern(C) double stm_ms(ulong) @system @nogc nothrow;
-double ms(ulong ticks) @trusted @nogc nothrow {
+double ms(ulong ticks) @trusted nothrow {
     return stm_ms(ticks);
 }
 extern(C) double stm_us(ulong) @system @nogc nothrow;
-double us(ulong ticks) @trusted @nogc nothrow {
+double us(ulong ticks) @trusted nothrow {
     return stm_us(ticks);
 }
 extern(C) double stm_ns(ulong) @system @nogc nothrow;
-double ns(ulong ticks) @trusted @nogc nothrow {
+double ns(ulong ticks) @trusted nothrow {
     return stm_ns(ticks);
 }
