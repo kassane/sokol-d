@@ -8,11 +8,15 @@ string cStrTod(T)(scope T c_str) nothrow {
     import std.conv: to;
     return c_str.to!string;
 }
-// helper function to convert "anything" to a Range struct
 
-Range asRange(T)(T val) {
+// WIP: helper function to convert "anything" to a Range struct
+Range asRange(T)(T val) @safe {
+    import std.traits;
     static if (isPointer!T) {
-       return Range(val, __traits(classInstanceSize, T));
+       return Range(val, T.sizeof);
+    } else static if (is(T == float[])) {
+       auto arr = val.dup;
+       return Range(&arr[0], arr.length * arr[0].sizeof);
     } else static if (is(T == struct)) {
        return Range(val.tupleof);
     } else {
@@ -120,23 +124,23 @@ struct Torus {
     Mat4 transform;
 }
 extern(C) Buffer sshape_build_plane(const Buffer *, const Plane *) @system @nogc nothrow;
-Buffer buildPlane(Buffer buf, Plane params) @trusted nothrow {
+Buffer buildPlane(ref Buffer buf, ref Plane params) @trusted nothrow {
     return sshape_build_plane(&buf, &params);
 }
 extern(C) Buffer sshape_build_box(const Buffer *, const Box *) @system @nogc nothrow;
-Buffer buildBox(Buffer buf, Box params) @trusted nothrow {
+Buffer buildBox(ref Buffer buf, ref Box params) @trusted nothrow {
     return sshape_build_box(&buf, &params);
 }
 extern(C) Buffer sshape_build_sphere(const Buffer *, const Sphere *) @system @nogc nothrow;
-Buffer buildSphere(Buffer buf, Sphere params) @trusted nothrow {
+Buffer buildSphere(ref Buffer buf, ref Sphere params) @trusted nothrow {
     return sshape_build_sphere(&buf, &params);
 }
 extern(C) Buffer sshape_build_cylinder(const Buffer *, const Cylinder *) @system @nogc nothrow;
-Buffer buildCylinder(Buffer buf, Cylinder params) @trusted nothrow {
+Buffer buildCylinder(ref Buffer buf, ref Cylinder params) @trusted nothrow {
     return sshape_build_cylinder(&buf, &params);
 }
 extern(C) Buffer sshape_build_torus(const Buffer *, const Torus *) @system @nogc nothrow;
-Buffer buildTorus(Buffer buf, Torus params) @trusted nothrow {
+Buffer buildTorus(ref Buffer buf, ref Torus params) @trusted nothrow {
     return sshape_build_torus(&buf, &params);
 }
 extern(C) Sizes sshape_plane_sizes(uint) @system @nogc nothrow;
@@ -160,15 +164,15 @@ Sizes torusSizes(uint sides, uint rings) @trusted nothrow {
     return sshape_torus_sizes(sides, rings);
 }
 extern(C) ElementRange sshape_element_range(const Buffer *) @system @nogc nothrow;
-ElementRange elementRange(Buffer buf) @trusted nothrow {
+ElementRange elementRange(ref Buffer buf) @trusted nothrow {
     return sshape_element_range(&buf);
 }
 extern(C) sg.BufferDesc sshape_vertex_buffer_desc(const Buffer *) @system @nogc nothrow;
-sg.BufferDesc vertexBufferDesc(Buffer buf) @trusted nothrow {
+sg.BufferDesc vertexBufferDesc(ref Buffer buf) @trusted nothrow {
     return sshape_vertex_buffer_desc(&buf);
 }
 extern(C) sg.BufferDesc sshape_index_buffer_desc(const Buffer *) @system @nogc nothrow;
-sg.BufferDesc indexBufferDesc(Buffer buf) @trusted nothrow {
+sg.BufferDesc indexBufferDesc(ref Buffer buf) @trusted nothrow {
     return sshape_index_buffer_desc(&buf);
 }
 extern(C) sg.VertexBufferLayoutState sshape_vertex_buffer_layout_state() @system @nogc nothrow;

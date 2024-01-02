@@ -536,7 +536,7 @@ void setWindowTitle(string str) @trusted nothrow {
     sapp_set_window_title(str.ptr);
 }
 extern(C) void sapp_set_icon(const IconDesc *) @system @nogc nothrow;
-void setIcon(IconDesc icon_desc) @trusted nothrow {
+void setIcon(ref IconDesc icon_desc) @trusted nothrow {
     sapp_set_icon(&icon_desc);
 }
 extern(C) int sapp_get_num_dropped_files() @system @nogc nothrow;
@@ -548,15 +548,15 @@ string getDroppedFilePath(int index) @trusted nothrow {
     return cStrTod(sapp_get_dropped_file_path(index));
 }
 extern(C) void sapp_run(const Desc *) @system @nogc nothrow;
-void run(Desc desc) @trusted nothrow {
+void run(ref Desc desc) @trusted nothrow {
     sapp_run(&desc);
 }
 extern(C) scope const(void)* sapp_egl_get_display() @system @nogc nothrow;
-scope const(void*) eglGetDisplay() @trusted nothrow {
+scope const(void)* eglGetDisplay() @trusted nothrow {
     return sapp_egl_get_display();
 }
 extern(C) scope const(void)* sapp_egl_get_context() @system @nogc nothrow;
-scope const(void*) eglGetContext() @trusted nothrow {
+scope const(void)* eglGetContext() @trusted nothrow {
     return sapp_egl_get_context();
 }
 extern(C) void sapp_html5_ask_leave_site(bool) @system @nogc nothrow;
@@ -568,70 +568,70 @@ uint html5GetDroppedFileSize(int index) @trusted nothrow {
     return sapp_html5_get_dropped_file_size(index);
 }
 extern(C) void sapp_html5_fetch_dropped_file(const Html5FetchRequest *) @system @nogc nothrow;
-void html5FetchDroppedFile(Html5FetchRequest request) @trusted nothrow {
+void html5FetchDroppedFile(ref Html5FetchRequest request) @trusted nothrow {
     sapp_html5_fetch_dropped_file(&request);
 }
 extern(C) scope const(void)* sapp_metal_get_device() @system @nogc nothrow;
-scope const(void*) metalGetDevice() @trusted nothrow {
+scope const(void)* metalGetDevice() @trusted nothrow {
     return sapp_metal_get_device();
 }
 extern(C) scope const(void)* sapp_metal_get_renderpass_descriptor() @system @nogc nothrow;
-scope const(void*) metalGetRenderpassDescriptor() @trusted nothrow {
+scope const(void)* metalGetRenderpassDescriptor() @trusted nothrow {
     return sapp_metal_get_renderpass_descriptor();
 }
 extern(C) scope const(void)* sapp_metal_get_drawable() @system @nogc nothrow;
-scope const(void*) metalGetDrawable() @trusted nothrow {
+scope const(void)* metalGetDrawable() @trusted nothrow {
     return sapp_metal_get_drawable();
 }
 extern(C) scope const(void)* sapp_macos_get_window() @system @nogc nothrow;
-scope const(void*) macosGetWindow() @trusted nothrow {
+scope const(void)* macosGetWindow() @trusted nothrow {
     return sapp_macos_get_window();
 }
 extern(C) scope const(void)* sapp_ios_get_window() @system @nogc nothrow;
-scope const(void*) iosGetWindow() @trusted nothrow {
+scope const(void)* iosGetWindow() @trusted nothrow {
     return sapp_ios_get_window();
 }
 extern(C) scope const(void)* sapp_d3d11_get_device() @system @nogc nothrow;
-scope const(void*) d3d11GetDevice() @trusted nothrow {
+scope const(void)* d3d11GetDevice() @trusted nothrow {
     return sapp_d3d11_get_device();
 }
 extern(C) scope const(void)* sapp_d3d11_get_device_context() @system @nogc nothrow;
-scope const(void*) d3d11GetDeviceContext() @trusted nothrow {
+scope const(void)* d3d11GetDeviceContext() @trusted nothrow {
     return sapp_d3d11_get_device_context();
 }
 extern(C) scope const(void)* sapp_d3d11_get_swap_chain() @system @nogc nothrow;
-scope const(void*) d3d11GetSwapChain() @trusted nothrow {
+scope const(void)* d3d11GetSwapChain() @trusted nothrow {
     return sapp_d3d11_get_swap_chain();
 }
 extern(C) scope const(void)* sapp_d3d11_get_render_target_view() @system @nogc nothrow;
-scope const(void*) d3d11GetRenderTargetView() @trusted nothrow {
+scope const(void)* d3d11GetRenderTargetView() @trusted nothrow {
     return sapp_d3d11_get_render_target_view();
 }
 extern(C) scope const(void)* sapp_d3d11_get_depth_stencil_view() @system @nogc nothrow;
-scope const(void*) d3d11GetDepthStencilView() @trusted nothrow {
+scope const(void)* d3d11GetDepthStencilView() @trusted nothrow {
     return sapp_d3d11_get_depth_stencil_view();
 }
 extern(C) scope const(void)* sapp_win32_get_hwnd() @system @nogc nothrow;
-scope const(void*) win32GetHwnd() @trusted nothrow {
+scope const(void)* win32GetHwnd() @trusted nothrow {
     return sapp_win32_get_hwnd();
 }
 extern(C) scope const(void)* sapp_wgpu_get_device() @system @nogc nothrow;
-scope const(void*) wgpuGetDevice() @trusted nothrow {
+scope const(void)* wgpuGetDevice() @trusted nothrow {
     return sapp_wgpu_get_device();
 }
 extern(C) scope const(void)* sapp_wgpu_get_render_view() @system @nogc nothrow;
-scope const(void*) wgpuGetRenderView() @trusted nothrow {
+scope const(void)* wgpuGetRenderView() @trusted nothrow {
     return sapp_wgpu_get_render_view();
 }
 extern(C) scope const(void)* sapp_wgpu_get_resolve_view() @system @nogc nothrow;
-scope const(void*) wgpuGetResolveView() @trusted nothrow {
+scope const(void)* wgpuGetResolveView() @trusted nothrow {
     return sapp_wgpu_get_resolve_view();
 }
 extern(C) scope const(void)* sapp_wgpu_get_depth_stencil_view() @system @nogc nothrow;
-scope const(void*) wgpuGetDepthStencilView() @trusted nothrow {
+scope const(void)* wgpuGetDepthStencilView() @trusted nothrow {
     return sapp_wgpu_get_depth_stencil_view();
 }
 extern(C) scope const(void)* sapp_android_get_native_activity() @system @nogc nothrow;
-scope const(void*) androidGetNativeActivity() @trusted nothrow {
+scope const(void)* androidGetNativeActivity() @trusted nothrow {
     return sapp_android_get_native_activity();
 }

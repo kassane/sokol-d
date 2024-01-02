@@ -79,7 +79,7 @@ void init()
         type: sg.BufferType.Indexbuffer,
         usage: sg.Usage.Immutable,
         label: "cube-vertices",
-        data: sg.Range(&vertices[0])
+        data: sg.asRange(vertices)
     };
     state.bind.vertex_buffers[0] = sg.makeBuffer(buffer);
 
@@ -116,9 +116,10 @@ void frame()
 
     sg.beginDefaultPass(state.passAction, app.width(), app.height());
 
+    sg.Range r = ranging(vsParams);
     sg.applyPipeline(state.pip);
     sg.applyBindings(state.bind);
-    sg.applyUniforms(sg.ShaderStage.Vs, shd.SLOT_VS_PARAMS, ranging(vsParams));
+    sg.applyUniforms(sg.ShaderStage.Vs, shd.SLOT_VS_PARAMS, r);
 
     sg.draw(0, 36, 1);
 

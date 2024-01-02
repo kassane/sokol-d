@@ -67,7 +67,7 @@ struct Desc {
     Logger logger;
 }
 extern(C) void sgl_setup(const Desc *) @system @nogc nothrow;
-void setup(Desc desc) @trusted nothrow {
+void setup(ref Desc desc) @trusted nothrow {
     sgl_setup(&desc);
 }
 extern(C) void sgl_shutdown() @system @nogc nothrow;
@@ -91,7 +91,7 @@ Error contextError(Context ctx) @trusted nothrow {
     return sgl_context_error(ctx);
 }
 extern(C) Context sgl_make_context(const ContextDesc *) @system @nogc nothrow;
-Context makeContext(ContextDesc desc) @trusted nothrow {
+Context makeContext(ref ContextDesc desc) @trusted nothrow {
     return sgl_make_context(&desc);
 }
 extern(C) void sgl_destroy_context(Context) @system @nogc nothrow;
@@ -127,11 +127,11 @@ void contextDrawLayer(Context ctx, int layer_id) @trusted nothrow {
     sgl_context_draw_layer(ctx, layer_id);
 }
 extern(C) Pipeline sgl_make_pipeline(const sg.PipelineDesc *) @system @nogc nothrow;
-Pipeline makePipeline(sg.PipelineDesc desc) @trusted nothrow {
+Pipeline makePipeline(ref sg.PipelineDesc desc) @trusted nothrow {
     return sgl_make_pipeline(&desc);
 }
 extern(C) Pipeline sgl_context_make_pipeline(Context, const sg.PipelineDesc *) @system @nogc nothrow;
-Pipeline contextMakePipeline(Context ctx, sg.PipelineDesc desc) @trusted nothrow {
+Pipeline contextMakePipeline(Context ctx, ref sg.PipelineDesc desc) @trusted nothrow {
     return sgl_context_make_pipeline(ctx, &desc);
 }
 extern(C) void sgl_destroy_pipeline(Pipeline) @system @nogc nothrow;

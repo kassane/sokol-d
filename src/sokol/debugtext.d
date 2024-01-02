@@ -8,11 +8,15 @@ string cStrTod(T)(scope T c_str) nothrow {
     import std.conv: to;
     return c_str.to!string;
 }
-// helper function to convert "anything" to a Range struct
 
-Range asRange(T)(T val) {
+// WIP: helper function to convert "anything" to a Range struct
+Range asRange(T)(T val) @safe {
+    import std.traits;
     static if (isPointer!T) {
-       return Range(val, __traits(classInstanceSize, T));
+       return Range(val, T.sizeof);
+    } else static if (is(T == float[])) {
+       auto arr = val.dup;
+       return Range(&arr[0], arr.length * arr[0].sizeof);
     } else static if (is(T == struct)) {
        return Range(val.tupleof);
     } else {
@@ -95,7 +99,7 @@ struct Desc {
     Logger logger;
 }
 extern(C) void sdtx_setup(const Desc *) @system @nogc nothrow;
-void setup(Desc desc) @trusted nothrow {
+void setup(ref Desc desc) @trusted nothrow {
     sdtx_setup(&desc);
 }
 extern(C) void sdtx_shutdown() @system @nogc nothrow;
@@ -127,7 +131,7 @@ FontDesc fontOric() @trusted nothrow {
     return sdtx_font_oric();
 }
 extern(C) Context sdtx_make_context(const ContextDesc *) @system @nogc nothrow;
-Context makeContext(ContextDesc desc) @trusted nothrow {
+Context makeContext(ref ContextDesc desc) @trusted nothrow {
     return sdtx_make_context(&desc);
 }
 extern(C) void sdtx_destroy_context(Context) @system @nogc nothrow;

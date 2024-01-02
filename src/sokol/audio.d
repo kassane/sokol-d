@@ -70,7 +70,7 @@ struct Desc {
     Logger logger;
 }
 extern(C) void saudio_setup(const Desc *) @system @nogc nothrow;
-void setup(Desc desc) @trusted nothrow {
+void setup(ref Desc desc) @trusted nothrow {
     saudio_setup(&desc);
 }
 extern(C) void saudio_shutdown() @system @nogc nothrow;
