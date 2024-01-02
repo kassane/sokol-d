@@ -12,90 +12,98 @@ import sapp = sokol.app;
 import sdtx = sokol.debugtext;
 import log = sokol.log;
 
-extern(C):
+extern (C):
 @safe:
 
 // Font slots
-enum KC854 = 0;
-enum C64 = 1;
-enum ORIC = 2;
+immutable FONT_KC853 = 0;
+immutable FONT_KC854 = 1;
+immutable FONT_KC85 = 1;
+immutable FONT_Z1013 = 2;
+immutable FONT_CPC = 3;
+immutable FONT_C64 = 4;
+immutable FONT_ORIC = 5;
 
 struct Color
 {
-    @disable this();
-    this(ubyte r, ubyte g, ubyte b){
-      this.r = r;
-      this.g = g;
-      this.b = b;
-    }
     ubyte r, g, b;
 }
 
 struct State
 {
-    @disable this();
-    sg.PassAction passAction = {};
-    uint frameCount;
-    ulong timeStamp;
+    sg.PassAction passAction = {
+        colors: [
+            {
+                load_action: sg.LoadAction.Clear, clear_value: {
+                    r: 0.0, g: 0.125, b: 0.25, a: 1.0
+                }
+            }
+        ]
+    };
+    uint frameCount = 0;
+    ulong timeStamp = 0;
 
-    immutable Color[3] colors = [
-        Color(0xF4, 0x43, 0x36),
-        Color(0x21, 0x96, 0xF3),
-        Color(0x4C, 0xAF, 0x50)
+    immutable Color[] colors = [
+        {r: 0xF4, g: 0x43, b: 0x36},
+        {r: 0x21, g: 0x96, b: 0xF3},
+        {r: 0x4C, g: 0xAF, b: 0x50}
     ];
 }
 
-static State state = {};
+static State state;
 
 void init()
 {
     stm.setup();
-    sg.Desc gfx = {
-        context: sgapp.context(),
-        logger: {func: &log.func}
-    };
+    sg.Desc gfx = {context: sgapp.context(),
+    logger: {func: &log.func}};
     sg.setup(gfx);
 
     sdtx.Desc desc = {
         logger: {func: &log.func},
-        fonts: [sdtx.fontKc854(), sdtx.fontC64(), sdtx.fontOric()]
+        fonts: [
+            sdtx.fontKc853(),
+            sdtx.fontKc854(),
+            sdtx.fontZ1013(),
+            sdtx.fontCpc(),
+            sdtx.fontC64(),
+            sdtx.fontOric()
+        ]
     };
     sdtx.setup(desc);
+}
 
-    state.passAction.colors[0].load_action = sg.LoadAction.Clear;
-    state.passAction.colors[0].clear_value.r = 0;
-    state.passAction.colors[0].clear_value.g = 0.125;
-    state.passAction.colors[0].clear_value.b = 0.25;
-    state.passAction.colors[0].clear_value.a = 1;
+void print_font(uint font_index, string title, ubyte r, ubyte g, ubyte b) {
+    sdtx.font(font_index);
+    sdtx.color3b(r, g, b);
+    sdtx.puts(title);
+
+    foreach (c; 32 .. 255) {
+        sdtx.putc(cast(char)c);
+        if ( ((c + 1) & 63) == 0) {
+            sdtx.crlf();
+        }
+    }
+
+    sdtx.crlf();
 }
 
 void frame()
 {
     state.frameCount++;
 
-    const frameTime = stm.ms(stm.laptime(&state.timeStamp));
+    sdtx.canvas(sapp.widthf() / 2.0, sapp.heightf() / 2.0);
+    sdtx.origin(0.0, 2.0);
+    sdtx.home();
 
-    sdtx.canvas(sapp.widthf() / 2, sapp.heightf() / 2);
-    sdtx.origin(3, 3);
+    print_font(FONT_KC853, "KC85/3:\n", 0xf4, 0x43, 0x36);
+    print_font(FONT_KC854, "KC85/4:\n", 0x21, 0x96, 0xf3);
+    print_font(FONT_Z1013, "Z1013:\n", 0x4c, 0xaf, 0x50);
+    print_font(FONT_CPC, "Amstrad CPC:\n", 0xff, 0xeb, 0x3b);
+    print_font(FONT_C64, "C64:\n", 0x79, 0x86, 0xcb);
+    print_font(FONT_ORIC, "Oric Atmos:\n", 0xff, 0x98, 0x00);
 
-    foreach (font; [KC854, C64, ORIC])
-    {
-        const color = state.colors[font];
-        sdtx.font(font);
-        sdtx.color3b(color.r, color.g, color.b);
-
-        const worldStr = (state.frameCount & (1 << 7)) ? "Welt" : "World";
-
-        sdtx.print("Hello '%s'!\n", worldStr);
-        sdtx.print("\tFrame Time:\t\t %0.3f ms", frameTime);
-        sdtx.print("\tFrame Count:\t%d\t%x\n", state.frameCount, state.frameCount);
-        sdtx.moveY(2);
-    }
-
-    sdtx.font(KC854);
-    sdtx.color3b(255, 128, 0);
-
-    sg.beginDefaultPass(state.passAction, sapp.width, sapp.height);
+    sg.beginDefaultPass(state.passAction, sapp.width(), sapp.height());
     sdtx.draw();
     sg.endPass();
     sg.commit();
@@ -114,10 +122,10 @@ void main()
         init_cb: &init,
         frame_cb: &frame,
         cleanup_cb: &cleanup,
-        width: 640,
-        height: 480,
+        width: 1024,
+        height: 600,
         icon: {sokol_default: true},
-        logger:{func: &log.func}
+        logger: {func: &log.func}
     };
     sapp.run(runner);
 }

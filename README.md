@@ -21,7 +21,7 @@ zig build -Doptimize=ReleaseFast -DShared
 
 # build samples [WiP]
 zig build clear -Doptimize=ReleaseFast # works (optional: add -DBetterC)
-zig build debugtext_print -Doptimize=ReleaseFast # run, but no anims (fixme)
+zig build debugtext_print -Doptimize=ReleaseFast # works
 zig build sgl_context -Doptimize=ReleaseFast # run, but no anims (fixme)
 zig build cube -Doptimize=ReleaseFast # (fixme)
 
