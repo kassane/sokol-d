@@ -102,9 +102,6 @@ void init()
     state.passAction.colors[0].clear_value.a = 1;
 }
 
-sg.Range ranging(ref shd.VsParams params) @trusted{
-    return cast(sg.Range)&params;
-}
 void frame()
 {
     float dt = cast(float) app.frameDuration() * 60;
@@ -116,7 +113,7 @@ void frame()
 
     sg.beginDefaultPass(state.passAction, app.width(), app.height());
 
-    sg.Range r = ranging(vsParams);
+    sg.Range r = sg.asRange(vsParams);
     sg.applyPipeline(state.pip);
     sg.applyBindings(state.bind);
     sg.applyUniforms(sg.ShaderStage.Vs, shd.SLOT_VS_PARAMS, r);

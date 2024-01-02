@@ -18,26 +18,23 @@ extern (C):
 
 struct Offscreen
 {
-    @disable this();
-    sg.PassAction pass_action = {};
-    sg.Pass pass = {};
-    sg.Image img = {};
-    sgl.Context sgl_ctx = {};
+    sg.PassAction pass_action;
+    sg.Pass pass;
+    sg.Image img;
+    sgl.Context sgl_ctx;
 }
 
 struct Display
 {
-    @disable this();
-    sg.PassAction pass_action = {};
-    sg.Sampler smp = {};
-    sgl.Pipeline sgl_pip = {};
+    sg.PassAction pass_action;
+    sg.Sampler smp;
+    sgl.Pipeline sgl_pip;
 }
 
 struct State
 {
-    @disable this();
-    Display display = {};
-    Offscreen offscreen = {};
+    static Display display;
+    static Offscreen offscreen;
 }
 
 enum offscreen_pixel_format = sg.PixelFormat.Rgba8;
@@ -45,7 +42,6 @@ enum offscreen_sample_count = 1;
 enum offscreen_width = 32;
 enum offscreen_height = 32;
 
-static State state = {};
 
 void init()
 {
@@ -66,6 +62,7 @@ void init()
     };
     sgl.setup(gld);
 
+    State state;
     // initialize a pass action struct for the default pass to clear to a light-blue color
     state.display.pass_action.colors[0].load_action = sg.LoadAction.Clear;
     state.display.pass_action.colors[0].clear_value.r = 0.5;
@@ -123,7 +120,8 @@ void init()
 
 void frame()
 {
-    const float a = sgl.asRadians(sapp.frameCount());
+    immutable float a = sgl.asRadians(sapp.frameCount());
+    State state;
 
     // draw a rotating quad into the offscreen render target texture
     sgl.setContext(state.offscreen.sgl_ctx);
@@ -140,7 +138,7 @@ void frame()
     sgl.loadPipeline(state.display.sgl_pip);
     sgl.matrixModeProjection();
     sgl.perspective(sgl.asRadians(45.0), sapp.widthf() / sapp.heightf(), 0.1, 100.0);
-    const float[3] eye = [sin(a) * 6.0, sin(a) * 3.0, cos(a) * 6.0,];
+    immutable (float)[3] eye = [sin(a) * 6.0, sin(a) * 3.0, cos(a) * 6.0];
     sgl.matrixModeModelview();
     sgl.lookat(eye[0], eye[1], eye[2], 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
     draw_cube();
