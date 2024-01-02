@@ -21,27 +21,31 @@ pub fn main() !void {
     try cmds.append("zig");
     try cmds.append("cc");
 
-    // LDC2 not set triple targets to cc/linker, except Apple (Why?)
-    switch (builtin.os.tag) {
-        .windows => {
-            try cmds.append("-target");
-            try cmds.append("native-native-msvc"); // msvc only
-        },
-        .ios, .macos, .watchos, .tvos => {},
-        else => {
-            try cmds.append("-target");
-            try cmds.append("native-native");
-            try cmds.append("-lunwind");
-        },
-    }
+    if (builtin.os.tag != .windows)
+        // not working on msvc target (nostdlib++)
+        try cmds.append("-lunwind");
 
+    // LDC2 not setting triple targets on host build to cc/linker, except Apple (why?)
+    var isNative = true;
     while (args.next()) |arg| {
         if (std.mem.eql(u8, arg, std.fmt.comptimePrint("{s}-apple-{s}", .{ @tagName(builtin.cpu.arch), @tagName(builtin.os.tag) }))) {
             try cmds.append("native-native");
-            try cmds.append("-lunwind");
             try cmds.append("-fapple-link-rtlib");
-        } else try cmds.append(arg);
+        } else if (std.mem.eql(u8, arg, "-target")) {
+            isNative = false;
+        } else {
+            try cmds.append(arg);
+        }
     }
+    if (isNative) {
+        try cmds.append("-target");
+        if (builtin.os.tag == .windows)
+            try cmds.append("native-native-msvc")
+        else {
+            try cmds.append("native-native");
+        }
+    }
+
     var proc = std.ChildProcess.init(cmds.items, allocator);
 
     // See all flags
