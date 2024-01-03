@@ -5,9 +5,8 @@
 //------------------------------------------------------------------------------
 module examples.debugtext_print;
 
-import stm = sokol.time;
 import sg = sokol.gfx;
-import sgapp = sokol.glue;
+import sglue = sokol.glue;
 import sapp = sokol.app;
 import sdtx = sokol.debugtext;
 import log = sokol.log;
@@ -24,13 +23,9 @@ immutable FONT_CPC = 3;
 immutable FONT_C64 = 4;
 immutable FONT_ORIC = 5;
 
-struct Color
-{
-    ubyte r, g, b;
-}
-
 struct State
 {
+    // background color
     sg.PassAction passAction = {
         colors: [
             {
@@ -40,23 +35,14 @@ struct State
             }
         ]
     };
-    uint frameCount = 0;
-    ulong timeStamp = 0;
-
-    immutable Color[] colors = [
-        {r: 0xF4, g: 0x43, b: 0x36},
-        {r: 0x21, g: 0x96, b: 0xF3},
-        {r: 0x4C, g: 0xAF, b: 0x50}
-    ];
 }
-
-static State state;
 
 void init()
 {
-    stm.setup();
-    sg.Desc gfx = {context: sgapp.context(),
-    logger: {func: &log.func}};
+    sg.Desc gfx = {
+        context: sglue.context(),
+        logger: {func: &log.func}
+    };
     sg.setup(gfx);
 
     sdtx.Desc desc = {
@@ -84,15 +70,13 @@ void print_font(uint font_index, string title, ubyte r, ubyte g, ubyte b) {
             sdtx.crlf();
         }
     }
-
     sdtx.crlf();
 }
 
 void frame()
 {
-    state.frameCount++;
-
-    sdtx.canvas(sapp.widthf() / 2.0, sapp.heightf() / 2.0);
+    State state;
+    sdtx.canvas(sapp.widthf() * 0.5, sapp.heightf() * 0.5);
     sdtx.origin(0.0, 2.0);
     sdtx.home();
 
