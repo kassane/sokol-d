@@ -11,9 +11,8 @@ import sapp = sokol.app;
 import log = sokol.log;
 
 extern (C):
-@safe:
 
-static sg.PassAction pass_action;
+__gshared sg.PassAction pass_action;
 
 void init()
 {
