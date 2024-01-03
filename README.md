@@ -20,10 +20,11 @@ zig build -Doptimize=ReleaseFast
 zig build -Doptimize=ReleaseFast -DShared
 
 # build samples [WiP]
-zig build clear -Doptimize=ReleaseFast # works (optional: add -DBetterC)
+zig build clear -Doptimize=ReleaseFast # works
 zig build debugtext_print -Doptimize=ReleaseFast # works
 zig build sgl_context -Doptimize=ReleaseFast # run, but no anims (fixme)
-zig build cube -Doptimize=ReleaseFast # (fixme)
+zig build cube -Doptimize=ReleaseFast # run, but no anims (fixme)
+zig build blend -Doptimize=ReleaseFast # run, but no anims (fixme)
 
 zig build --help
 # Project-Specific Options:
@@ -49,7 +50,7 @@ Checkout [sokol-tools](https://github.com/floooh/sokol-tools) for a sokol shader
 here have been compiled using it with `-f sokol_d`!
 
 ```bash
-zig build shaders # (re-)generate D bindings from shaders.
+zig build shaders # (re)generate D bindings from shaders.
 ```
 
 ## License and attributinos

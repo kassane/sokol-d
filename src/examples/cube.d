@@ -17,21 +17,28 @@ extern(C):
 
 struct State
 {
-    @disable this();
-    float rx = 0.0f;
-    float ry = 0.0f;
+    float rx;
+    float ry;
 
     sg.Pipeline pip;
     sg.Bindings bind;
-    sg.PassAction passAction;
+    sg.PassAction passAction = {
+        colors: [
+            {
+                load_action: sg.LoadAction.Clear, clear_value: {
+                    r: 0.25, g: 0.5, b: 0.75, a: 1.0
+                }
+            }
+        ]
+    };
 
-    static Mat4 view()
+    Mat4 view()
     {
-        return Mat4.lookAt(Vec3(0.0f, 1.5f, 6.0f), Vec3.zero(), Vec3.up());
+        return Mat4.lookAt(Vec3(0.0, 1.5, 6.0), Vec3.zero(), Vec3.up());
     }
 }
 
-static State state = {};
+static State state;
 
 void init()
 {
@@ -74,42 +81,47 @@ void init()
     ];
 
     // Create vertex buffer
-    sg.BufferDesc buffer = {
-        size: vertices.length,
-        type: sg.BufferType.Indexbuffer,
-        usage: sg.Usage.Immutable,
-        label: "cube-vertices",
+    sg.BufferDesc vbuffer = {
         data: sg.asRange(vertices)
     };
-    state.bind.vertex_buffers[0] = sg.makeBuffer(buffer);
+    state.bind.vertex_buffers[0] = sg.makeBuffer(vbuffer);
 
-    // shader and pipeline object
+    double[] indices = [
+        0,  1,  2,   0,  2,  3,
+        6,  5,  4,   7,  6,  4,
+        8,  9,  10,  8,  10, 11,
+        14, 13, 12,  15, 14, 12,
+        16, 17, 18,  16, 18, 19,
+        22, 21, 20,  23, 22, 20,
+    ];
+
+    sg.BufferDesc ibuffer = {
+        type: sg.BufferType.Indexbuffer,
+        data: sg.asRange(indices)
+    };
+    state.bind.index_buffer = sg.makeBuffer(ibuffer);
+
+    sg.ShaderDesc cubeShader = shd.cube_shader_desc(sg.queryBackend());
     sg.PipelineDesc pld = {
         index_type: sg.IndexType.Uint16,
         cull_mode: sg.CullMode.Back,
-        depth: {write_enabled: true, compare: sg.CompareFunc.Less_equal}
+        depth: {write_enabled: true, compare: sg.CompareFunc.Less_equal},
+        layout: {buffers: [{stride: 28}]}
     };
-    pld.layout.buffers[0].stride = 28;
+    pld.shader = sg.makeShader(cubeShader);
     pld.layout.attrs[shd.ATTR_VS_POSITION].format = sg.VertexFormat.Float3;
     pld.layout.attrs[shd.ATTR_VS_COLOR0].format = sg.VertexFormat.Float4;
     state.pip = sg.makePipeline(pld);
-
-    // framebuffer clear color
-    state.passAction.colors[0].load_action = sg.LoadAction.Clear;
-    state.passAction.colors[0].clear_value.r = 0.25;
-    state.passAction.colors[0].clear_value.g = 0.5;
-    state.passAction.colors[0].clear_value.b = 0.75;
-    state.passAction.colors[0].clear_value.a = 1;
 }
 
 void frame()
 {
-    float dt = cast(float) app.frameDuration() * 60;
+    immutable float t = cast(float) (app.frameDuration() * 60.0);
 
-    state.rx += dt;
-    state.ry += dt;
+    state.rx += 1.0 * t;
+    state.ry += 2.0 * t;
 
-    auto vsParams = computeVsParams(state.rx, state.ry);
+    shd.VsParams vsParams = {mvp: computeVsParams(state.rx, state.ry)};
 
     sg.beginDefaultPass(state.passAction, app.width(), app.height());
 
@@ -117,9 +129,7 @@ void frame()
     sg.applyPipeline(state.pip);
     sg.applyBindings(state.bind);
     sg.applyUniforms(sg.ShaderStage.Vs, shd.SLOT_VS_PARAMS, r);
-
     sg.draw(0, 36, 1);
-
     sg.endPass();
     sg.commit();
 }
@@ -129,6 +139,17 @@ void cleanup()
     sg.shutdown();
 }
 
+Mat4 computeVsParams(float rx, float ry) 
+{
+    immutable proj = Mat4.perspective(60.0, app.widthf() / app.heightf(), 0.01, 10.0);
+    immutable rxm = Mat4.rotate(rx, Vec3(1.0, 0.0, 0.0));
+    immutable rym = Mat4.rotate(ry, Vec3(0.0, 1.0, 0.0));
+    immutable model = Mat4.mul(rxm, rym);
+    immutable view_proj = Mat4.mul(proj, state.view());
+
+    return Mat4.mul(view_proj, model);
+}
+
 void main()
 {
     app.Desc runner = {
@@ -136,23 +157,11 @@ void main()
         init_cb: &init,
         frame_cb: &frame,
         cleanup_cb: &cleanup,
-        width: 640,
-        height: 480,
-        win32_console_attach: true,
+        width: 800,
+        height: 600,
+        sample_count: 4,
         icon: {sokol_default: true},
         logger: {func: &log.func}
     };
     app.run(runner);
-}
-
-shd.VsParams computeVsParams(float rx, float ry) 
-{
-    auto rxm = Mat4.rotate(rx, Vec3(1, 0, 0));
-    auto rym = Mat4.rotate(ry, Vec3(0, 1, 0));
-    auto model = Mat4.mul(rxm, rym);
-
-    auto aspect = app.width() / app.height();
-    auto proj = Mat4.perspective(60, aspect, 0.01f, 10);
-    shd.VsParams params = {mvp: Mat4.mul(Mat4.mul(proj, state.view), model)};
-    return params;
 }

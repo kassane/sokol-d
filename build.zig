@@ -207,7 +207,7 @@ pub fn build(b: *Builder) !void {
         "cube",
         // "noninterleaved",
         // "texcube",
-        // "blend",
+        "blend",
         // "offscreen",
         // "instancing",
         // "mrt",
@@ -229,6 +229,12 @@ pub fn build(b: *Builder) !void {
                     b.fmt("{s}/src/examples/{s}.d", .{ rootPath(), example }),
                     b.fmt("{s}/src/examples/math.d", .{rootPath()}),
                     b.fmt("{s}/src/examples/shaders/cube.glsl.d", .{rootPath()}),
+                }
+            else if (std.mem.eql(u8, example, "blend"))
+                &.{
+                    b.fmt("{s}/src/examples/{s}.d", .{ rootPath(), example }),
+                    b.fmt("{s}/src/examples/math.d", .{rootPath()}),
+                    b.fmt("{s}/src/examples/shaders/blend.glsl.d", .{rootPath()}),
                 }
             else
                 &.{

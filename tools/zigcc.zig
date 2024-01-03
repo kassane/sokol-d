@@ -33,6 +33,7 @@ pub fn main() !void {
             try cmds.append("-fapple-link-rtlib");
         } else if (std.mem.eql(u8, arg, "-target")) {
             isNative = false;
+            try cmds.append(arg); // get "-target" flag
         } else {
             try cmds.append(arg);
         }
