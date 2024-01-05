@@ -2,9 +2,10 @@
 
 const std = @import("std");
 const builtin = @import("builtin");
-const Builder = std.build;
-const CompileStep = std.build.CompileStep;
-const CrossTarget = std.zig.CrossTarget;
+const Builder = std.Build;
+const CompileStep = Builder.Step.Compile;
+const RunStep = Builder.Step.Run;
+const CrossTarget = Builder.ResolvedTarget;
 const OptimizeMode = std.builtin.OptimizeMode;
 const fmt = std.fmt;
 
@@ -41,7 +42,7 @@ pub fn buildSokol(b: *Builder, target: CrossTarget, optimize: OptimizeMode, conf
         .target = target,
         .optimize = optimize,
     });
-    lib.disable_sanitize_c = true;
+    lib.root_module.sanitize_c = false;
     lib.linkLibC();
     const sokol_path = prefix_path ++ "src/sokol/c/";
     const csources = [_][]const u8{
@@ -57,11 +58,11 @@ pub fn buildSokol(b: *Builder, target: CrossTarget, optimize: OptimizeMode, conf
     };
     var _backend = config.backend;
     if (_backend == .auto) {
-        if (lib.target.isDarwin()) {
+        if (lib.rootModuleTarget().isDarwin()) {
             _backend = .metal;
-        } else if (lib.target.isWindows()) {
+        } else if (lib.rootModuleTarget().os.tag == .windows) {
             _backend = .d3d11;
-        } else if (lib.target.getAbi() == .android) {
+        } else if (lib.rootModuleTarget().abi == .android) {
             _backend = .gles3;
         } else {
             _backend = .gl;
@@ -77,11 +78,11 @@ pub fn buildSokol(b: *Builder, target: CrossTarget, optimize: OptimizeMode, conf
         else => unreachable,
     };
 
-    if (lib.target.isDarwin()) {
+    if (lib.rootModuleTarget().isDarwin()) {
         inline for (csources) |csrc| {
             lib.addCSourceFile(.{
                 .file = .{ .path = sokol_path ++ csrc },
-                .flags = switch (target.getOsTag()) {
+                .flags = switch (target.result.os.tag) {
                     .macos => &.{ "-ObjC", "-DIMPL", "-mmacos-version-min=12", backend_option },
                     else => &.{ "-ObjC", "-DIMPL", backend_option },
                 },
@@ -93,14 +94,14 @@ pub fn buildSokol(b: *Builder, target: CrossTarget, optimize: OptimizeMode, conf
             lib.linkFramework("MetalKit");
             lib.linkFramework("Metal");
         }
-        if (lib.target.getOsTag() == .ios) {
+        if (lib.rootModuleTarget().os.tag == .ios) {
             lib.linkFramework("UIKit");
             lib.linkFramework("AVFoundation");
             if (.gl == _backend) {
                 lib.linkFramework("OpenGLES");
                 lib.linkFramework("GLKit");
             }
-        } else if (lib.target.getOsTag() == .macos) {
+        } else if (lib.rootModuleTarget().os.tag == .macos) {
             lib.linkFramework("Cocoa");
             lib.linkFramework("QuartzCore");
             if (.gl == _backend) {
@@ -119,7 +120,7 @@ pub fn buildSokol(b: *Builder, target: CrossTarget, optimize: OptimizeMode, conf
             });
         }
 
-        if (lib.target.getAbi() == .android) {
+        if (lib.rootModuleTarget().abi == .android) {
             if (.gles3 != _backend) {
                 @panic("For android targets, you must have backend set to GLES3");
             }
@@ -127,7 +128,7 @@ pub fn buildSokol(b: *Builder, target: CrossTarget, optimize: OptimizeMode, conf
             lib.linkSystemLibrary("EGL");
             lib.linkSystemLibrary("android");
             lib.linkSystemLibrary("log");
-        } else if (lib.target.isLinux()) {
+        } else if (lib.rootModuleTarget().os.tag == .linux) {
             const link_egl = config.force_egl or config.enable_wayland;
             const egl_ensured = (config.force_egl and config.enable_x11) or config.enable_wayland;
 
@@ -155,14 +156,14 @@ pub fn buildSokol(b: *Builder, target: CrossTarget, optimize: OptimizeMode, conf
             if (link_egl) {
                 lib.linkSystemLibrary("egl");
             }
-        } else if (lib.target.isWindows()) {
-            lib.linkSystemLibraryName("kernel32");
-            lib.linkSystemLibraryName("user32");
-            lib.linkSystemLibraryName("gdi32");
-            lib.linkSystemLibraryName("ole32");
+        } else if (lib.rootModuleTarget().os.tag == .windows) {
+            lib.linkSystemLibrary("kernel32");
+            lib.linkSystemLibrary("user32");
+            lib.linkSystemLibrary("gdi32");
+            lib.linkSystemLibrary("ole32");
             if (.d3d11 == _backend) {
-                lib.linkSystemLibraryName("d3d11");
-                lib.linkSystemLibraryName("dxgi");
+                lib.linkSystemLibrary("d3d11");
+                lib.linkSystemLibrary("dxgi");
             }
         }
     }
@@ -184,8 +185,8 @@ pub fn build(b: *Builder) !void {
     var target = b.standardTargetOptions(.{});
 
     // ldc2 w/ druntime + phobos2 works on MSVC
-    if (target.isWindows() and target.isNative())
-        target.abi = .msvc;
+    if (builtin.os.tag == .windows and target.query.isNative())
+        target.query.abi = .msvc;
 
     const optimize = b.standardOptimizeOption(.{});
     const sokol = buildSokol(b, target, optimize, config, "");
@@ -247,7 +248,7 @@ pub fn build(b: *Builder) !void {
                 "-preview=dip1000",
             },
             // fixme: https://github.com/kassane/sokol-d/issues/1 - betterC works on darwin
-            .zig_cc = if (target.isDarwin() and !enable_betterC) false else enable_zigcc,
+            .zig_cc = if (target.result.isDarwin() and !enable_betterC) false else enable_zigcc,
         });
         ldc.setName("ldc2");
         ldc.step.dependOn(b.getInstallStep());
@@ -302,7 +303,7 @@ fn buildShaders(b: *Builder) void {
 }
 
 // Use LDC2 (https://github.com/ldc-developers/ldc) to compile the D examples
-fn buildLDC(b: *Builder, lib: *CompileStep, config: ldcConfig) !*Builder.RunStep {
+fn buildLDC(b: *Builder, lib: *CompileStep, config: ldcConfig) !*RunStep {
     const ldc = try b.findProgram(&.{"ldmd2"}, &.{});
 
     var cmds = std.ArrayList([]const u8).init(b.allocator);
@@ -312,8 +313,8 @@ fn buildLDC(b: *Builder, lib: *CompileStep, config: ldcConfig) !*Builder.RunStep
     try cmds.append(ldc);
 
     if (config.zig_cc) {
-        try cmds.append(b.fmt("--gcc={s}", .{b.pathJoin(&.{ b.install_prefix, "bin", if (lib.target.isWindows()) "zcc.exe" else "zcc" })}));
-        try cmds.append(b.fmt("--linker={s}", .{b.pathJoin(&.{ b.install_prefix, "bin", if (lib.target.isWindows()) "zcc.exe" else "zcc" })}));
+        try cmds.append(b.fmt("--gcc={s}", .{b.pathJoin(&.{ b.install_prefix, "bin", if (lib.rootModuleTarget().os.tag == .windows) "zcc.exe" else "zcc" })}));
+        try cmds.append(b.fmt("--linker={s}", .{b.pathJoin(&.{ b.install_prefix, "bin", if (lib.rootModuleTarget().os.tag == .windows) "zcc.exe" else "zcc" })}));
     }
 
     // set kind of build
@@ -340,7 +341,7 @@ fn buildLDC(b: *Builder, lib: *CompileStep, config: ldcConfig) !*Builder.RunStep
     if (config.betterC)
         try cmds.append("--betterC");
 
-    switch (lib.optimize) {
+    switch (lib.root_module.optimize.?) {
         .Debug => {
             try cmds.append("-d-debug");
             try cmds.append("--gc"); // debuginfo for non D dbg
@@ -379,6 +380,8 @@ fn buildLDC(b: *Builder, lib: *CompileStep, config: ldcConfig) !*Builder.RunStep
     // object files with fully qualified names
     try cmds.append("--oq");
 
+    try cmds.append("--disable-verify");
+
     // keep all function bodies in .di files
     try cmds.append("--Hkeep-all-bodies");
 
@@ -406,7 +409,7 @@ fn buildLDC(b: *Builder, lib: *CompileStep, config: ldcConfig) !*Builder.RunStep
     }
 
     // library paths
-    for (lib.lib_paths.items) |libpath| {
+    for (lib.root_module.lib_paths.items) |libpath| {
         if (libpath.path.len > 0) // skip empty paths
             try cmds.append(b.fmt("-L-L{s}", .{libpath.path}));
     }
@@ -416,13 +419,13 @@ fn buildLDC(b: *Builder, lib: *CompileStep, config: ldcConfig) !*Builder.RunStep
     try cmds.append(b.fmt("-L-l{s}", .{lib.name}));
 
     // link system libs
-    for (lib.link_objects.items) |link_object| {
+    for (lib.root_module.link_objects.items) |link_object| {
         if (link_object != .system_lib) continue;
         const system_lib = link_object.system_lib;
         try cmds.append(b.fmt("-L-l{s}", .{system_lib.name}));
     }
     // C flags
-    for (lib.link_objects.items) |link_object| {
+    for (lib.root_module.link_objects.items) |link_object| {
         if (link_object != .c_source_file) continue;
         const c_source_file = link_object.c_source_file;
         for (c_source_file.flags) |flag|
@@ -430,19 +433,19 @@ fn buildLDC(b: *Builder, lib: *CompileStep, config: ldcConfig) !*Builder.RunStep
                 try cmds.append(b.fmt("--Xcc={s}", .{flag}));
         break;
     }
-    for (lib.c_macros.items) |cdefine| {
+    for (lib.root_module.c_macros.items) |cdefine| {
         if (cdefine.len > 0) // skip empty cdefines
             try cmds.append(b.fmt("--Xcc=-D{s}", .{cdefine}));
         break;
     }
 
     // link flags
-    if (lib.target.isLinux() and !config.zig_cc)
+    if (lib.rootModuleTarget().os.tag == .linux and !config.zig_cc)
         try cmds.append("-L--no-as-needed");
 
     // Darwin frameworks
-    if (lib.target.isDarwin()) {
-        var it = lib.frameworks.iterator();
+    if (lib.rootModuleTarget().isDarwin()) {
+        var it = lib.root_module.frameworks.iterator();
         while (it.next()) |framework| {
             try cmds.append(b.fmt("-L-framework", .{}));
             try cmds.append(b.fmt("-L{s}", .{framework.key_ptr.*}));
@@ -455,35 +458,37 @@ fn buildLDC(b: *Builder, lib: *CompileStep, config: ldcConfig) !*Builder.RunStep
         try cmds.append("-Xcc=-v");
     }
 
-    if (lib.sanitize_thread)
-        try cmds.append("--fsanitize=thread");
+    if (lib.root_module.sanitize_thread) |tsan|
+        if (tsan)
+            try cmds.append("--fsanitize=thread");
 
     // zig enable sanitize=undefined by default
-    if (!lib.disable_sanitize_c)
-        try cmds.append("--fsanitize=address");
+    if (lib.root_module.sanitize_c) |ubsan|
+        if (ubsan)
+            try cmds.append("--fsanitize=address");
 
     if (lib.dead_strip_dylibs)
         try cmds.append("--disable-linker-strip-dead");
 
-    // if (lib.omit_frame_pointer) |enabled| {
-    //     if (enabled)
-    //         try cmds.append("--frame-pointer=none")
-    //     else
-    //         try cmds.append("--frame-pointer=all");
-    // }
+    if (lib.root_module.omit_frame_pointer) |enabled| {
+        if (enabled)
+            try cmds.append("--frame-pointer=none")
+        else
+            try cmds.append("--frame-pointer=all");
+    }
 
     // link-time optimization
     if (lib.want_lto) |enabled|
         if (enabled) try cmds.append("--flto=thin");
 
     // ldc2 doesn't support zig native (a.k.a: native-native or native)
-    if (lib.target.isDarwin())
-        try cmds.append(b.fmt("--mtriple={s}-apple-{s}", .{ @tagName(lib.target.getCpuArch()), @tagName(lib.target.getOsTag()) }))
+    if (lib.rootModuleTarget().isDarwin())
+        try cmds.append(b.fmt("--mtriple={s}-apple-{s}", .{ @tagName(lib.rootModuleTarget().cpu.arch), @tagName(lib.rootModuleTarget().os.tag) }))
     else
-        try cmds.append(b.fmt("--mtriple={s}-{s}-{s}", .{ @tagName(lib.target.getCpuArch()), @tagName(lib.target.getOsTag()), @tagName(lib.target.getAbi()) }));
+        try cmds.append(b.fmt("--mtriple={s}-{s}-{s}", .{ @tagName(lib.rootModuleTarget().cpu.arch), @tagName(lib.rootModuleTarget().os.tag), @tagName(lib.rootModuleTarget().abi) }));
 
     // cpu model (e.g. "generic")
-    try cmds.append(b.fmt("--mcpu={s}", .{lib.target.getCpuModel().name}));
+    try cmds.append(b.fmt("--mcpu={s}", .{lib.rootModuleTarget().cpu.model.name}));
     // output file
     try cmds.append(b.fmt("--of={s}", .{b.pathJoin(&.{ b.install_prefix, "bin", config.name orelse "d_binary" })}));
 
@@ -494,7 +499,7 @@ fn buildLDC(b: *Builder, lib: *CompileStep, config: ldcConfig) !*Builder.RunStep
 fn buildZigCC(b: *Builder) void {
     const exe = b.addExecutable(.{
         .name = "zcc",
-        .target = .{}, // native (host)
+        .target = .{ .query = .{}, .result = builtin.target }, // native (host)
         .optimize = .ReleaseSafe,
         .root_source_file = .{
             .path = "tools/zigcc.zig",
