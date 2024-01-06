@@ -479,16 +479,18 @@ fn buildLDC(b: *Builder, lib: *CompileStep, config: ldcConfig) !*RunStep {
 
     // link-time optimization
     if (lib.want_lto) |enabled|
-        if (enabled) try cmds.append("--flto=thin");
+        if (enabled) try cmds.append("--flto=full");
 
     // ldc2 doesn't support zig native (a.k.a: native-native or native)
     if (lib.rootModuleTarget().isDarwin())
-        try cmds.append(b.fmt("--mtriple={s}-apple-{s}", .{ @tagName(lib.rootModuleTarget().cpu.arch), @tagName(lib.rootModuleTarget().os.tag) }))
+        try cmds.append(b.fmt("--mtriple={s}-apple-{s}", .{ if (lib.rootModuleTarget().cpu.arch.isAARCH64()) "arm64" else @tagName(lib.rootModuleTarget().cpu.arch), @tagName(lib.rootModuleTarget().os.tag) }))
+    else if (lib.rootModuleTarget().isWasm())
+        try cmds.append(b.fmt("--mtriple={s}-unknown-unknown-{s}", .{ @tagName(lib.rootModuleTarget().cpu.arch), @tagName(lib.rootModuleTarget().os.tag) }))
     else
         try cmds.append(b.fmt("--mtriple={s}-{s}-{s}", .{ @tagName(lib.rootModuleTarget().cpu.arch), @tagName(lib.rootModuleTarget().os.tag), @tagName(lib.rootModuleTarget().abi) }));
 
-    // cpu model (e.g. "generic")
-    try cmds.append(b.fmt("--mcpu={s}", .{lib.rootModuleTarget().cpu.model.name}));
+    // cpu model (e.g. "baseline")
+    // try cmds.append(b.fmt("--mcpu={s}", .{lib.rootModuleTarget().cpu.model.name}));
     // output file
     try cmds.append(b.fmt("--of={s}", .{b.pathJoin(&.{ b.install_prefix, "bin", config.name orelse "d_binary" })}));
 

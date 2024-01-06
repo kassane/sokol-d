@@ -28,9 +28,13 @@ pub fn main() !void {
     // LDC2 not setting triple targets on host build to cc/linker, except Apple (why?)
     var isNative = true;
     while (args.next()) |arg| {
-        if (std.mem.eql(u8, arg, std.fmt.comptimePrint("{s}-apple-{s}", .{ @tagName(builtin.cpu.arch), @tagName(builtin.os.tag) }))) {
+        // MacOS M1/M2 on ldc2 replace aarch64 to arm64 - (TODO: fix?)
+        if (std.mem.eql(u8, arg, std.fmt.comptimePrint("{s}-apple-{s}", .{ if (builtin.cpu.arch.isAARCH64()) "arm64" else @tagName(builtin.cpu.arch), @tagName(builtin.os.tag) }))) {
             try cmds.append("native-native");
             try cmds.append("-fapple-link-rtlib");
+        } else if (std.mem.eql(u8, arg, std.fmt.comptimePrint("{s}-unknown-unknown-{s}", .{ @tagName(builtin.cpu.arch), @tagName(builtin.os.tag) }))) {
+            // wasm32 or wasm64
+            try cmds.append(std.fmt.comptimePrint("{s}-emscripten", .{@tagName(builtin.cpu.arch)}));
         } else if (std.mem.eql(u8, arg, "-target")) {
             isNative = false;
             try cmds.append(arg); // get "-target" flag
@@ -38,6 +42,7 @@ pub fn main() !void {
             try cmds.append(arg);
         }
     }
+    // Why native? See: https://github.com/kassane/sokol-d/issues/1
     if (isNative) {
         try cmds.append("-target");
         if (builtin.os.tag == .windows)
