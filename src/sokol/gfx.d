@@ -117,6 +117,7 @@ enum PixelFormat {
     Bgra8,
     Rgb10a2,
     Rg11b10f,
+    Rgb9e5,
     Rg32ui,
     Rg32si,
     Rg32f,
@@ -149,7 +150,6 @@ enum PixelFormat {
     Etc2_rgba8,
     Etc2_rg11,
     Etc2_rg11sn,
-    Rgb9e5,
     Num,
 }
 extern(C)
@@ -160,6 +160,8 @@ struct PixelformatInfo {
     bool blend;
     bool msaa;
     bool depth;
+    bool compressed;
+    int bytes_per_pixel;
 }
 extern(C)
 struct Features {
@@ -1432,6 +1434,14 @@ Limits queryLimits() @trusted nothrow {
 extern(C) PixelformatInfo sg_query_pixelformat(PixelFormat) @system @nogc nothrow;
 PixelformatInfo queryPixelformat(PixelFormat fmt) @trusted nothrow {
     return sg_query_pixelformat(fmt);
+}
+extern(C) int sg_query_row_pitch(PixelFormat, int, int) @system @nogc nothrow;
+int queryRowPitch(PixelFormat fmt, int width, int row_align_bytes) @trusted nothrow {
+    return sg_query_row_pitch(fmt, width, row_align_bytes);
+}
+extern(C) int sg_query_surface_pitch(PixelFormat, int, int, int) @system @nogc nothrow;
+int querySurfacePitch(PixelFormat fmt, int width, int height, int row_align_bytes) @trusted nothrow {
+    return sg_query_surface_pitch(fmt, width, height, row_align_bytes);
 }
 extern(C) ResourceState sg_query_buffer_state(Buffer) @system @nogc nothrow;
 ResourceState queryBufferState(Buffer buf) @trusted nothrow {
