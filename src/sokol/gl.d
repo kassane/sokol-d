@@ -3,11 +3,9 @@
 module sokol.gl;
 import sg = sokol.gfx;
 
-// helper function to convert a C string to a D string
-string cStrTod(T)(scope T c_str) nothrow {
-    import std.conv: to;
-    return c_str.to!string;
-}
+// helper functions
+import sokol.utils: cStrTod;
+
 enum LogItem {
     Ok,
     Malloc_failed,

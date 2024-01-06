@@ -3,11 +3,9 @@
 module sokol.shape;
 import sg = sokol.gfx;
 
-// helper function to convert a C string to a D string
-string cStrTod(T)(scope T c_str) nothrow {
-    import std.conv: to;
-    return c_str.to!string;
-}
+// helper functions
+import sokol.utils: cStrTod;
+
 
 // WIP: helper function to convert "anything" to a Range struct
 Range asRange(T)(T val) @trusted {

@@ -2,11 +2,9 @@
 
 module sokol.app;
 
-// helper function to convert a C string to a D string
-string cStrTod(T)(scope T c_str) nothrow {
-    import std.conv: to;
-    return c_str.to!string;
-}
+// helper functions
+import sokol.utils: cStrTod;
+
 enum max_touchpoints = 8;
 enum max_mousebuttons = 3;
 enum max_keycodes = 512;

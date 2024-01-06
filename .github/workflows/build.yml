@@ -24,8 +24,8 @@ jobs:
 
       - name: Build
         run: |
-            zig build debugtext_print -DZigCC --summary all
-            zig build clear -DZigCC --summary all
-            zig build sgl_context -DZigCC --summary all
+            zig build debugtext_print -DZigCC -DBetterC --summary all
+            zig build clear -DZigCC -DBetterC --summary all
+            zig build sgl_context -DBetterC -DZigCC --summary all
             zig build cube -DZigCC --summary all
             zig build blend -DZigCC --summary all

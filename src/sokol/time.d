@@ -2,11 +2,9 @@
 
 module sokol.time;
 
-// helper function to convert a C string to a D string
-string cStrTod(T)(scope T c_str) nothrow {
-    import std.conv: to;
-    return c_str.to!string;
-}
+// helper functions
+import sokol.utils: cStrTod;
+
 extern(C) void stm_setup() @system @nogc nothrow;
 void setup() @trusted nothrow {
     stm_setup();

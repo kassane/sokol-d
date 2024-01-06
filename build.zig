@@ -186,7 +186,7 @@ pub fn build(b: *Builder) !void {
 
     // ldc2 w/ druntime + phobos2 works on MSVC
     if (builtin.os.tag == .windows and target.query.isNative())
-        target.query.abi = .msvc;
+        target.result.abi = .msvc;
 
     const optimize = b.standardOptimizeOption(.{});
     const sokol = buildSokol(b, target, optimize, config, "");
@@ -397,6 +397,7 @@ fn buildLDC(b: *Builder, lib: *CompileStep, config: ldcConfig) !*RunStep {
         "shape",
         "time",
         "debugtext",
+        "utils",
     };
     try cmds.append("-i");
     inline for (srcs) |src| {
