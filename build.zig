@@ -185,8 +185,10 @@ pub fn build(b: *Builder) !void {
     var target = b.standardTargetOptions(.{});
 
     // ldc2 w/ druntime + phobos2 works on MSVC
-    if (builtin.os.tag == .windows and target.query.isNative())
-        target.result.abi = .msvc;
+    if (builtin.os.tag == .windows and target.query.isNative()) {
+        target.result.abi = .msvc; // for ldc2
+        target.query.abi = .msvc; // for libsokol
+    }
 
     const optimize = b.standardOptimizeOption(.{});
     const sokol = buildSokol(b, target, optimize, config, "");
@@ -507,7 +509,7 @@ fn buildLDC(b: *Builder, lib: *CompileStep, config: ldcConfig) !*RunStep {
 fn buildZigCC(b: *Builder) void {
     const exe = b.addExecutable(.{
         .name = "zcc",
-        .target = .{ .query = .{}, .result = builtin.target }, // native (host)
+        .target = b.host, // native (host)
         .optimize = .ReleaseSafe,
         .root_source_file = .{
             .path = "tools/zigcc.zig",
