@@ -441,8 +441,13 @@ fn buildLDC(b: *Builder, lib: *CompileStep, config: ldcConfig) !*RunStep {
     }
 
     // link flags
+    // GNU LD
     if (lib.rootModuleTarget().os.tag == .linux and !config.zig_cc)
         try cmds.append("-L--no-as-needed");
+    // LLD (not working in zld)
+    if (lib.rootModuleTarget().isDarwin() and !config.zig_cc)
+        // https://github.com/ldc-developers/ldc/issues/4501
+        try cmds.append("-L-w"); // resolve linker warnings
 
     // Darwin frameworks
     if (lib.rootModuleTarget().isDarwin()) {
