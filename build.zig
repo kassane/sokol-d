@@ -192,7 +192,6 @@ pub fn build(b: *Builder) !void {
 
     const optimize = b.standardOptimizeOption(.{});
     const sokol = buildSokol(b, target, optimize, config, "");
-    b.installArtifact(sokol);
 
     // LDC-config options
     const enable_betterC = b.option(bool, "BetterC", "Omit generating some runtime information and helper functions. [default: false]") orelse false;
@@ -230,14 +229,12 @@ pub fn build(b: *Builder) !void {
             .sources = if (std.mem.eql(u8, example, "cube"))
                 &.{
                     b.fmt("{s}/src/examples/{s}.d", .{ rootPath(), example }),
-                    b.fmt("{s}/src/examples/math.d", .{rootPath()}),
-                    b.fmt("{s}/src/examples/shaders/cube.glsl.d", .{rootPath()}),
+                    b.fmt("{s}/src/examples/shaders/{s}.glsl.d", .{ rootPath(), example }),
                 }
             else if (std.mem.eql(u8, example, "blend"))
                 &.{
                     b.fmt("{s}/src/examples/{s}.d", .{ rootPath(), example }),
-                    b.fmt("{s}/src/examples/math.d", .{rootPath()}),
-                    b.fmt("{s}/src/examples/shaders/blend.glsl.d", .{rootPath()}),
+                    b.fmt("{s}/src/examples/shaders/{s}.glsl.d", .{ rootPath(), example }),
                 }
             else
                 &.{
@@ -252,10 +249,14 @@ pub fn build(b: *Builder) !void {
             // fixme: https://github.com/kassane/sokol-d/issues/1 - betterC works on darwin
             .zig_cc = if (target.result.isDarwin() and !enable_betterC) false else enable_zigcc,
         });
-        ldc.setName("ldc2");
-        ldc.step.dependOn(b.getInstallStep());
-        const run = b.step(b.fmt("{s}", .{example}), b.fmt("Build example {s}", .{example}));
-        run.dependOn(&ldc.step);
+        ldc.setName(example);
+
+        ldc.addArtifactArg(sokol);
+        b.getInstallStep().dependOn(&ldc.step);
+
+        const example_run = b.addSystemCommand(&.{b.pathJoin(&.{ b.install_path, "bin", example })});
+        const run = b.step(b.fmt("run-{s}", .{example}), b.fmt("Run example {s}", .{example}));
+        run.dependOn(&example_run.step);
     }
     buildShaders(b);
 }
@@ -306,6 +307,7 @@ fn buildShaders(b: *Builder) void {
 
 // Use LDC2 (https://github.com/ldc-developers/ldc) to compile the D examples
 fn buildLDC(b: *Builder, lib: *CompileStep, config: ldcConfig) !*RunStep {
+    // ldmd2: ldc2 wrapped w/ dmd flags
     const ldc = try b.findProgram(&.{"ldmd2"}, &.{});
 
     var cmds = std.ArrayList([]const u8).init(b.allocator);
@@ -382,29 +384,22 @@ fn buildLDC(b: *Builder, lib: *CompileStep, config: ldcConfig) !*RunStep {
     // object files with fully qualified names
     try cmds.append("--oq");
 
+    // disable LLVM-IR verifier
+    // https://llvm.org/docs/Passes.html#verify-module-verifier
     try cmds.append("--disable-verify");
 
     // keep all function bodies in .di files
     try cmds.append("--Hkeep-all-bodies");
 
-    // sokol D files and include path
-    try cmds.append(b.fmt("-I{s}", .{b.pathJoin(&.{ rootPath(), "src", "sokol" })}));
-    const srcs = &.{
-        "app",
-        "audio",
-        "gl",
-        "gfx",
-        "glue",
-        "log",
-        "shape",
-        "time",
-        "debugtext",
-        "utils",
-    };
+    // Include imported modules in the compilation
+    // automatically finds needed library files and builds
     try cmds.append("-i");
-    inline for (srcs) |src| {
-        try cmds.append(b.fmt("{s}.d", .{b.pathJoin(&.{ rootPath(), "src", "sokol", src })}));
-    }
+
+    // sokol D files and include path
+    try cmds.append(b.fmt("-I{s}", .{b.pathJoin(&.{
+        rootPath(),
+        "src",
+    })}));
 
     // example D file
     for (config.sources) |src| {
@@ -416,10 +411,6 @@ fn buildLDC(b: *Builder, lib: *CompileStep, config: ldcConfig) !*RunStep {
         if (libpath.path.len > 0) // skip empty paths
             try cmds.append(b.fmt("-L-L{s}", .{libpath.path}));
     }
-
-    // sokol library path (zig-out/lib/libsokol.{a|lib})
-    try cmds.append(b.fmt("-L-L{s}", .{b.pathJoin(&.{ b.install_prefix, "lib" })}));
-    try cmds.append(b.fmt("-L-l{s}", .{lib.name}));
 
     // link system libs
     for (lib.root_module.link_objects.items) |link_object| {
@@ -462,7 +453,7 @@ fn buildLDC(b: *Builder, lib: *CompileStep, config: ldcConfig) !*RunStep {
 
     if (b.verbose) {
         try cmds.append("-vdmd");
-        // try cmds.append("-v");
+        // try cmds.append("-v"); // very long
         try cmds.append("-Xcc=-v");
     }
 
@@ -474,9 +465,6 @@ fn buildLDC(b: *Builder, lib: *CompileStep, config: ldcConfig) !*RunStep {
     if (lib.root_module.sanitize_c) |ubsan|
         if (ubsan)
             try cmds.append("--fsanitize=address");
-
-    if (lib.dead_strip_dylibs)
-        try cmds.append("--disable-linker-strip-dead");
 
     if (lib.root_module.omit_frame_pointer) |enabled| {
         if (enabled)
@@ -499,6 +487,7 @@ fn buildLDC(b: *Builder, lib: *CompileStep, config: ldcConfig) !*RunStep {
 
     // cpu model (e.g. "baseline")
     // try cmds.append(b.fmt("--mcpu={s}", .{lib.rootModuleTarget().cpu.model.name}));
+
     // output file
     try cmds.append(b.fmt("--of={s}", .{b.pathJoin(&.{ b.install_prefix, "bin", config.name orelse "d_binary" })}));
 

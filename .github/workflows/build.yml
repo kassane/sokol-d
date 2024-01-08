@@ -23,9 +23,4 @@ jobs:
             sudo apt-get install libglu1-mesa-dev mesa-common-dev xorg-dev libasound-dev
 
       - name: Build
-        run: |
-            zig build debugtext_print -DZigCC -DBetterC --summary all
-            zig build clear -DZigCC -DBetterC --summary all
-            zig build sgl_context -DBetterC -DZigCC --summary all
-            zig build cube -DZigCC --summary all
-            zig build blend -DZigCC --summary all
+        run: zig build -DZigCC --summary all
