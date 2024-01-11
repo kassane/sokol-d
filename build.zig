@@ -2,10 +2,10 @@
 
 const std = @import("std");
 const builtin = @import("builtin");
-const Builder = std.Build;
-const CompileStep = Builder.Step.Compile;
-const RunStep = Builder.Step.Run;
-const CrossTarget = Builder.ResolvedTarget;
+const Build = std.Build;
+const CompileStep = Build.Step.Compile;
+const RunStep = Build.Step.Run;
+const CrossTarget = Build.ResolvedTarget;
 const OptimizeMode = std.builtin.OptimizeMode;
 const fmt = std.fmt;
 
@@ -31,7 +31,7 @@ fn rootPath() []const u8 {
 }
 
 // build sokol into a static library
-pub fn buildSokol(b: *Builder, target: CrossTarget, optimize: OptimizeMode, config: Config, comptime prefix_path: []const u8) *CompileStep {
+pub fn buildSokol(b: *Build, target: CrossTarget, optimize: OptimizeMode, config: Config, comptime prefix_path: []const u8) *CompileStep {
     const sharedlib = b.option(bool, "Shared", "Build sokol dynamic library [default: static]") orelse false;
     const lib = if (sharedlib) b.addSharedLibrary(.{
         .name = "sokol",
@@ -172,7 +172,7 @@ pub fn buildSokol(b: *Builder, target: CrossTarget, optimize: OptimizeMode, conf
     return lib;
 }
 
-pub fn build(b: *Builder) !void {
+pub fn build(b: *Build) !void {
     var config: Config = .{};
 
     const force_gl = b.option(bool, "gl", "Force GL backend") orelse false;
@@ -236,7 +236,9 @@ pub fn build(b: *Builder) !void {
                 "-preview=all",
             },
             // fixme: https://github.com/kassane/sokol-d/issues/1 - betterC works on darwin
-            .zig_cc = enable_zigcc,
+            .zig_cc = if (target.result.isDarwin() and !enable_betterC) false else enable_zigcc,
+            .target = target,
+            .optimize = optimize,
         });
         ldc.setName(example);
         b.getInstallStep().dependOn(&ldc.step);
@@ -249,7 +251,7 @@ pub fn build(b: *Builder) !void {
 }
 
 // a separate step to compile shaders, expects the shader compiler in ../sokol-tools-bin/
-fn buildShaders(b: *Builder) void {
+fn buildShaders(b: *Build) void {
     const sokol_tools_bin_dir = "../sokol-tools-bin/bin/";
     const shaders_dir = "src/shaders/";
     const shaders = .{
@@ -293,7 +295,7 @@ fn buildShaders(b: *Builder) void {
 }
 
 // Use LDC2 (https://github.com/ldc-developers/ldc) to compile the D examples
-fn buildLDC(b: *Builder, lib: *CompileStep, config: ldcConfig) !*RunStep {
+fn buildLDC(b: *Build, lib: *CompileStep, config: ldcConfig) !*RunStep {
     // ldmd2: ldc2 wrapped w/ dmd flags
     const ldc = try b.findProgram(&.{"ldmd2"}, &.{});
 
@@ -304,8 +306,8 @@ fn buildLDC(b: *Builder, lib: *CompileStep, config: ldcConfig) !*RunStep {
     try cmds.append(ldc);
 
     if (config.zig_cc) {
-        try cmds.append(b.fmt("--gcc={s}", .{b.pathJoin(&.{ b.install_prefix, "bin", if (lib.rootModuleTarget().os.tag == .windows) "zcc.exe" else "zcc" })}));
-        try cmds.append(b.fmt("--linker={s}", .{b.pathJoin(&.{ b.install_prefix, "bin", if (lib.rootModuleTarget().os.tag == .windows) "zcc.exe" else "zcc" })}));
+        try cmds.append(b.fmt("--gcc={s}", .{b.pathJoin(&.{ b.install_prefix, "bin", if (config.target.result.os.tag == .windows) "zcc.exe" else "zcc" })}));
+        try cmds.append(b.fmt("--linker={s}", .{b.pathJoin(&.{ b.install_prefix, "bin", if (config.target.result.os.tag == .windows) "zcc.exe" else "zcc" })}));
     }
 
     // set kind of build
@@ -322,11 +324,17 @@ fn buildLDC(b: *Builder, lib: *CompileStep, config: ldcConfig) !*RunStep {
     if (config.kind == .lib) {
         if (config.linkage == .dynamic) {
             try cmds.append("-shared");
-            try cmds.append("-fvisibility=public");
-            try cmds.append("--dllimport=all");
+            if (config.target.result.os.tag == .windows) {
+                try cmds.append("-fvisibility=public");
+                try cmds.append("--dllimport=all");
+            }
+        } else {
+            if (config.target.result.os.tag == .windows)
+                try cmds.append("--dllimport=defaultLibsOnly");
+            try cmds.append("-fvisibility=hidden");
+            // remove object files after archiving to static lib, and put them in a unique temp directory
+            try cmds.append("--cleanup-obj");
         }
-        try cmds.append("--dllimport=defaultLibsOnly");
-        try cmds.append("-fvisibility=hidden");
     }
 
     for (config.dflags) |dflag| {
@@ -336,11 +344,11 @@ fn buildLDC(b: *Builder, lib: *CompileStep, config: ldcConfig) !*RunStep {
     // betterC disable druntime and phobos
     if (config.betterC)
         try cmds.append("--betterC")
-    else if (lib.linkage == .dynamic or lib.rootModuleTarget().isDarwin())
+    else if (lib.linkage == .dynamic)
         // linking the druntime/Phobos as dynamic libraries
         try cmds.append("-link-defaultlib-shared");
 
-    switch (lib.root_module.optimize.?) {
+    switch (config.optimize) {
         .Debug => {
             try cmds.append("-d-debug");
             try cmds.append("--gc"); // debuginfo for non D dbg
@@ -377,7 +385,7 @@ fn buildLDC(b: *Builder, lib: *CompileStep, config: ldcConfig) !*RunStep {
     if (b.cache_root.path) |path|
         try cmds.append(b.fmt("-od={s}", .{b.pathJoin(&.{ path, "o", b.cache.hash.peek()[0..] })}));
 
-    // object files with fully qualified names
+    // name object files uniquely (so the files don't collide)
     try cmds.append("--oq");
 
     // disable LLVM-IR verifier
@@ -431,15 +439,15 @@ fn buildLDC(b: *Builder, lib: *CompileStep, config: ldcConfig) !*RunStep {
 
     // link flags
     // GNU LD
-    if (lib.rootModuleTarget().os.tag == .linux and !config.zig_cc)
+    if (config.target.result.os.tag == .linux and !config.zig_cc)
         try cmds.append("-L--no-as-needed");
     // LLD (not working in zld)
-    if (lib.rootModuleTarget().isDarwin() and !config.zig_cc)
+    if (config.target.result.isDarwin() and !config.zig_cc)
         // https://github.com/ldc-developers/ldc/issues/4501
         try cmds.append("-L-w"); // resolve linker warnings
 
     // Darwin frameworks
-    if (lib.rootModuleTarget().isDarwin()) {
+    if (config.target.result.isDarwin()) {
         var it = lib.root_module.frameworks.iterator();
         while (it.next()) |framework| {
             try cmds.append(b.fmt("-L-framework", .{}));
@@ -474,15 +482,15 @@ fn buildLDC(b: *Builder, lib: *CompileStep, config: ldcConfig) !*RunStep {
         if (enabled) try cmds.append("--flto=full");
 
     // ldc2 doesn't support zig native (a.k.a: native-native or native)
-    if (lib.rootModuleTarget().isDarwin())
-        try cmds.append(b.fmt("--mtriple={s}-apple-{s}", .{ if (lib.rootModuleTarget().cpu.arch.isAARCH64()) "arm64" else @tagName(lib.rootModuleTarget().cpu.arch), @tagName(lib.rootModuleTarget().os.tag) }))
-    else if (lib.rootModuleTarget().isWasm())
-        try cmds.append(b.fmt("--mtriple={s}-unknown-unknown-{s}", .{ @tagName(lib.rootModuleTarget().cpu.arch), @tagName(lib.rootModuleTarget().os.tag) }))
+    if (config.target.result.isDarwin())
+        try cmds.append(b.fmt("--mtriple={s}-apple-{s}", .{ if (config.target.result.cpu.arch.isAARCH64()) "arm64" else @tagName(config.target.result.cpu.arch), @tagName(config.target.result.os.tag) }))
+    else if (config.target.result.isWasm())
+        try cmds.append(b.fmt("--mtriple={s}-unknown-unknown-{s}", .{ @tagName(config.target.result.cpu.arch), @tagName(config.target.result.os.tag) }))
     else
-        try cmds.append(b.fmt("--mtriple={s}-{s}-{s}", .{ @tagName(lib.rootModuleTarget().cpu.arch), @tagName(lib.rootModuleTarget().os.tag), @tagName(lib.rootModuleTarget().abi) }));
+        try cmds.append(b.fmt("--mtriple={s}-{s}-{s}", .{ @tagName(config.target.result.cpu.arch), @tagName(config.target.result.os.tag), @tagName(config.target.result.abi) }));
 
     // cpu model (e.g. "baseline")
-    // try cmds.append(b.fmt("--mcpu={s}", .{lib.rootModuleTarget().cpu.model.name}));
+    // try cmds.append(b.fmt("--mcpu={s}", .{config.target.result.cpu.model.name}));
 
     // output file
     try cmds.append(b.fmt("--of={s}", .{b.pathJoin(&.{ b.install_prefix, "bin", config.name orelse "d_binary" })}));
@@ -493,7 +501,7 @@ fn buildLDC(b: *Builder, lib: *CompileStep, config: ldcConfig) !*RunStep {
     return ldc_exec;
 }
 
-fn buildZigCC(b: *Builder) void {
+fn buildZigCC(b: *Build) void {
     const exe = b.addExecutable(.{
         .name = "zcc",
         .target = b.host, // native (host)
@@ -506,6 +514,8 @@ fn buildZigCC(b: *Builder) void {
 }
 
 const ldcConfig = struct {
+    target: Build.ResolvedTarget,
+    optimize: std.builtin.OptimizeMode = .Debug,
     kind: CompileStep.Kind = .exe,
     linkage: CompileStep.Linkage = .static,
     betterC: bool = false,
@@ -513,4 +523,11 @@ const ldcConfig = struct {
     dflags: []const []const u8 = std.mem.zeroes([]const []const u8),
     name: ?[]const u8 = null,
     zig_cc: bool = false,
+    package: ?*Build.Dependency = null,
+
+    fn packagePath(self: ldcConfig, b: *Build) ?[]const u8 {
+        if (self.package) |dep|
+            return dep.path("").getPath(b);
+        return null;
+    }
 };
