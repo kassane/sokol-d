@@ -167,6 +167,8 @@ pub fn buildSokol(b: *Builder, target: CrossTarget, optimize: OptimizeMode, conf
             }
         }
     }
+    if (sharedlib)
+        b.installArtifact(lib);
     return lib;
 }
 
@@ -234,7 +236,7 @@ pub fn build(b: *Builder) !void {
                 "-preview=all",
             },
             // fixme: https://github.com/kassane/sokol-d/issues/1 - betterC works on darwin
-            .zig_cc = if (target.result.isDarwin() and !enable_betterC) false else enable_zigcc,
+            .zig_cc = enable_zigcc,
         });
         ldc.setName(example);
         b.getInstallStep().dependOn(&ldc.step);
@@ -318,8 +320,13 @@ fn buildLDC(b: *Builder, lib: *CompileStep, config: ldcConfig) !*RunStep {
     }
 
     if (config.kind == .lib) {
-        if (config.linkage == .dynamic)
+        if (config.linkage == .dynamic) {
             try cmds.append("-shared");
+            try cmds.append("-fvisibility=public");
+            try cmds.append("--dllimport=all");
+        }
+        try cmds.append("--dllimport=defaultLibsOnly");
+        try cmds.append("-fvisibility=hidden");
     }
 
     for (config.dflags) |dflag| {
@@ -328,7 +335,10 @@ fn buildLDC(b: *Builder, lib: *CompileStep, config: ldcConfig) !*RunStep {
 
     // betterC disable druntime and phobos
     if (config.betterC)
-        try cmds.append("--betterC");
+        try cmds.append("--betterC")
+    else if (lib.linkage == .dynamic or lib.rootModuleTarget().isDarwin())
+        // linking the druntime/Phobos as dynamic libraries
+        try cmds.append("-link-defaultlib-shared");
 
     switch (lib.root_module.optimize.?) {
         .Debug => {
@@ -343,6 +353,7 @@ fn buildLDC(b: *Builder, lib: *CompileStep, config: ldcConfig) !*RunStep {
         .ReleaseSafe => {
             try cmds.append("--O2");
             try cmds.append("--release");
+            try cmds.append("--enable-inlining");
             try cmds.append("--boundscheck=on");
         },
         .ReleaseFast => {
