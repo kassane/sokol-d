@@ -102,7 +102,7 @@ void cleanup()
 void main()
 {
     sapp.Desc runner = {
-        window_title: "debugtext_print.d",
+        window_title: "debugtext-print.d",
         init_cb: &init,
         frame_cb: &frame,
         cleanup_cb: &cleanup,

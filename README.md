@@ -25,10 +25,12 @@ zig build -Doptimize=ReleaseFast -DShared
 
 # Run Examples
 zig build run-clear -Doptimize=ReleaseFast # works
-zig build run-debugtext_print -Doptimize=ReleaseFast # works
-zig build run-sgl_context -Doptimize=ReleaseFast # run, but no anims (fixme)
+zig build run-debugtext-print -Doptimize=ReleaseFast # works
+zig build run-sgl-context -Doptimize=ReleaseFast # run, but no anims (fixme)
 zig build run-cube -Doptimize=ReleaseFast # run, but no anims (fixme)
 zig build run-blend -Doptimize=ReleaseFast # run, but no anims (fixme)
+zig build run-mrt -Doptimize=ReleaseFast # run, but no anims (fixme)
+zig build run-triangle -Doptimize=ReleaseFast # run, but no anims (fixme)
 
 zig build --help
 # Project-Specific Options:

@@ -185,7 +185,7 @@ pub fn build(b: *Builder) !void {
     var target = b.standardTargetOptions(.{});
 
     // ldc2 w/ druntime + phobos2 works on MSVC
-    if (builtin.os.tag == .windows and target.query.isNative()) {
+    if (target.result.os.tag == .windows and target.query.isNative()) {
         target.result.abi = .msvc; // for ldc2
         target.query.abi = .msvc; // for libsokol
     }
@@ -203,7 +203,7 @@ pub fn build(b: *Builder) !void {
     // WiP: build examples
     const examples = .{
         "clear",
-        // "triangle",
+        "triangle",
         // "quad",
         // "bufferoffsets",
         "cube",
@@ -212,13 +212,13 @@ pub fn build(b: *Builder) !void {
         "blend",
         // "offscreen",
         // "instancing",
-        // "mrt",
+        "mrt",
         // "saudio",
         // "sgl",
-        "sgl_context",
+        "sgl-context",
         // "sgl-points",
         // "debugtext",
-        "debugtext_print",
+        "debugtext-print",
         // "debugtext-userfont",
         // "shapes",
     };
@@ -226,32 +226,17 @@ pub fn build(b: *Builder) !void {
     inline for (examples) |example| {
         const ldc = try buildLDC(b, sokol, .{
             .name = example,
-            .sources = if (std.mem.eql(u8, example, "cube"))
-                &.{
-                    b.fmt("{s}/src/examples/{s}.d", .{ rootPath(), example }),
-                    b.fmt("{s}/src/examples/shaders/{s}.glsl.d", .{ rootPath(), example }),
-                }
-            else if (std.mem.eql(u8, example, "blend"))
-                &.{
-                    b.fmt("{s}/src/examples/{s}.d", .{ rootPath(), example }),
-                    b.fmt("{s}/src/examples/shaders/{s}.glsl.d", .{ rootPath(), example }),
-                }
-            else
-                &.{
-                    b.fmt("{s}/src/examples/{s}.d", .{ rootPath(), example }),
-                },
+            .sources = &.{b.fmt("{s}/src/examples/{s}.d", .{ rootPath(), example })},
             .betterC = enable_betterC,
             .dflags = &.{
-                "-wi", // warnings only (no error)
-                // "-w", // warnings as error
-                "-preview=dip1000",
+                "-w", // warnings as error
+                // more info: ldc2 -preview=help (list all specs)
+                "-preview=all",
             },
             // fixme: https://github.com/kassane/sokol-d/issues/1 - betterC works on darwin
             .zig_cc = if (target.result.isDarwin() and !enable_betterC) false else enable_zigcc,
         });
         ldc.setName(example);
-
-        ldc.addArtifactArg(sokol);
         b.getInstallStep().dependOn(&ldc.step);
 
         const example_run = b.addSystemCommand(&.{b.pathJoin(&.{ b.install_path, "bin", example })});
@@ -264,7 +249,7 @@ pub fn build(b: *Builder) !void {
 // a separate step to compile shaders, expects the shader compiler in ../sokol-tools-bin/
 fn buildShaders(b: *Builder) void {
     const sokol_tools_bin_dir = "../sokol-tools-bin/bin/";
-    const shaders_dir = "src/examples/shaders/";
+    const shaders_dir = "src/shaders/";
     const shaders = .{
         "bufferoffsets.glsl",
         "cube.glsl",
@@ -287,7 +272,7 @@ fn buildShaders(b: *Builder) void {
         std.log.warn("unsupported host platform, skipping shader compiler step", .{});
         return;
     }
-    const shdc_path = sokol_tools_bin_dir ++ optional_shdc.?;
+    const shdc_path = b.findProgram(&.{"sokol-shdc"}, &.{}) catch sokol_tools_bin_dir ++ optional_shdc.?;
     const shdc_step = b.step("shaders", "Compile shaders (needs ../sokol-tools-bin)");
     inline for (shaders) |shader| {
         const cmd = b.addSystemCommand(&.{
@@ -295,7 +280,7 @@ fn buildShaders(b: *Builder) void {
             "-i",
             shaders_dir ++ shader,
             "-o",
-            shaders_dir ++ shader ++ ".d",
+            shaders_dir ++ shader[0 .. shader.len - 5] ++ ".d",
             "-l",
             "glsl330:metal_macos:hlsl4",
             "-f",
@@ -492,7 +477,9 @@ fn buildLDC(b: *Builder, lib: *CompileStep, config: ldcConfig) !*RunStep {
     try cmds.append(b.fmt("--of={s}", .{b.pathJoin(&.{ b.install_prefix, "bin", config.name orelse "d_binary" })}));
 
     // run the command
-    return b.addSystemCommand(cmds.items);
+    var ldc_exec = b.addSystemCommand(cmds.items);
+    ldc_exec.addArtifactArg(lib);
+    return ldc_exec;
 }
 
 fn buildZigCC(b: *Builder) void {

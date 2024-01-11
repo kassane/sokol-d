@@ -162,7 +162,7 @@ void cleanup()
 void main()
 {
     sapp.Desc runner = {
-        window_title: "sgl_context.d",
+        window_title: "sgl-context.d",
         init_cb: &init,
         frame_cb: &frame,
         cleanup_cb: &cleanup,
