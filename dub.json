@@ -9,7 +9,6 @@
     "configurations": [
         {
           "name": "debugtext_print",
-          "targetPath": "examples",
           "targetType": "executable",
           "sourceFiles": ["src/examples/debugtext_print.d"], 
           "buildTypes": {

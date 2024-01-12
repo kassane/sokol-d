@@ -21,15 +21,16 @@ On Linux install the following packages: libglu1-mesa-dev, mesa-common-dev, xorg
 zig build -Doptimize=ReleaseFast
 
 # build sokol shared library + all examples
-zig build -Doptimize=ReleaseFast -DShared
+zig build -Doptimize=ReleaseFast -Dshared
 
 # Run Examples
-zig build run-clear -Doptimize=ReleaseFast # works
-zig build run-debugtext-print -Doptimize=ReleaseFast # works
-zig build run-sgl-context -Doptimize=ReleaseFast # run, but no anims (fixme)
-zig build run-cube -Doptimize=ReleaseFast # run, but no anims (fixme)
 zig build run-blend -Doptimize=ReleaseFast # run, but no anims (fixme)
+zig build run-clear -Doptimize=ReleaseFast # works
+zig build run-cube -Doptimize=ReleaseFast # run, but no anims (fixme)
+zig build run-debugtext-print -Doptimize=ReleaseFast # works
 zig build run-mrt -Doptimize=ReleaseFast # run, but no anims (fixme)
+zig build run-saudio -Doptimize=ReleaseFast # run (fixme)
+zig build run-sgl-context -Doptimize=ReleaseFast # run, but no anims (fixme)
 zig build run-triangle -Doptimize=ReleaseFast # run, but no anims (fixme)
 
 zig build --help
@@ -46,9 +47,9 @@ zig build --help
 #                                    ReleaseSafe
 #                                    ReleaseFast
 #                                    ReleaseSmall
-#   -DShared=[bool]              Build sokol dynamic library [default: static]
-#   -DBetterC=[bool]             Omit generating some runtime information and helper functions. [default: false]
-#   -DZigCC=[bool]               Use zig cc as compiler and linker. [default: false]
+#   -Dshared=[bool]              Build sokol dynamic library (default: static)
+#   -DbetterC=[bool]             Omit generating some runtime information and helper functions. (default: false)
+#   -DzigCC=[bool]               Use zig cc as compiler and linker. (default: false)
 ```
 
 ## Shaders

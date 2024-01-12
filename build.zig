@@ -32,7 +32,7 @@ fn rootPath() []const u8 {
 
 // build sokol into a static library
 pub fn buildSokol(b: *Build, target: CrossTarget, optimize: OptimizeMode, config: Config, comptime prefix_path: []const u8) *CompileStep {
-    const sharedlib = b.option(bool, "Shared", "Build sokol dynamic library [default: static]") orelse false;
+    const sharedlib = b.option(bool, "shared", "Build sokol dynamic library (default: static)") orelse false;
     const lib = if (sharedlib) b.addSharedLibrary(.{
         .name = "sokol",
         .target = target,
@@ -196,8 +196,8 @@ pub fn build(b: *Build) !void {
     const sokol = buildSokol(b, target, optimize, config, "");
 
     // LDC-config options
-    const enable_betterC = b.option(bool, "BetterC", "Omit generating some runtime information and helper functions. [default: false]") orelse false;
-    const enable_zigcc = b.option(bool, "ZigCC", "Use zig cc as compiler and linker. [default: false]") orelse false;
+    const enable_betterC = b.option(bool, "betterC", "Omit generating some runtime information and helper functions. (default: false)") orelse false;
+    const enable_zigcc = b.option(bool, "zigCC", "Use zig cc as compiler and linker. (default: false)") orelse false;
 
     if (enable_zigcc)
         buildZigCC(b);
@@ -215,7 +215,7 @@ pub fn build(b: *Build) !void {
         // "offscreen",
         // "instancing",
         "mrt",
-        // "saudio",
+        "saudio",
         // "sgl",
         "sgl-context",
         // "sgl-points",
