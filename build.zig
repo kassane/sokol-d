@@ -286,7 +286,7 @@ fn buildShaders(b: *Build) void {
             "-o",
             shaders_dir ++ shader[0 .. shader.len - 5] ++ ".d",
             "-l",
-            "glsl330:metal_macos:hlsl4",
+            "glsl330:metal_macos:hlsl4:glsl300es:wgsl",
             "-f",
             "sokol_d",
         });
@@ -332,8 +332,6 @@ fn buildLDC(b: *Build, lib: *CompileStep, config: ldcConfig) !*RunStep {
             if (config.target.result.os.tag == .windows)
                 try cmds.append("--dllimport=defaultLibsOnly");
             try cmds.append("-fvisibility=hidden");
-            // remove object files after archiving to static lib, and put them in a unique temp directory
-            try cmds.append("--cleanup-obj");
         }
     }
 
@@ -344,7 +342,7 @@ fn buildLDC(b: *Build, lib: *CompileStep, config: ldcConfig) !*RunStep {
     // betterC disable druntime and phobos
     if (config.betterC)
         try cmds.append("--betterC")
-    else if (lib.linkage == .dynamic)
+    else if (lib.linkage == .dynamic or config.linkage == .dynamic)
         // linking the druntime/Phobos as dynamic libraries
         try cmds.append("-link-defaultlib-shared");
 
@@ -387,6 +385,9 @@ fn buildLDC(b: *Build, lib: *CompileStep, config: ldcConfig) !*RunStep {
 
     // name object files uniquely (so the files don't collide)
     try cmds.append("--oq");
+
+    // remove object files after success build, and put them in a unique temp directory
+    try cmds.append("--cleanup-obj");
 
     // disable LLVM-IR verifier
     // https://llvm.org/docs/Passes.html#verify-module-verifier

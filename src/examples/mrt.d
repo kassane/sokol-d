@@ -73,7 +73,8 @@ void frame()
 
 void event(const app.Event* ev)
 {
-    if(ev.type == app.EventType.Resized){
+    if(ev.type == app.EventType.Resized)
+    {
         createOffscreenPass(ev.framebuffer_width, ev.framebuffer_height);
     }
 }
