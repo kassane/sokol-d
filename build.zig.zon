@@ -1,13 +1,16 @@
 .{
     .name = "sokol-d",
     .version = "0.1.0",
+    .min_zig_version = "0.12.0",
+    .paths = .{""},
     .dependencies = .{
-        // TODO
+        // .emsdk = .{
+        //     .url = "git+https://github.com/emscripten-core/emsdk#0bbae74935d57ff41739648c12cf90b56668398f",
+        //     .hash = "1220f1340cd871b444021c600661f921f96091ce0815fa43008528f4844cece7e245",
+        // },
         // .@"bindbc-imgui" = .{
         //     .url = "git+https://github.com/BindBC/bindbc-imgui#63cf88e1ab3981794d2e17d2c4a30d1ac340b148",
         //     .hash = "1220194ac6476adaed11b30299a8abdd593eb7ae6d368bf6832d7fe6a604f12cae4f",
         // },
     },
-    .min_zig_version = "0.12.0",
-    .paths = .{""},
 }

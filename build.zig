@@ -9,163 +9,155 @@ const CrossTarget = Build.ResolvedTarget;
 const OptimizeMode = std.builtin.OptimizeMode;
 const fmt = std.fmt;
 
-pub const Backend = enum {
+pub const SokolBackend = enum {
     auto, // Windows: D3D11, macOS/iOS: Metal, otherwise: GL
     d3d11,
     metal,
     gl,
-    gles2,
     gles3,
     wgpu,
 };
 
-pub const Config = struct {
-    backend: Backend = .auto,
-    force_egl: bool = false,
-    enable_x11: bool = true,
-    enable_wayland: bool = false,
+pub const LibSokolOptions = struct {
+    target: Build.ResolvedTarget,
+    optimize: OptimizeMode,
+    backend: SokolBackend = .auto,
+    use_egl: bool = false,
+    use_x11: bool = true,
+    use_wayland: bool = false,
+    emsdk: ?*Build.Dependency = null,
 };
+
+// helper function to resolve .auto backend based on target platform
+fn resolveSokolBackend(backend: SokolBackend, target: std.Target) SokolBackend {
+    if (backend != .auto) {
+        return backend;
+    } else if (target.isDarwin()) {
+        return .metal;
+    } else if (target.os.tag == .windows) {
+        return .d3d11;
+    } else if (target.isWasm()) {
+        return .gles3;
+    } else if (target.isAndroid()) {
+        return .gles3;
+    } else {
+        return .gl;
+    }
+}
 
 fn rootPath() []const u8 {
     return std.fs.path.dirname(@src().file) orelse ".";
 }
 
 // build sokol into a static library
-pub fn buildSokol(b: *Build, target: CrossTarget, optimize: OptimizeMode, config: Config, comptime prefix_path: []const u8) *CompileStep {
+pub fn buildLibSokol(b: *Build, options: LibSokolOptions) !*CompileStep {
     const sharedlib = b.option(bool, "shared", "Build sokol dynamic library (default: static)") orelse false;
     const lib = if (sharedlib) b.addSharedLibrary(.{
         .name = "sokol",
-        .target = target,
-        .optimize = optimize,
+        .target = options.target,
+        .optimize = options.optimize,
     }) else b.addStaticLibrary(.{
         .name = "sokol",
-        .target = target,
-        .optimize = optimize,
+        .target = options.target,
+        .optimize = options.optimize,
     });
     lib.root_module.sanitize_c = false;
     lib.linkLibC();
-    const sokol_path = prefix_path ++ "src/sokol/c/";
-    const csources = [_][]const u8{
-        "sokol_log.c",
-        "sokol_app.c",
-        "sokol_gfx.c",
-        "sokol_glue.c",
-        "sokol_time.c",
-        "sokol_audio.c",
-        "sokol_gl.c",
-        "sokol_debugtext.c",
-        "sokol_shape.c",
-    };
-    var _backend = config.backend;
-    if (_backend == .auto) {
-        if (lib.rootModuleTarget().isDarwin()) {
-            _backend = .metal;
-        } else if (lib.rootModuleTarget().os.tag == .windows) {
-            _backend = .d3d11;
-        } else if (lib.rootModuleTarget().abi == .android) {
-            _backend = .gles3;
-        } else {
-            _backend = .gl;
-        }
-    }
-    const backend_option = switch (_backend) {
+
+    // resolve .auto backend into specific backend by platform
+    const backend = resolveSokolBackend(options.backend, lib.rootModuleTarget());
+    const backend_cflags = switch (backend) {
         .d3d11 => "-DSOKOL_D3D11",
         .metal => "-DSOKOL_METAL",
         .gl => "-DSOKOL_GLCORE33",
-        .gles2 => "-DSOKOL_GLES2",
         .gles3 => "-DSOKOL_GLES3",
         .wgpu => "-DSOKOL_WGPU",
-        else => unreachable,
+        else => @panic("unknown sokol backend"),
     };
 
+    // platform specific compile and link options
+    var cflags: []const []const u8 = &.{ "-DIMPL", backend_cflags };
     if (lib.rootModuleTarget().isDarwin()) {
-        inline for (csources) |csrc| {
-            lib.addCSourceFile(.{
-                .file = .{ .path = sokol_path ++ csrc },
-                .flags = switch (target.result.os.tag) {
-                    .macos => &.{ "-ObjC", "-DIMPL", "-mmacos-version-min=12", backend_option },
-                    else => &.{ "-ObjC", "-DIMPL", backend_option },
-                },
-            });
-        }
+        cflags = &.{ "-ObjC", "-DIMPL", backend_cflags };
         lib.linkFramework("Foundation");
         lib.linkFramework("AudioToolbox");
-        if (.metal == _backend) {
+        if (.metal == backend) {
             lib.linkFramework("MetalKit");
             lib.linkFramework("Metal");
         }
         if (lib.rootModuleTarget().os.tag == .ios) {
             lib.linkFramework("UIKit");
             lib.linkFramework("AVFoundation");
-            if (.gl == _backend) {
+            if (.gl == backend) {
                 lib.linkFramework("OpenGLES");
                 lib.linkFramework("GLKit");
             }
         } else if (lib.rootModuleTarget().os.tag == .macos) {
             lib.linkFramework("Cocoa");
             lib.linkFramework("QuartzCore");
-            if (.gl == _backend) {
+            if (.gl == backend) {
                 lib.linkFramework("OpenGL");
             }
         }
-    } else {
-        const egl_flag = if (config.force_egl) "-DSOKOL_FORCE_EGL " else "";
-        const x11_flag = if (!config.enable_x11) "-DSOKOL_DISABLE_X11 " else "";
-        const wayland_flag = if (!config.enable_wayland) "-DSOKOL_DISABLE_WAYLAND" else "";
-
-        inline for (csources) |csrc| {
-            lib.addCSourceFile(.{
-                .file = .{ .path = sokol_path ++ csrc },
-                .flags = &[_][]const u8{ "-DIMPL", backend_option, egl_flag, x11_flag, wayland_flag },
-            });
+    } else if (lib.rootModuleTarget().isAndroid()) {
+        if (.gles3 != backend) {
+            @panic("For android targets, you must have backend set to GLES3");
         }
-
-        if (lib.rootModuleTarget().abi == .android) {
-            if (.gles3 != _backend) {
-                @panic("For android targets, you must have backend set to GLES3");
-            }
-            lib.linkSystemLibrary("GLESv3");
-            lib.linkSystemLibrary("EGL");
-            lib.linkSystemLibrary("android");
-            lib.linkSystemLibrary("log");
-        } else if (lib.rootModuleTarget().os.tag == .linux) {
-            const link_egl = config.force_egl or config.enable_wayland;
-            const egl_ensured = (config.force_egl and config.enable_x11) or config.enable_wayland;
-
-            lib.linkSystemLibrary("asound");
-
-            if (.gles2 == _backend) {
-                lib.linkSystemLibrary("glesv2");
-                if (!egl_ensured) {
-                    @panic("GLES2 in Linux only available with Config.force_egl and/or Wayland");
-                }
-            } else {
-                lib.linkSystemLibrary("GL");
-            }
-            if (config.enable_x11) {
-                lib.linkSystemLibrary("X11");
-                lib.linkSystemLibrary("Xi");
-                lib.linkSystemLibrary("Xcursor");
-            }
-            if (config.enable_wayland) {
-                lib.linkSystemLibrary("wayland-client");
-                lib.linkSystemLibrary("wayland-cursor");
-                lib.linkSystemLibrary("wayland-egl");
-                lib.linkSystemLibrary("xkbcommon");
-            }
-            if (link_egl) {
-                lib.linkSystemLibrary("egl");
-            }
-        } else if (lib.rootModuleTarget().os.tag == .windows) {
-            lib.linkSystemLibrary("kernel32");
-            lib.linkSystemLibrary("user32");
-            lib.linkSystemLibrary("gdi32");
-            lib.linkSystemLibrary("ole32");
-            if (.d3d11 == _backend) {
-                lib.linkSystemLibrary("d3d11");
-                lib.linkSystemLibrary("dxgi");
-            }
+        lib.linkSystemLibrary("GLESv3");
+        lib.linkSystemLibrary("EGL");
+        lib.linkSystemLibrary("android");
+        lib.linkSystemLibrary("log");
+    } else if (lib.rootModuleTarget().os.tag == .linux) {
+        const egl_cflags = if (options.use_egl) "-DSOKOL_FORCE_EGL " else "";
+        const x11_cflags = if (!options.use_x11) "-DSOKOL_DISABLE_X11 " else "";
+        const wayland_cflags = if (!options.use_wayland) "-DSOKOL_DISABLE_WAYLAND" else "";
+        const link_egl = options.use_egl or options.use_wayland;
+        cflags = &.{ "-DIMPL", backend_cflags, egl_cflags, x11_cflags, wayland_cflags };
+        lib.linkSystemLibrary("asound");
+        lib.linkSystemLibrary("GL");
+        if (options.use_x11) {
+            lib.linkSystemLibrary("X11");
+            lib.linkSystemLibrary("Xi");
+            lib.linkSystemLibrary("Xcursor");
         }
+        if (options.use_wayland) {
+            lib.linkSystemLibrary("wayland-client");
+            lib.linkSystemLibrary("wayland-cursor");
+            lib.linkSystemLibrary("wayland-egl");
+            lib.linkSystemLibrary("xkbcommon");
+        }
+        if (link_egl) {
+            lib.linkSystemLibrary("egl");
+        }
+    } else if (lib.rootModuleTarget().os.tag == .windows) {
+        lib.linkSystemLibrary("kernel32");
+        lib.linkSystemLibrary("user32");
+        lib.linkSystemLibrary("gdi32");
+        lib.linkSystemLibrary("ole32");
+        if (.d3d11 == backend) {
+            lib.linkSystemLibrary("d3d11");
+            lib.linkSystemLibrary("dxgi");
+        }
+    }
+
+    // finally add the C source files
+    const csrc_root = "src/sokol/c/";
+    const csources = [_][]const u8{
+        csrc_root ++ "sokol_log.c",
+        csrc_root ++ "sokol_app.c",
+        csrc_root ++ "sokol_gfx.c",
+        csrc_root ++ "sokol_time.c",
+        csrc_root ++ "sokol_audio.c",
+        csrc_root ++ "sokol_gl.c",
+        csrc_root ++ "sokol_glue.c",
+        csrc_root ++ "sokol_debugtext.c",
+        csrc_root ++ "sokol_shape.c",
+    };
+    for (csources) |csrc| {
+        lib.addCSourceFile(.{
+            .file = .{ .path = csrc },
+            .flags = cflags,
+        });
     }
     if (sharedlib)
         b.installArtifact(lib);
@@ -173,16 +165,12 @@ pub fn buildSokol(b: *Build, target: CrossTarget, optimize: OptimizeMode, config
 }
 
 pub fn build(b: *Build) !void {
-    var config: Config = .{};
-
-    const force_gl = b.option(bool, "gl", "Force GL backend") orelse false;
-    config.backend = if (force_gl) .gl else .auto;
-
-    // NOTE: Wayland support is *not* currently supported in the standard sokol-zig bindings,
-    // you need to generate your own bindings using this PR: https://github.com/floooh/sokol/pull/425
-    config.enable_wayland = b.option(bool, "wayland", "Compile with wayland-support (default: false)") orelse false;
-    config.enable_x11 = b.option(bool, "x11", "Compile with x11-support (default: true)") orelse true;
-    config.force_egl = b.option(bool, "egl", "Use EGL instead of GLX if possible (default: false)") orelse false;
+    const opt_use_gl = b.option(bool, "gl", "Force OpenGL (default: false)") orelse false;
+    const opt_use_wgpu = b.option(bool, "wgpu", "Force WebGPU (default: false, web only)") orelse false;
+    const opt_use_x11 = b.option(bool, "x11", "Force X11 (default: true, Linux only)") orelse true;
+    const opt_use_wayland = b.option(bool, "wayland", "Force Wayland (default: false, Linux only, not supported in main-line headers)") orelse false;
+    const opt_use_egl = b.option(bool, "egl", "Force EGL (default: false, Linux only)") orelse false;
+    const sokol_backend: SokolBackend = if (opt_use_gl) .gl else if (opt_use_wgpu) .wgpu else .auto;
 
     var target = b.standardTargetOptions(.{});
 
@@ -193,9 +181,17 @@ pub fn build(b: *Build) !void {
     }
 
     const optimize = b.standardOptimizeOption(.{});
-    const sokol = buildSokol(b, target, optimize, config, "");
+    const sokol = try buildLibSokol(b, .{
+        .target = target,
+        .optimize = optimize,
+        // .emsdk = emsdk,
+        .backend = sokol_backend,
+        .use_wayland = opt_use_wayland,
+        .use_x11 = opt_use_x11,
+        .use_egl = opt_use_egl,
+    });
 
-    // LDC-config options
+    // LDC-options options
     const enable_betterC = b.option(bool, "betterC", "Omit generating some runtime information and helper functions. (default: false)") orelse false;
     const enable_zigcc = b.option(bool, "zigCC", "Use zig cc as compiler and linker. (default: false)") orelse false;
 
@@ -226,7 +222,7 @@ pub fn build(b: *Build) !void {
     };
     b.getInstallStep().name = "sokol library";
     inline for (examples) |example| {
-        const ldc = try buildLDC(b, sokol, .{
+        const ldc = try DCompileStep(b, sokol, .{
             .name = example,
             .sources = &.{b.fmt("{s}/src/examples/{s}.d", .{ rootPath(), example })},
             .betterC = enable_betterC,
@@ -290,7 +286,7 @@ fn buildShaders(b: *Build) void {
 }
 
 // Use LDC2 (https://github.com/ldc-developers/ldc) to compile the D examples
-fn buildLDC(b: *Build, lib: *CompileStep, config: ldcConfig) !*RunStep {
+fn DCompileStep(b: *Build, lib_sokol: *CompileStep, options: LDCOptions) !*RunStep {
     // ldmd2: ldc2 wrapped w/ dmd flags
     const ldc = try b.findProgram(&.{"ldmd2"}, &.{});
 
@@ -300,13 +296,13 @@ fn buildLDC(b: *Build, lib: *CompileStep, config: ldcConfig) !*RunStep {
     // D compiler
     try cmds.append(ldc);
 
-    if (config.zig_cc) {
-        try cmds.append(b.fmt("--gcc={s}", .{b.pathJoin(&.{ b.install_prefix, "bin", if (config.target.result.os.tag == .windows) "zcc.exe" else "zcc" })}));
-        try cmds.append(b.fmt("--linker={s}", .{b.pathJoin(&.{ b.install_prefix, "bin", if (config.target.result.os.tag == .windows) "zcc.exe" else "zcc" })}));
+    if (options.zig_cc) {
+        try cmds.append(b.fmt("--gcc={s}", .{b.pathJoin(&.{ b.install_prefix, "bin", if (options.target.result.os.tag == .windows) "zcc.exe" else "zcc" })}));
+        try cmds.append(b.fmt("--linker={s}", .{b.pathJoin(&.{ b.install_prefix, "bin", if (options.target.result.os.tag == .windows) "zcc.exe" else "zcc" })}));
     }
 
     // set kind of build
-    switch (config.kind) {
+    switch (options.kind) {
         .@"test" => {
             try cmds.append("-unittest");
             try cmds.append("-main");
@@ -316,32 +312,32 @@ fn buildLDC(b: *Build, lib: *CompileStep, config: ldcConfig) !*RunStep {
         .exe => {},
     }
 
-    if (config.kind == .lib) {
-        if (config.linkage == .dynamic) {
+    if (options.kind == .lib) {
+        if (options.linkage == .dynamic) {
             try cmds.append("-shared");
-            if (config.target.result.os.tag == .windows) {
+            if (options.target.result.os.tag == .windows) {
                 try cmds.append("-fvisibility=public");
                 try cmds.append("--dllimport=all");
             }
         } else {
-            if (config.target.result.os.tag == .windows)
+            if (options.target.result.os.tag == .windows)
                 try cmds.append("--dllimport=defaultLibsOnly");
             try cmds.append("-fvisibility=hidden");
         }
     }
 
-    for (config.dflags) |dflag| {
+    for (options.dflags) |dflag| {
         try cmds.append(dflag);
     }
 
     // betterC disable druntime and phobos
-    if (config.betterC)
+    if (options.betterC)
         try cmds.append("--betterC")
-    else if (lib.linkage == .dynamic or config.linkage == .dynamic)
+    else if (lib_sokol.linkage == .dynamic or options.linkage == .dynamic)
         // linking the druntime/Phobos as dynamic libraries
         try cmds.append("-link-defaultlib-shared");
 
-    switch (config.optimize) {
+    switch (options.optimize) {
         .Debug => {
             try cmds.append("-d-debug");
             try cmds.append("--gc"); // debuginfo for non D dbg
@@ -402,24 +398,24 @@ fn buildLDC(b: *Build, lib: *CompileStep, config: ldcConfig) !*RunStep {
     })}));
 
     // example D file
-    for (config.sources) |src| {
+    for (options.sources) |src| {
         try cmds.append(src);
     }
 
     // library paths
-    for (lib.root_module.lib_paths.items) |libpath| {
+    for (lib_sokol.root_module.lib_paths.items) |libpath| {
         if (libpath.path.len > 0) // skip empty paths
             try cmds.append(b.fmt("-L-L{s}", .{libpath.path}));
     }
 
     // link system libs
-    for (lib.root_module.link_objects.items) |link_object| {
+    for (lib_sokol.root_module.link_objects.items) |link_object| {
         if (link_object != .system_lib) continue;
         const system_lib = link_object.system_lib;
         try cmds.append(b.fmt("-L-l{s}", .{system_lib.name}));
     }
     // C flags
-    for (lib.root_module.link_objects.items) |link_object| {
+    for (lib_sokol.root_module.link_objects.items) |link_object| {
         if (link_object != .c_source_file) continue;
         const c_source_file = link_object.c_source_file;
         for (c_source_file.flags) |flag|
@@ -427,7 +423,7 @@ fn buildLDC(b: *Build, lib: *CompileStep, config: ldcConfig) !*RunStep {
                 try cmds.append(b.fmt("--Xcc={s}", .{flag}));
         break;
     }
-    for (lib.root_module.c_macros.items) |cdefine| {
+    for (lib_sokol.root_module.c_macros.items) |cdefine| {
         if (cdefine.len > 0) // skip empty cdefines
             try cmds.append(b.fmt("--Xcc=-D{s}", .{cdefine}));
         break;
@@ -435,16 +431,16 @@ fn buildLDC(b: *Build, lib: *CompileStep, config: ldcConfig) !*RunStep {
 
     // link flags
     // GNU LD
-    if (config.target.result.os.tag == .linux and !config.zig_cc)
+    if (options.target.result.os.tag == .linux and !options.zig_cc)
         try cmds.append("-L--no-as-needed");
     // LLD (not working in zld)
-    if (config.target.result.isDarwin() and !config.zig_cc)
+    if (options.target.result.isDarwin() and !options.zig_cc)
         // https://github.com/ldc-developers/ldc/issues/4501
         try cmds.append("-L-w"); // resolve linker warnings
 
     // Darwin frameworks
-    if (config.target.result.isDarwin()) {
-        var it = lib.root_module.frameworks.iterator();
+    if (options.target.result.isDarwin()) {
+        var it = lib_sokol.root_module.frameworks.iterator();
         while (it.next()) |framework| {
             try cmds.append(b.fmt("-L-framework", .{}));
             try cmds.append(b.fmt("-L{s}", .{framework.key_ptr.*}));
@@ -457,16 +453,16 @@ fn buildLDC(b: *Build, lib: *CompileStep, config: ldcConfig) !*RunStep {
         try cmds.append("-Xcc=-v");
     }
 
-    if (lib.root_module.sanitize_thread) |tsan|
+    if (lib_sokol.root_module.sanitize_thread) |tsan|
         if (tsan)
             try cmds.append("--fsanitize=thread");
 
     // zig enable sanitize=undefined by default
-    if (lib.root_module.sanitize_c) |ubsan|
+    if (lib_sokol.root_module.sanitize_c) |ubsan|
         if (ubsan)
             try cmds.append("--fsanitize=address");
 
-    if (lib.root_module.omit_frame_pointer) |enabled| {
+    if (lib_sokol.root_module.omit_frame_pointer) |enabled| {
         if (enabled)
             try cmds.append("--frame-pointer=none")
         else
@@ -474,32 +470,32 @@ fn buildLDC(b: *Build, lib: *CompileStep, config: ldcConfig) !*RunStep {
     }
 
     // link-time optimization
-    if (lib.want_lto) |enabled|
+    if (lib_sokol.want_lto) |enabled|
         if (enabled) try cmds.append("--flto=full");
 
     // ldc2 doesn't support zig native (a.k.a: native-native or native)
-    if (config.target.result.isDarwin())
-        try cmds.append(b.fmt("--mtriple={s}-apple-{s}", .{ if (config.target.result.cpu.arch.isAARCH64()) "arm64" else @tagName(config.target.result.cpu.arch), @tagName(config.target.result.os.tag) }))
-    else if (config.target.result.isWasm())
-        try cmds.append(b.fmt("--mtriple={s}-unknown-unknown-{s}", .{ @tagName(config.target.result.cpu.arch), @tagName(config.target.result.os.tag) }))
+    if (options.target.result.isDarwin())
+        try cmds.append(b.fmt("--mtriple={s}-apple-{s}", .{ if (options.target.result.cpu.arch.isAARCH64()) "arm64" else @tagName(options.target.result.cpu.arch), @tagName(options.target.result.os.tag) }))
+    else if (options.target.result.isWasm())
+        try cmds.append(b.fmt("--mtriple={s}-unknown-unknown-{s}", .{ @tagName(options.target.result.cpu.arch), @tagName(options.target.result.os.tag) }))
     else
-        try cmds.append(b.fmt("--mtriple={s}-{s}-{s}", .{ @tagName(config.target.result.cpu.arch), @tagName(config.target.result.os.tag), @tagName(config.target.result.abi) }));
+        try cmds.append(b.fmt("--mtriple={s}-{s}-{s}", .{ @tagName(options.target.result.cpu.arch), @tagName(options.target.result.os.tag), @tagName(options.target.result.abi) }));
 
     // cpu model (e.g. "baseline")
-    // try cmds.append(b.fmt("--mcpu={s}", .{config.target.result.cpu.model.name}));
+    // try cmds.append(b.fmt("--mcpu={s}", .{options.target.result.cpu.model.name}));
 
     // output file
-    try cmds.append(b.fmt("--of={s}", .{b.pathJoin(&.{ b.install_prefix, "bin", config.name.? })}));
+    try cmds.append(b.fmt("--of={s}", .{b.pathJoin(&.{ b.install_prefix, "bin", options.name })}));
 
     // run the command
     var ldc_exec = b.addSystemCommand(cmds.items);
-    ldc_exec.addArtifactArg(lib);
-    ldc_exec.setName(config.name.?);
+    ldc_exec.addArtifactArg(lib_sokol);
+    ldc_exec.setName(options.name);
 
-    const example_run = b.addSystemCommand(&.{b.pathJoin(&.{ b.install_path, "bin", config.name.? })});
+    const example_run = b.addSystemCommand(&.{b.pathJoin(&.{ b.install_path, "bin", options.name })});
     example_run.step.dependOn(&ldc_exec.step);
 
-    const run = b.step(b.fmt("run-{s}", .{config.name.?}), b.fmt("Run {s} example", .{config.name.?}));
+    const run = b.step(b.fmt("run-{s}", .{options.name}), b.fmt("Run {s} example", .{options.name}));
     run.dependOn(&example_run.step);
 
     return ldc_exec;
@@ -508,7 +504,7 @@ fn buildLDC(b: *Build, lib: *CompileStep, config: ldcConfig) !*RunStep {
 fn buildZigCC(b: *Build) void {
     const exe = b.addExecutable(.{
         .name = "zcc",
-        .target = b.host, // native (host)
+        .target = b.host,
         .optimize = .ReleaseSafe,
         .root_source_file = .{
             .path = "tools/zigcc.zig",
@@ -517,19 +513,19 @@ fn buildZigCC(b: *Build) void {
     b.installArtifact(exe);
 }
 
-const ldcConfig = struct {
+const LDCOptions = struct {
     target: Build.ResolvedTarget,
     optimize: std.builtin.OptimizeMode = .Debug,
     kind: CompileStep.Kind = .exe,
     linkage: CompileStep.Linkage = .static,
     betterC: bool = false,
-    sources: []const []const u8 = std.mem.zeroes([]const []const u8),
-    dflags: []const []const u8 = std.mem.zeroes([]const []const u8),
-    name: ?[]const u8 = null,
+    sources: []const []const u8,
+    dflags: []const []const u8,
+    name: []const u8,
     zig_cc: bool = false,
     package: ?*Build.Dependency = null,
 
-    fn packagePath(self: ldcConfig, b: *Build) ?[]const u8 {
+    fn packagePath(self: @This(), b: *Build) ?[]const u8 {
         if (self.package) |dep|
             return dep.path("").getPath(b);
         return null;
