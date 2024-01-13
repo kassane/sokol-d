@@ -9,6 +9,7 @@ import sg = sokol.gfx;
 import sapp = sokol.app;
 import log = sokol.log;
 import sgapp = sokol.glue;
+import sgutil = sokol.utils;
 
 extern (C):
 @safe:
@@ -30,7 +31,7 @@ void init()
 
     // create vertex buffer with triangle vertices
     sg.BufferDesc buff;
-    buff.data = sg.asRange([
+    buff.data = sgutil.asRange([
         // positions         colors
         0.0,  0.5,  0.5, 1.0, 0.0, 0.0, 1.0,
         0.5,  -0.5, 0.5, 0.0, 1.0, 0.0, 1.0,

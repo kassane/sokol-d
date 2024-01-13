@@ -3,9 +3,6 @@
 module sokol.gl;
 import sg = sokol.gfx;
 
-// helper functions
-import sokol.utils: cStrTod;
-
 enum LogItem {
     Ok,
     Malloc_failed,

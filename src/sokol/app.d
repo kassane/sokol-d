@@ -2,9 +2,6 @@
 
 module sokol.app;
 
-// helper functions
-import sokol.utils: cStrTod;
-
 enum max_touchpoints = 8;
 enum max_mousebuttons = 3;
 enum max_keycodes = 512;
@@ -522,16 +519,16 @@ double frameDuration() @trusted nothrow {
     return sapp_frame_duration();
 }
 extern(C) void sapp_set_clipboard_string(scope const(char)*) @system @nogc nothrow;
-void setClipboardString(string str) @trusted nothrow {
-    sapp_set_clipboard_string(str.ptr);
+void setClipboardString(scope const(char)* str) @trusted nothrow {
+    sapp_set_clipboard_string(str);
 }
 extern(C) scope const(char)* sapp_get_clipboard_string() @system @nogc nothrow;
-string getClipboardString() @trusted nothrow {
-    return cStrTod(sapp_get_clipboard_string());
+scope const(char)* getClipboardString() @trusted nothrow {
+    return sapp_get_clipboard_string();
 }
 extern(C) void sapp_set_window_title(scope const(char)*) @system @nogc nothrow;
-void setWindowTitle(string str) @trusted nothrow {
-    sapp_set_window_title(str.ptr);
+void setWindowTitle(scope const(char)* str) @trusted nothrow {
+    sapp_set_window_title(str);
 }
 extern(C) void sapp_set_icon(const IconDesc *) @system @nogc nothrow;
 void setIcon(ref IconDesc icon_desc) @trusted nothrow {
@@ -542,8 +539,8 @@ int getNumDroppedFiles() @trusted nothrow {
     return sapp_get_num_dropped_files();
 }
 extern(C) scope const(char)* sapp_get_dropped_file_path(int) @system @nogc nothrow;
-string getDroppedFilePath(int index) @trusted nothrow {
-    return cStrTod(sapp_get_dropped_file_path(index));
+scope const(char)* getDroppedFilePath(int index) @trusted nothrow {
+    return sapp_get_dropped_file_path(index);
 }
 extern(C) void sapp_run(const Desc *) @system @nogc nothrow;
 void run(ref Desc desc) @trusted nothrow {

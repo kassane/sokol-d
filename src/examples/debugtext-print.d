@@ -62,7 +62,7 @@ void init()
 void print_font(uint font_index, string title, ubyte r, ubyte g, ubyte b) {
     sdtx.font(font_index);
     sdtx.color3b(r, g, b);
-    sdtx.puts(title);
+    sdtx.puts(&title[0]);
 
     foreach (c; 32 .. 255) {
         sdtx.putc(cast(char)c);

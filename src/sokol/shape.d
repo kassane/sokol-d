@@ -3,26 +3,6 @@
 module sokol.shape;
 import sg = sokol.gfx;
 
-// helper functions
-import sokol.utils: cStrTod;
-
-
-// WIP: helper function to convert "anything" to a Range struct
-Range asRange(T)(T val) @trusted {
-    import std.traits;
-    static if (isPointer!T) {
-       return Range(val, T.sizeof);
-    } else static if (is(T == float[]) || is(T == double[])) {
-       auto arr = val.dup;
-       return Range(&arr[0], arr.length * arr[0].sizeof);
-    } else static if (is(T == struct)) {
-       Range r = {ptr: cast(const(void)*)&val, size: T.sizeof};
-       return r;
-    } else {
-       static assert(0, "Cannot convert to range");
-    }
-}
-
 extern(C)
 struct Range {
     const(void)* ptr;

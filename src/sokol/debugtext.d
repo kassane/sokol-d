@@ -3,46 +3,6 @@
 module sokol.debugtext;
 import sg = sokol.gfx;
 
-// helper functions
-import sokol.utils: cStrTod;
-
-
-// WIP: helper function to convert "anything" to a Range struct
-Range asRange(T)(T val) @trusted {
-    import std.traits;
-    static if (isPointer!T) {
-       return Range(val, T.sizeof);
-    } else static if (is(T == float[]) || is(T == double[])) {
-       auto arr = val.dup;
-       return Range(&arr[0], arr.length * arr[0].sizeof);
-    } else static if (is(T == struct)) {
-       Range r = {ptr: cast(const(void)*)&val, size: T.sizeof};
-       return r;
-    } else {
-       static assert(0, "Cannot convert to range");
-    }
-}
-
-struct Writer {
-    void write(R)(R range) if (isInputRange!R && is(ElementType!R : const(ubyte))) {
-        foreach (b; range) {
-            putc(b);
-        }
-    }
-    void writeMultiple(ubyte b, ulong n) @trusted {
-        foreach(_; 0..n) {
-            putc(cast(int) b);
-        }
-    }
-}
-
-void print(Args...)(const char[] fmt, Args args) @safe {
-    import std.array;
-    import std.format;
-    auto w = appender!string();
-    formattedWrite(w, fmt, args);
-}
-
 enum LogItem {
     Ok,
     Malloc_failed,
@@ -238,10 +198,10 @@ void putc(char c) @trusted nothrow {
     sdtx_putc(c);
 }
 extern(C) void sdtx_puts(scope const(char)*) @system @nogc nothrow;
-void puts(string str) @trusted nothrow {
-    sdtx_puts(str.ptr);
+void puts(scope const(char)* str) @trusted nothrow {
+    sdtx_puts(str);
 }
 extern(C) void sdtx_putr(scope const(char)*, int) @system @nogc nothrow;
-void putr(string str, int len) @trusted nothrow {
-    sdtx_putr(str.ptr, len);
+void putr(scope const(char)* str, int len) @trusted nothrow {
+    sdtx_putr(str, len);
 }

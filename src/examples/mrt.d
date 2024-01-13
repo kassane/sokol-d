@@ -18,6 +18,7 @@ import handmade.math : Mat4, Vec3, Vec2;
 import std.math : sin, cos;
 import sgapp = sokol.glue;
 import shd = shaders.mrt;
+import sgutil = sokol.utils;
 
 extern (C):
 @safe:
@@ -128,7 +129,7 @@ void init()
     ];
 
     // create vertex buffer for a cube
-    sg.BufferDesc buf = { data: sg.asRange(VERTICES) };
+    sg.BufferDesc buf = { data: sgutil.asRange(VERTICES) };
     auto cube_vbuf = sg.makeBuffer(buf);
 
     double[] INDICES = [
@@ -143,7 +144,7 @@ void init()
     // index buffer for a cube
     sg.BufferDesc ibuf = {
         type: sg.BufferType.Indexbuffer,
-        data: sg.asRange(INDICES),
+        data: sgutil.asRange(INDICES),
     };
     auto cube_ibuf = sg.makeBuffer(ibuf);
 
@@ -171,7 +172,7 @@ void init()
 
     float[] QUAD_VERTICES = [0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0];
     // a vertex buffer to render a fullscreen quad
-    sg.BufferDesc quad_buf = { data: sg.asRange(QUAD_VERTICES) };
+    sg.BufferDesc quad_buf = { data: sgutil.asRange(QUAD_VERTICES) };
     const quad_vbuf = sg.makeBuffer(quad_buf);
 
     // shader and pipeline object to render a fullscreen quad which composes
@@ -235,7 +236,7 @@ void frame()
     sg.applyUniforms(
         sg.ShaderStage.Vs,
         shd.SLOT_OFFSCREEN_PARAMS,
-        sg.asRange(offscreen_params),
+        sgutil.asRange(offscreen_params),
     );
     sg.draw(0, 36, 1);
     sg.endPass();
@@ -245,7 +246,7 @@ void frame()
     sg.beginDefaultPass(state.dflt.pass_action, app.width(), app.height());
     sg.applyPipeline(state.fsq.pip);
     sg.applyBindings(state.fsq.bind);
-    sg.applyUniforms(sg.ShaderStage.Vs, shd.SLOT_FSQ_PARAMS, sg.asRange(fsq_params));
+    sg.applyUniforms(sg.ShaderStage.Vs, shd.SLOT_FSQ_PARAMS, sgutil.asRange(fsq_params));
     sg.draw(0, 4, 1);
     sg.applyPipeline(state.dbg.pip);
     foreach(i;[0,1,2]) {

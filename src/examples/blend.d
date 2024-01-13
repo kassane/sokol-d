@@ -10,6 +10,7 @@ import app = sokol.app;
 import log = sokol.log;
 import handmade.math : Mat4, Vec3;
 import sgapp = sokol.glue;
+import sgutil = sokol.utils;
 import shd = shaders.blend;
 
 extern (C):
@@ -54,7 +55,7 @@ void init()
     ];
 
     // Create vertex buffer
-    sg.BufferDesc vbuffer = {data: sg.asRange(vertices)};
+    sg.BufferDesc vbuffer = {data: sgutil.asRange(vertices)};
     state.bind.vertex_buffers[0] = sg.makeBuffer(vbuffer);
 
     sg.ShaderDesc bgShader = shd.bg_shader_desc(sg.queryBackend());
@@ -109,7 +110,7 @@ void frame()
 
     sg.beginDefaultPass(state.passAction, app.width(), app.height());
 
-    sg.Range r = sg.asRange(state.bg_fs_params);
+    sg.Range r = sgutil.asRange(state.bg_fs_params);
     sg.applyPipeline(state.bg_pip);
     sg.applyBindings(state.bind);
     sg.applyUniforms(sg.ShaderStage.Fs, shd.SLOT_BG_FS_PARAMS, r);
@@ -127,7 +128,7 @@ void frame()
             immutable y = (src - (NUM_BLEND_FACTORS / 2)) * 2.2;
             immutable model = Mat4.mul(Mat4.translate(Vec3(x, y, 0.0)), rm);
             state.quad_vs_params.mvp = Mat4.mul(view_proj, model);
-            sg.Range rg = sg.asRange(state.quad_vs_params);
+            sg.Range rg = sgutil.asRange(state.quad_vs_params);
 
             sg.applyPipeline(state.pips[src][dst]);
             sg.applyBindings(state.bind);

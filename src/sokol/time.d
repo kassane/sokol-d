@@ -2,9 +2,6 @@
 
 module sokol.time;
 
-// helper functions
-import sokol.utils: cStrTod;
-
 extern(C) void stm_setup() @system @nogc nothrow;
 void setup() @trusted nothrow {
     stm_setup();

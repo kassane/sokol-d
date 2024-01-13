@@ -2,9 +2,6 @@
 
 module sokol.audio;
 
-// helper functions
-import sokol.utils: cStrTod;
-
 enum LogItem {
     Ok,
     Malloc_failed,

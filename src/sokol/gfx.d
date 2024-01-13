@@ -2,26 +2,6 @@
 
 module sokol.gfx;
 
-// helper functions
-import sokol.utils: cStrTod;
-
-
-// WIP: helper function to convert "anything" to a Range struct
-Range asRange(T)(T val) @trusted {
-    import std.traits;
-    static if (isPointer!T) {
-       return Range(val, T.sizeof);
-    } else static if (is(T == float[]) || is(T == double[])) {
-       auto arr = val.dup;
-       return Range(&arr[0], arr.length * arr[0].sizeof);
-    } else static if (is(T == struct)) {
-       Range r = {ptr: cast(const(void)*)&val, size: T.sizeof};
-       return r;
-    } else {
-       static assert(0, "Cannot convert to range");
-    }
-}
-
 extern(C)
 struct Buffer {
     uint id;
@@ -1281,8 +1261,8 @@ TraceHooks installTraceHooks(ref TraceHooks trace_hooks) @trusted nothrow {
     return sg_install_trace_hooks(&trace_hooks);
 }
 extern(C) void sg_push_debug_group(scope const(char)*) @system @nogc nothrow;
-void pushDebugGroup(string name) @trusted nothrow {
-    sg_push_debug_group(name.ptr);
+void pushDebugGroup(scope const(char)* name) @trusted nothrow {
+    sg_push_debug_group(name);
 }
 extern(C) void sg_pop_debug_group() @system @nogc nothrow;
 void popDebugGroup() @trusted nothrow {
