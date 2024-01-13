@@ -190,7 +190,6 @@ enum IndexType {
 }
 enum ImageType {
     Default,
-    Dim2,
     _2d,
     Cube,
     _3d,

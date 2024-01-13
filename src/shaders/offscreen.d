@@ -23,11 +23,11 @@ extern(C):
                     Bind slot: SLOT_VS_PARAMS = 0
             Fragment shader: fs_default
                 Image 'tex':
-                    Type: sg.ImageType.Dim2
+                    Type: sg.ImageType._2d
                     Sample Type: sg.ImageSampleType.Float
                     Bind slot: SLOT_TEX = 0
                 Image 'tex':
-                    Image Type: sg.ImageType.Dim2
+                    Image Type: sg.ImageType._2d
                     Sample Type: sg.ImageSampleType.Float
                     Multisampled: false
                     Bind slot: SLOT_tex = 0
@@ -1351,7 +1351,7 @@ sg.ShaderDesc default_shader_desc(sg.Backend backend) @trusted @nogc nothrow {
 			desc.fs.entry = "main";
 			desc.fs.images[0].used = true;
 			desc.fs.images[0].multisampled = false;
-			desc.fs.images[0].image_type = sg.ImageType.Dim2;
+			desc.fs.images[0].image_type = sg.ImageType._2d;
 			desc.fs.images[0].sample_type = sg.ImageSampleType.Float;
 			desc.fs.samplers[0].used = true;
 			desc.fs.samplers[0].sampler_type = sg.SamplerType.Filtering;
@@ -1376,7 +1376,7 @@ sg.ShaderDesc default_shader_desc(sg.Backend backend) @trusted @nogc nothrow {
 			desc.fs.entry = "main";
 			desc.fs.images[0].used = true;
 			desc.fs.images[0].multisampled = false;
-			desc.fs.images[0].image_type = sg.ImageType.Dim2;
+			desc.fs.images[0].image_type = sg.ImageType._2d;
 			desc.fs.images[0].sample_type = sg.ImageSampleType.Float;
 			desc.fs.samplers[0].used = true;
 			desc.fs.samplers[0].sampler_type = sg.SamplerType.Filtering;
@@ -1403,7 +1403,7 @@ sg.ShaderDesc default_shader_desc(sg.Backend backend) @trusted @nogc nothrow {
 			desc.fs.entry = "main";
 			desc.fs.images[0].used = true;
 			desc.fs.images[0].multisampled = false;
-			desc.fs.images[0].image_type = sg.ImageType.Dim2;
+			desc.fs.images[0].image_type = sg.ImageType._2d;
 			desc.fs.images[0].sample_type = sg.ImageSampleType.Float;
 			desc.fs.samplers[0].used = true;
 			desc.fs.samplers[0].sampler_type = sg.SamplerType.Filtering;
@@ -1421,7 +1421,7 @@ sg.ShaderDesc default_shader_desc(sg.Backend backend) @trusted @nogc nothrow {
 			desc.fs.entry = "main0";
 			desc.fs.images[0].used = true;
 			desc.fs.images[0].multisampled = false;
-			desc.fs.images[0].image_type = sg.ImageType.Dim2;
+			desc.fs.images[0].image_type = sg.ImageType._2d;
 			desc.fs.images[0].sample_type = sg.ImageSampleType.Float;
 			desc.fs.samplers[0].used = true;
 			desc.fs.samplers[0].sampler_type = sg.SamplerType.Filtering;
@@ -1439,7 +1439,7 @@ sg.ShaderDesc default_shader_desc(sg.Backend backend) @trusted @nogc nothrow {
 			desc.fs.entry = "main";
 			desc.fs.images[0].used = true;
 			desc.fs.images[0].multisampled = false;
-			desc.fs.images[0].image_type = sg.ImageType.Dim2;
+			desc.fs.images[0].image_type = sg.ImageType._2d;
 			desc.fs.images[0].sample_type = sg.ImageSampleType.Float;
 			desc.fs.samplers[0].used = true;
 			desc.fs.samplers[0].sampler_type = sg.SamplerType.Filtering;
