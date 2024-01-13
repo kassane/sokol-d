@@ -240,12 +240,7 @@ pub fn build(b: *Build) !void {
             .target = target,
             .optimize = optimize,
         });
-        ldc.setName(example);
         b.getInstallStep().dependOn(&ldc.step);
-
-        const example_run = b.addSystemCommand(&.{b.pathJoin(&.{ b.install_path, "bin", example })});
-        const run = b.step(b.fmt("run-{s}", .{example}), b.fmt("Run example {s}", .{example}));
-        run.dependOn(&example_run.step);
     }
     buildShaders(b);
 }
@@ -494,11 +489,19 @@ fn buildLDC(b: *Build, lib: *CompileStep, config: ldcConfig) !*RunStep {
     // try cmds.append(b.fmt("--mcpu={s}", .{config.target.result.cpu.model.name}));
 
     // output file
-    try cmds.append(b.fmt("--of={s}", .{b.pathJoin(&.{ b.install_prefix, "bin", config.name orelse "d_binary" })}));
+    try cmds.append(b.fmt("--of={s}", .{b.pathJoin(&.{ b.install_prefix, "bin", config.name.? })}));
 
     // run the command
     var ldc_exec = b.addSystemCommand(cmds.items);
     ldc_exec.addArtifactArg(lib);
+    ldc_exec.setName(config.name.?);
+
+    const example_run = b.addSystemCommand(&.{b.pathJoin(&.{ b.install_path, "bin", config.name.? })});
+    example_run.step.dependOn(&ldc_exec.step);
+
+    const run = b.step(b.fmt("run-{s}", .{config.name.?}), b.fmt("Run {s} example", .{config.name.?}));
+    run.dependOn(&example_run.step);
+
     return ldc_exec;
 }
 
