@@ -195,8 +195,9 @@ pub fn build(b: *Build) !void {
     const enable_betterC = b.option(bool, "betterC", "Omit generating some runtime information and helper functions. (default: false)") orelse false;
     const enable_zigcc = b.option(bool, "zigCC", "Use zig cc as compiler and linker. (default: false)") orelse false;
 
-    if (enable_zigcc)
+    if (enable_zigcc) {
         buildZigCC(b);
+    }
 
     // WiP: build examples
     const examples = .{
@@ -219,6 +220,7 @@ pub fn build(b: *Build) !void {
         "debugtext-print",
         // "debugtext-userfont",
         // "shapes",
+        "user-data",
     };
     b.getInstallStep().name = "sokol library";
     inline for (examples) |example| {
@@ -392,10 +394,7 @@ fn DCompileStep(b: *Build, lib_sokol: *CompileStep, options: LDCOptions) !*RunSt
     try cmds.append("-i");
 
     // sokol D files and include path
-    try cmds.append(b.fmt("-I{s}", .{b.pathJoin(&.{
-        rootPath(),
-        "src",
-    })}));
+    try cmds.append(b.fmt("-I{s}", .{b.pathJoin(&.{ rootPath(), "src" })}));
 
     // example D file
     for (options.sources) |src| {
@@ -431,13 +430,18 @@ fn DCompileStep(b: *Build, lib_sokol: *CompileStep, options: LDCOptions) !*RunSt
 
     // link flags
     // GNU LD
-    if (options.target.result.os.tag == .linux and !options.zig_cc)
+    if (options.target.result.os.tag == .linux and !options.zig_cc) {
         try cmds.append("-L--no-as-needed");
+    }
     // LLD (not working in zld)
-    if (options.target.result.isDarwin() and !options.zig_cc)
+    if (options.target.result.isDarwin() and !options.zig_cc) {
         // https://github.com/ldc-developers/ldc/issues/4501
-        try cmds.append("-L-w"); // resolve linker warnings
+        try cmds.append("-L-w"); // hide linker warnings
 
+        if (lib_sokol.dead_strip_dylibs) {
+            try cmds.append("-L=-dead_strip");
+        }
+    }
     // Darwin frameworks
     if (options.target.result.isDarwin()) {
         var it = lib_sokol.root_module.frameworks.iterator();

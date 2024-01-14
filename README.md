@@ -24,21 +24,23 @@ zig build -Doptimize=ReleaseFast
 zig build -Doptimize=ReleaseFast -Dshared
 
 # Run Examples
-zig build run-blend -Doptimize=ReleaseFast # run, but no anims (fixme)
-zig build run-clear -Doptimize=ReleaseFast # works
-zig build run-cube -Doptimize=ReleaseFast # run, but no anims (fixme)
-zig build run-debugtext-print -Doptimize=ReleaseFast # works
-zig build run-mrt -Doptimize=ReleaseFast # run, but no anims (fixme)
-zig build run-saudio -Doptimize=ReleaseFast # run (fixme)
-zig build run-sgl-context -Doptimize=ReleaseFast # run, but no anims (fixme)
-zig build run-triangle -Doptimize=ReleaseFast # run, but no anims (fixme)
+zig build run-blend -Doptimize=ReleaseFast
+zig build run-clear -Doptimize=ReleaseFast
+zig build run-cube -Doptimize=ReleaseFast
+zig build run-debugtext-print -Doptimize=ReleaseFast
+zig build run-mrt -Doptimize=ReleaseFast
+zig build run-saudio -Doptimize=ReleaseFast
+zig build run-sgl-context -Doptimize=ReleaseFast
+zig build run-user-data -Doptimize=ReleaseFast
+zig build run-triangle -Doptimize=ReleaseFast
 
 zig build --help
 # Project-Specific Options:
-#   -Dgl=[bool]                  Force GL backend
-#   -Dwayland=[bool]             Compile with wayland-support (default: false)
-#   -Dx11=[bool]                 Compile with x11-support (default: true)
-#   -Degl=[bool]                 Use EGL instead of GLX if possible (default: false)
+#   -Dgl=[bool]                  Force OpenGL (default: false)
+#   -Dwgpu=[bool]                Force WebGPU (default: false, web only)
+#   -Dx11=[bool]                 Force X11 (default: true, Linux only)
+#   -Dwayland=[bool]             Force Wayland (default: false, Linux only, not supported in main-line headers)
+#   -Degl=[bool]                 Force EGL (default: false, Linux only)
 #   -Dtarget=[string]            The CPU architecture, OS, and ABI to build for
 #   -Dcpu=[string]               Target CPU features to add or subtract
 #   -Doptimize=[enum]            Prioritize performance, safety, or binary size (-O flag)
