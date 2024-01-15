@@ -373,9 +373,10 @@ fn DCompileStep(b: *Build, lib_sokol: *CompileStep, options: LDCOptions) !*RunSt
     try cmds.append("--vcolumns");
 
     // object file output (zig-cache/o/{hash_id}/*.o)
-    if (b.cache_root.path) |path|
+    if (b.cache_root.path) |path| {
         try cmds.append(b.fmt("-od={s}", .{b.pathJoin(&.{ path, "o", b.cache.hash.peek()[0..] })}));
-
+        try cmds.append(b.fmt("-cache={s}", .{b.pathJoin(&.{ path, "o", b.cache.hash.peek()[0..] })}));
+    }
     // name object files uniquely (so the files don't collide)
     try cmds.append("--oq");
 
