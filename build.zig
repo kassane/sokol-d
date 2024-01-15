@@ -181,7 +181,6 @@ pub fn build(b: *Build) !void {
     const sokol = try buildLibSokol(b, .{
         .target = target,
         .optimize = optimize,
-        // .emsdk = emsdk,
         .backend = sokol_backend,
         .use_wayland = opt_use_wayland,
         .use_x11 = opt_use_x11,
@@ -193,7 +192,9 @@ pub fn build(b: *Build) !void {
     const enable_zigcc = b.option(bool, "zigCC", "Use zig cc as compiler and linker. (default: false)") orelse false;
 
     if (enable_zigcc) {
-        buildZigCC(b);
+        const zcc = buildZigCC(b);
+        const install = b.addInstallArtifact(zcc, .{ .dest_dir = .{ .override = .{ .custom = "tools" } } });
+        b.default_step.dependOn(&install.step);
     }
 
     // WiP: build examples
@@ -296,8 +297,8 @@ fn ldcBuild(b: *Build, lib_sokol: *CompileStep, options: DCompileStep) !*RunStep
     try cmds.append(ldc);
 
     if (options.zig_cc) {
-        try cmds.append(b.fmt("--gcc={s}", .{b.pathJoin(&.{ b.install_prefix, "bin", if (options.target.result.os.tag == .windows) "zcc.exe" else "zcc" })}));
-        try cmds.append(b.fmt("--linker={s}", .{b.pathJoin(&.{ b.install_prefix, "bin", if (options.target.result.os.tag == .windows) "zcc.exe" else "zcc" })}));
+        try cmds.append(b.fmt("--gcc={s}", .{b.pathJoin(&.{ b.install_prefix, "tools", if (options.target.result.os.tag == .windows) "zcc.exe" else "zcc" })}));
+        try cmds.append(b.fmt("--linker={s}", .{b.pathJoin(&.{ b.install_prefix, "tools", if (options.target.result.os.tag == .windows) "zcc.exe" else "zcc" })}));
     }
 
     // set kind of build
@@ -391,8 +392,15 @@ fn ldcBuild(b: *Build, lib_sokol: *CompileStep, options: DCompileStep) !*RunStep
     // automatically finds needed library files and builds
     try cmds.append("-i");
 
-    // sokol D files and include path
+    // sokol include path
     try cmds.append(b.fmt("-I{s}", .{b.pathJoin(&.{ rootPath(), "src" })}));
+
+    // D-packages include path
+    if (options.d_packages) |d_packages| {
+        for (d_packages) |pkg| {
+            try cmds.append(b.fmt("-I{s}", .{packagePath(b, pkg)}));
+        }
+    }
 
     // example D file
     for (options.sources) |src| {
@@ -451,7 +459,6 @@ fn ldcBuild(b: *Build, lib_sokol: *CompileStep, options: DCompileStep) !*RunStep
 
     if (b.verbose) {
         try cmds.append("-vdmd");
-        // try cmds.append("-v"); // very long
         try cmds.append("-Xcc=-v");
     }
 
@@ -503,7 +510,7 @@ fn ldcBuild(b: *Build, lib_sokol: *CompileStep, options: DCompileStep) !*RunStep
     return ldc_exec;
 }
 
-fn buildZigCC(b: *Build) void {
+fn buildZigCC(b: *Build) *CompileStep {
     const exe = b.addExecutable(.{
         .name = "zcc",
         .target = b.host,
@@ -512,8 +519,7 @@ fn buildZigCC(b: *Build) void {
             .path = "tools/zigcc.zig",
         },
     });
-    b.installArtifact(exe);
-    b.default_step.dependOn(&exe.step);
+    return exe;
 }
 
 const DCompileStep = struct {
@@ -526,11 +532,9 @@ const DCompileStep = struct {
     dflags: []const []const u8,
     name: []const u8,
     zig_cc: bool = false,
-    package: ?*Build.Dependency = null,
-
-    fn packagePath(self: @This(), b: *Build) ?[]const u8 {
-        if (self.package) |dep|
-            return dep.path("").getPath(b);
-        return null;
-    }
+    d_packages: ?[]*Build.Dependency = null,
 };
+
+fn packagePath(b: *Build, package: *Build.Dependency) []const u8 {
+    return package.path("").getPath(b);
+}
