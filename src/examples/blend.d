@@ -10,7 +10,7 @@ import app = sokol.app;
 import log = sokol.log;
 import handmade.math : Mat4, Vec3;
 import sgapp = sokol.glue;
-import sgutil = sokol.utils;
+import sgutil = sokol.utils : asRange;
 import shd = shaders.blend;
 
 extern (C):
@@ -37,7 +37,7 @@ struct State
 
 static State state;
 
-void init()
+void init() @trusted
 {
     sg.Desc gfx = {
         pipeline_pool_size: NUM_BLEND_FACTORS * NUM_BLEND_FACTORS + 1,
@@ -46,7 +46,7 @@ void init()
     };
     sg.setup(gfx);
 
-    float[] vertices = [
+    float[28] vertices = [
         // pos            color
         -1.0, -1.0, 0.0, 1.0, 0.0, 0.0, 0.5,
         1.0, -1.0, 0.0, 0.0, 1.0, 0.0, 0.5,
@@ -55,7 +55,7 @@ void init()
     ];
 
     // Create vertex buffer
-    sg.BufferDesc vbuffer = {data: sgutil.asRange(vertices)};
+    sg.BufferDesc vbuffer = {data: sgutil.asRange(&vertices[0])};
     state.bind.vertex_buffers[0] = sg.makeBuffer(vbuffer);
 
     sg.ShaderDesc bgShader = shd.bg_shader_desc(sg.queryBackend());

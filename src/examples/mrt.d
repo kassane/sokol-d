@@ -18,7 +18,7 @@ import handmade.math : Mat4, Vec3, Vec2;
 import std.math : sin, cos;
 import sgapp = sokol.glue;
 import shd = shaders.mrt;
-import sgutil = sokol.utils;
+import sgutil = sokol.utils : asRange;
 
 extern (C):
 @safe:
@@ -59,7 +59,7 @@ struct State {
 
 static State state;
 
-void init()
+void init() @trusted
 {
     sg.Desc gfx = {
         context: sgapp.context(),
@@ -95,7 +95,7 @@ void init()
     // this will also be called when the window resizes
     createOffscreenPass(app.width(), app.height());
 
-    float[] VERTICES = [
+    float[96] VERTICES = [
         // positions        brightness
         -1.0, -1.0, -1.0,   1.0,
          1.0, -1.0, -1.0,   1.0,
@@ -129,10 +129,10 @@ void init()
     ];
 
     // create vertex buffer for a cube
-    sg.BufferDesc buf = { data: sgutil.asRange(VERTICES) };
+    sg.BufferDesc buf = { data: sgutil.asRange(&VERTICES[0]) };
     auto cube_vbuf = sg.makeBuffer(buf);
 
-    double[] INDICES = [
+    double[36] INDICES = [
         0,  1,  2,   0,  2,  3,
         6,  5,  4,   7,  6,  4,
         8,  9,  10,  8,  10, 11,
@@ -144,7 +144,7 @@ void init()
     // index buffer for a cube
     sg.BufferDesc ibuf = {
         type: sg.BufferType.Indexbuffer,
-        data: sgutil.asRange(INDICES),
+        data: sgutil.asRange(&INDICES[0]),
     };
     auto cube_ibuf = sg.makeBuffer(ibuf);
 
@@ -170,9 +170,9 @@ void init()
     offscreen_pip_desc.layout.attrs[shd.ATTR_VS_OFFSCREEN_BRIGHT0].format = sg.VertexFormat.Float;
     state.offscreen.pip = sg.makePipeline(offscreen_pip_desc);
 
-    float[] QUAD_VERTICES = [0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0];
+    float[8] QUAD_VERTICES = [0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0];
     // a vertex buffer to render a fullscreen quad
-    sg.BufferDesc quad_buf = { data: sgutil.asRange(QUAD_VERTICES) };
+    sg.BufferDesc quad_buf = { data: sgutil.asRange(&QUAD_VERTICES[0]) };
     const quad_vbuf = sg.makeBuffer(quad_buf);
 
     // shader and pipeline object to render a fullscreen quad which composes

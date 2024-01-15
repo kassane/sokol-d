@@ -5,9 +5,6 @@ const builtin = @import("builtin");
 const Build = std.Build;
 const CompileStep = Build.Step.Compile;
 const RunStep = Build.Step.Run;
-const CrossTarget = Build.ResolvedTarget;
-const OptimizeMode = std.builtin.OptimizeMode;
-const fmt = std.fmt;
 
 pub const SokolBackend = enum {
     auto, // Windows: D3D11, macOS/iOS: Metal, otherwise: GL
@@ -20,7 +17,7 @@ pub const SokolBackend = enum {
 
 pub const LibSokolOptions = struct {
     target: Build.ResolvedTarget,
-    optimize: OptimizeMode,
+    optimize: std.builtin.OptimizeMode,
     backend: SokolBackend = .auto,
     use_egl: bool = false,
     use_x11: bool = true,
@@ -224,7 +221,7 @@ pub fn build(b: *Build) !void {
     };
     b.getInstallStep().name = "sokol library";
     inline for (examples) |example| {
-        const ldc = try DCompileStep(b, sokol, .{
+        const ldc = try ldcBuild(b, sokol, .{
             .name = example,
             .sources = &.{b.fmt("{s}/src/examples/{s}.d", .{ rootPath(), example })},
             .betterC = enable_betterC,
@@ -288,7 +285,7 @@ fn buildShaders(b: *Build) void {
 }
 
 // Use LDC2 (https://github.com/ldc-developers/ldc) to compile the D examples
-fn DCompileStep(b: *Build, lib_sokol: *CompileStep, options: LDCOptions) !*RunStep {
+fn ldcBuild(b: *Build, lib_sokol: *CompileStep, options: DCompileStep) !*RunStep {
     // ldmd2: ldc2 wrapped w/ dmd flags
     const ldc = try b.findProgram(&.{"ldmd2"}, &.{});
 
@@ -516,9 +513,10 @@ fn buildZigCC(b: *Build) void {
         },
     });
     b.installArtifact(exe);
+    b.default_step.dependOn(&exe.step);
 }
 
-const LDCOptions = struct {
+const DCompileStep = struct {
     target: Build.ResolvedTarget,
     optimize: std.builtin.OptimizeMode = .Debug,
     kind: CompileStep.Kind = .exe,

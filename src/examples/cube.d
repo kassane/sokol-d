@@ -11,7 +11,7 @@ import log = sokol.log;
 import handmade.math : Mat4, Vec3;
 import sgapp = sokol.glue;
 import shd = shaders.cube;
-import sgutil = sokol.utils;
+import sgutil = sokol.utils : asRange;
 
 extern(C):
 @safe:
@@ -41,7 +41,7 @@ struct State
 
 static State state;
 
-void init()
+void init() @trusted
 {
     sg.Desc gfx = {
         context: sgapp.context(),
@@ -49,7 +49,7 @@ void init()
     };
     sg.setup(gfx);
 
-    float[] vertices = [
+    float[168] vertices = [
         -1.0, -1.0, -1.0,   1.0, 0.0, 0.0, 1.0,
          1.0, -1.0, -1.0,   1.0, 0.0, 0.0, 1.0,
          1.0,  1.0, -1.0,   1.0, 0.0, 0.0, 1.0,
@@ -83,11 +83,11 @@ void init()
 
     // Create vertex buffer
     sg.BufferDesc vbuffer = {
-        data: sgutil.asRange(vertices)
+        data: sgutil.asRange(&vertices[0])
     };
     state.bind.vertex_buffers[0] = sg.makeBuffer(vbuffer);
 
-    double[] indices = [
+    double[36] indices = [
         0,  1,  2,   0,  2,  3,
         6,  5,  4,   7,  6,  4,
         8,  9,  10,  8,  10, 11,
@@ -98,7 +98,7 @@ void init()
 
     sg.BufferDesc ibuffer = {
         type: sg.BufferType.Indexbuffer,
-        data: sgutil.asRange(indices)
+        data: sgutil.asRange(&indices[0])
     };
     state.bind.index_buffer = sg.makeBuffer(ibuffer);
 
