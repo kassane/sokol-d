@@ -8,7 +8,9 @@
 //------------------------------------------------------------------------------
 module handmade.math;
 
-import std.math : PI, sqrt, sin, cos, tan, isClose;
+extern(C):
+import std.math : PI;
+import core.stdc.math : sqrt, sin, cos, tan;
 
 @safe:
 
@@ -211,7 +213,7 @@ float radians(float deg)
 
 @safe pure unittest
 {
-
+    import std.math : isClose;
     // Vec3.zero test
     {
         auto v = Vec3.zero();
@@ -224,7 +226,7 @@ float radians(float deg)
 
 @safe pure unittest
 {
-
+    import std.math : isClose;
     // Vec3.new test
     {
         auto v = Vec3(1.0, 2.0, 3.0);
@@ -237,7 +239,7 @@ float radians(float deg)
 
 @safe pure unittest
 {
-
+    import std.math : isClose;
     // Mat4.identity test
     {
         auto m = Mat4.identity();
