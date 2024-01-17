@@ -24,3 +24,6 @@ jobs:
 
       - name: Build
         run: zig build -DzigCC --summary all
+
+      - name: Test
+        run: zig build test

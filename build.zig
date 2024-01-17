@@ -231,6 +231,17 @@ pub fn build(b: *Build) !void {
         b.getInstallStep().dependOn(&ldc.step);
     }
     buildShaders(b);
+
+    // build tests
+    const math_test = try ldcBuildStep(b, .{
+        .name = "test-math",
+        .kind = .@"test",
+        .target = b.host,
+        .artifact = sokol,
+        .sources = &.{b.fmt("{s}/src/handmade/math.d", .{rootPath()})},
+        .dflags = &.{},
+    });
+    b.default_step.dependOn(&math_test.step);
 }
 
 // Use LDC2 (https://github.com/ldc-developers/ldc) to compile the D examples
@@ -454,8 +465,13 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
     const example_run = b.addSystemCommand(&.{b.pathJoin(&.{ b.install_path, "bin", options.name })});
     example_run.step.dependOn(&ldc_exec.step);
 
-    const run = b.step(b.fmt("run-{s}", .{options.name}), b.fmt("Run {s} example", .{options.name}));
-    run.dependOn(&example_run.step);
+    if (options.kind != .@"test") {
+        const run = b.step(b.fmt("run-{s}", .{options.name}), b.fmt("Run {s} example", .{options.name}));
+        run.dependOn(&example_run.step);
+    } else {
+        const tests = b.step("test", "Run all tests");
+        tests.dependOn(&example_run.step);
+    }
 
     return ldc_exec;
 }
