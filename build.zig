@@ -174,7 +174,7 @@ pub fn build(b: *Build) !void {
     // ldc2 w/ druntime + phobos2 works on MSVC
     if (target.result.os.tag == .windows and target.query.isNative()) {
         target.result.abi = .msvc; // for ldc2
-        target.query.abi = .msvc; // for libsokol
+        target.query.abi = target.result.abi; // for libsokol
     }
 
     const optimize = b.standardOptimizeOption(.{});
@@ -188,8 +188,8 @@ pub fn build(b: *Build) !void {
     });
 
     // LDC-options options
-    const enable_betterC = b.option(bool, "betterC", "Omit generating some runtime information and helper functions. (default: false)") orelse false;
-    const enable_zigcc = b.option(bool, "zigCC", "Use zig cc as compiler and linker. (default: false)") orelse false;
+    const enable_betterC = b.option(bool, "betterC", "Omit generating some runtime information and helper functions (default: false)") orelse false;
+    const enable_zigcc = b.option(bool, "zigCC", "Use zig cc as compiler and linker (default: false)") orelse false;
 
     if (enable_zigcc) {
         const zcc = buildZigCC(b);
@@ -197,33 +197,25 @@ pub fn build(b: *Build) !void {
         b.default_step.dependOn(&install.step);
     }
 
-    // WiP: build examples
+    // build examples
     const examples = .{
         "clear",
         "triangle",
-        // "quad",
-        // "bufferoffsets",
         "cube",
-        // "noninterleaved",
-        // "texcube",
         "blend",
-        // "offscreen",
-        // "instancing",
         "mrt",
         "saudio",
-        // "sgl",
         "sgl-context",
-        // "sgl-points",
-        // "debugtext",
         "debugtext-print",
-        // "debugtext-userfont",
-        // "shapes",
         "user-data",
     };
+
     b.getInstallStep().name = "sokol library";
+
     inline for (examples) |example| {
-        const ldc = try ldcBuild(b, sokol, .{
+        const ldc = try ldcBuildStep(b, .{
             .name = example,
+            .artifact = sokol,
             .sources = &.{b.fmt("{s}/src/examples/{s}.d", .{ rootPath(), example })},
             .betterC = enable_betterC,
             .dflags = &.{
@@ -241,54 +233,11 @@ pub fn build(b: *Build) !void {
     buildShaders(b);
 }
 
-// a separate step to compile shaders, expects the shader compiler in ../sokol-tools-bin/
-fn buildShaders(b: *Build) void {
-    const sokol_tools_bin_dir = "../sokol-tools-bin/bin/";
-    const shaders_dir = "src/shaders/";
-    const shaders = .{
-        "bufferoffsets.glsl",
-        "cube.glsl",
-        "instancing.glsl",
-        "mrt.glsl",
-        "noninterleaved.glsl",
-        "offscreen.glsl",
-        "quad.glsl",
-        "shapes.glsl",
-        "texcube.glsl",
-        "blend.glsl",
-    };
-    const optional_shdc: ?[:0]const u8 = comptime switch (builtin.os.tag) {
-        .windows => "win32/sokol-shdc.exe",
-        .linux => "linux/sokol-shdc",
-        .macos => if (builtin.cpu.arch.isX86()) "osx/sokol-shdc" else "osx_arm64/sokol-shdc",
-        else => null,
-    };
-    if (optional_shdc == null) {
-        std.log.warn("unsupported host platform, skipping shader compiler step", .{});
-        return;
-    }
-    const shdc_path = b.findProgram(&.{"sokol-shdc"}, &.{}) catch sokol_tools_bin_dir ++ optional_shdc.?;
-    const shdc_step = b.step("shaders", "Compile shaders (needs ../sokol-tools-bin)");
-    inline for (shaders) |shader| {
-        const cmd = b.addSystemCommand(&.{
-            shdc_path,
-            "-i",
-            shaders_dir ++ shader,
-            "-o",
-            shaders_dir ++ shader[0 .. shader.len - 5] ++ ".d",
-            "-l",
-            "glsl330:metal_macos:hlsl4:glsl300es:wgsl",
-            "-f",
-            "sokol_d",
-        });
-        shdc_step.dependOn(&cmd.step);
-    }
-}
-
 // Use LDC2 (https://github.com/ldc-developers/ldc) to compile the D examples
-fn ldcBuild(b: *Build, lib_sokol: *CompileStep, options: DCompileStep) !*RunStep {
+pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
     // ldmd2: ldc2 wrapped w/ dmd flags
     const ldc = try b.findProgram(&.{"ldmd2"}, &.{});
+    const lib_sokol = options.artifact;
 
     var cmds = std.ArrayList([]const u8).init(b.allocator);
     defer cmds.deinit();
@@ -348,7 +297,7 @@ fn ldcBuild(b: *Build, lib_sokol: *CompileStep, options: DCompileStep) !*RunStep
             try cmds.append("-verrors=context");
         },
         .ReleaseSafe => {
-            try cmds.append("--O2");
+            try cmds.append("--O3");
             try cmds.append("--release");
             try cmds.append("--enable-inlining");
             try cmds.append("--boundscheck=on");
@@ -434,7 +383,7 @@ fn ldcBuild(b: *Build, lib_sokol: *CompileStep, options: DCompileStep) !*RunStep
         break;
     }
 
-    // link flags
+    // linker flags
     // GNU LD
     if (options.target.result.os.tag == .linux and !options.zig_cc) {
         try cmds.append("-L--no-as-needed");
@@ -491,7 +440,8 @@ fn ldcBuild(b: *Build, lib_sokol: *CompileStep, options: DCompileStep) !*RunStep
         try cmds.append(b.fmt("--mtriple={s}-{s}-{s}", .{ @tagName(options.target.result.cpu.arch), @tagName(options.target.result.os.tag), @tagName(options.target.result.abi) }));
 
     // cpu model (e.g. "baseline")
-    // try cmds.append(b.fmt("--mcpu={s}", .{options.target.result.cpu.model.name}));
+    if (options.target.query.isNative())
+        try cmds.append(b.fmt("--mcpu={s}", .{builtin.cpu.model.name}));
 
     // output file
     try cmds.append(b.fmt("--of={s}", .{b.pathJoin(&.{ b.install_prefix, "bin", options.name })}));
@@ -510,6 +460,27 @@ fn ldcBuild(b: *Build, lib_sokol: *CompileStep, options: DCompileStep) !*RunStep
     return ldc_exec;
 }
 
+pub const DCompileStep = struct {
+    target: Build.ResolvedTarget,
+    optimize: std.builtin.OptimizeMode = .Debug,
+    kind: CompileStep.Kind = .exe,
+    linkage: CompileStep.Linkage = .static,
+    betterC: bool = false,
+    sources: []const []const u8,
+    dflags: []const []const u8,
+    name: []const u8,
+    zig_cc: bool = false,
+    d_packages: ?[]*Build.Dependency = null,
+    artifact: *Build.Step.Compile,
+};
+
+fn packagePath(b: *Build, package: *Build.Dependency) []const u8 {
+    return package.path("").getPath(b);
+}
+
+// -------------------------- Others Configuration --------------------------
+
+// zig-cc wrapper for ldc2
 fn buildZigCC(b: *Build) *CompileStep {
     const exe = b.addExecutable(.{
         .name = "zcc",
@@ -522,19 +493,46 @@ fn buildZigCC(b: *Build) *CompileStep {
     return exe;
 }
 
-const DCompileStep = struct {
-    target: Build.ResolvedTarget,
-    optimize: std.builtin.OptimizeMode = .Debug,
-    kind: CompileStep.Kind = .exe,
-    linkage: CompileStep.Linkage = .static,
-    betterC: bool = false,
-    sources: []const []const u8,
-    dflags: []const []const u8,
-    name: []const u8,
-    zig_cc: bool = false,
-    d_packages: ?[]*Build.Dependency = null,
-};
-
-fn packagePath(b: *Build, package: *Build.Dependency) []const u8 {
-    return package.path("").getPath(b);
+// a separate step to compile shaders, expects the shader compiler in ../sokol-tools-bin/
+fn buildShaders(b: *Build) void {
+    const sokol_tools_bin_dir = "../sokol-tools-bin/bin/";
+    const shaders_dir = "src/shaders/";
+    const shaders = .{
+        "bufferoffsets.glsl",
+        "cube.glsl",
+        "instancing.glsl",
+        "mrt.glsl",
+        "noninterleaved.glsl",
+        "offscreen.glsl",
+        "quad.glsl",
+        "shapes.glsl",
+        "texcube.glsl",
+        "blend.glsl",
+    };
+    const optional_shdc: ?[:0]const u8 = comptime switch (builtin.os.tag) {
+        .windows => "win32/sokol-shdc.exe",
+        .linux => "linux/sokol-shdc",
+        .macos => if (builtin.cpu.arch.isX86()) "osx/sokol-shdc" else "osx_arm64/sokol-shdc",
+        else => null,
+    };
+    if (optional_shdc == null) {
+        std.log.warn("unsupported host platform, skipping shader compiler step", .{});
+        return;
+    }
+    const shdc_path = b.findProgram(&.{"sokol-shdc"}, &.{}) catch sokol_tools_bin_dir ++ optional_shdc.?;
+    const shdc_step = b.step("shaders", "Compile shaders (needs ../sokol-tools-bin)");
+    inline for (shaders) |shader| {
+        const cmd = b.addSystemCommand(&.{
+            shdc_path,
+            "-i",
+            shaders_dir ++ shader,
+            "-o",
+            shaders_dir ++ shader[0 .. shader.len - 5] ++ ".d",
+            "-l",
+            "glsl330:metal_macos:hlsl4:glsl300es:wgsl",
+            "-f",
+            "sokol_d",
+        });
+        shdc_step.dependOn(&cmd.step);
+    }
 }
