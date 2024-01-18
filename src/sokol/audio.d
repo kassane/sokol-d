@@ -65,46 +65,46 @@ struct Desc {
     Logger logger;
 }
 extern(C) void saudio_setup(const Desc *) @system @nogc nothrow;
-void setup(ref Desc desc) @trusted nothrow {
+void setup(ref Desc desc) @trusted nothrow @nogc {
     saudio_setup(&desc);
 }
 extern(C) void saudio_shutdown() @system @nogc nothrow;
-void shutdown() @trusted nothrow {
+void shutdown() @trusted nothrow @nogc {
     saudio_shutdown();
 }
 extern(C) bool saudio_isvalid() @system @nogc nothrow;
-bool isvalid() @trusted nothrow {
+bool isvalid() @trusted nothrow @nogc {
     return saudio_isvalid();
 }
 extern(C) void* saudio_userdata() @system @nogc nothrow;
-scope void* userdata() @trusted nothrow {
+scope void* userdata() @trusted nothrow @nogc {
     return saudio_userdata();
 }
 extern(C) Desc saudio_query_desc() @system @nogc nothrow;
-Desc queryDesc() @trusted nothrow {
+Desc queryDesc() @trusted nothrow @nogc {
     return saudio_query_desc();
 }
 extern(C) int saudio_sample_rate() @system @nogc nothrow;
-int sampleRate() @trusted nothrow {
+int sampleRate() @trusted nothrow @nogc {
     return saudio_sample_rate();
 }
 extern(C) int saudio_buffer_frames() @system @nogc nothrow;
-int bufferFrames() @trusted nothrow {
+int bufferFrames() @trusted nothrow @nogc {
     return saudio_buffer_frames();
 }
 extern(C) int saudio_channels() @system @nogc nothrow;
-int channels() @trusted nothrow {
+int channels() @trusted nothrow @nogc {
     return saudio_channels();
 }
 extern(C) bool saudio_suspended() @system @nogc nothrow;
-bool suspended() @trusted nothrow {
+bool suspended() @trusted nothrow @nogc {
     return saudio_suspended();
 }
 extern(C) int saudio_expect() @system @nogc nothrow;
-int expect() @trusted nothrow {
+int expect() @trusted nothrow @nogc {
     return saudio_expect();
 }
 extern(C) int saudio_push(const float *, int) @system @nogc nothrow;
-int push(const float * frames, int num_frames) @trusted nothrow {
+int push(const float * frames, int num_frames) @trusted nothrow @nogc {
     return saudio_push(frames, num_frames);
 }

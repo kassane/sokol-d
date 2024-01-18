@@ -62,346 +62,346 @@ struct Desc {
     Logger logger;
 }
 extern(C) void sgl_setup(const Desc *) @system @nogc nothrow;
-void setup(ref Desc desc) @trusted nothrow {
+void setup(ref Desc desc) @trusted nothrow @nogc {
     sgl_setup(&desc);
 }
 extern(C) void sgl_shutdown() @system @nogc nothrow;
-void shutdown() @trusted nothrow {
+void shutdown() @trusted nothrow @nogc {
     sgl_shutdown();
 }
 extern(C) float sgl_rad(float) @system @nogc nothrow;
-float asRadians(float deg) @trusted nothrow {
+float asRadians(float deg) @trusted nothrow @nogc {
     return sgl_rad(deg);
 }
 extern(C) float sgl_deg(float) @system @nogc nothrow;
-float asDegrees(float rad) @trusted nothrow {
+float asDegrees(float rad) @trusted nothrow @nogc {
     return sgl_deg(rad);
 }
 extern(C) Error sgl_error() @system @nogc nothrow;
-Error getError() @trusted nothrow {
+Error getError() @trusted nothrow @nogc {
     return sgl_error();
 }
 extern(C) Error sgl_context_error(Context) @system @nogc nothrow;
-Error contextError(Context ctx) @trusted nothrow {
+Error contextError(Context ctx) @trusted nothrow @nogc {
     return sgl_context_error(ctx);
 }
 extern(C) Context sgl_make_context(const ContextDesc *) @system @nogc nothrow;
-Context makeContext(ref ContextDesc desc) @trusted nothrow {
+Context makeContext(ref ContextDesc desc) @trusted nothrow @nogc {
     return sgl_make_context(&desc);
 }
 extern(C) void sgl_destroy_context(Context) @system @nogc nothrow;
-void destroyContext(Context ctx) @trusted nothrow {
+void destroyContext(Context ctx) @trusted nothrow @nogc {
     sgl_destroy_context(ctx);
 }
 extern(C) void sgl_set_context(Context) @system @nogc nothrow;
-void setContext(Context ctx) @trusted nothrow {
+void setContext(Context ctx) @trusted nothrow @nogc {
     sgl_set_context(ctx);
 }
 extern(C) Context sgl_get_context() @system @nogc nothrow;
-Context getContext() @trusted nothrow {
+Context getContext() @trusted nothrow @nogc {
     return sgl_get_context();
 }
 extern(C) Context sgl_default_context() @system @nogc nothrow;
-Context defaultContext() @trusted nothrow {
+Context defaultContext() @trusted nothrow @nogc {
     return sgl_default_context();
 }
 extern(C) void sgl_draw() @system @nogc nothrow;
-void draw() @trusted nothrow {
+void draw() @trusted nothrow @nogc {
     sgl_draw();
 }
 extern(C) void sgl_context_draw(Context) @system @nogc nothrow;
-void contextDraw(Context ctx) @trusted nothrow {
+void contextDraw(Context ctx) @trusted nothrow @nogc {
     sgl_context_draw(ctx);
 }
 extern(C) void sgl_draw_layer(int) @system @nogc nothrow;
-void drawLayer(int layer_id) @trusted nothrow {
+void drawLayer(int layer_id) @trusted nothrow @nogc {
     sgl_draw_layer(layer_id);
 }
 extern(C) void sgl_context_draw_layer(Context, int) @system @nogc nothrow;
-void contextDrawLayer(Context ctx, int layer_id) @trusted nothrow {
+void contextDrawLayer(Context ctx, int layer_id) @trusted nothrow @nogc {
     sgl_context_draw_layer(ctx, layer_id);
 }
 extern(C) Pipeline sgl_make_pipeline(const sg.PipelineDesc *) @system @nogc nothrow;
-Pipeline makePipeline(ref sg.PipelineDesc desc) @trusted nothrow {
+Pipeline makePipeline(ref sg.PipelineDesc desc) @trusted nothrow @nogc {
     return sgl_make_pipeline(&desc);
 }
 extern(C) Pipeline sgl_context_make_pipeline(Context, const sg.PipelineDesc *) @system @nogc nothrow;
-Pipeline contextMakePipeline(Context ctx, ref sg.PipelineDesc desc) @trusted nothrow {
+Pipeline contextMakePipeline(Context ctx, ref sg.PipelineDesc desc) @trusted nothrow @nogc {
     return sgl_context_make_pipeline(ctx, &desc);
 }
 extern(C) void sgl_destroy_pipeline(Pipeline) @system @nogc nothrow;
-void destroyPipeline(Pipeline pip) @trusted nothrow {
+void destroyPipeline(Pipeline pip) @trusted nothrow @nogc {
     sgl_destroy_pipeline(pip);
 }
 extern(C) void sgl_defaults() @system @nogc nothrow;
-void defaults() @trusted nothrow {
+void defaults() @trusted nothrow @nogc {
     sgl_defaults();
 }
 extern(C) void sgl_viewport(int, int, int, int, bool) @system @nogc nothrow;
-void viewport(int x, int y, int w, int h, bool origin_top_left) @trusted nothrow {
+void viewport(int x, int y, int w, int h, bool origin_top_left) @trusted nothrow @nogc {
     sgl_viewport(x, y, w, h, origin_top_left);
 }
 extern(C) void sgl_viewportf(float, float, float, float, bool) @system @nogc nothrow;
-void viewportf(float x, float y, float w, float h, bool origin_top_left) @trusted nothrow {
+void viewportf(float x, float y, float w, float h, bool origin_top_left) @trusted nothrow @nogc {
     sgl_viewportf(x, y, w, h, origin_top_left);
 }
 extern(C) void sgl_scissor_rect(int, int, int, int, bool) @system @nogc nothrow;
-void scissorRect(int x, int y, int w, int h, bool origin_top_left) @trusted nothrow {
+void scissorRect(int x, int y, int w, int h, bool origin_top_left) @trusted nothrow @nogc {
     sgl_scissor_rect(x, y, w, h, origin_top_left);
 }
 extern(C) void sgl_scissor_rectf(float, float, float, float, bool) @system @nogc nothrow;
-void scissorRectf(float x, float y, float w, float h, bool origin_top_left) @trusted nothrow {
+void scissorRectf(float x, float y, float w, float h, bool origin_top_left) @trusted nothrow @nogc {
     sgl_scissor_rectf(x, y, w, h, origin_top_left);
 }
 extern(C) void sgl_enable_texture() @system @nogc nothrow;
-void enableTexture() @trusted nothrow {
+void enableTexture() @trusted nothrow @nogc {
     sgl_enable_texture();
 }
 extern(C) void sgl_disable_texture() @system @nogc nothrow;
-void disableTexture() @trusted nothrow {
+void disableTexture() @trusted nothrow @nogc {
     sgl_disable_texture();
 }
 extern(C) void sgl_texture(sg.Image, sg.Sampler) @system @nogc nothrow;
-void texture(sg.Image img, sg.Sampler smp) @trusted nothrow {
+void texture(sg.Image img, sg.Sampler smp) @trusted nothrow @nogc {
     sgl_texture(img, smp);
 }
 extern(C) void sgl_layer(int) @system @nogc nothrow;
-void layer(int layer_id) @trusted nothrow {
+void layer(int layer_id) @trusted nothrow @nogc {
     sgl_layer(layer_id);
 }
 extern(C) void sgl_load_default_pipeline() @system @nogc nothrow;
-void loadDefaultPipeline() @trusted nothrow {
+void loadDefaultPipeline() @trusted nothrow @nogc {
     sgl_load_default_pipeline();
 }
 extern(C) void sgl_load_pipeline(Pipeline) @system @nogc nothrow;
-void loadPipeline(Pipeline pip) @trusted nothrow {
+void loadPipeline(Pipeline pip) @trusted nothrow @nogc {
     sgl_load_pipeline(pip);
 }
 extern(C) void sgl_push_pipeline() @system @nogc nothrow;
-void pushPipeline() @trusted nothrow {
+void pushPipeline() @trusted nothrow @nogc {
     sgl_push_pipeline();
 }
 extern(C) void sgl_pop_pipeline() @system @nogc nothrow;
-void popPipeline() @trusted nothrow {
+void popPipeline() @trusted nothrow @nogc {
     sgl_pop_pipeline();
 }
 extern(C) void sgl_matrix_mode_modelview() @system @nogc nothrow;
-void matrixModeModelview() @trusted nothrow {
+void matrixModeModelview() @trusted nothrow @nogc {
     sgl_matrix_mode_modelview();
 }
 extern(C) void sgl_matrix_mode_projection() @system @nogc nothrow;
-void matrixModeProjection() @trusted nothrow {
+void matrixModeProjection() @trusted nothrow @nogc {
     sgl_matrix_mode_projection();
 }
 extern(C) void sgl_matrix_mode_texture() @system @nogc nothrow;
-void matrixModeTexture() @trusted nothrow {
+void matrixModeTexture() @trusted nothrow @nogc {
     sgl_matrix_mode_texture();
 }
 extern(C) void sgl_load_identity() @system @nogc nothrow;
-void loadIdentity() @trusted nothrow {
+void loadIdentity() @trusted nothrow @nogc {
     sgl_load_identity();
 }
 extern(C) void sgl_load_matrix(const float *) @system @nogc nothrow;
-void loadMatrix(const float * m) @trusted nothrow {
+void loadMatrix(const float * m) @trusted nothrow @nogc {
     sgl_load_matrix(m);
 }
 extern(C) void sgl_load_transpose_matrix(const float *) @system @nogc nothrow;
-void loadTransposeMatrix(const float * m) @trusted nothrow {
+void loadTransposeMatrix(const float * m) @trusted nothrow @nogc {
     sgl_load_transpose_matrix(m);
 }
 extern(C) void sgl_mult_matrix(const float *) @system @nogc nothrow;
-void multMatrix(const float * m) @trusted nothrow {
+void multMatrix(const float * m) @trusted nothrow @nogc {
     sgl_mult_matrix(m);
 }
 extern(C) void sgl_mult_transpose_matrix(const float *) @system @nogc nothrow;
-void multTransposeMatrix(const float * m) @trusted nothrow {
+void multTransposeMatrix(const float * m) @trusted nothrow @nogc {
     sgl_mult_transpose_matrix(m);
 }
 extern(C) void sgl_rotate(float, float, float, float) @system @nogc nothrow;
-void rotate(float angle_rad, float x, float y, float z) @trusted nothrow {
+void rotate(float angle_rad, float x, float y, float z) @trusted nothrow @nogc {
     sgl_rotate(angle_rad, x, y, z);
 }
 extern(C) void sgl_scale(float, float, float) @system @nogc nothrow;
-void scale(float x, float y, float z) @trusted nothrow {
+void scale(float x, float y, float z) @trusted nothrow @nogc {
     sgl_scale(x, y, z);
 }
 extern(C) void sgl_translate(float, float, float) @system @nogc nothrow;
-void translate(float x, float y, float z) @trusted nothrow {
+void translate(float x, float y, float z) @trusted nothrow @nogc {
     sgl_translate(x, y, z);
 }
 extern(C) void sgl_frustum(float, float, float, float, float, float) @system @nogc nothrow;
-void frustum(float l, float r, float b, float t, float n, float f) @trusted nothrow {
+void frustum(float l, float r, float b, float t, float n, float f) @trusted nothrow @nogc {
     sgl_frustum(l, r, b, t, n, f);
 }
 extern(C) void sgl_ortho(float, float, float, float, float, float) @system @nogc nothrow;
-void ortho(float l, float r, float b, float t, float n, float f) @trusted nothrow {
+void ortho(float l, float r, float b, float t, float n, float f) @trusted nothrow @nogc {
     sgl_ortho(l, r, b, t, n, f);
 }
 extern(C) void sgl_perspective(float, float, float, float) @system @nogc nothrow;
-void perspective(float fov_y, float aspect, float z_near, float z_far) @trusted nothrow {
+void perspective(float fov_y, float aspect, float z_near, float z_far) @trusted nothrow @nogc {
     sgl_perspective(fov_y, aspect, z_near, z_far);
 }
 extern(C) void sgl_lookat(float, float, float, float, float, float, float, float, float) @system @nogc nothrow;
-void lookat(float eye_x, float eye_y, float eye_z, float center_x, float center_y, float center_z, float up_x, float up_y, float up_z) @trusted nothrow {
+void lookat(float eye_x, float eye_y, float eye_z, float center_x, float center_y, float center_z, float up_x, float up_y, float up_z) @trusted nothrow @nogc {
     sgl_lookat(eye_x, eye_y, eye_z, center_x, center_y, center_z, up_x, up_y, up_z);
 }
 extern(C) void sgl_push_matrix() @system @nogc nothrow;
-void pushMatrix() @trusted nothrow {
+void pushMatrix() @trusted nothrow @nogc {
     sgl_push_matrix();
 }
 extern(C) void sgl_pop_matrix() @system @nogc nothrow;
-void popMatrix() @trusted nothrow {
+void popMatrix() @trusted nothrow @nogc {
     sgl_pop_matrix();
 }
 extern(C) void sgl_t2f(float, float) @system @nogc nothrow;
-void t2f(float u, float v) @trusted nothrow {
+void t2f(float u, float v) @trusted nothrow @nogc {
     sgl_t2f(u, v);
 }
 extern(C) void sgl_c3f(float, float, float) @system @nogc nothrow;
-void c3f(float r, float g, float b) @trusted nothrow {
+void c3f(float r, float g, float b) @trusted nothrow @nogc {
     sgl_c3f(r, g, b);
 }
 extern(C) void sgl_c4f(float, float, float, float) @system @nogc nothrow;
-void c4f(float r, float g, float b, float a) @trusted nothrow {
+void c4f(float r, float g, float b, float a) @trusted nothrow @nogc {
     sgl_c4f(r, g, b, a);
 }
 extern(C) void sgl_c3b(ubyte, ubyte, ubyte) @system @nogc nothrow;
-void c3b(ubyte r, ubyte g, ubyte b) @trusted nothrow {
+void c3b(ubyte r, ubyte g, ubyte b) @trusted nothrow @nogc {
     sgl_c3b(r, g, b);
 }
 extern(C) void sgl_c4b(ubyte, ubyte, ubyte, ubyte) @system @nogc nothrow;
-void c4b(ubyte r, ubyte g, ubyte b, ubyte a) @trusted nothrow {
+void c4b(ubyte r, ubyte g, ubyte b, ubyte a) @trusted nothrow @nogc {
     sgl_c4b(r, g, b, a);
 }
 extern(C) void sgl_c1i(uint) @system @nogc nothrow;
-void c1i(uint rgba) @trusted nothrow {
+void c1i(uint rgba) @trusted nothrow @nogc {
     sgl_c1i(rgba);
 }
 extern(C) void sgl_point_size(float) @system @nogc nothrow;
-void pointSize(float s) @trusted nothrow {
+void pointSize(float s) @trusted nothrow @nogc {
     sgl_point_size(s);
 }
 extern(C) void sgl_begin_points() @system @nogc nothrow;
-void beginPoints() @trusted nothrow {
+void beginPoints() @trusted nothrow @nogc {
     sgl_begin_points();
 }
 extern(C) void sgl_begin_lines() @system @nogc nothrow;
-void beginLines() @trusted nothrow {
+void beginLines() @trusted nothrow @nogc {
     sgl_begin_lines();
 }
 extern(C) void sgl_begin_line_strip() @system @nogc nothrow;
-void beginLineStrip() @trusted nothrow {
+void beginLineStrip() @trusted nothrow @nogc {
     sgl_begin_line_strip();
 }
 extern(C) void sgl_begin_triangles() @system @nogc nothrow;
-void beginTriangles() @trusted nothrow {
+void beginTriangles() @trusted nothrow @nogc {
     sgl_begin_triangles();
 }
 extern(C) void sgl_begin_triangle_strip() @system @nogc nothrow;
-void beginTriangleStrip() @trusted nothrow {
+void beginTriangleStrip() @trusted nothrow @nogc {
     sgl_begin_triangle_strip();
 }
 extern(C) void sgl_begin_quads() @system @nogc nothrow;
-void beginQuads() @trusted nothrow {
+void beginQuads() @trusted nothrow @nogc {
     sgl_begin_quads();
 }
 extern(C) void sgl_v2f(float, float) @system @nogc nothrow;
-void v2f(float x, float y) @trusted nothrow {
+void v2f(float x, float y) @trusted nothrow @nogc {
     sgl_v2f(x, y);
 }
 extern(C) void sgl_v3f(float, float, float) @system @nogc nothrow;
-void v3f(float x, float y, float z) @trusted nothrow {
+void v3f(float x, float y, float z) @trusted nothrow @nogc {
     sgl_v3f(x, y, z);
 }
 extern(C) void sgl_v2f_t2f(float, float, float, float) @system @nogc nothrow;
-void v2fT2f(float x, float y, float u, float v) @trusted nothrow {
+void v2fT2f(float x, float y, float u, float v) @trusted nothrow @nogc {
     sgl_v2f_t2f(x, y, u, v);
 }
 extern(C) void sgl_v3f_t2f(float, float, float, float, float) @system @nogc nothrow;
-void v3fT2f(float x, float y, float z, float u, float v) @trusted nothrow {
+void v3fT2f(float x, float y, float z, float u, float v) @trusted nothrow @nogc {
     sgl_v3f_t2f(x, y, z, u, v);
 }
 extern(C) void sgl_v2f_c3f(float, float, float, float, float) @system @nogc nothrow;
-void v2fC3f(float x, float y, float r, float g, float b) @trusted nothrow {
+void v2fC3f(float x, float y, float r, float g, float b) @trusted nothrow @nogc {
     sgl_v2f_c3f(x, y, r, g, b);
 }
 extern(C) void sgl_v2f_c3b(float, float, ubyte, ubyte, ubyte) @system @nogc nothrow;
-void v2fC3b(float x, float y, ubyte r, ubyte g, ubyte b) @trusted nothrow {
+void v2fC3b(float x, float y, ubyte r, ubyte g, ubyte b) @trusted nothrow @nogc {
     sgl_v2f_c3b(x, y, r, g, b);
 }
 extern(C) void sgl_v2f_c4f(float, float, float, float, float, float) @system @nogc nothrow;
-void v2fC4f(float x, float y, float r, float g, float b, float a) @trusted nothrow {
+void v2fC4f(float x, float y, float r, float g, float b, float a) @trusted nothrow @nogc {
     sgl_v2f_c4f(x, y, r, g, b, a);
 }
 extern(C) void sgl_v2f_c4b(float, float, ubyte, ubyte, ubyte, ubyte) @system @nogc nothrow;
-void v2fC4b(float x, float y, ubyte r, ubyte g, ubyte b, ubyte a) @trusted nothrow {
+void v2fC4b(float x, float y, ubyte r, ubyte g, ubyte b, ubyte a) @trusted nothrow @nogc {
     sgl_v2f_c4b(x, y, r, g, b, a);
 }
 extern(C) void sgl_v2f_c1i(float, float, uint) @system @nogc nothrow;
-void v2fC1i(float x, float y, uint rgba) @trusted nothrow {
+void v2fC1i(float x, float y, uint rgba) @trusted nothrow @nogc {
     sgl_v2f_c1i(x, y, rgba);
 }
 extern(C) void sgl_v3f_c3f(float, float, float, float, float, float) @system @nogc nothrow;
-void v3fC3f(float x, float y, float z, float r, float g, float b) @trusted nothrow {
+void v3fC3f(float x, float y, float z, float r, float g, float b) @trusted nothrow @nogc {
     sgl_v3f_c3f(x, y, z, r, g, b);
 }
 extern(C) void sgl_v3f_c3b(float, float, float, ubyte, ubyte, ubyte) @system @nogc nothrow;
-void v3fC3b(float x, float y, float z, ubyte r, ubyte g, ubyte b) @trusted nothrow {
+void v3fC3b(float x, float y, float z, ubyte r, ubyte g, ubyte b) @trusted nothrow @nogc {
     sgl_v3f_c3b(x, y, z, r, g, b);
 }
 extern(C) void sgl_v3f_c4f(float, float, float, float, float, float, float) @system @nogc nothrow;
-void v3fC4f(float x, float y, float z, float r, float g, float b, float a) @trusted nothrow {
+void v3fC4f(float x, float y, float z, float r, float g, float b, float a) @trusted nothrow @nogc {
     sgl_v3f_c4f(x, y, z, r, g, b, a);
 }
 extern(C) void sgl_v3f_c4b(float, float, float, ubyte, ubyte, ubyte, ubyte) @system @nogc nothrow;
-void v3fC4b(float x, float y, float z, ubyte r, ubyte g, ubyte b, ubyte a) @trusted nothrow {
+void v3fC4b(float x, float y, float z, ubyte r, ubyte g, ubyte b, ubyte a) @trusted nothrow @nogc {
     sgl_v3f_c4b(x, y, z, r, g, b, a);
 }
 extern(C) void sgl_v3f_c1i(float, float, float, uint) @system @nogc nothrow;
-void v3fC1i(float x, float y, float z, uint rgba) @trusted nothrow {
+void v3fC1i(float x, float y, float z, uint rgba) @trusted nothrow @nogc {
     sgl_v3f_c1i(x, y, z, rgba);
 }
 extern(C) void sgl_v2f_t2f_c3f(float, float, float, float, float, float, float) @system @nogc nothrow;
-void v2fT2fC3f(float x, float y, float u, float v, float r, float g, float b) @trusted nothrow {
+void v2fT2fC3f(float x, float y, float u, float v, float r, float g, float b) @trusted nothrow @nogc {
     sgl_v2f_t2f_c3f(x, y, u, v, r, g, b);
 }
 extern(C) void sgl_v2f_t2f_c3b(float, float, float, float, ubyte, ubyte, ubyte) @system @nogc nothrow;
-void v2fT2fC3b(float x, float y, float u, float v, ubyte r, ubyte g, ubyte b) @trusted nothrow {
+void v2fT2fC3b(float x, float y, float u, float v, ubyte r, ubyte g, ubyte b) @trusted nothrow @nogc {
     sgl_v2f_t2f_c3b(x, y, u, v, r, g, b);
 }
 extern(C) void sgl_v2f_t2f_c4f(float, float, float, float, float, float, float, float) @system @nogc nothrow;
-void v2fT2fC4f(float x, float y, float u, float v, float r, float g, float b, float a) @trusted nothrow {
+void v2fT2fC4f(float x, float y, float u, float v, float r, float g, float b, float a) @trusted nothrow @nogc {
     sgl_v2f_t2f_c4f(x, y, u, v, r, g, b, a);
 }
 extern(C) void sgl_v2f_t2f_c4b(float, float, float, float, ubyte, ubyte, ubyte, ubyte) @system @nogc nothrow;
-void v2fT2fC4b(float x, float y, float u, float v, ubyte r, ubyte g, ubyte b, ubyte a) @trusted nothrow {
+void v2fT2fC4b(float x, float y, float u, float v, ubyte r, ubyte g, ubyte b, ubyte a) @trusted nothrow @nogc {
     sgl_v2f_t2f_c4b(x, y, u, v, r, g, b, a);
 }
 extern(C) void sgl_v2f_t2f_c1i(float, float, float, float, uint) @system @nogc nothrow;
-void v2fT2fC1i(float x, float y, float u, float v, uint rgba) @trusted nothrow {
+void v2fT2fC1i(float x, float y, float u, float v, uint rgba) @trusted nothrow @nogc {
     sgl_v2f_t2f_c1i(x, y, u, v, rgba);
 }
 extern(C) void sgl_v3f_t2f_c3f(float, float, float, float, float, float, float, float) @system @nogc nothrow;
-void v3fT2fC3f(float x, float y, float z, float u, float v, float r, float g, float b) @trusted nothrow {
+void v3fT2fC3f(float x, float y, float z, float u, float v, float r, float g, float b) @trusted nothrow @nogc {
     sgl_v3f_t2f_c3f(x, y, z, u, v, r, g, b);
 }
 extern(C) void sgl_v3f_t2f_c3b(float, float, float, float, float, ubyte, ubyte, ubyte) @system @nogc nothrow;
-void v3fT2fC3b(float x, float y, float z, float u, float v, ubyte r, ubyte g, ubyte b) @trusted nothrow {
+void v3fT2fC3b(float x, float y, float z, float u, float v, ubyte r, ubyte g, ubyte b) @trusted nothrow @nogc {
     sgl_v3f_t2f_c3b(x, y, z, u, v, r, g, b);
 }
 extern(C) void sgl_v3f_t2f_c4f(float, float, float, float, float, float, float, float, float) @system @nogc nothrow;
-void v3fT2fC4f(float x, float y, float z, float u, float v, float r, float g, float b, float a) @trusted nothrow {
+void v3fT2fC4f(float x, float y, float z, float u, float v, float r, float g, float b, float a) @trusted nothrow @nogc {
     sgl_v3f_t2f_c4f(x, y, z, u, v, r, g, b, a);
 }
 extern(C) void sgl_v3f_t2f_c4b(float, float, float, float, float, ubyte, ubyte, ubyte, ubyte) @system @nogc nothrow;
-void v3fT2fC4b(float x, float y, float z, float u, float v, ubyte r, ubyte g, ubyte b, ubyte a) @trusted nothrow {
+void v3fT2fC4b(float x, float y, float z, float u, float v, ubyte r, ubyte g, ubyte b, ubyte a) @trusted nothrow @nogc {
     sgl_v3f_t2f_c4b(x, y, z, u, v, r, g, b, a);
 }
 extern(C) void sgl_v3f_t2f_c1i(float, float, float, float, float, uint) @system @nogc nothrow;
-void v3fT2fC1i(float x, float y, float z, float u, float v, uint rgba) @trusted nothrow {
+void v3fT2fC1i(float x, float y, float z, float u, float v, uint rgba) @trusted nothrow @nogc {
     sgl_v3f_t2f_c1i(x, y, z, u, v, rgba);
 }
 extern(C) void sgl_end() @system @nogc nothrow;
-void end() @trusted nothrow {
+void end() @trusted nothrow @nogc {
     sgl_end();
 }

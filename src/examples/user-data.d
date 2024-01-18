@@ -5,13 +5,13 @@ import sapp = sokol.app;
 import log = sokol.log;
 import sgapp = sokol.glue;
 
-import std.stdio;
+import ikod.containers.hashmap;
 
 extern (C):
 
 struct ExampleUserData {
     ubyte data;    
-    int[ubyte] map;
+    HashMap!(ubyte, int) map;
 }
 
 void init() @safe
@@ -34,8 +34,13 @@ void frame_userdata(scope void* userdata) @trusted
     if (state.data % 12 == 0 && state.data % 15 == 0) {
         state.map.clear();
     }
-    
-    writeln(*state);
+    version(D_BetterC){
+        import core.stdc.stdio;
+        printf("ExampleUserData[%d:%d, %d]\n", state.map.length, state.data, state.map.fetch(state.data).value);
+    } else {
+        import std.stdio;
+        writeln(*state);
+    }
 
     sg.PassAction pass_action = {};
     sg.beginDefaultPass(pass_action, sapp.width(), sapp.height());
@@ -50,7 +55,7 @@ void cleanup() @safe
 
 void main()
 {
-    auto userData = ExampleUserData(0, null);
+    ExampleUserData userData;
 
     sapp.Desc runner = {
         window_title: "user-data.d",

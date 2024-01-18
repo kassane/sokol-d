@@ -21,7 +21,7 @@ struct State {
 
 static State state;
 
-void init()
+void init() @trusted
 {
     sg.Desc gfx = {
         context: sgapp.context(),
@@ -30,13 +30,13 @@ void init()
     sg.setup(gfx);
 
     // create vertex buffer with triangle vertices
-    sg.BufferDesc buff;
-    buff.data = sgutil.asRange([
+    float[21] vertices = [
         // positions         colors
         0.0,  0.5,  0.5, 1.0, 0.0, 0.0, 1.0,
         0.5,  -0.5, 0.5, 0.0, 1.0, 0.0, 1.0,
         -0.5, -0.5, 0.5, 0.0, 0.0, 1.0, 1.0,
-    ]);
+    ];
+    sg.BufferDesc buff = {data: sgutil.asRange(&vertices[0])};
     state.bind.vertex_buffers[0] = sg.makeBuffer(buff);
 
     // create a shader and pipeline object
@@ -65,7 +65,6 @@ void cleanup()
     sg.shutdown();
 }
 
-
 void main()
 {
     sapp.Desc runner = {
@@ -81,7 +80,7 @@ void main()
     sapp.run(runner);
 }
 
-sg.ShaderDesc shaderDesc() @trusted nothrow {
+sg.ShaderDesc shaderDesc() @trusted nothrow @nogc {
 	sg.ShaderDesc desc;
 	switch (sg.queryBackend) {
 		case sg.Backend.Glcore33:

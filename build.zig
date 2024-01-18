@@ -194,7 +194,7 @@ pub fn build(b: *Build) !void {
     if (enable_zigcc) {
         const zcc = buildZigCC(b);
         const install = b.addInstallArtifact(zcc, .{ .dest_dir = .{ .override = .{ .custom = "tools" } } });
-        b.getInstallStep().dependOn(&install.step);
+        b.default_step.dependOn(&install.step);
     }
 
     // build examples
@@ -210,13 +210,15 @@ pub fn build(b: *Build) !void {
         "user-data",
     };
 
-    b.getInstallStep().name = "sokol library";
-
     inline for (examples) |example| {
         const ldc = try ldcBuildStep(b, .{
             .name = example,
             .artifact = sokol,
             .sources = &.{b.fmt("{s}/src/examples/{s}.d", .{ rootPath(), example })},
+            .d_packages = &.{
+                b.dependency("automem", .{}).path("source").getPath(b),
+                b.dependency("ikod_containers", .{}).path("source").getPath(b),
+            },
             .betterC = enable_betterC,
             .dflags = &.{
                 "-w", // warnings as error
@@ -233,7 +235,7 @@ pub fn build(b: *Build) !void {
     buildShaders(b);
 
     // build tests
-    // fixme: not building on Windows libsokol w/ king test
+    // fixme: not building on Windows libsokol w/ kind test (missing cc [??])
     if (target.result.os.tag != .windows) {
         _ = try ldcBuildStep(b, .{
             .name = "test-math",
@@ -356,7 +358,7 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
     // D-packages include path
     if (options.d_packages) |d_packages| {
         for (d_packages) |pkg| {
-            try cmds.append(b.fmt("-I{s}", .{packagePath(b, pkg)}));
+            try cmds.append(b.fmt("-I{s}", .{pkg}));
         }
     }
 
@@ -502,7 +504,7 @@ pub const DCompileStep = struct {
     dflags: []const []const u8,
     name: []const u8,
     zig_cc: bool = false,
-    d_packages: ?[]*Build.Dependency = null,
+    d_packages: ?[]const []const u8 = null,
     artifact: ?*Build.Step.Compile = null,
 };
 
