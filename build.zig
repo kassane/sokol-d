@@ -174,7 +174,7 @@ pub fn build(b: *Build) !void {
     // ldc2 w/ druntime + phobos2 works on MSVC
     if (target.result.os.tag == .windows and target.query.isNative()) {
         target.result.abi = .msvc; // for ldc2
-        target.query.abi = target.result.abi; // for libsokol
+        target.query.abi = .msvc; // for libsokol
     }
 
     const optimize = b.standardOptimizeOption(.{});
@@ -237,7 +237,6 @@ pub fn build(b: *Build) !void {
         .name = "test-math",
         .kind = .@"test",
         .target = b.host,
-        .artifact = sokol,
         .sources = &.{b.fmt("{s}/src/handmade/math.d", .{rootPath()})},
         .dflags = &.{},
     });
@@ -248,7 +247,6 @@ pub fn build(b: *Build) !void {
 pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
     // ldmd2: ldc2 wrapped w/ dmd flags
     const ldc = try b.findProgram(&.{"ldmd2"}, &.{});
-    const lib_sokol = options.artifact;
 
     var cmds = std.ArrayList([]const u8).init(b.allocator);
     defer cmds.deinit();
@@ -267,7 +265,7 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
             try cmds.append("-unittest");
             try cmds.append("-main");
         },
-        .lib => try cmds.append("-lib"),
+        .lib => {},
         .obj => try cmds.append("-c"),
         .exe => {},
     }
@@ -280,6 +278,7 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
                 try cmds.append("--dllimport=all");
             }
         } else {
+            try cmds.append("-lib");
             if (options.target.result.os.tag == .windows)
                 try cmds.append("--dllimport=defaultLibsOnly");
             try cmds.append("-fvisibility=hidden");
@@ -292,17 +291,14 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
 
     // betterC disable druntime and phobos
     if (options.betterC)
-        try cmds.append("--betterC")
-    else if (lib_sokol.linkage == .dynamic or options.linkage == .dynamic)
-        // linking the druntime/Phobos as dynamic libraries
-        try cmds.append("-link-defaultlib-shared");
+        try cmds.append("--betterC");
 
     switch (options.optimize) {
         .Debug => {
             try cmds.append("-d-debug");
             try cmds.append("--gc"); // debuginfo for non D dbg
             try cmds.append("-g"); // debuginfo
-            try cmds.append("--O0");
+            try cmds.append("--O");
             try cmds.append("-vgc");
             try cmds.append("-vtls");
             try cmds.append("-verrors=context");
@@ -367,33 +363,6 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
         try cmds.append(src);
     }
 
-    // library paths
-    for (lib_sokol.root_module.lib_paths.items) |libpath| {
-        if (libpath.path.len > 0) // skip empty paths
-            try cmds.append(b.fmt("-L-L{s}", .{libpath.path}));
-    }
-
-    // link system libs
-    for (lib_sokol.root_module.link_objects.items) |link_object| {
-        if (link_object != .system_lib) continue;
-        const system_lib = link_object.system_lib;
-        try cmds.append(b.fmt("-L-l{s}", .{system_lib.name}));
-    }
-    // C flags
-    for (lib_sokol.root_module.link_objects.items) |link_object| {
-        if (link_object != .c_source_file) continue;
-        const c_source_file = link_object.c_source_file;
-        for (c_source_file.flags) |flag|
-            if (flag.len > 0) // skip empty flags
-                try cmds.append(b.fmt("--Xcc={s}", .{flag}));
-        break;
-    }
-    for (lib_sokol.root_module.c_macros.items) |cdefine| {
-        if (cdefine.len > 0) // skip empty cdefines
-            try cmds.append(b.fmt("--Xcc=-D{s}", .{cdefine}));
-        break;
-    }
-
     // linker flags
     // GNU LD
     if (options.target.result.os.tag == .linux and !options.zig_cc) {
@@ -403,18 +372,6 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
     if (options.target.result.isDarwin() and !options.zig_cc) {
         // https://github.com/ldc-developers/ldc/issues/4501
         try cmds.append("-L-w"); // hide linker warnings
-
-        if (lib_sokol.dead_strip_dylibs) {
-            try cmds.append("-L=-dead_strip");
-        }
-    }
-    // Darwin frameworks
-    if (options.target.result.isDarwin()) {
-        var it = lib_sokol.root_module.frameworks.iterator();
-        while (it.next()) |framework| {
-            try cmds.append(b.fmt("-L-framework", .{}));
-            try cmds.append(b.fmt("-L{s}", .{framework.key_ptr.*}));
-        }
     }
 
     if (b.verbose) {
@@ -422,25 +379,73 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
         try cmds.append("-Xcc=-v");
     }
 
-    if (lib_sokol.root_module.sanitize_thread) |tsan|
-        if (tsan)
-            try cmds.append("--fsanitize=thread");
+    if (options.artifact) |sokol| {
+        const lib_sokol = sokol;
 
-    // zig enable sanitize=undefined by default
-    if (lib_sokol.root_module.sanitize_c) |ubsan|
-        if (ubsan)
-            try cmds.append("--fsanitize=address");
+        if (lib_sokol.linkage == .dynamic or options.linkage == .dynamic) {
+            // linking the druntime/Phobos as dynamic libraries
+            try cmds.append("-link-defaultlib-shared");
+        }
 
-    if (lib_sokol.root_module.omit_frame_pointer) |enabled| {
-        if (enabled)
-            try cmds.append("--frame-pointer=none")
-        else
-            try cmds.append("--frame-pointer=all");
+        // library paths
+        for (lib_sokol.root_module.lib_paths.items) |libpath| {
+            if (libpath.path.len > 0) // skip empty paths
+                try cmds.append(b.fmt("-L-L{s}", .{libpath.path}));
+        }
+
+        // link system libs
+        for (lib_sokol.root_module.link_objects.items) |link_object| {
+            if (link_object != .system_lib) continue;
+            const system_lib = link_object.system_lib;
+            try cmds.append(b.fmt("-L-l{s}", .{system_lib.name}));
+        }
+        // C flags
+        for (lib_sokol.root_module.link_objects.items) |link_object| {
+            if (link_object != .c_source_file) continue;
+            const c_source_file = link_object.c_source_file;
+            for (c_source_file.flags) |flag|
+                if (flag.len > 0) // skip empty flags
+                    try cmds.append(b.fmt("--Xcc={s}", .{flag}));
+            break;
+        }
+        for (lib_sokol.root_module.c_macros.items) |cdefine| {
+            if (cdefine.len > 0) // skip empty cdefines
+                try cmds.append(b.fmt("--Xcc=-D{s}", .{cdefine}));
+            break;
+        }
+
+        if (lib_sokol.dead_strip_dylibs) {
+            try cmds.append("-L=-dead_strip");
+        }
+        // Darwin frameworks
+        if (options.target.result.isDarwin()) {
+            var it = lib_sokol.root_module.frameworks.iterator();
+            while (it.next()) |framework| {
+                try cmds.append(b.fmt("-L-framework", .{}));
+                try cmds.append(b.fmt("-L{s}", .{framework.key_ptr.*}));
+            }
+        }
+
+        if (lib_sokol.root_module.sanitize_thread) |tsan|
+            if (tsan)
+                try cmds.append("--fsanitize=thread");
+
+        // zig enable sanitize=undefined by default
+        if (lib_sokol.root_module.sanitize_c) |ubsan|
+            if (ubsan)
+                try cmds.append("--fsanitize=address");
+
+        if (lib_sokol.root_module.omit_frame_pointer) |enabled| {
+            if (enabled)
+                try cmds.append("--frame-pointer=none")
+            else
+                try cmds.append("--frame-pointer=all");
+        }
+
+        // link-time optimization
+        if (lib_sokol.want_lto) |enabled|
+            if (enabled) try cmds.append("--flto=full");
     }
-
-    // link-time optimization
-    if (lib_sokol.want_lto) |enabled|
-        if (enabled) try cmds.append("--flto=full");
 
     // ldc2 doesn't support zig native (a.k.a: native-native or native)
     if (options.target.result.isDarwin())
@@ -454,15 +459,24 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
     if (options.target.query.isNative())
         try cmds.append(b.fmt("--mcpu={s}", .{builtin.cpu.model.name}));
 
+    const outputDir = switch (options.kind) {
+        .lib => "lib",
+        .exe => "bin",
+        .@"test" => "test",
+        .obj => "obj",
+    };
     // output file
-    try cmds.append(b.fmt("--of={s}", .{b.pathJoin(&.{ b.install_prefix, "bin", options.name })}));
+    try cmds.append(b.fmt("--of={s}", .{b.pathJoin(&.{ b.install_prefix, outputDir, options.name })}));
 
     // run the command
     var ldc_exec = b.addSystemCommand(cmds.items);
-    ldc_exec.addArtifactArg(lib_sokol);
     ldc_exec.setName(options.name);
 
-    const example_run = b.addSystemCommand(&.{b.pathJoin(&.{ b.install_path, "bin", options.name })});
+    if (options.artifact) |sokol| {
+        ldc_exec.addArtifactArg(sokol);
+    }
+
+    const example_run = b.addSystemCommand(&.{b.pathJoin(&.{ b.install_path, outputDir, options.name })});
     example_run.step.dependOn(&ldc_exec.step);
 
     if (options.kind != .@"test") {
@@ -487,7 +501,7 @@ pub const DCompileStep = struct {
     name: []const u8,
     zig_cc: bool = false,
     d_packages: ?[]*Build.Dependency = null,
-    artifact: *Build.Step.Compile,
+    artifact: ?*Build.Step.Compile = null,
 };
 
 fn packagePath(b: *Build, package: *Build.Dependency) []const u8 {
