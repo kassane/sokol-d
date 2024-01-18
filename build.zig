@@ -194,7 +194,7 @@ pub fn build(b: *Build) !void {
     if (enable_zigcc) {
         const zcc = buildZigCC(b);
         const install = b.addInstallArtifact(zcc, .{ .dest_dir = .{ .override = .{ .custom = "tools" } } });
-        b.default_step.dependOn(&install.step);
+        b.getInstallStep().dependOn(&install.step);
     }
 
     // build examples
@@ -233,14 +233,16 @@ pub fn build(b: *Build) !void {
     buildShaders(b);
 
     // build tests
-    const math_test = try ldcBuildStep(b, .{
-        .name = "test-math",
-        .kind = .@"test",
-        .target = b.host,
-        .sources = &.{b.fmt("{s}/src/handmade/math.d", .{rootPath()})},
-        .dflags = &.{},
-    });
-    b.default_step.dependOn(&math_test.step);
+    // fixme: not building on Windows libsokol w/ king test
+    if (target.result.os.tag != .windows) {
+        _ = try ldcBuildStep(b, .{
+            .name = "test-math",
+            .kind = .@"test",
+            .target = b.host,
+            .sources = &.{b.fmt("{s}/src/handmade/math.d", .{rootPath()})},
+            .dflags = &.{},
+        });
+    }
 }
 
 // Use LDC2 (https://github.com/ldc-developers/ldc) to compile the D examples

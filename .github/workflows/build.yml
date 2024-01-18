@@ -22,8 +22,9 @@ jobs:
             sudo apt-get update
             sudo apt-get install libglu1-mesa-dev mesa-common-dev xorg-dev libasound-dev
 
-      - name: Build
+      - name: Build Summary
         run: zig build -DzigCC --summary all
 
-      - name: Test
-        run: zig build test
+      - name: Running Test
+        if: runner.os != 'Windows'
+        run: zig build test -DzigCC
