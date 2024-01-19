@@ -214,13 +214,13 @@ pub fn build(b: *Build) !void {
         const ldc = try ldcBuildStep(b, .{
             .name = example,
             .artifact = sokol,
-            .sources = &.{b.fmt("{s}/src/examples/{s}.d", .{ rootPath(), example })},
-            .d_packages = &.{
+            .sources = &[_][]const u8{b.fmt("{s}/src/examples/{s}.d", .{ rootPath(), example })},
+            .d_packages = &[_][]const u8{
                 b.dependency("automem", .{}).path("source").getPath(b),
                 b.dependency("ikod_containers", .{}).path("source").getPath(b),
             },
             .betterC = enable_betterC,
-            .dflags = &.{
+            .dflags = &[_][]const u8{
                 "-w", // warnings as error
                 // more info: ldc2 -preview=help (list all specs)
                 "-preview=all",
@@ -236,15 +236,13 @@ pub fn build(b: *Build) !void {
 
     // build tests
     // fixme: not building on Windows libsokol w/ kind test (missing cc [??])
-    if (target.result.os.tag != .windows) {
-        _ = try ldcBuildStep(b, .{
-            .name = "test-math",
-            .kind = .@"test",
-            .target = b.host,
-            .sources = &.{b.fmt("{s}/src/handmade/math.d", .{rootPath()})},
-            .dflags = &.{},
-        });
-    }
+    _ = try ldcBuildStep(b, .{
+        .name = "test-math",
+        .kind = .@"test",
+        .target = b.host,
+        .sources = &.{b.fmt("{s}/src/handmade/math.d", .{rootPath()})},
+        .dflags = &.{},
+    });
 }
 
 // Use LDC2 (https://github.com/ldc-developers/ldc) to compile the D examples
@@ -269,9 +267,8 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
             try cmds.append("-unittest");
             try cmds.append("-main");
         },
-        .lib => {},
         .obj => try cmds.append("-c"),
-        .exe => {},
+        else => {},
     }
 
     if (options.kind == .lib) {
@@ -291,6 +288,15 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
 
     for (options.dflags) |dflag| {
         try cmds.append(dflag);
+    }
+
+    if (options.ldflags) |ldflags| {
+        for (ldflags) |ldflag| {
+            if (ldflag[0] == '-') {
+                @panic("ldflags: add library name only!");
+            }
+            try cmds.append(b.fmt("-L-l{s}", .{ldflag}));
+        }
     }
 
     // betterC disable druntime and phobos
@@ -332,8 +338,10 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
 
     // object file output (zig-cache/o/{hash_id}/*.o)
     if (b.cache_root.path) |path| {
-        try cmds.append(b.fmt("-od={s}", .{b.pathJoin(&.{ path, "o", b.cache.hash.peek()[0..] })}));
-        try cmds.append(b.fmt("-cache={s}", .{b.pathJoin(&.{ path, "o", b.cache.hash.peek()[0..] })}));
+        // immutable state hash
+        try cmds.append(b.fmt("-od={s}", .{b.pathJoin(&.{ path, "o", &b.cache.hash.peek() })}));
+        // mutable state hash
+        try cmds.append(b.fmt("-cache={s}", .{b.pathJoin(&.{ path, "o", &b.cache.hash.final() })}));
     }
     // name object files uniquely (so the files don't collide)
     try cmds.append("--oq");
@@ -348,7 +356,6 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
     // keep all function bodies in .di files
     try cmds.append("--Hkeep-all-bodies");
 
-    // Include imported modules in the compilation
     // automatically finds needed library files and builds
     try cmds.append("-i");
 
@@ -362,7 +369,7 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
         }
     }
 
-    // example D file
+    // D Source files
     for (options.sources) |src| {
         try cmds.append(src);
     }
@@ -383,9 +390,7 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
         try cmds.append("-Xcc=-v");
     }
 
-    if (options.artifact) |sokol| {
-        const lib_sokol = sokol;
-
+    if (options.artifact) |lib_sokol| {
         if (lib_sokol.linkage == .dynamic or options.linkage == .dynamic) {
             // linking the druntime/Phobos as dynamic libraries
             try cmds.append("-link-defaultlib-shared");
@@ -412,6 +417,7 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
                     try cmds.append(b.fmt("--Xcc={s}", .{flag}));
             break;
         }
+        // C defines
         for (lib_sokol.root_module.c_macros.items) |cdefine| {
             if (cdefine.len > 0) // skip empty cdefines
                 try cmds.append(b.fmt("--Xcc=-D{s}", .{cdefine}));
@@ -430,14 +436,16 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
             }
         }
 
-        if (lib_sokol.root_module.sanitize_thread) |tsan|
+        if (lib_sokol.root_module.sanitize_thread) |tsan| {
             if (tsan)
                 try cmds.append("--fsanitize=thread");
+        }
 
         // zig enable sanitize=undefined by default
-        if (lib_sokol.root_module.sanitize_c) |ubsan|
+        if (lib_sokol.root_module.sanitize_c) |ubsan| {
             if (ubsan)
                 try cmds.append("--fsanitize=address");
+        }
 
         if (lib_sokol.root_module.omit_frame_pointer) |enabled| {
             if (enabled)
@@ -502,20 +510,17 @@ pub const DCompileStep = struct {
     betterC: bool = false,
     sources: []const []const u8,
     dflags: []const []const u8,
+    ldflags: ?[]const []const u8 = null,
     name: []const u8,
     zig_cc: bool = false,
     d_packages: ?[]const []const u8 = null,
     artifact: ?*Build.Step.Compile = null,
 };
 
-fn packagePath(b: *Build, package: *Build.Dependency) []const u8 {
-    return package.path("").getPath(b);
-}
-
 // -------------------------- Others Configuration --------------------------
 
 // zig-cc wrapper for ldc2
-fn buildZigCC(b: *Build) *CompileStep {
+pub fn buildZigCC(b: *Build) *CompileStep {
     const exe = b.addExecutable(.{
         .name = "zcc",
         .target = b.host,
