@@ -62,6 +62,11 @@ pub fn buildLibSokol(b: *Build, options: LibSokolOptions) !*CompileStep {
     lib.linkLibC();
     lib.root_module.root_source_file = .{ .path = "src/handmade/math.zig" };
 
+    switch (options.optimize) {
+        .Debug, .ReleaseSafe => lib.bundle_compiler_rt = true,
+        else => lib.root_module.strip = true,
+    }
+
     if (options.target.result.isWasm()) {
         // make sure we're building for the wasm32-emscripten target, not wasm32-freestanding
         if (lib.rootModuleTarget().os.tag != .emscripten) {
