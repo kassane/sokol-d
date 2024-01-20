@@ -9,13 +9,9 @@
         "Readme.md",
     },
     .dependencies = .{
-        .ikod_containers = .{
-            .url = "git+https://github.com/ikod/ikod-containers#6aabba3fdf3ebc4d2d6d55ac86727fa0c45f3ed5",
-            .hash = "1220aa60f94961a1755e42eb018493842dcd08c25ac1e619cbfcc7f981db3147983f",
-        },
-        .automem = .{
-            .url = "git+https://github.com/atilaneves/automem#7d7757913a4c89ce558ec2d7a062695beae388e7",
-            .hash = "1220a980693e9d341ca41176a9f82227468a42b35d49d09acdd8f7d56299d33cb6b5",
+        .emsdk = .{
+            .url = "git+https://github.com/emscripten-core/emsdk#0bbae74935d57ff41739648c12cf90b56668398f",
+            .hash = "1220f1340cd871b444021c600661f921f96091ce0815fa43008528f4844cece7e245",
         },
     },
 }

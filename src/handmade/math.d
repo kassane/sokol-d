@@ -9,8 +9,18 @@
 module handmade.math;
 
 extern(C):
-import std.math : PI;
-import core.stdc.math : sqrt, sin, cos, tan;
+
+enum real PI = 0x1.921fb54442d18469898cc51701b84p+1L;
+double zig_sqrt(double value) @nogc nothrow @trusted;
+double zig_sqrtf(double value) @nogc nothrow @trusted;
+double zig_cos(double value) @nogc nothrow @trusted;
+double zig_sin(double value) @nogc nothrow @trusted;
+double zig_tan(double value) @nogc nothrow @trusted;
+alias sqrt = zig_sqrt;
+alias sqrtf = zig_sqrtf;
+alias cos = zig_cos;
+alias sin = zig_sin;
+alias tan = zig_tan;
 
 @safe:
 

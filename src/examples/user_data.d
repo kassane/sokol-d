@@ -5,13 +5,11 @@ import sapp = sokol.app;
 import log = sokol.log;
 import sgapp = sokol.glue;
 
-import ikod.containers.hashmap;
-
 extern (C):
 
 struct ExampleUserData {
     ubyte data;    
-    HashMap!(ubyte, int) map;
+    int[ubyte] map; // need druntime
 }
 
 void init() @safe

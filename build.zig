@@ -60,6 +60,23 @@ pub fn buildLibSokol(b: *Build, options: LibSokolOptions) !*CompileStep {
     });
     lib.root_module.sanitize_c = false;
     lib.linkLibC();
+    lib.root_module.root_source_file = .{ .path = "src/handmade/math.zig" };
+
+    if (options.target.result.isWasm()) {
+        // make sure we're building for the wasm32-emscripten target, not wasm32-freestanding
+        if (lib.rootModuleTarget().os.tag != .emscripten) {
+            std.log.err("Please build with 'zig build -Dtarget=wasm32-emscripten", .{});
+            return error.Wasm32EmscriptenExpected;
+        }
+        // one-time setup of Emscripten SDK
+        if (try emSdkSetupStep(b, options.emsdk.?)) |emsdk_setup| {
+            lib.step.dependOn(&emsdk_setup.step);
+        }
+        // add the Emscripten system include seach path
+        const emsdk_sysroot = b.pathJoin(&.{ emSdkPath(b, options.emsdk.?), "upstream", "emscripten", "cache", "sysroot" });
+        const include_path = b.pathJoin(&.{ emsdk_sysroot, "include" });
+        lib.addSystemIncludePath(.{ .path = include_path });
+    }
 
     // resolve .auto backend into specific backend by platform
     const backend = resolveSokolBackend(options.backend, lib.rootModuleTarget());
@@ -170,21 +187,22 @@ pub fn build(b: *Build) !void {
     const sokol_backend: SokolBackend = if (opt_use_gl) .gl else if (opt_use_wgpu) .wgpu else .auto;
 
     var target = b.standardTargetOptions(.{});
+    const optimize = b.standardOptimizeOption(.{});
 
     // ldc2 w/ druntime + phobos2 works on MSVC
     if (target.result.os.tag == .windows and target.query.isNative()) {
         target.result.abi = .msvc; // for ldc2
         target.query.abi = .msvc; // for libsokol
     }
-
-    const optimize = b.standardOptimizeOption(.{});
-    const sokol = try buildLibSokol(b, .{
+    const emsdk = b.dependency("emsdk", .{});
+    const lib_sokol = try buildLibSokol(b, .{
         .target = target,
         .optimize = optimize,
         .backend = sokol_backend,
         .use_wayland = opt_use_wayland,
         .use_x11 = opt_use_x11,
         .use_egl = opt_use_egl,
+        .emsdk = emsdk,
     });
 
     // LDC-options options
@@ -205,30 +223,29 @@ pub fn build(b: *Build) !void {
         "blend",
         "mrt",
         "saudio",
-        "sgl-context",
-        "debugtext-print",
-        "user-data",
+        "sgl_context",
+        "debugtext_print",
+        // "user_data", // Need GC for user data [associative array]
     };
 
     inline for (examples) |example| {
         const ldc = try ldcBuildStep(b, .{
             .name = example,
-            .artifact = sokol,
+            .artifact = lib_sokol,
             .sources = &[_][]const u8{b.fmt("{s}/src/examples/{s}.d", .{ rootPath(), example })},
-            .d_packages = &[_][]const u8{
-                b.dependency("automem", .{}).path("source").getPath(b),
-                b.dependency("ikod_containers", .{}).path("source").getPath(b),
-            },
-            .betterC = enable_betterC,
+            .betterC = if (std.mem.eql(u8, example, "user-data")) false else enable_betterC,
             .dflags = &[_][]const u8{
                 "-w", // warnings as error
                 // more info: ldc2 -preview=help (list all specs)
                 "-preview=all",
+                "-lowmem",
             },
             // fixme: https://github.com/kassane/sokol-d/issues/1 - betterC works on darwin
             .zig_cc = if (target.result.isDarwin() and !enable_betterC) false else enable_zigcc,
             .target = target,
-            .optimize = optimize,
+            .optimize = if (target.result.isWasm()) .ReleaseSmall else optimize,
+            .kind = if (target.result.isWasm()) .obj else .exe,
+            .emsdk = emsdk,
         });
         b.getInstallStep().dependOn(&ldc.step);
     }
@@ -301,60 +318,64 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
 
     // betterC disable druntime and phobos
     if (options.betterC)
-        try cmds.append("--betterC");
+        try cmds.append("-betterC");
 
     switch (options.optimize) {
         .Debug => {
+            try cmds.append("-debug");
             try cmds.append("-d-debug");
-            try cmds.append("--gc"); // debuginfo for non D dbg
-            try cmds.append("-g"); // debuginfo
-            try cmds.append("--O");
+            try cmds.append("-gc"); // debuginfo for non D dbg
+            try cmds.append("-g"); // debuginfo for D dbg
+            try cmds.append("-gf");
+            try cmds.append("-gs");
             try cmds.append("-vgc");
             try cmds.append("-vtls");
             try cmds.append("-verrors=context");
+            try cmds.append("-boundscheck=on");
         },
         .ReleaseSafe => {
-            try cmds.append("--O3");
-            try cmds.append("--release");
-            try cmds.append("--enable-inlining");
-            try cmds.append("--boundscheck=on");
+            try cmds.append("-O3");
+            try cmds.append("-release");
+            try cmds.append("-enable-inlining");
+            try cmds.append("-boundscheck=safeonly");
         },
         .ReleaseFast => {
-            try cmds.append("--O3");
-            try cmds.append("--release");
-            try cmds.append("--enable-inlining");
-            try cmds.append("--boundscheck=off");
+            try cmds.append("-O3");
+            try cmds.append("-release");
+            try cmds.append("-enable-inlining");
+            try cmds.append("-boundscheck=off");
         },
         .ReleaseSmall => {
-            try cmds.append("--Oz");
-            try cmds.append("--release");
-            try cmds.append("--enable-inlining");
-            try cmds.append("--boundscheck=off");
+            try cmds.append("-Oz");
+            try cmds.append("-release");
+            try cmds.append("-enable-inlining");
+            try cmds.append("-boundscheck=off");
         },
     }
 
     // Print character (column) numbers in diagnostics
-    try cmds.append("--vcolumns");
+    try cmds.append("-vcolumns");
 
     // object file output (zig-cache/o/{hash_id}/*.o)
     if (b.cache_root.path) |path| {
         // immutable state hash
-        try cmds.append(b.fmt("-od={s}", .{b.pathJoin(&.{ path, "o", &b.cache.hash.peek() })}));
+        if (options.kind != .obj)
+            try cmds.append(b.fmt("-od={s}", .{b.pathJoin(&.{ path, "o", &b.cache.hash.peek() })}));
         // mutable state hash
         try cmds.append(b.fmt("-cache={s}", .{b.pathJoin(&.{ path, "o", &b.cache.hash.final() })}));
     }
     // name object files uniquely (so the files don't collide)
-    try cmds.append("--oq");
+    try cmds.append("-oq");
 
     // remove object files after success build, and put them in a unique temp directory
-    try cmds.append("--cleanup-obj");
+    // try cmds.append("-cleanup-obj");
 
     // disable LLVM-IR verifier
     // https://llvm.org/docs/Passes.html#verify-module-verifier
-    try cmds.append("--disable-verify");
+    try cmds.append("-disable-verify");
 
     // keep all function bodies in .di files
-    try cmds.append("--Hkeep-all-bodies");
+    try cmds.append("-Hkeep-all-bodies");
 
     // automatically finds needed library files and builds
     try cmds.append("-i");
@@ -396,6 +417,12 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
             try cmds.append("-link-defaultlib-shared");
         }
 
+        // C include path
+        for (lib_sokol.root_module.include_dirs.items) |include_dir| {
+            const path = include_dir.path_system.getPath(b);
+            try cmds.append(b.fmt("-P-I{s}", .{path}));
+        }
+
         // library paths
         for (lib_sokol.root_module.lib_paths.items) |libpath| {
             if (libpath.path.len > 0) // skip empty paths
@@ -414,13 +441,13 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
             const c_source_file = link_object.c_source_file;
             for (c_source_file.flags) |flag|
                 if (flag.len > 0) // skip empty flags
-                    try cmds.append(b.fmt("--Xcc={s}", .{flag}));
+                    try cmds.append(b.fmt("-Xcc={s}", .{flag}));
             break;
         }
         // C defines
         for (lib_sokol.root_module.c_macros.items) |cdefine| {
             if (cdefine.len > 0) // skip empty cdefines
-                try cmds.append(b.fmt("--Xcc=-D{s}", .{cdefine}));
+                try cmds.append(b.fmt("-Xcc=-D{s}", .{cdefine}));
             break;
         }
 
@@ -462,10 +489,10 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
     // ldc2 doesn't support zig native (a.k.a: native-native or native)
     if (options.target.result.isDarwin())
         try cmds.append(b.fmt("--mtriple={s}-apple-{s}", .{ if (options.target.result.cpu.arch.isAARCH64()) "arm64" else @tagName(options.target.result.cpu.arch), @tagName(options.target.result.os.tag) }))
-    else if (options.target.result.isWasm())
-        try cmds.append(b.fmt("--mtriple={s}-unknown-unknown-{s}", .{ @tagName(options.target.result.cpu.arch), @tagName(options.target.result.os.tag) }))
-    else
-        try cmds.append(b.fmt("--mtriple={s}-{s}-{s}", .{ @tagName(options.target.result.cpu.arch), @tagName(options.target.result.os.tag), @tagName(options.target.result.abi) }));
+    else if (options.target.result.isWasm()) {
+        try cmds.append("-L-allow-undefined");
+        try cmds.append(b.fmt("--mtriple={s}-unknown-unknown-wasm", .{@tagName(options.target.result.cpu.arch)}));
+    } else try cmds.append(b.fmt("--mtriple={s}-{s}-{s}", .{ @tagName(options.target.result.cpu.arch), @tagName(options.target.result.os.tag), @tagName(options.target.result.abi) }));
 
     // cpu model (e.g. "baseline")
     if (options.target.query.isNative())
@@ -477,15 +504,19 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
         .@"test" => "test",
         .obj => "obj",
     };
+
     // output file
-    try cmds.append(b.fmt("--of={s}", .{b.pathJoin(&.{ b.install_prefix, outputDir, options.name })}));
+    if (options.kind != .obj)
+        try cmds.append(b.fmt("-of={s}", .{b.pathJoin(&.{ b.install_prefix, outputDir, options.name })}))
+    else
+        try cmds.append(b.fmt("-od={s}", .{b.pathJoin(&.{ b.install_prefix, outputDir })}));
 
     // run the command
     var ldc_exec = b.addSystemCommand(cmds.items);
     ldc_exec.setName(options.name);
 
-    if (options.artifact) |sokol| {
-        ldc_exec.addArtifactArg(sokol);
+    if (options.artifact) |lib_sokol| {
+        ldc_exec.addArtifactArg(lib_sokol);
     }
 
     const example_run = b.addSystemCommand(&.{b.pathJoin(&.{ b.install_path, outputDir, options.name })});
@@ -497,6 +528,17 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
     } else {
         const tests = b.step("test", "Run all tests");
         tests.dependOn(&example_run.step);
+    }
+
+    if (options.target.result.isWasm()) {
+        try wasmBuild(b, options.emsdk.?, .{
+            .name = options.name,
+            .lib_main = b.fmt("{s}/examples.{s}.o", .{ b.pathJoin(&.{ b.install_prefix, outputDir }), options.name }),
+            .lib_sokol = options.artifact.?,
+            .target = options.target,
+            .optimize = options.optimize,
+            .step = &ldc_exec.step,
+        });
     }
 
     return ldc_exec;
@@ -515,6 +557,7 @@ pub const DCompileStep = struct {
     zig_cc: bool = false,
     d_packages: ?[]const []const u8 = null,
     artifact: ?*Build.Step.Compile = null,
+    emsdk: ?*Build.Dependency = null,
 };
 
 // -------------------------- Others Configuration --------------------------
@@ -573,5 +616,163 @@ fn buildShaders(b: *Build) void {
             "sokol_d",
         });
         shdc_step.dependOn(&cmd.step);
+    }
+}
+
+// ------------------------ Wasm Configuration ------------------------
+
+fn wasmBuild(b: *Build, emsdk: *Build.Dependency, options: struct {
+    name: []const u8,
+    lib_main: []const u8,
+    lib_sokol: *Build.Step.Compile,
+    target: Build.ResolvedTarget,
+    optimize: std.builtin.OptimizeMode,
+    step: *Build.Step,
+}) !void {
+    const link_step = try emLinkStep(b, .{
+        .name = options.name,
+        .lib_main = options.lib_main,
+        .lib_sokol = options.lib_sokol,
+        .target = options.target,
+        .optimize = options.optimize,
+        .emsdk = emsdk,
+        .use_webgl2 = true,
+        .use_emmalloc = true,
+        .use_filesystem = false,
+        .shell_file_path = "src/sokol/web/shell.html",
+        // NOTE: This is required to make the Zig @returnAddress() builtin work,
+        // which is used heavily in the stdlib allocator code (not just
+        // the GeneralPurposeAllocator).
+        // The Emscripten runtime error message when the option is missing is:
+        // Cannot use convertFrameToPC (needed by __builtin_return_address) without -sUSE_OFFSET_CONVERTER
+        .extra_args = &.{"-sUSE_OFFSET_CONVERTER=1"},
+    });
+    link_step.step.dependOn(options.step);
+    const run = emRunStep(b, .{ .name = options.name, .emsdk = emsdk });
+    run.step.dependOn(&link_step.step);
+    b.step(b.fmt("run-web-{s}", .{options.name}), b.fmt("Run {s} example", .{options.name})).dependOn(&run.step);
+}
+
+// for wasm32-emscripten, need to run the Emscripten linker from the Emscripten SDK
+// NOTE: ideally this would go into a separate emsdk-zig package
+pub const EmLinkOptions = struct {
+    target: Build.ResolvedTarget,
+    optimize: std.builtin.OptimizeMode,
+    name: []const u8,
+    lib_main: []const u8,
+    lib_sokol: *Build.Step.Compile,
+    emsdk: *Build.Dependency,
+    release_use_closure: bool = true,
+    release_use_lto: bool = true,
+    use_webgpu: bool = false,
+    use_webgl2: bool = false,
+    use_emmalloc: bool = false,
+    use_filesystem: bool = true,
+    shell_file_path: ?[]const u8 = null,
+    extra_args: []const []const u8 = &.{},
+};
+
+pub fn emLinkStep(b: *Build, options: EmLinkOptions) !*Build.Step.Run {
+    const emcc_path = b.findProgram(&.{"emcc"}, &.{}) catch b.pathJoin(&.{ emSdkPath(b, options.emsdk), "upstream", "emscripten", "emcc" });
+
+    // create a separate output directory zig-out/web
+    try std.fs.cwd().makePath(b.fmt("{s}/web", .{b.install_path}));
+
+    var emcc_cmd = std.ArrayList([]const u8).init(b.allocator);
+    defer emcc_cmd.deinit();
+
+    try emcc_cmd.append(emcc_path);
+    if (options.optimize == .Debug) {
+        try emcc_cmd.append("-Og");
+    } else {
+        try emcc_cmd.append("-sASSERTIONS=0");
+        if (options.optimize == .ReleaseSmall) {
+            try emcc_cmd.append("-Oz");
+        } else {
+            try emcc_cmd.append("-O3");
+        }
+        if (options.release_use_lto) {
+            try emcc_cmd.append("-flto");
+        }
+        if (options.release_use_closure) {
+            try emcc_cmd.append("--closure");
+            try emcc_cmd.append("1");
+        }
+    }
+    if (options.use_webgpu) {
+        try emcc_cmd.append("-sUSE_WEBGPU=1");
+    }
+    if (options.use_webgl2) {
+        try emcc_cmd.append("-sUSE_WEBGL2=1");
+    }
+    if (!options.use_filesystem) {
+        try emcc_cmd.append("-sNO_FILESYSTEM=1");
+    }
+    if (options.use_emmalloc) {
+        try emcc_cmd.append("-sMALLOC='emmalloc'");
+    }
+    if (options.shell_file_path) |shell_file_path| {
+        try emcc_cmd.append(b.fmt("--shell-file={s}", .{shell_file_path}));
+    }
+    try emcc_cmd.append(b.fmt("-o{s}/web/{s}.html", .{ b.install_path, options.name }));
+    for (options.extra_args) |arg| {
+        try emcc_cmd.append(arg);
+    }
+
+    const emcc = b.addSystemCommand(emcc_cmd.items);
+    emcc.setName("emcc"); // hide emcc path
+
+    // add the main lib, and then scan for library dependencies and add those too
+    emcc.addArgs(&.{options.lib_main});
+    emcc.addArtifactArg(options.lib_sokol);
+
+    // get the emcc step to run on 'zig build'
+    b.getInstallStep().dependOn(&emcc.step);
+    return emcc;
+}
+
+// build a run step which uses the emsdk emrun command to run a build target in the browser
+// NOTE: ideally this would go into a separate emsdk-zig package
+pub const EmRunOptions = struct {
+    name: []const u8,
+    emsdk: *Build.Dependency,
+};
+pub fn emRunStep(b: *Build, options: EmRunOptions) *Build.Step.Run {
+    const emrun_path = b.findProgram(&.{"emrun"}, &.{}) catch b.pathJoin(&.{ emSdkPath(b, options.emsdk), "upstream", "emscripten", "emrun" });
+    const emrun = b.addSystemCommand(&.{ emrun_path, b.fmt("{s}/web/{s}.html", .{ b.install_path, options.name }) });
+    return emrun;
+}
+
+// helper function to extract emsdk path from the emsdk package dependency
+fn emSdkPath(b: *Build, emsdk: *Build.Dependency) []const u8 {
+    return emsdk.path("").getPath(b);
+}
+
+// One-time setup of the Emscripten SDK (runs 'emsdk install + activate'). If the
+// SDK had to be setup, a run step will be returned which should be added
+// as dependency to the sokol library (since this needs the emsdk in place),
+// if the emsdk was already setup, null will be returned.
+// NOTE: ideally this would go into a separate emsdk-zig package
+fn emSdkSetupStep(b: *Build, emsdk: *Build.Dependency) !?*Build.Step.Run {
+    const emsdk_path = emSdkPath(b, emsdk);
+    const dot_emsc_path = b.pathJoin(&.{ emsdk_path, ".emscripten" });
+    const dot_emsc_exists = !std.meta.isError(std.fs.accessAbsolute(dot_emsc_path, .{}));
+    if (!dot_emsc_exists) {
+        var cmd = std.ArrayList([]const u8).init(b.allocator);
+        defer cmd.deinit();
+        if (builtin.os.tag == .windows)
+            try cmd.append(b.pathJoin(&.{ emsdk_path, "emsdk.bat" }))
+        else {
+            try cmd.append("bash"); // or try chmod
+            try cmd.append(b.pathJoin(&.{ emsdk_path, "emsdk" }));
+        }
+        const emsdk_install = b.addSystemCommand(cmd.items);
+        emsdk_install.addArgs(&.{ "install", "latest" });
+        const emsdk_activate = b.addSystemCommand(cmd.items);
+        emsdk_activate.addArgs(&.{ "activate", "latest" });
+        emsdk_activate.step.dependOn(&emsdk_install.step);
+        return emsdk_activate;
+    } else {
+        return null;
     }
 }
