@@ -189,14 +189,10 @@ pub fn build(b: *Build) !void {
     const opt_use_egl = b.option(bool, "egl", "Force EGL (default: false, Linux only)") orelse false;
     const sokol_backend: SokolBackend = if (opt_use_gl) .gl else if (opt_use_wgpu) .wgpu else .auto;
 
-    var target = b.standardTargetOptions(.{});
+    // ldc2 w/ druntime + phobos2 works on MSVC
+    const target = b.standardTargetOptions(.{ .default_target = if (builtin.os.tag == .windows) try std.Target.Query.parse(.{ .arch_os_abi = "native-windows-msvc" }) else .{} });
     const optimize = b.standardOptimizeOption(.{});
 
-    // ldc2 w/ druntime + phobos2 works on MSVC
-    if (target.result.os.tag == .windows and target.query.isNative()) {
-        target.result.abi = .msvc; // for ldc2
-        target.query.abi = .msvc; // for libsokol
-    }
     const emsdk = b.dependency("emsdk", .{});
     const lib_sokol = try buildLibSokol(b, .{
         .target = target,
