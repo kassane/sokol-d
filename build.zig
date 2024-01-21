@@ -495,8 +495,6 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
         b.fmt("{s}-apple-{s}", .{ if (options.target.result.cpu.arch.isAARCH64()) "arm64" else @tagName(options.target.result.cpu.arch), @tagName(options.target.result.os.tag) })
     else if (options.target.result.isWasm())
         b.fmt("{s}-unknown-unknown-wasm", .{@tagName(options.target.result.cpu.arch)})
-    else if (options.target.result.isMinGW())
-        @panic("Mingw is not supported for ldc2 yet")
     else
         b.fmt("{s}-{s}-{s}", .{ @tagName(options.target.result.cpu.arch), @tagName(options.target.result.os.tag), @tagName(options.target.result.abi) });
 
