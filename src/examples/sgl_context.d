@@ -11,7 +11,7 @@ import sgapp = sokol.glue;
 import sapp = sokol.app;
 import slog = sokol.log;
 import sgl = sokol.gl;
-import std.math : sin, cos;
+import handmade.math : sin, cos;
 
 extern (C):
 @safe:

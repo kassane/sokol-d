@@ -5,13 +5,11 @@ import sapp = sokol.app;
 import log = sokol.log;
 import sgapp = sokol.glue;
 
-import ikod.containers.hashmap;
-
 extern (C):
 
 struct ExampleUserData {
     ubyte data;    
-    HashMap!(ubyte, int) map;
+    int[ubyte] map; // need druntime
 }
 
 void init() @safe
@@ -28,13 +26,20 @@ void frame_userdata(scope void* userdata) @trusted
     auto state = cast(ExampleUserData*) userdata;
     
     state.data++;
-    if (state.data % 13 == 0) {
-        state.map[state.data] = state.data * 13 / 3; 
+    
+    version(WebAssembly){
+        // TODO support
     }
-    if (state.data % 12 == 0 && state.data % 15 == 0) {
-        state.map.clear();
+    else
+    {
+        if (state.data % 13 == 0) {
+            state.map[state.data] = state.data * 13 / 3; 
+        }
+        if (state.data % 12 == 0 && state.data % 15 == 0) {
+            state.map.clear();
+        } 
     }
-    debug { 
+    debug {
         import std.stdio : writeln;
         try { 
             writeln(*state);
@@ -54,7 +59,7 @@ void cleanup() @safe
 
 void main()
 {
-    ExampleUserData userData;
+    auto userData = ExampleUserData(0, null);
 
     sapp.Desc runner = {
         window_title: "user-data.d",

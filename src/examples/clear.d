@@ -28,15 +28,11 @@ void init()
     pass_action.colors[0].clear_value.b = 0;
     pass_action.colors[0].clear_value.a = 1;
 
-    version (D_BetterC)
-    {
-        import core.stdc.stdio: printf;
-        printf("Backend: %d\n", sg.queryBackend());
-    }
-    else
-    {
-        import std.stdio;
-        writeln("Backend: ", sg.queryBackend());
+    debug { 
+        import std.stdio : writeln;
+        try { 
+            writeln("Backend: ", sg.queryBackend());
+        } catch (Exception) {}
     }
 }
 

@@ -22,9 +22,10 @@ jobs:
             sudo apt-get update
             sudo apt-get install libglu1-mesa-dev mesa-common-dev xorg-dev libasound-dev
 
-      - name: Build Summary
-        run: zig build -DzigCC --summary all
-
       - name: Running Test
         if: runner.os != 'Windows'
         run: zig build test -DzigCC
+      - name: Build Native
+        run: zig build -DzigCC --summary all
+      - name: Build Wasm
+        run: zig build -DzigCC --summary all -Dtarget=wasm32-emscripten
