@@ -224,7 +224,7 @@ pub fn build(b: *Build) !void {
         "saudio",
         "sgl_context",
         "debugtext_print",
-        // "user_data", // Need GC for user data [associative array]
+        "user_data", // Need GC for user data [associative array]
     };
 
     inline for (examples) |example| {
@@ -237,8 +237,10 @@ pub fn build(b: *Build) !void {
                 "-w", // warnings as error
                 // more info: ldc2 -preview=help (list all specs)
                 "-preview=all",
-                "-lowmem",
             },
+            .d_packages = if (target.result.isWasm()) &[_][]const u8{
+                b.dependency("wasmd", .{}).path("arsd-webassembly").getPath(b),
+            } else null,
             // fixme: https://github.com/kassane/sokol-d/issues/1 - betterC works on darwin
             .zig_cc = if (target.result.isDarwin() and !enable_betterC) false else enable_zigcc,
             .target = target,

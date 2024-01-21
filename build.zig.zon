@@ -13,5 +13,9 @@
             .url = "git+https://github.com/emscripten-core/emsdk#0bbae74935d57ff41739648c12cf90b56668398f",
             .hash = "1220f1340cd871b444021c600661f921f96091ce0815fa43008528f4844cece7e245",
         },
+        .wasmd = .{
+            .url = "git+https://github.com/kassane/webassembly#800870e68be1518eeffbb2c0814e23b9543a89cb",
+            .hash = "12203c2350903f04a07f746b448abb22824a452e8d81500b2fa11a0c3a5ea896b3f6",
+        },
     },
 }

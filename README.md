@@ -10,7 +10,7 @@ Auto-generated [D](https://dlang.org) bindings for the [sokol headers](https://g
 **Required**
 
 - [zig](https://ziglang.org/download) v0.12.0 or master
-- [ldc](https://ldc-developers.github.io) v1.35.0 or latest-CI (nightly)
+- [ldc](https://ldc-developers.github.io) v1.36.0 or latest-CI (nightly)
 
 Supported platforms are: Windows, macOS, Linux (with X11)
 
@@ -27,11 +27,11 @@ zig build -Doptimize=ReleaseFast -Dshared
 zig build run-blend -Doptimize=ReleaseFast
 zig build run-clear -Doptimize=ReleaseFast
 zig build run-cube -Doptimize=ReleaseFast
-zig build run-debugtext-print -Doptimize=ReleaseFast
+zig build run-debugtext_print -Doptimize=ReleaseFast
 zig build run-mrt -Doptimize=ReleaseFast
 zig build run-saudio -Doptimize=ReleaseFast
-zig build run-sgl-context -Doptimize=ReleaseFast
-zig build run-user-data -Doptimize=ReleaseFast
+zig build run-sgl_context -Doptimize=ReleaseFast
+zig build run-user_data -Doptimize=ReleaseFast
 zig build run-triangle -Doptimize=ReleaseFast
 
 zig build --help
@@ -50,8 +50,8 @@ zig build --help
 #                                    ReleaseFast
 #                                    ReleaseSmall
 #   -Dshared=[bool]              Build sokol dynamic library (default: static)
-#   -DbetterC=[bool]             Omit generating some runtime information and helper functions. (default: false)
-#   -DzigCC=[bool]               Use zig cc as compiler and linker. (default: false)
+#   -DbetterC=[bool]             Omit generating some runtime information and helper functions (default: false)
+#   -DzigCC=[bool]               Use zig cc as compiler and linker (default: false)
 ```
 
 ## Shaders
