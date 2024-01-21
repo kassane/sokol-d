@@ -28,4 +28,4 @@ jobs:
       - name: Build Native
         run: zig build -DzigCC --summary all
       - name: Build Wasm
-        run: zig build -DbetterC -DzigCC --summary all -Dtarget=wasm32-emscripten
+        run: zig build -DzigCC --summary all -Dtarget=wasm32-emscripten
