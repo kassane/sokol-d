@@ -407,226 +407,226 @@ enum MouseCursor {
     Num,
 }
 extern(C) bool sapp_isvalid() @system @nogc nothrow;
-bool isvalid() @trusted nothrow @nogc {
+bool isvalid() @trusted @nogc nothrow {
     return sapp_isvalid();
 }
 extern(C) int sapp_width() @system @nogc nothrow;
-int width() @trusted nothrow @nogc {
+int width() @trusted @nogc nothrow {
     return sapp_width();
 }
 extern(C) float sapp_widthf() @system @nogc nothrow;
-float widthf() @trusted nothrow @nogc {
+float widthf() @trusted @nogc nothrow {
     return sapp_widthf();
 }
 extern(C) int sapp_height() @system @nogc nothrow;
-int height() @trusted nothrow @nogc {
+int height() @trusted @nogc nothrow {
     return sapp_height();
 }
 extern(C) float sapp_heightf() @system @nogc nothrow;
-float heightf() @trusted nothrow @nogc {
+float heightf() @trusted @nogc nothrow {
     return sapp_heightf();
 }
 extern(C) int sapp_color_format() @system @nogc nothrow;
-int colorFormat() @trusted nothrow @nogc {
+int colorFormat() @trusted @nogc nothrow {
     return sapp_color_format();
 }
 extern(C) int sapp_depth_format() @system @nogc nothrow;
-int depthFormat() @trusted nothrow @nogc {
+int depthFormat() @trusted @nogc nothrow {
     return sapp_depth_format();
 }
 extern(C) int sapp_sample_count() @system @nogc nothrow;
-int sampleCount() @trusted nothrow @nogc {
+int sampleCount() @trusted @nogc nothrow {
     return sapp_sample_count();
 }
 extern(C) bool sapp_high_dpi() @system @nogc nothrow;
-bool highDpi() @trusted nothrow @nogc {
+bool highDpi() @trusted @nogc nothrow {
     return sapp_high_dpi();
 }
 extern(C) float sapp_dpi_scale() @system @nogc nothrow;
-float dpiScale() @trusted nothrow @nogc {
+float dpiScale() @trusted @nogc nothrow {
     return sapp_dpi_scale();
 }
 extern(C) void sapp_show_keyboard(bool) @system @nogc nothrow;
-void showKeyboard(bool show) @trusted nothrow @nogc {
+void showKeyboard(bool show) @trusted @nogc nothrow {
     sapp_show_keyboard(show);
 }
 extern(C) bool sapp_keyboard_shown() @system @nogc nothrow;
-bool keyboardShown() @trusted nothrow @nogc {
+bool keyboardShown() @trusted @nogc nothrow {
     return sapp_keyboard_shown();
 }
 extern(C) bool sapp_is_fullscreen() @system @nogc nothrow;
-bool isFullscreen() @trusted nothrow @nogc {
+bool isFullscreen() @trusted @nogc nothrow {
     return sapp_is_fullscreen();
 }
 extern(C) void sapp_toggle_fullscreen() @system @nogc nothrow;
-void toggleFullscreen() @trusted nothrow @nogc {
+void toggleFullscreen() @trusted @nogc nothrow {
     sapp_toggle_fullscreen();
 }
 extern(C) void sapp_show_mouse(bool) @system @nogc nothrow;
-void showMouse(bool show) @trusted nothrow @nogc {
+void showMouse(bool show) @trusted @nogc nothrow {
     sapp_show_mouse(show);
 }
 extern(C) bool sapp_mouse_shown() @system @nogc nothrow;
-bool mouseShown() @trusted nothrow @nogc {
+bool mouseShown() @trusted @nogc nothrow {
     return sapp_mouse_shown();
 }
 extern(C) void sapp_lock_mouse(bool) @system @nogc nothrow;
-void lockMouse(bool lock) @trusted nothrow @nogc {
+void lockMouse(bool lock) @trusted @nogc nothrow {
     sapp_lock_mouse(lock);
 }
 extern(C) bool sapp_mouse_locked() @system @nogc nothrow;
-bool mouseLocked() @trusted nothrow @nogc {
+bool mouseLocked() @trusted @nogc nothrow {
     return sapp_mouse_locked();
 }
 extern(C) void sapp_set_mouse_cursor(MouseCursor) @system @nogc nothrow;
-void setMouseCursor(MouseCursor cursor) @trusted nothrow @nogc {
+void setMouseCursor(MouseCursor cursor) @trusted @nogc nothrow {
     sapp_set_mouse_cursor(cursor);
 }
 extern(C) MouseCursor sapp_get_mouse_cursor() @system @nogc nothrow;
-MouseCursor getMouseCursor() @trusted nothrow @nogc {
+MouseCursor getMouseCursor() @trusted @nogc nothrow {
     return sapp_get_mouse_cursor();
 }
 extern(C) void* sapp_userdata() @system @nogc nothrow;
-scope void* userdata() @trusted nothrow @nogc {
+scope void* userdata() @trusted @nogc nothrow {
     return sapp_userdata();
 }
 extern(C) Desc sapp_query_desc() @system @nogc nothrow;
-Desc queryDesc() @trusted nothrow @nogc {
+Desc queryDesc() @trusted @nogc nothrow {
     return sapp_query_desc();
 }
 extern(C) void sapp_request_quit() @system @nogc nothrow;
-void requestQuit() @trusted nothrow @nogc {
+void requestQuit() @trusted @nogc nothrow {
     sapp_request_quit();
 }
 extern(C) void sapp_cancel_quit() @system @nogc nothrow;
-void cancelQuit() @trusted nothrow @nogc {
+void cancelQuit() @trusted @nogc nothrow {
     sapp_cancel_quit();
 }
 extern(C) void sapp_quit() @system @nogc nothrow;
-void quit() @trusted nothrow @nogc {
+void quit() @trusted @nogc nothrow {
     sapp_quit();
 }
 extern(C) void sapp_consume_event() @system @nogc nothrow;
-void consumeEvent() @trusted nothrow @nogc {
+void consumeEvent() @trusted @nogc nothrow {
     sapp_consume_event();
 }
 extern(C) ulong sapp_frame_count() @system @nogc nothrow;
-ulong frameCount() @trusted nothrow @nogc {
+ulong frameCount() @trusted @nogc nothrow {
     return sapp_frame_count();
 }
 extern(C) double sapp_frame_duration() @system @nogc nothrow;
-double frameDuration() @trusted nothrow @nogc {
+double frameDuration() @trusted @nogc nothrow {
     return sapp_frame_duration();
 }
 extern(C) void sapp_set_clipboard_string(scope const(char)*) @system @nogc nothrow;
-void setClipboardString(scope const(char)* str) @trusted nothrow @nogc {
+void setClipboardString(scope const(char)* str) @trusted @nogc nothrow {
     sapp_set_clipboard_string(str);
 }
 extern(C) scope const(char)* sapp_get_clipboard_string() @system @nogc nothrow;
-scope const(char)* getClipboardString() @trusted nothrow @nogc {
+scope const(char)* getClipboardString() @trusted @nogc nothrow {
     return sapp_get_clipboard_string();
 }
 extern(C) void sapp_set_window_title(scope const(char)*) @system @nogc nothrow;
-void setWindowTitle(scope const(char)* str) @trusted nothrow @nogc {
+void setWindowTitle(scope const(char)* str) @trusted @nogc nothrow {
     sapp_set_window_title(str);
 }
 extern(C) void sapp_set_icon(const IconDesc *) @system @nogc nothrow;
-void setIcon(ref IconDesc icon_desc) @trusted nothrow @nogc {
+void setIcon(ref IconDesc icon_desc) @trusted @nogc nothrow {
     sapp_set_icon(&icon_desc);
 }
 extern(C) int sapp_get_num_dropped_files() @system @nogc nothrow;
-int getNumDroppedFiles() @trusted nothrow @nogc {
+int getNumDroppedFiles() @trusted @nogc nothrow {
     return sapp_get_num_dropped_files();
 }
 extern(C) scope const(char)* sapp_get_dropped_file_path(int) @system @nogc nothrow;
-scope const(char)* getDroppedFilePath(int index) @trusted nothrow @nogc {
+scope const(char)* getDroppedFilePath(int index) @trusted @nogc nothrow {
     return sapp_get_dropped_file_path(index);
 }
 extern(C) void sapp_run(const Desc *) @system @nogc nothrow;
-void run(ref Desc desc) @trusted nothrow @nogc {
+void run(ref Desc desc) @trusted @nogc nothrow {
     sapp_run(&desc);
 }
 extern(C) scope const(void)* sapp_egl_get_display() @system @nogc nothrow;
-scope const(void)* eglGetDisplay() @trusted nothrow @nogc {
+scope const(void)* eglGetDisplay() @trusted @nogc nothrow {
     return sapp_egl_get_display();
 }
 extern(C) scope const(void)* sapp_egl_get_context() @system @nogc nothrow;
-scope const(void)* eglGetContext() @trusted nothrow @nogc {
+scope const(void)* eglGetContext() @trusted @nogc nothrow {
     return sapp_egl_get_context();
 }
 extern(C) void sapp_html5_ask_leave_site(bool) @system @nogc nothrow;
-void html5AskLeaveSite(bool ask) @trusted nothrow @nogc {
+void html5AskLeaveSite(bool ask) @trusted @nogc nothrow {
     sapp_html5_ask_leave_site(ask);
 }
 extern(C) uint sapp_html5_get_dropped_file_size(int) @system @nogc nothrow;
-uint html5GetDroppedFileSize(int index) @trusted nothrow @nogc {
+uint html5GetDroppedFileSize(int index) @trusted @nogc nothrow {
     return sapp_html5_get_dropped_file_size(index);
 }
 extern(C) void sapp_html5_fetch_dropped_file(const Html5FetchRequest *) @system @nogc nothrow;
-void html5FetchDroppedFile(ref Html5FetchRequest request) @trusted nothrow @nogc {
+void html5FetchDroppedFile(ref Html5FetchRequest request) @trusted @nogc nothrow {
     sapp_html5_fetch_dropped_file(&request);
 }
 extern(C) scope const(void)* sapp_metal_get_device() @system @nogc nothrow;
-scope const(void)* metalGetDevice() @trusted nothrow @nogc {
+scope const(void)* metalGetDevice() @trusted @nogc nothrow {
     return sapp_metal_get_device();
 }
 extern(C) scope const(void)* sapp_metal_get_renderpass_descriptor() @system @nogc nothrow;
-scope const(void)* metalGetRenderpassDescriptor() @trusted nothrow @nogc {
+scope const(void)* metalGetRenderpassDescriptor() @trusted @nogc nothrow {
     return sapp_metal_get_renderpass_descriptor();
 }
 extern(C) scope const(void)* sapp_metal_get_drawable() @system @nogc nothrow;
-scope const(void)* metalGetDrawable() @trusted nothrow @nogc {
+scope const(void)* metalGetDrawable() @trusted @nogc nothrow {
     return sapp_metal_get_drawable();
 }
 extern(C) scope const(void)* sapp_macos_get_window() @system @nogc nothrow;
-scope const(void)* macosGetWindow() @trusted nothrow @nogc {
+scope const(void)* macosGetWindow() @trusted @nogc nothrow {
     return sapp_macos_get_window();
 }
 extern(C) scope const(void)* sapp_ios_get_window() @system @nogc nothrow;
-scope const(void)* iosGetWindow() @trusted nothrow @nogc {
+scope const(void)* iosGetWindow() @trusted @nogc nothrow {
     return sapp_ios_get_window();
 }
 extern(C) scope const(void)* sapp_d3d11_get_device() @system @nogc nothrow;
-scope const(void)* d3d11GetDevice() @trusted nothrow @nogc {
+scope const(void)* d3d11GetDevice() @trusted @nogc nothrow {
     return sapp_d3d11_get_device();
 }
 extern(C) scope const(void)* sapp_d3d11_get_device_context() @system @nogc nothrow;
-scope const(void)* d3d11GetDeviceContext() @trusted nothrow @nogc {
+scope const(void)* d3d11GetDeviceContext() @trusted @nogc nothrow {
     return sapp_d3d11_get_device_context();
 }
 extern(C) scope const(void)* sapp_d3d11_get_swap_chain() @system @nogc nothrow;
-scope const(void)* d3d11GetSwapChain() @trusted nothrow @nogc {
+scope const(void)* d3d11GetSwapChain() @trusted @nogc nothrow {
     return sapp_d3d11_get_swap_chain();
 }
 extern(C) scope const(void)* sapp_d3d11_get_render_target_view() @system @nogc nothrow;
-scope const(void)* d3d11GetRenderTargetView() @trusted nothrow @nogc {
+scope const(void)* d3d11GetRenderTargetView() @trusted @nogc nothrow {
     return sapp_d3d11_get_render_target_view();
 }
 extern(C) scope const(void)* sapp_d3d11_get_depth_stencil_view() @system @nogc nothrow;
-scope const(void)* d3d11GetDepthStencilView() @trusted nothrow @nogc {
+scope const(void)* d3d11GetDepthStencilView() @trusted @nogc nothrow {
     return sapp_d3d11_get_depth_stencil_view();
 }
 extern(C) scope const(void)* sapp_win32_get_hwnd() @system @nogc nothrow;
-scope const(void)* win32GetHwnd() @trusted nothrow @nogc {
+scope const(void)* win32GetHwnd() @trusted @nogc nothrow {
     return sapp_win32_get_hwnd();
 }
 extern(C) scope const(void)* sapp_wgpu_get_device() @system @nogc nothrow;
-scope const(void)* wgpuGetDevice() @trusted nothrow @nogc {
+scope const(void)* wgpuGetDevice() @trusted @nogc nothrow {
     return sapp_wgpu_get_device();
 }
 extern(C) scope const(void)* sapp_wgpu_get_render_view() @system @nogc nothrow;
-scope const(void)* wgpuGetRenderView() @trusted nothrow @nogc {
+scope const(void)* wgpuGetRenderView() @trusted @nogc nothrow {
     return sapp_wgpu_get_render_view();
 }
 extern(C) scope const(void)* sapp_wgpu_get_resolve_view() @system @nogc nothrow;
-scope const(void)* wgpuGetResolveView() @trusted nothrow @nogc {
+scope const(void)* wgpuGetResolveView() @trusted @nogc nothrow {
     return sapp_wgpu_get_resolve_view();
 }
 extern(C) scope const(void)* sapp_wgpu_get_depth_stencil_view() @system @nogc nothrow;
-scope const(void)* wgpuGetDepthStencilView() @trusted nothrow @nogc {
+scope const(void)* wgpuGetDepthStencilView() @trusted @nogc nothrow {
     return sapp_wgpu_get_depth_stencil_view();
 }
 extern(C) scope const(void)* sapp_android_get_native_activity() @system @nogc nothrow;
-scope const(void)* androidGetNativeActivity() @trusted nothrow @nogc {
+scope const(void)* androidGetNativeActivity() @trusted @nogc nothrow {
     return sapp_android_get_native_activity();
 }

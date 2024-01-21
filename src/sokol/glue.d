@@ -4,6 +4,6 @@ module sokol.glue;
 import sg = sokol.gfx;
 
 extern(C) sg.ContextDesc sapp_sgcontext() @system @nogc nothrow;
-sg.ContextDesc context() @trusted nothrow @nogc {
+sg.ContextDesc context() @trusted @nogc nothrow {
     return sapp_sgcontext();
 }
