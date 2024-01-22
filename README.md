@@ -5,6 +5,11 @@ Auto-generated [D](https://dlang.org) bindings for the [sokol headers](https://g
 
 #### Status: Experimental
 
+#### Targets
+
+- Native
+- Wasm (`-Dtarget=wasm32-emscripten`)
+
 ## BUILD
 
 **Required**
@@ -65,12 +70,13 @@ zig build shaders # (re)generate D bindings from shaders.
 
 <br>
 
-## License and attributinos
+## License and attributions
 
 <sub>
 This code is released under the zlib license (see `LICENSE` for info). Parts of `gen_d.py` have been copied and modified from
 the zig-bindings (https://github.com/floooh/sokol-zig/) and rust-bindings (https://github.com/floooh/sokol-rust/) for sokol.
 </sub>
+
 
 <sub>
 The sokol headers are created by Andre Weissflog (floooh) and sokol is released under its own license here: https://github.com/floooh/sokol/blob/master/LICENSE
