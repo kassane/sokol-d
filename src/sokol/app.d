@@ -164,7 +164,7 @@ enum AndroidTooltype {
 }
 extern(C)
 struct Touchpoint {
-    size_t identifier;
+    ulong identifier;
     float pos_x;
     float pos_y;
     AndroidTooltype android_tooltype;

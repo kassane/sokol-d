@@ -166,7 +166,6 @@ pub fn buildLibSokol(b: *Build, options: LibSokolOptions) !*CompileStep {
         csrc_root ++ "sokol_time.c",
         csrc_root ++ "sokol_audio.c",
         csrc_root ++ "sokol_gl.c",
-        csrc_root ++ "sokol_glue.c",
         csrc_root ++ "sokol_debugtext.c",
         csrc_root ++ "sokol_shape.c",
     };
@@ -408,7 +407,9 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
         // https://github.com/ldc-developers/ldc/issues/4501
         try cmds.append("-L-w"); // hide linker warnings
     }
+
     if (options.target.result.isWasm()) {
+        try cmds.append("--d-version=CarelessAlocation");
         try cmds.append("-L-allow-undefined");
     }
 
@@ -425,7 +426,12 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
 
         // C include path
         for (lib_sokol.root_module.include_dirs.items) |include_dir| {
-            const path = include_dir.path_system.getPath(b);
+            const path = if (include_dir == .path)
+                include_dir.path.getPath(b)
+            else if (include_dir == .path_system)
+                include_dir.path_system.getPath(b)
+            else
+                include_dir.path_after.getPath(b);
             try cmds.append(b.fmt("-P-I{s}", .{path}));
         }
 
@@ -453,7 +459,7 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
         // C defines
         for (lib_sokol.root_module.c_macros.items) |cdefine| {
             if (cdefine.len > 0) // skip empty cdefines
-                try cmds.append(b.fmt("-Xcc=-D{s}", .{cdefine}));
+                try cmds.append(b.fmt("-P-D{s}", .{cdefine}));
             break;
         }
 
@@ -534,11 +540,7 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
         b.step("test", "Run all tests");
 
     if (options.target.result.isWasm()) {
-        const artifact = addArtifact(options, b, .{
-            .name = options.name,
-            .target = options.target,
-            .optimize = options.optimize,
-        });
+        const artifact = addArtifact(b, options);
         artifact.addObjectFile(.{ .path = b.fmt("{s}/examples.{s}.o", .{ objpath, options.name }) });
         artifact.linkLibrary(options.artifact.?);
         artifact.step.dependOn(&ldc_exec.step);
@@ -583,28 +585,15 @@ pub const DCompileStep = struct {
     artifact: ?*Build.Step.Compile = null,
     emsdk: ?*Build.Dependency = null,
 };
-pub fn addArtifact(self: DCompileStep, b: *Build, options: Build.ObjectOptions) *Build.Step.Compile {
+pub fn addArtifact(b: *Build, options: DCompileStep) *Build.Step.Compile {
     return Build.Step.Compile.create(b, .{
         .name = options.name,
         .root_module = .{
-            .target = self.target,
-            .optimize = self.optimize,
-            .link_libc = options.link_libc,
-            .single_threaded = options.single_threaded,
-            .pic = options.pic,
-            .strip = options.strip,
-            .unwind_tables = options.unwind_tables,
-            .omit_frame_pointer = options.omit_frame_pointer,
-            .sanitize_thread = options.sanitize_thread,
-            .error_tracing = options.error_tracing,
-            .code_model = options.code_model,
+            .target = options.target,
+            .optimize = options.optimize,
         },
-        .linkage = self.linkage,
-        .kind = self.kind,
-        .max_rss = options.max_rss,
-        .use_llvm = options.use_llvm,
-        .use_lld = options.use_lld,
-        .zig_lib_dir = options.zig_lib_dir orelse b.zig_lib_dir,
+        .linkage = options.linkage,
+        .kind = options.kind,
     });
 }
 

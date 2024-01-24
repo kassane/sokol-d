@@ -14,8 +14,8 @@
             .hash = "1220f1340cd871b444021c600661f921f96091ce0815fa43008528f4844cece7e245",
         },
         .wasmd = .{
-            .url = "git+https://github.com/kassane/webassembly#800870e68be1518eeffbb2c0814e23b9543a89cb",
-            .hash = "12203c2350903f04a07f746b448abb22824a452e8d81500b2fa11a0c3a5ea896b3f6",
+            .url = "git+https://github.com/kassane/wasmd#067e21e29aea24ec936d6c6b859f7c9a79894f78",
+            .hash = "122006f8e097d5bd627f26d2aa3b397d92b400c786f13396c47afed66fed1e8ef2c1",
         },
     },
 }
