@@ -232,10 +232,11 @@ void frame()
     sg.beginPass(state.offscreen.pass, state.offscreen.pass_action);
     sg.applyPipeline(state.offscreen.pip);
     sg.applyBindings(state.offscreen.bind);
+    auto offs_rg = sgutil.asRange(offscreen_params);
     sg.applyUniforms(
         sg.ShaderStage.Vs,
         shd.SLOT_OFFSCREEN_PARAMS,
-        sgutil.asRange(offscreen_params),
+        offs_rg,
     );
     sg.draw(0, 36, 1);
     sg.endPass();
@@ -245,7 +246,8 @@ void frame()
     sg.beginDefaultPass(state.dflt.pass_action, app.width(), app.height());
     sg.applyPipeline(state.fsq.pip);
     sg.applyBindings(state.fsq.bind);
-    sg.applyUniforms(sg.ShaderStage.Vs, shd.SLOT_FSQ_PARAMS, sgutil.asRange(fsq_params));
+    auto fsq_rg = sgutil.asRange(fsq_params);
+    sg.applyUniforms(sg.ShaderStage.Vs, shd.SLOT_FSQ_PARAMS, fsq_rg);
     sg.draw(0, 4, 1);
     sg.applyPipeline(state.dbg.pip);
     foreach(i;[0,1,2]) {

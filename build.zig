@@ -426,6 +426,7 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
 
         // C include path
         for (lib_sokol.root_module.include_dirs.items) |include_dir| {
+            if (include_dir == .other_step) continue;
             const path = if (include_dir == .path)
                 include_dir.path.getPath(b)
             else if (include_dir == .path_system)
@@ -503,6 +504,8 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
         b.fmt("{s}-apple-{s}", .{ if (options.target.result.cpu.arch.isAARCH64()) "arm64" else @tagName(options.target.result.cpu.arch), @tagName(options.target.result.os.tag) })
     else if (options.target.result.isWasm())
         b.fmt("{s}-unknown-unknown-wasm", .{@tagName(options.target.result.cpu.arch)})
+    else if (options.target.result.isWasm() and options.target.result.os.tag == .wasi)
+        b.fmt("{s}-unknown-{s}", .{ @tagName(options.target.result.cpu.arch), @tagName(options.target.result.os.tag) })
     else
         b.fmt("{s}-{s}-{s}", .{ @tagName(options.target.result.cpu.arch), @tagName(options.target.result.os.tag), @tagName(options.target.result.abi) });
 

@@ -10,17 +10,28 @@ module handmade.math;
 
 extern(C):
 
-enum real PI = 0x1.921fb54442d18469898cc51701b84p+1L;
-double zig_sqrt(double value) @nogc nothrow @trusted;
-double zig_sqrtf(double value) @nogc nothrow @trusted;
-double zig_cos(double value) @nogc nothrow @trusted;
-double zig_sin(double value) @nogc nothrow @trusted;
-double zig_tan(double value) @nogc nothrow @trusted;
-alias sqrt = zig_sqrt;
-alias sqrtf = zig_sqrtf;
-alias cos = zig_cos;
-alias sin = zig_sin;
-alias tan = zig_tan;
+version(WebAssembly){
+    enum PI = 3.14159265358979323846264338327950288419716939937510;
+    double zig_sqrt(ulong value) @nogc nothrow @trusted;
+    double zig_sqrtf(double value) @nogc nothrow @trusted;
+    double zig_cos(double value) @nogc nothrow @trusted;
+    double zig_sin(double value) @nogc nothrow @trusted;
+    double zig_tan(double value) @nogc nothrow @trusted;
+    alias cos = zig_cos;
+    alias sin = zig_sin;
+    alias tan = zig_tan;
+
+    auto sqrt(T)(T value){
+        static if(is(T == double) || is(T == float)){
+            return zig_sqrtf(value);
+        } else {
+            return zig_sqrt(value);
+        }
+    }
+} else {
+    public import core.stdc.math: sqrt, cos, sin, tan;
+    public import std.math: PI;
+}
 
 @safe:
 
