@@ -1,9 +1,9 @@
 name "sokol-d"
+version "0.1.0"
 description "D bindings for sokol"
 authors "Matheus Catarino França <matheus-catarino@hotmail.com>"
 copyright "Copyright 2023-2024 - Matheus Catarino França"
 license "Zlib"
-version "0.1.0"
 buildType "debug" {
 	buildOptions "debugMode" "debugInfo"
 }
@@ -19,35 +19,76 @@ buildType "release-nobounds" {
 buildType "release-debug" {
 	buildOptions "releaseMode" "debugInfo" "inline" "optimize"
 }
-toolchainRequirements dmd=">=2.89.0" ldc=">=1.25.0" gdc=">=9.3.0"
+toolchainRequirements dmd=">=2.105.0" ldc=">=1.35.0" gdc=">=9.3.0"
 lflags "-L-Lzig-out/lib" "-L-lsokol"
-sourcePaths "src"
 preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast"
-configuration "linux" {
+configuration "default" {
+	targetType "sourceLibrary"
+}
+configuration "unittest" {
+	targetType "library"
+	sourcePaths "src"
+}
+subPackage {
+	name "clear"
 	targetType "executable"
-	targetPath "build/linux"
-	targetName "sokol-d-example-clear"
-	dflags "-P-DSOKOL_GLCORE33" platform="linux"
-	libs "X11" "GL" "asound" "Xi" "Xcursor" platform="linux"
+	targetPath "build"
 	sourceFiles "src/examples/clear.d"
 	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/triangle.d" "src/examples/saudio.d" "src/examples/debugtext_print.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/shaders/*.d"
 }
-configuration "osx" {
+subPackage {
+	name "sgl_context"
 	targetType "executable"
-	targetPath "build/osx"
-	targetName "sokol-d-example-clear"
-	dflags "-P-DSOKOL_METAL" "-Xcc=-ObjC" "-P-DIMPL" platform="osx"
-	lflags "-ld_classic" platform="osx"
-	libs "Cocoa" "QuartzCore" "MetalKit" "Metal" "AudioToolbox" "Foundation" platform="osx"
-	sourceFiles "src/examples/clear.d"
-	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/triangle.d" "src/examples/saudio.d" "src/examples/debugtext_print.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d"
+	targetPath "build"
+	sourceFiles "src/examples/sgl_context.d"
+	excludedSourceFiles "src/examples/clear.d" "src/examples/triangle.d" "src/examples/saudio.d" "src/examples/debugtext_print.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/shaders/*.d"
 }
-configuration "windows" {
+subPackage {
+	name "debugtext_print"
 	targetType "executable"
-	targetPath "build/windows"
-	targetName "sokol-d-example-clear"
-	dflags "-P-DSOKOL_D3D11" platform="windows"
-	libs "kernel32" "user32" "ole32" "gdi32" "d3d11" "dxgi" platform="windows"
-	sourceFiles "src/examples/clear.d"
-	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/triangle.d" "src/examples/saudio.d" "src/examples/debugtext_print.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d"
+	targetPath "build"
+	sourceFiles "src/examples/debugtext_print.d"
+	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/triangle.d" "src/examples/saudio.d" "src/examples/clear.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/shaders/*.d"
+}
+subPackage {
+	name "triangle"
+	targetType "executable"
+	targetPath "build"
+	sourceFiles "src/examples/triangle.d"
+	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/debugtext_print.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/shaders/*.d"
+}
+subPackage {
+	name "blend"
+	targetType "executable"
+	targetPath "build"
+	sourceFiles "src/examples/blend.d"
+	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/debugtext_print.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/triangle.d" "src/shaders/*.d"
+}
+subPackage {
+	name "saudio"
+	targetType "executable"
+	targetPath "build"
+	sourceFiles "src/examples/saudio.d"
+	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/clear.d" "src/examples/triangle.d" "src/examples/debugtext_print.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/shaders/*.d"
+}
+subPackage {
+	name "mrt"
+	targetType "executable"
+	targetPath "build"
+	sourceFiles "src/examples/mrt.d"
+	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/debugtext_print.d" "src/examples/triangle.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/shaders/*.d"
+}
+subPackage {
+	name "cube"
+	targetType "executable"
+	targetPath "build"
+	sourceFiles "src/examples/cube.d"
+	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/debugtext_print.d" "src/examples/triangle.d" "src/examples/user_data.d" "src/examples/mrt.d" "src/examples/blend.d" "src/shaders/*.d"
+}
+subPackage {
+	name "user_data"
+	targetType "executable"
+	targetPath "build"
+	sourceFiles "src/examples/user_data.d"
+	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/debugtext_print.d" "src/examples/triangle.d" "src/examples/cube.d" "src/examples/mrt.d" "src/examples/blend.d" "src/shaders/*.d"
 }
