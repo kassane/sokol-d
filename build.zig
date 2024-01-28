@@ -531,10 +531,9 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
     ldc_exec.setName(options.name);
 
     if (options.artifact) |lib_sokol| {
-        if (lib_sokol.generated_implib) |lib|
-            ldc_exec.addArg(lib.getPath())
-        else
-            ldc_exec.addArtifactArg(lib_sokol);
+        if (lib_sokol.rootModuleTarget().os.tag == .windows and lib_sokol.isDynamicLibrary()) {
+            ldc_exec.addArg(b.pathJoin(&.{ b.install_path, outputDir, b.fmt("{s}.lib", .{lib_sokol.name}) }));
+        } else ldc_exec.addArtifactArg(lib_sokol);
     }
 
     const example_run = b.addSystemCommand(&.{b.pathJoin(&.{ b.install_path, outputDir, options.name })});
