@@ -532,11 +532,11 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
 
     if (options.artifact) |lib_sokol| {
         if (lib_sokol.rootModuleTarget().os.tag == .windows and lib_sokol.isDynamicLibrary()) {
-            ldc_exec.addArg(b.pathJoin(&.{ b.install_path, outputDir, b.fmt("{s}.lib", .{lib_sokol.name}) }));
+            ldc_exec.addArg(b.pathJoin(&.{ b.install_path, "lib", b.fmt("{s}.lib", .{lib_sokol.name}) }));
         } else ldc_exec.addArtifactArg(lib_sokol);
     }
 
-    const example_run = b.addSystemCommand(&.{b.pathJoin(&.{ b.install_path, "lib", options.name })});
+    const example_run = b.addSystemCommand(&.{b.pathJoin(&.{ b.install_path, outputDir, options.name })});
     example_run.step.dependOn(&ldc_exec.step);
 
     const run = if (options.kind != .@"test")
