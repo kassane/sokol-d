@@ -536,7 +536,7 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
         } else ldc_exec.addArtifactArg(lib_sokol);
     }
 
-    const example_run = b.addSystemCommand(&.{b.pathJoin(&.{ b.install_path, outputDir, options.name })});
+    const example_run = b.addSystemCommand(&.{b.pathJoin(&.{ b.install_path, "lib", options.name })});
     example_run.step.dependOn(&ldc_exec.step);
 
     const run = if (options.kind != .@"test")
