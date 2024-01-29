@@ -35,7 +35,7 @@ subPackage {
 	sourceFiles "src/examples/clear.d"
 	libs "sokol"
 	lflags "-Lzig-out/lib" platform="posix"
-	ldflags "/LIBPATH:zig-out/lib" platform="windows"
+	lflags "/LIBPATH:zig-out/lib" platform="windows"
 	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/triangle.d" "src/examples/saudio.d" "src/examples/debugtext_print.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/shaders/*.d"
 	preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast"
 }
@@ -46,7 +46,7 @@ subPackage {
 	sourceFiles "src/examples/sgl_context.d"
 	libs "sokol"
 	lflags "-Lzig-out/lib" platform="posix"
-	ldflags "/LIBPATH:zig-out/lib" platform="windows"
+	lflags "/LIBPATH:zig-out/lib" platform="windows"
 	excludedSourceFiles "src/examples/clear.d" "src/examples/triangle.d" "src/examples/saudio.d" "src/examples/debugtext_print.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/shaders/*.d"
 	preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast"
 }
@@ -57,7 +57,7 @@ subPackage {
 	sourceFiles "src/examples/debugtext_print.d"
 	libs "sokol"
 	lflags "-Lzig-out/lib" platform="posix"
-	ldflags "/LIBPATH:zig-out/lib" platform="windows"
+	lflags "/LIBPATH:zig-out/lib" platform="windows"
 	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/triangle.d" "src/examples/saudio.d" "src/examples/clear.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/shaders/*.d"
 	preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast"
 }
@@ -68,7 +68,7 @@ subPackage {
 	sourceFiles "src/examples/triangle.d"
 	libs "sokol"
 	lflags "-Lzig-out/lib" platform="posix"
-	ldflags "/LIBPATH:zig-out/lib" platform="windows"
+	lflags "/LIBPATH:zig-out/lib" platform="windows"
 	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/debugtext_print.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/shaders/*.d"
 	preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast"
 }
@@ -79,7 +79,7 @@ subPackage {
 	sourceFiles "src/examples/blend.d"
 	libs "sokol"
 	lflags "-Lzig-out/lib" platform="posix"
-	ldflags "/LIBPATH:zig-out/lib" platform="windows"
+	lflags "/LIBPATH:zig-out/lib" platform="windows"
 	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/debugtext_print.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/triangle.d" "src/shaders/*.d"
 	preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast"
 }
@@ -90,7 +90,7 @@ subPackage {
 	sourceFiles "src/examples/saudio.d"
 	libs "sokol"
 	lflags "-Lzig-out/lib" platform="posix"
-	ldflags "/LIBPATH:zig-out/lib" platform="windows"
+	lflags "/LIBPATH:zig-out/lib" platform="windows"
 	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/clear.d" "src/examples/triangle.d" "src/examples/debugtext_print.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/shaders/*.d"
 	preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast"
 }
@@ -101,7 +101,7 @@ subPackage {
 	sourceFiles "src/examples/mrt.d"
 	libs "sokol"
 	lflags "-Lzig-out/lib" platform="posix"
-	ldflags "/LIBPATH:zig-out/lib" platform="windows"
+	lflags "/LIBPATH:zig-out/lib" platform="windows"
 	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/debugtext_print.d" "src/examples/triangle.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/shaders/*.d"
 	preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast"
 }
@@ -112,7 +112,7 @@ subPackage {
 	sourceFiles "src/examples/cube.d"
 	libs "sokol"
 	lflags "-Lzig-out/lib" platform="posix"
-	ldflags "/LIBPATH:zig-out/lib" platform="windows"
+	lflags "/LIBPATH:zig-out/lib" platform="windows"
 	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/debugtext_print.d" "src/examples/triangle.d" "src/examples/user_data.d" "src/examples/mrt.d" "src/examples/blend.d" "src/shaders/*.d"
 	preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast"
 }
@@ -123,7 +123,7 @@ subPackage {
 	sourceFiles "src/examples/user_data.d"
 	libs "sokol"
 	lflags "-Lzig-out/lib" platform="posix"
-	ldflags "/LIBPATH:zig-out/lib" platform="windows"
+	lflags "/LIBPATH:zig-out/lib" platform="windows"
 	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/debugtext_print.d" "src/examples/triangle.d" "src/examples/cube.d" "src/examples/mrt.d" "src/examples/blend.d" "src/shaders/*.d"
 	preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast"
 }
