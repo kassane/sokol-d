@@ -1,0 +1,129 @@
+name "sokol-d"
+version "0.1.0"
+description "D bindings for sokol"
+authors "Matheus Catarino França <matheus-catarino@hotmail.com>"
+copyright "Copyright 2023-2024 - Matheus Catarino França"
+license "Zlib"
+buildType "debug" {
+	buildOptions "debugMode" "debugInfo"
+}
+buildType "unittest" {
+	buildOptions "debugMode" "debugInfo" "unittests"
+}
+buildType "release" {
+	buildOptions "releaseMode" "inline" "optimize"
+}
+buildType "release-nobounds" {
+	buildOptions "releaseMode" "inline" "noBoundsCheck" "optimize"
+}
+buildType "release-debug" {
+	buildOptions "releaseMode" "debugInfo" "inline" "optimize"
+}
+toolchainRequirements dmd=">=2.105.0" ldc=">=1.35.0" gdc=">=9.3.0"
+configuration "default" {
+	targetType "sourceLibrary"
+	sourcePaths "src"
+}
+configuration "unittest" {
+	targetType "library"
+	sourcePaths "src/handmade"
+}
+subPackage {
+	name "clear"
+	targetType "executable"
+	targetPath "build"
+	sourceFiles "src/examples/clear.d"
+	libs "sokol"
+	lflags "-Lzig-out/lib" platform="posix"
+	lflags "/LIBPATH:zig-out/lib" platform="windows"
+	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/triangle.d" "src/examples/saudio.d" "src/examples/debugtext_print.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/shaders/*.d"
+	preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast"
+}
+subPackage {
+	name "sgl_context"
+	targetType "executable"
+	targetPath "build"
+	sourceFiles "src/examples/sgl_context.d"
+	libs "sokol"
+	lflags "-Lzig-out/lib" platform="posix"
+	lflags "/LIBPATH:zig-out/lib" platform="windows"
+	excludedSourceFiles "src/examples/clear.d" "src/examples/triangle.d" "src/examples/saudio.d" "src/examples/debugtext_print.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/shaders/*.d"
+	preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast"
+}
+subPackage {
+	name "debugtext_print"
+	targetType "executable"
+	targetPath "build"
+	sourceFiles "src/examples/debugtext_print.d"
+	libs "sokol"
+	lflags "-Lzig-out/lib" platform="posix"
+	lflags "/LIBPATH:zig-out/lib" platform="windows"
+	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/triangle.d" "src/examples/saudio.d" "src/examples/clear.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/shaders/*.d"
+	preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast"
+}
+subPackage {
+	name "triangle"
+	targetType "executable"
+	targetPath "build"
+	sourceFiles "src/examples/triangle.d"
+	libs "sokol"
+	lflags "-Lzig-out/lib" platform="posix"
+	lflags "/LIBPATH:zig-out/lib" platform="windows"
+	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/debugtext_print.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/shaders/*.d"
+	preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast"
+}
+subPackage {
+	name "blend"
+	targetType "executable"
+	targetPath "build"
+	sourceFiles "src/examples/blend.d"
+	libs "sokol"
+	lflags "-Lzig-out/lib" platform="posix"
+	lflags "/LIBPATH:zig-out/lib" platform="windows"
+	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/debugtext_print.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/triangle.d" "src/shaders/*.d"
+	preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast"
+}
+subPackage {
+	name "saudio"
+	targetType "executable"
+	targetPath "build"
+	sourceFiles "src/examples/saudio.d"
+	libs "sokol"
+	lflags "-Lzig-out/lib" platform="posix"
+	lflags "/LIBPATH:zig-out/lib" platform="windows"
+	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/clear.d" "src/examples/triangle.d" "src/examples/debugtext_print.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/shaders/*.d"
+	preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast"
+}
+subPackage {
+	name "mrt"
+	targetType "executable"
+	targetPath "build"
+	sourceFiles "src/examples/mrt.d"
+	libs "sokol"
+	lflags "-Lzig-out/lib" platform="posix"
+	lflags "/LIBPATH:zig-out/lib" platform="windows"
+	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/debugtext_print.d" "src/examples/triangle.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/shaders/*.d"
+	preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast"
+}
+subPackage {
+	name "cube"
+	targetType "executable"
+	targetPath "build"
+	sourceFiles "src/examples/cube.d"
+	libs "sokol"
+	lflags "-Lzig-out/lib" platform="posix"
+	lflags "/LIBPATH:zig-out/lib" platform="windows"
+	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/debugtext_print.d" "src/examples/triangle.d" "src/examples/user_data.d" "src/examples/mrt.d" "src/examples/blend.d" "src/shaders/*.d"
+	preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast"
+}
+subPackage {
+	name "user_data"
+	targetType "executable"
+	targetPath "build"
+	sourceFiles "src/examples/user_data.d"
+	libs "sokol"
+	lflags "-Lzig-out/lib" platform="posix"
+	lflags "/LIBPATH:zig-out/lib" platform="windows"
+	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/debugtext_print.d" "src/examples/triangle.d" "src/examples/cube.d" "src/examples/mrt.d" "src/examples/blend.d" "src/shaders/*.d"
+	preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast"
+}

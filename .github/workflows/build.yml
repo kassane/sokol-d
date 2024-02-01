@@ -11,7 +11,9 @@ jobs:
     runs-on: ${{ matrix.runs-on }}
     steps:
       - uses: actions/checkout@v4
-      - uses: goto-bus-stop/setup-zig@v2
+      - uses: korandoru/setup-zig@v1
+        with:
+          zig-version: master
       - uses: dlang-community/setup-dlang@v1
         with:
           compiler: ldc-master
@@ -22,10 +24,22 @@ jobs:
             sudo apt-get update
             sudo apt-get install libglu1-mesa-dev mesa-common-dev xorg-dev libasound-dev
 
-      - name: Running Test
+      - name: (Dub) Build Native
+        if: runner.os != 'Windows'
+        run: |
+            dub build :clear
+            dub build :sgl_context
+            dub build :debugtext_print
+            # dub build :cube
+            # dub build :blend
+            dub build :triangle
+            # dub build :mrt
+            dub build :user_data
+
+      - name: (Zig) Running Test
         if: runner.os != 'Windows'
         run: zig build test -DzigCC
-      - name: Build Native
+      - name: (Zig) Build Native
         run: zig build -DzigCC --summary all
-      - name: Build Wasm
+      - name: (Zig + emsdk) Build Wasm
         run: zig build -DzigCC --summary all -Dtarget=wasm32-emscripten

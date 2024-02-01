@@ -20,6 +20,7 @@ docs.json
 __dummy.html
 docs/
 *.selections.json
+build/
 
 # Code coverage
 *.lst
@@ -27,5 +28,5 @@ docs/
 # Zig build
 zig-*/
 
-#VScode
+# VScode
 .vscode/
