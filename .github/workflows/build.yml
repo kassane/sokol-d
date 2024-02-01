@@ -25,6 +25,7 @@ jobs:
             sudo apt-get install libglu1-mesa-dev mesa-common-dev xorg-dev libasound-dev
 
       - name: (Dub) Build Native
+        if: runner.os != 'Windows'
         run: |
             dub build :clear
             dub build :sgl_context
