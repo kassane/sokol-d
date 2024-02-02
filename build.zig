@@ -207,12 +207,6 @@ pub fn build(b: *Build) !void {
     const enable_betterC = b.option(bool, "betterC", "Omit generating some runtime information and helper functions (default: false)") orelse false;
     const enable_zigcc = b.option(bool, "zigCC", "Use zig cc as compiler and linker (default: false)") orelse false;
 
-    if (enable_zigcc) {
-        const zcc = buildZigCC(b);
-        const install = b.addInstallArtifact(zcc, .{ .dest_dir = .{ .override = .{ .custom = "tools" } } });
-        b.default_step.dependOn(&install.step);
-    }
-
     // build examples
     const examples = .{
         "clear",
@@ -273,11 +267,6 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
 
     // D compiler
     try cmds.append(ldc);
-
-    if (options.zig_cc) {
-        try cmds.append(b.fmt("--gcc={s}", .{b.pathJoin(&.{ b.install_prefix, "tools", if (options.target.result.os.tag == .windows) "zcc.exe" else "zcc" })}));
-        try cmds.append(b.fmt("--linker={s}", .{b.pathJoin(&.{ b.install_prefix, "tools", if (options.target.result.os.tag == .windows) "zcc.exe" else "zcc" })}));
-    }
 
     // set kind of build
     switch (options.kind) {
@@ -530,6 +519,17 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
     // run the command
     var ldc_exec = b.addSystemCommand(cmds.items);
     ldc_exec.setName(options.name);
+
+    if (options.zig_cc) {
+        const zcc = buildZigCC(b);
+        const install = b.addInstallArtifact(zcc, .{ .dest_dir = .{ .override = .{ .custom = "tools" } } });
+        const zcc_path = b.pathJoin(&.{ b.install_prefix, "tools", if (options.target.result.os.tag == .windows) "zcc.exe" else "zcc" });
+        const zcc_exists = !std.meta.isError(std.fs.accessAbsolute(zcc_path, .{}));
+        if (!zcc_exists)
+            ldc_exec.step.dependOn(&install.step);
+        try cmds.append(b.fmt("--gcc={s}", .{zcc_path}));
+        try cmds.append(b.fmt("--linker={s}", .{zcc_path}));
+    }
 
     if (options.artifact) |lib_sokol| {
         if (lib_sokol.rootModuleTarget().os.tag == .windows and lib_sokol.isDynamicLibrary()) {
