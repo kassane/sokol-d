@@ -19,11 +19,11 @@ struct Logger {
 }
 extern(C)
 struct Pipeline {
-    uint id;
+    uint id = 0;
 }
 extern(C)
 struct Context {
-    uint id;
+    uint id = 0;
 }
 enum Error {
     No_error = 0,
@@ -36,11 +36,11 @@ enum Error {
 }
 extern(C)
 struct ContextDesc {
-    int max_vertices;
-    int max_commands;
+    int max_vertices = 0;
+    int max_commands = 0;
     sg.PixelFormat color_format;
     sg.PixelFormat depth_format;
-    int sample_count;
+    int sample_count = 0;
 }
 extern(C)
 struct Allocator {
@@ -50,13 +50,13 @@ struct Allocator {
 }
 extern(C)
 struct Desc {
-    int max_vertices;
-    int max_commands;
-    int context_pool_size;
-    int pipeline_pool_size;
+    int max_vertices = 0;
+    int max_commands = 0;
+    int context_pool_size = 0;
+    int pipeline_pool_size = 0;
     sg.PixelFormat color_format;
     sg.PixelFormat depth_format;
-    int sample_count;
+    int sample_count = 0;
     sg.FaceWinding face_winding;
     Allocator allocator;
     Logger logger;

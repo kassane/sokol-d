@@ -18,29 +18,29 @@ struct Logger {
 }
 extern(C)
 struct Context {
-    uint id;
+    uint id = 0;
 }
 extern(C)
 struct Range {
     const(void)* ptr;
-    size_t size;
+    size_t size = 0;
 }
 extern(C)
 struct FontDesc {
     Range data;
-    ubyte first_char;
-    ubyte last_char;
+    ubyte first_char = 0;
+    ubyte last_char = 0;
 }
 extern(C)
 struct ContextDesc {
-    int max_commands;
-    int char_buf_size;
-    float canvas_width;
-    float canvas_height;
-    int tab_width;
+    int max_commands = 0;
+    int char_buf_size = 0;
+    float canvas_width = 0.0;
+    float canvas_height = 0.0;
+    int tab_width = 0;
     sg.PixelFormat color_format;
     sg.PixelFormat depth_format;
-    int sample_count;
+    int sample_count = 0;
 }
 extern(C)
 struct Allocator {
@@ -50,8 +50,8 @@ struct Allocator {
 }
 extern(C)
 struct Desc {
-    int context_pool_size;
-    int printf_buf_size;
+    int context_pool_size = 0;
+    int printf_buf_size = 0;
     FontDesc[8] fonts;
     ContextDesc context;
     Allocator allocator;

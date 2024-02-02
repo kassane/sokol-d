@@ -53,11 +53,11 @@ struct Allocator {
 }
 extern(C)
 struct Desc {
-    int sample_rate;
-    int num_channels;
-    int buffer_frames;
-    int packet_frames;
-    int num_packets;
+    int sample_rate = 0;
+    int num_channels = 0;
+    int buffer_frames = 0;
+    int packet_frames = 0;
+    int num_packets = 0;
     extern(C) void function(float *, int, int) stream_cb;
     extern(C) void function(float *, int, int, void*) stream_userdata_cb;
     void* user_data;

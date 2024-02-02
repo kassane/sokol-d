@@ -164,11 +164,11 @@ enum AndroidTooltype {
 }
 extern(C)
 struct Touchpoint {
-    ulong identifier;
-    float pos_x;
-    float pos_y;
+    ulong identifier = 0;
+    float pos_x = 0.0;
+    float pos_y = 0.0;
     AndroidTooltype android_tooltype;
-    bool changed;
+    bool changed = false;
 }
 enum Mousebutton {
     Left = 0,
@@ -185,40 +185,40 @@ enum modifier_rmb = 512;
 enum modifier_mmb = 1024;
 extern(C)
 struct Event {
-    ulong frame_count;
+    ulong frame_count = 0;
     EventType type;
     Keycode key_code;
-    uint char_code;
-    bool key_repeat;
-    uint modifiers;
+    uint char_code = 0;
+    bool key_repeat = false;
+    uint modifiers = 0;
     Mousebutton mouse_button;
-    float mouse_x;
-    float mouse_y;
-    float mouse_dx;
-    float mouse_dy;
-    float scroll_x;
-    float scroll_y;
-    int num_touches;
+    float mouse_x = 0.0;
+    float mouse_y = 0.0;
+    float mouse_dx = 0.0;
+    float mouse_dy = 0.0;
+    float scroll_x = 0.0;
+    float scroll_y = 0.0;
+    int num_touches = 0;
     Touchpoint[8] touches;
-    int window_width;
-    int window_height;
-    int framebuffer_width;
-    int framebuffer_height;
+    int window_width = 0;
+    int window_height = 0;
+    int framebuffer_width = 0;
+    int framebuffer_height = 0;
 }
 extern(C)
 struct Range {
     const(void)* ptr;
-    size_t size;
+    size_t size = 0;
 }
 extern(C)
 struct ImageDesc {
-    int width;
-    int height;
+    int width = 0;
+    int height = 0;
     Range pixels;
 }
 extern(C)
 struct IconDesc {
-    bool sokol_default;
+    bool sokol_default = false;
     ImageDesc[8] images;
 }
 extern(C)
@@ -343,38 +343,38 @@ struct Desc {
     extern(C) void function(void*) frame_userdata_cb;
     extern(C) void function(void*) cleanup_userdata_cb;
     extern(C) void function(const Event *, void*) event_userdata_cb;
-    int width;
-    int height;
-    int sample_count;
-    int swap_interval;
-    bool high_dpi;
-    bool fullscreen;
-    bool alpha;
+    int width = 0;
+    int height = 0;
+    int sample_count = 0;
+    int swap_interval = 0;
+    bool high_dpi = false;
+    bool fullscreen = false;
+    bool alpha = false;
     const(char)* window_title;
-    bool enable_clipboard;
-    int clipboard_size;
-    bool enable_dragndrop;
-    int max_dropped_files;
-    int max_dropped_file_path_length;
+    bool enable_clipboard = false;
+    int clipboard_size = 0;
+    bool enable_dragndrop = false;
+    int max_dropped_files = 0;
+    int max_dropped_file_path_length = 0;
     IconDesc icon;
     Allocator allocator;
     Logger logger;
-    int gl_major_version;
-    int gl_minor_version;
-    bool win32_console_utf8;
-    bool win32_console_create;
-    bool win32_console_attach;
+    int gl_major_version = 0;
+    int gl_minor_version = 0;
+    bool win32_console_utf8 = false;
+    bool win32_console_create = false;
+    bool win32_console_attach = false;
     const(char)* html5_canvas_name;
-    bool html5_canvas_resize;
-    bool html5_preserve_drawing_buffer;
-    bool html5_premultiplied_alpha;
-    bool html5_ask_leave_site;
-    bool html5_bubble_mouse_events;
-    bool html5_bubble_touch_events;
-    bool html5_bubble_wheel_events;
-    bool html5_bubble_key_events;
-    bool html5_bubble_char_events;
-    bool ios_keyboard_resizes_canvas;
+    bool html5_canvas_resize = false;
+    bool html5_preserve_drawing_buffer = false;
+    bool html5_premultiplied_alpha = false;
+    bool html5_ask_leave_site = false;
+    bool html5_bubble_mouse_events = false;
+    bool html5_bubble_touch_events = false;
+    bool html5_bubble_wheel_events = false;
+    bool html5_bubble_key_events = false;
+    bool html5_bubble_char_events = false;
+    bool ios_keyboard_resizes_canvas = false;
 }
 enum Html5FetchError {
     Fetch_error_no_error,
@@ -383,16 +383,16 @@ enum Html5FetchError {
 }
 extern(C)
 struct Html5FetchResponse {
-    bool succeeded;
+    bool succeeded = false;
     Html5FetchError error_code;
-    int file_index;
+    int file_index = 0;
     Range data;
     Range buffer;
     void* user_data;
 }
 extern(C)
 struct Html5FetchRequest {
-    int dropped_file_index;
+    int dropped_file_index = 0;
     extern(C) void function(const Html5FetchResponse *) callback;
     Range buffer;
     void* user_data;

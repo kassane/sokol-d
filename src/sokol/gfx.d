@@ -4,36 +4,36 @@ module sokol.gfx;
 
 extern(C)
 struct Buffer {
-    uint id;
+    uint id = 0;
 }
 extern(C)
 struct Image {
-    uint id;
+    uint id = 0;
 }
 extern(C)
 struct Sampler {
-    uint id;
+    uint id = 0;
 }
 extern(C)
 struct Shader {
-    uint id;
+    uint id = 0;
 }
 extern(C)
 struct Pipeline {
-    uint id;
+    uint id = 0;
 }
 extern(C)
 struct Pass {
-    uint id;
+    uint id = 0;
 }
 extern(C)
 struct Context {
-    uint id;
+    uint id = 0;
 }
 extern(C)
 struct Range {
     const(void)* ptr;
-    size_t size;
+    size_t size = 0;
 }
 enum invalid_id = 0;
 enum num_shader_stages = 2;
@@ -50,10 +50,10 @@ enum max_mipmaps = 16;
 enum max_texturearray_layers = 128;
 extern(C)
 struct Color {
-    float r;
-    float g;
-    float b;
-    float a;
+    float r = 0.0;
+    float g = 0.0;
+    float b = 0.0;
+    float a = 0.0;
 }
 enum Backend {
     Glcore33,
@@ -140,32 +140,32 @@ enum PixelFormat {
 }
 extern(C)
 struct PixelformatInfo {
-    bool sample;
-    bool filter;
-    bool render;
-    bool blend;
-    bool msaa;
-    bool depth;
-    bool compressed;
-    int bytes_per_pixel;
+    bool sample = false;
+    bool filter = false;
+    bool render = false;
+    bool blend = false;
+    bool msaa = false;
+    bool depth = false;
+    bool compressed = false;
+    int bytes_per_pixel = 0;
 }
 extern(C)
 struct Features {
-    bool origin_top_left;
-    bool image_clamp_to_border;
-    bool mrt_independent_blend_state;
-    bool mrt_independent_write_mask;
+    bool origin_top_left = false;
+    bool image_clamp_to_border = false;
+    bool mrt_independent_blend_state = false;
+    bool mrt_independent_write_mask = false;
 }
 extern(C)
 struct Limits {
-    int max_image_size_2d;
-    int max_image_size_cube;
-    int max_image_size_3d;
-    int max_image_size_array;
-    int max_image_array_layers;
-    int max_vertex_attrs;
-    int gl_max_vertex_uniform_vectors;
-    int gl_max_combined_texture_image_units;
+    int max_image_size_2d = 0;
+    int max_image_size_cube = 0;
+    int max_image_size_3d = 0;
+    int max_image_size_array = 0;
+    int max_image_array_layers = 0;
+    int max_vertex_attrs = 0;
+    int gl_max_vertex_uniform_vectors = 0;
+    int gl_max_combined_texture_image_units = 0;
 }
 enum ResourceState {
     Initial,
@@ -411,21 +411,21 @@ extern(C)
 struct DepthAttachmentAction {
     LoadAction load_action;
     StoreAction store_action;
-    float clear_value;
+    float clear_value = 0.0;
 }
 extern(C)
 struct StencilAttachmentAction {
     LoadAction load_action;
     StoreAction store_action;
-    ubyte clear_value;
+    ubyte clear_value = 0;
 }
 extern(C)
 struct PassAction {
-    uint _start_canary;
+    uint _start_canary = 0;
     ColorAttachmentAction[4] colors;
     DepthAttachmentAction depth;
     StencilAttachmentAction stencil;
-    uint _end_canary;
+    uint _end_canary = 0;
 }
 extern(C)
 struct StageBindings {
@@ -434,19 +434,19 @@ struct StageBindings {
 }
 extern(C)
 struct Bindings {
-    uint _start_canary;
+    uint _start_canary = 0;
     Buffer[8] vertex_buffers;
     int[8] vertex_buffer_offsets;
     Buffer index_buffer;
-    int index_buffer_offset;
+    int index_buffer_offset = 0;
     StageBindings vs;
     StageBindings fs;
-    uint _end_canary;
+    uint _end_canary = 0;
 }
 extern(C)
 struct BufferDesc {
-    uint _start_canary;
-    size_t size;
+    uint _start_canary = 0;
+    size_t size = 0;
     BufferType type;
     Usage usage;
     Range data;
@@ -455,7 +455,7 @@ struct BufferDesc {
     const(void)*[2] mtl_buffers;
     const(void)* d3d11_buffer;
     const(void)* wgpu_buffer;
-    uint _end_canary;
+    uint _end_canary = 0;
 }
 extern(C)
 struct ImageData {
@@ -463,83 +463,83 @@ struct ImageData {
 }
 extern(C)
 struct ImageDesc {
-    uint _start_canary;
+    uint _start_canary = 0;
     ImageType type;
-    bool render_target;
-    int width;
-    int height;
-    int num_slices;
-    int num_mipmaps;
+    bool render_target = false;
+    int width = 0;
+    int height = 0;
+    int num_slices = 0;
+    int num_mipmaps = 0;
     Usage usage;
     PixelFormat pixel_format;
-    int sample_count;
+    int sample_count = 0;
     ImageData data;
     const(char)* label;
     uint[2] gl_textures;
-    uint gl_texture_target;
+    uint gl_texture_target = 0;
     const(void)*[2] mtl_textures;
     const(void)* d3d11_texture;
     const(void)* d3d11_shader_resource_view;
     const(void)* wgpu_texture;
     const(void)* wgpu_texture_view;
-    uint _end_canary;
+    uint _end_canary = 0;
 }
 extern(C)
 struct SamplerDesc {
-    uint _start_canary;
+    uint _start_canary = 0;
     Filter min_filter;
     Filter mag_filter;
     Filter mipmap_filter;
     Wrap wrap_u;
     Wrap wrap_v;
     Wrap wrap_w;
-    float min_lod;
-    float max_lod;
+    float min_lod = 0.0;
+    float max_lod = 0.0;
     BorderColor border_color;
     CompareFunc compare;
-    uint max_anisotropy;
+    uint max_anisotropy = 0;
     const(char)* label;
-    uint gl_sampler;
+    uint gl_sampler = 0;
     const(void)* mtl_sampler;
     const(void)* d3d11_sampler;
     const(void)* wgpu_sampler;
-    uint _end_canary;
+    uint _end_canary = 0;
 }
 extern(C)
 struct ShaderAttrDesc {
     const(char)* name;
     const(char)* sem_name;
-    int sem_index;
+    int sem_index = 0;
 }
 extern(C)
 struct ShaderUniformDesc {
     const(char)* name;
     UniformType type;
-    int array_count;
+    int array_count = 0;
 }
 extern(C)
 struct ShaderUniformBlockDesc {
-    size_t size;
+    size_t size = 0;
     UniformLayout layout;
     ShaderUniformDesc[16] uniforms;
 }
 extern(C)
 struct ShaderImageDesc {
-    bool used;
-    bool multisampled;
+    bool used = false;
+    bool multisampled = false;
     ImageType image_type;
     ImageSampleType sample_type;
 }
 extern(C)
 struct ShaderSamplerDesc {
-    bool used;
+    bool used = false;
     SamplerType sampler_type;
 }
 extern(C)
 struct ShaderImageSamplerPairDesc {
-    bool used;
-    int image_slot;
-    int sampler_slot;
+    bool used = false;
+    int image_slot = 0;
+    int sampler_slot = 0;
     const(char)* glsl_name;
 }
 extern(C)
@@ -555,23 +555,23 @@ struct ShaderStageDesc {
 }
 extern(C)
 struct ShaderDesc {
-    uint _start_canary;
+    uint _start_canary = 0;
     ShaderAttrDesc[16] attrs;
     ShaderStageDesc vs;
     ShaderStageDesc fs;
     const(char)* label;
-    uint _end_canary;
+    uint _end_canary = 0;
 }
 extern(C)
 struct VertexBufferLayoutState {
-    int stride;
+    int stride = 0;
     VertexStep step_func;
-    int step_rate;
+    int step_rate = 0;
 }
 extern(C)
 struct VertexAttrState {
-    int buffer_index;
-    int offset;
+    int buffer_index = 0;
+    int offset = 0;
     VertexFormat format;
 }
 extern(C)
@@ -588,25 +588,25 @@ struct StencilFaceState {
 }
 extern(C)
 struct StencilState {
-    bool enabled;
+    bool enabled = false;
     StencilFaceState front;
     StencilFaceState back;
-    ubyte read_mask;
-    ubyte write_mask;
-    ubyte _ref;
+    ubyte read_mask = 0;
+    ubyte write_mask = 0;
+    ubyte _ref = 0;
 }
 extern(C)
 struct DepthState {
     PixelFormat pixel_format;
     CompareFunc compare;
-    bool write_enabled;
-    float bias;
-    float bias_slope_scale;
-    float bias_clamp;
+    bool write_enabled = false;
+    float bias = 0.0;
+    float bias_slope_scale = 0.0;
+    float bias_clamp = 0.0;
 }
 extern(C)
 struct BlendState {
-    bool enabled;
+    bool enabled = false;
     BlendFactor src_factor_rgb;
     BlendFactor dst_factor_rgb;
     BlendOp op_rgb;
@@ -622,37 +622,37 @@ struct ColorTargetState {
 }
 extern(C)
 struct PipelineDesc {
-    uint _start_canary;
+    uint _start_canary = 0;
     Shader shader;
     VertexLayoutState layout;
     DepthState depth;
     StencilState stencil;
-    int color_count;
+    int color_count = 0;
     ColorTargetState[4] colors;
     PrimitiveType primitive_type;
     IndexType index_type;
     CullMode cull_mode;
     FaceWinding face_winding;
-    int sample_count;
+    int sample_count = 0;
     Color blend_color;
-    bool alpha_to_coverage_enabled;
+    bool alpha_to_coverage_enabled = false;
     const(char)* label;
-    uint _end_canary;
+    uint _end_canary = 0;
 }
 extern(C)
 struct PassAttachmentDesc {
     Image image;
-    int mip_level;
-    int slice;
+    int mip_level = 0;
+    int slice = 0;
 }
 extern(C)
 struct PassDesc {
-    uint _start_canary;
+    uint _start_canary = 0;
     PassAttachmentDesc[4] color_attachments;
     PassAttachmentDesc[4] resolve_attachments;
     PassAttachmentDesc depth_stencil_attachment;
     const(char)* label;
-    uint _end_canary;
+    uint _end_canary = 0;
 }
 extern(C)
 struct TraceHooks {
@@ -719,25 +719,25 @@ struct TraceHooks {
 extern(C)
 struct SlotInfo {
     ResourceState state;
-    uint res_id;
-    uint ctx_id;
+    uint res_id = 0;
+    uint ctx_id = 0;
 }
 extern(C)
 struct BufferInfo {
     SlotInfo slot;
-    uint update_frame_index;
-    uint append_frame_index;
-    int append_pos;
-    bool append_overflow;
-    int num_slots;
-    int active_slot;
+    uint update_frame_index = 0;
+    uint append_frame_index = 0;
+    int append_pos = 0;
+    bool append_overflow = false;
+    int num_slots = 0;
+    int active_slot = 0;
 }
 extern(C)
 struct ImageInfo {
     SlotInfo slot;
-    uint upd_frame_index;
-    int num_slots;
-    int active_slot;
+    uint upd_frame_index = 0;
+    int num_slots = 0;
+    int active_slot = 0;
 }
 extern(C)
 struct SamplerInfo {
@@ -757,56 +757,56 @@ struct PassInfo {
 }
 extern(C)
 struct FrameStatsGl {
-    uint num_bind_buffer;
-    uint num_active_texture;
-    uint num_bind_texture;
-    uint num_bind_sampler;
-    uint num_use_program;
-    uint num_render_state;
-    uint num_vertex_attrib_pointer;
-    uint num_vertex_attrib_divisor;
-    uint num_enable_vertex_attrib_array;
-    uint num_disable_vertex_attrib_array;
-    uint num_uniform;
+    uint num_bind_buffer = 0;
+    uint num_active_texture = 0;
+    uint num_bind_texture = 0;
+    uint num_bind_sampler = 0;
+    uint num_use_program = 0;
+    uint num_render_state = 0;
+    uint num_vertex_attrib_pointer = 0;
+    uint num_vertex_attrib_divisor = 0;
+    uint num_enable_vertex_attrib_array = 0;
+    uint num_disable_vertex_attrib_array = 0;
+    uint num_uniform = 0;
 }
 extern(C)
 struct FrameStatsD3d11Pass {
-    uint num_om_set_render_targets;
-    uint num_clear_render_target_view;
-    uint num_clear_depth_stencil_view;
-    uint num_resolve_subresource;
+    uint num_om_set_render_targets = 0;
+    uint num_clear_render_target_view = 0;
+    uint num_clear_depth_stencil_view = 0;
+    uint num_resolve_subresource = 0;
 }
 extern(C)
 struct FrameStatsD3d11Pipeline {
-    uint num_rs_set_state;
-    uint num_om_set_depth_stencil_state;
-    uint num_om_set_blend_state;
-    uint num_ia_set_primitive_topology;
-    uint num_ia_set_input_layout;
-    uint num_vs_set_shader;
-    uint num_vs_set_constant_buffers;
-    uint num_ps_set_shader;
-    uint num_ps_set_constant_buffers;
+    uint num_rs_set_state = 0;
+    uint num_om_set_depth_stencil_state = 0;
+    uint num_om_set_blend_state = 0;
+    uint num_ia_set_primitive_topology = 0;
+    uint num_ia_set_input_layout = 0;
+    uint num_vs_set_shader = 0;
+    uint num_vs_set_constant_buffers = 0;
+    uint num_ps_set_shader = 0;
+    uint num_ps_set_constant_buffers = 0;
 }
 extern(C)
 struct FrameStatsD3d11Bindings {
-    uint num_ia_set_vertex_buffers;
-    uint num_ia_set_index_buffer;
-    uint num_vs_set_shader_resources;
-    uint num_ps_set_shader_resources;
-    uint num_vs_set_samplers;
-    uint num_ps_set_samplers;
+    uint num_ia_set_vertex_buffers = 0;
+    uint num_ia_set_index_buffer = 0;
+    uint num_vs_set_shader_resources = 0;
+    uint num_ps_set_shader_resources = 0;
+    uint num_vs_set_samplers = 0;
+    uint num_ps_set_samplers = 0;
 }
 extern(C)
 struct FrameStatsD3d11Uniforms {
-    uint num_update_subresource;
+    uint num_update_subresource = 0;
 }
 extern(C)
 struct FrameStatsD3d11Draw {
-    uint num_draw_indexed_instanced;
-    uint num_draw_indexed;
-    uint num_draw_instanced;
-    uint num_draw;
+    uint num_draw_indexed_instanced = 0;
+    uint num_draw_indexed = 0;
+    uint num_draw_instanced = 0;
+    uint num_draw = 0;
 }
 extern(C)
 struct FrameStatsD3d11 {
@@ -815,37 +815,37 @@ struct FrameStatsD3d11 {
     FrameStatsD3d11Bindings bindings;
     FrameStatsD3d11Uniforms uniforms;
     FrameStatsD3d11Draw draw;
-    uint num_map;
-    uint num_unmap;
+    uint num_map = 0;
+    uint num_unmap = 0;
 }
 extern(C)
 struct FrameStatsMetalIdpool {
-    uint num_added;
-    uint num_released;
-    uint num_garbage_collected;
+    uint num_added = 0;
+    uint num_released = 0;
+    uint num_garbage_collected = 0;
 }
 extern(C)
 struct FrameStatsMetalPipeline {
-    uint num_set_blend_color;
-    uint num_set_cull_mode;
-    uint num_set_front_facing_winding;
-    uint num_set_stencil_reference_value;
-    uint num_set_depth_bias;
-    uint num_set_render_pipeline_state;
-    uint num_set_depth_stencil_state;
+    uint num_set_blend_color = 0;
+    uint num_set_cull_mode = 0;
+    uint num_set_front_facing_winding = 0;
+    uint num_set_stencil_reference_value = 0;
+    uint num_set_depth_bias = 0;
+    uint num_set_render_pipeline_state = 0;
+    uint num_set_depth_stencil_state = 0;
 }
 extern(C)
 struct FrameStatsMetalBindings {
-    uint num_set_vertex_buffer;
-    uint num_set_vertex_texture;
-    uint num_set_vertex_sampler_state;
-    uint num_set_fragment_texture;
-    uint num_set_fragment_sampler_state;
+    uint num_set_vertex_buffer = 0;
+    uint num_set_vertex_texture = 0;
+    uint num_set_vertex_sampler_state = 0;
+    uint num_set_fragment_texture = 0;
+    uint num_set_fragment_sampler_state = 0;
 }
 extern(C)
 struct FrameStatsMetalUniforms {
-    uint num_set_vertex_buffer_offset;
-    uint num_set_fragment_buffer_offset;
+    uint num_set_vertex_buffer_offset = 0;
+    uint num_set_fragment_buffer_offset = 0;
 }
 extern(C)
 struct FrameStatsMetal {
@@ -856,23 +856,23 @@ struct FrameStatsMetal {
 }
 extern(C)
 struct FrameStatsWgpuUniforms {
-    uint num_set_bindgroup;
-    uint size_write_buffer;
+    uint num_set_bindgroup = 0;
+    uint size_write_buffer = 0;
 }
 extern(C)
 struct FrameStatsWgpuBindings {
-    uint num_set_vertex_buffer;
-    uint num_skip_redundant_vertex_buffer;
-    uint num_set_index_buffer;
-    uint num_skip_redundant_index_buffer;
-    uint num_create_bindgroup;
-    uint num_discard_bindgroup;
-    uint num_set_bindgroup;
-    uint num_skip_redundant_bindgroup;
-    uint num_bindgroup_cache_hits;
-    uint num_bindgroup_cache_misses;
-    uint num_bindgroup_cache_collisions;
-    uint num_bindgroup_cache_hash_vs_key_mismatch;
+    uint num_set_vertex_buffer = 0;
+    uint num_skip_redundant_vertex_buffer = 0;
+    uint num_set_index_buffer = 0;
+    uint num_skip_redundant_index_buffer = 0;
+    uint num_create_bindgroup = 0;
+    uint num_discard_bindgroup = 0;
+    uint num_set_bindgroup = 0;
+    uint num_skip_redundant_bindgroup = 0;
+    uint num_bindgroup_cache_hits = 0;
+    uint num_bindgroup_cache_misses = 0;
+    uint num_bindgroup_cache_collisions = 0;
+    uint num_bindgroup_cache_hash_vs_key_mismatch = 0;
 }
 extern(C)
 struct FrameStatsWgpu {
@@ -881,21 +881,21 @@ struct FrameStatsWgpu {
 }
 extern(C)
 struct FrameStats {
-    uint frame_index;
-    uint num_passes;
-    uint num_apply_viewport;
-    uint num_apply_scissor_rect;
-    uint num_apply_pipeline;
-    uint num_apply_bindings;
-    uint num_apply_uniforms;
-    uint num_draw;
-    uint num_update_buffer;
-    uint num_append_buffer;
-    uint num_update_image;
-    uint size_apply_uniforms;
-    uint size_update_buffer;
-    uint size_append_buffer;
-    uint size_update_image;
+    uint frame_index = 0;
+    uint num_passes = 0;
+    uint num_apply_viewport = 0;
+    uint num_apply_scissor_rect = 0;
+    uint num_apply_pipeline = 0;
+    uint num_apply_bindings = 0;
+    uint num_apply_uniforms = 0;
+    uint num_draw = 0;
+    uint num_update_buffer = 0;
+    uint num_append_buffer = 0;
+    uint num_update_image = 0;
+    uint size_apply_uniforms = 0;
+    uint size_update_buffer = 0;
+    uint size_append_buffer = 0;
+    uint size_update_image = 0;
     FrameStatsGl gl;
     FrameStatsD3d11 d3d11;
     FrameStatsMetal metal;
@@ -1200,9 +1200,9 @@ struct GlContextDesc {
 }
 extern(C)
 struct ContextDesc {
-    int color_format;
-    int depth_format;
-    int sample_count;
+    int color_format = 0;
+    int depth_format = 0;
+    int sample_count = 0;
     MetalContextDesc metal;
     D3d11ContextDesc d3d11;
     WgpuContextDesc wgpu;
@@ -1226,24 +1226,24 @@ struct Logger {
 }
 extern(C)
 struct Desc {
-    uint _start_canary;
-    int buffer_pool_size;
-    int image_pool_size;
-    int sampler_pool_size;
-    int shader_pool_size;
-    int pipeline_pool_size;
-    int pass_pool_size;
-    int context_pool_size;
-    int uniform_buffer_size;
-    int max_commit_listeners;
-    bool disable_validation;
-    bool mtl_force_managed_storage_mode;
-    bool wgpu_disable_bindgroups_cache;
-    int wgpu_bindgroups_cache_size;
+    uint _start_canary = 0;
+    int buffer_pool_size = 0;
+    int image_pool_size = 0;
+    int sampler_pool_size = 0;
+    int shader_pool_size = 0;
+    int pipeline_pool_size = 0;
+    int pass_pool_size = 0;
+    int context_pool_size = 0;
+    int uniform_buffer_size = 0;
+    int max_commit_listeners = 0;
+    bool disable_validation = false;
+    bool mtl_force_managed_storage_mode = false;
+    bool wgpu_disable_bindgroups_cache = false;
+    int wgpu_bindgroups_cache_size = 0;
     Allocator allocator;
     Logger logger;
     ContextDesc context;
-    uint _end_canary;
+    uint _end_canary = 0;
 }
 extern(C) void sg_setup(const Desc *) @system @nogc nothrow;
 void setup(ref Desc desc) @trusted @nogc nothrow {
@@ -1711,12 +1711,12 @@ struct D3d11PassInfo {
 extern(C)
 struct MtlBufferInfo {
     const(void)*[2] buf;
-    int active_slot;
+    int active_slot = 0;
 }
 extern(C)
 struct MtlImageInfo {
     const(void)*[2] tex;
-    int active_slot;
+    int active_slot = 0;
 }
 extern(C)
 struct MtlSamplerInfo {
@@ -1766,26 +1766,26 @@ struct WgpuPassInfo {
 extern(C)
 struct GlBufferInfo {
     uint[2] buf;
-    int active_slot;
+    int active_slot = 0;
 }
 extern(C)
 struct GlImageInfo {
     uint[2] tex;
-    uint tex_target;
-    uint msaa_render_buffer;
-    int active_slot;
+    uint tex_target = 0;
+    uint msaa_render_buffer = 0;
+    int active_slot = 0;
 }
 extern(C)
 struct GlSamplerInfo {
-    uint smp;
+    uint smp = 0;
 }
 extern(C)
 struct GlShaderInfo {
-    uint prog;
+    uint prog = 0;
 }
 extern(C)
 struct GlPassInfo {
-    uint frame_buffer;
+    uint frame_buffer = 0;
     uint[4] msaa_resolve_framebuffer;
 }
 extern(C) scope const(void)* sg_d3d11_device() @system @nogc nothrow;

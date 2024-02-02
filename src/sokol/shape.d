@@ -6,7 +6,7 @@ import sg = sokol.gfx;
 extern(C)
 struct Range {
     const(void)* ptr;
-    size_t size;
+    size_t size = 0;
 }
 extern(C)
 struct Mat4 {
@@ -14,23 +14,23 @@ struct Mat4 {
 }
 extern(C)
 struct Vertex {
-    float x;
-    float y;
-    float z;
-    uint normal;
-    ushort u;
-    ushort v;
-    uint color;
+    float x = 0.0;
+    float y = 0.0;
+    float z = 0.0;
+    uint normal = 0;
+    ushort u = 0;
+    ushort v = 0;
+    uint color = 0;
 }
 extern(C)
 struct ElementRange {
-    uint base_element;
-    uint num_elements;
+    uint base_element = 0;
+    uint num_elements = 0;
 }
 extern(C)
 struct SizesItem {
-    uint num;
-    uint size;
+    uint num = 0;
+    uint size = 0;
 }
 extern(C)
 struct Sizes {
@@ -40,66 +40,66 @@ struct Sizes {
 extern(C)
 struct BufferItem {
     Range buffer;
-    size_t data_size;
-    size_t shape_offset;
+    size_t data_size = 0;
+    size_t shape_offset = 0;
 }
 extern(C)
 struct Buffer {
-    bool valid;
+    bool valid = false;
     BufferItem vertices;
     BufferItem indices;
 }
 extern(C)
 struct Plane {
-    float width;
-    float depth;
-    ushort tiles;
-    uint color;
-    bool random_colors;
-    bool merge;
+    float width = 0.0;
+    float depth = 0.0;
+    ushort tiles = 0;
+    uint color = 0;
+    bool random_colors = false;
+    bool merge = false;
     Mat4 transform;
 }
 extern(C)
 struct Box {
-    float width;
-    float height;
-    float depth;
-    ushort tiles;
-    uint color;
-    bool random_colors;
-    bool merge;
+    float width = 0.0;
+    float height = 0.0;
+    float depth = 0.0;
+    ushort tiles = 0;
+    uint color = 0;
+    bool random_colors = false;
+    bool merge = false;
     Mat4 transform;
 }
 extern(C)
 struct Sphere {
-    float radius;
-    ushort slices;
-    ushort stacks;
-    uint color;
-    bool random_colors;
-    bool merge;
+    float radius = 0.0;
+    ushort slices = 0;
+    ushort stacks = 0;
+    uint color = 0;
+    bool random_colors = false;
+    bool merge = false;
     Mat4 transform;
 }
 extern(C)
 struct Cylinder {
-    float radius;
-    float height;
-    ushort slices;
-    ushort stacks;
-    uint color;
-    bool random_colors;
-    bool merge;
+    float radius = 0.0;
+    float height = 0.0;
+    ushort slices = 0;
+    ushort stacks = 0;
+    uint color = 0;
+    bool random_colors = false;
+    bool merge = false;
     Mat4 transform;
 }
 extern(C)
 struct Torus {
-    float radius;
-    float ring_radius;
-    ushort sides;
-    ushort rings;
-    uint color;
-    bool random_colors;
-    bool merge;
+    float radius = 0.0;
+    float ring_radius = 0.0;
+    ushort sides = 0;
+    ushort rings = 0;
+    uint color = 0;
+    bool random_colors = false;
+    bool merge = false;
     Mat4 transform;
 }
 extern(C) Buffer sshape_build_plane(const Buffer *, const Plane *) @system @nogc nothrow;
