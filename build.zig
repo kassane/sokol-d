@@ -243,7 +243,8 @@ pub fn build(b: *Build) !void {
             // fixme: https://github.com/kassane/sokol-d/issues/1 - betterC works on darwin
             .zig_cc = if (target.result.isDarwin() and !enable_betterC) false else enable_zigcc,
             .target = target,
-            .optimize = if (target.result.isWasm()) .ReleaseSmall else optimize,
+            .optimize = optimize,
+            // send ldc2-obj (wasm artifact) to emcc
             .kind = if (target.result.isWasm()) .obj else .exe,
             .emsdk = emsdk,
         });

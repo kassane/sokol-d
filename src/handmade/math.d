@@ -6,13 +6,17 @@
 //
 //  Ported from HandmadeMath.h
 //------------------------------------------------------------------------------
+
 module handmade.math;
 
-extern(C):
+extern (C):
+@safe:
 
-version(WebAssembly){
+version (WebAssembly)
+{
+    // zig stdlib no-libc math functions
     enum PI = 3.14159265358979323846264338327950288419716939937510;
-    double zig_sqrt(ulong value) @nogc nothrow @trusted;
+    double zig_sqrt(size_t value) @nogc nothrow @trusted;
     double zig_sqrtf(double value) @nogc nothrow @trusted;
     double zig_cos(double value) @nogc nothrow @trusted;
     double zig_sin(double value) @nogc nothrow @trusted;
@@ -21,23 +25,27 @@ version(WebAssembly){
     alias sin = zig_sin;
     alias tan = zig_tan;
 
-    auto sqrt(T)(T value){
-        static if(is(T == double) || is(T == float)){
+    auto sqrt(T)(T value)
+    {
+        static if (is(T == double) || is(T == float))
+        {
             return zig_sqrtf(value);
-        } else {
+        }
+        else
+        {
             return zig_sqrt(value);
         }
     }
-} else {
-    public import core.stdc.math: sqrt, cos, sin, tan;
-    public import std.math: PI;
 }
-
-@safe:
+else
+{
+    public import core.stdc.math : sqrt, cos, sin, tan;
+    public import std.math : PI;
+}
 
 struct Vec2
 {
-    float x, y;
+    float x = 0.0, y = 0.0;
 
     static Vec2 zero()
     {
@@ -53,7 +61,7 @@ struct Vec2
 
 struct Vec3
 {
-    float x, y, z;
+    float x = 0.0, y = 0.0, z = 0.0;
 
     static Vec3 zero()
     {
@@ -108,7 +116,7 @@ struct Vec3
     static Vec3 cross(Vec3 v0, Vec3 v1)
     {
         return Vec3((v0.y * v1.z) - (v0.z * v1.y), (v0.z * v1.x) - (v0.x * v1.z),
-                (v0.x * v1.y) - (v0.y * v1.x));
+            (v0.x * v1.y) - (v0.y * v1.x));
     }
 
     static float dot(Vec3 v0, Vec3 v1)
@@ -232,9 +240,10 @@ float radians(float deg)
     return deg * (PI / 180.0);
 }
 
-@safe unittest
+unittest
 {
     import std.math : isClose;
+
     // Vec3.zero test
     {
         auto v = Vec3.zero();
@@ -245,9 +254,10 @@ float radians(float deg)
 
 }
 
-@safe unittest
+unittest
 {
     import std.math : isClose;
+
     // Vec3.new test
     {
         auto v = Vec3(1.0, 2.0, 3.0);
@@ -258,9 +268,10 @@ float radians(float deg)
 
 }
 
-@safe unittest
+unittest
 {
     import std.math : isClose;
+
     // Mat4.identity test
     {
         auto m = Mat4.identity();

@@ -1,7 +1,8 @@
-//! replace "core.stdc.math" to "zig.std.math"
+//! replace "core.stdc.math" to "zig.std.math" (no-libc)
+
 const std = @import("std");
 
-export fn zig_sqrt(x: u64) callconv(.C) u64 {
+export fn zig_sqrt(x: usize) callconv(.C) usize {
     return std.math.sqrt(x);
 }
 export fn zig_sqrtf(x: f64) callconv(.C) f64 {

@@ -42,4 +42,4 @@ jobs:
       - name: (Zig) Build Native
         run: zig build -DzigCC --summary all
       - name: (Zig + emsdk) Build Wasm
-        run: zig build -DzigCC --summary all -Dtarget=wasm32-emscripten
+        run: zig build -DzigCC --summary all -Dtarget=wasm32-emscripten -Doptimize=ReleaseSmall
