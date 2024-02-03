@@ -32,7 +32,7 @@ struct Context {
 }
 extern(C)
 struct Range {
-    const(void)* ptr;
+    const(void)* ptr = null;
     size_t size = 0;
 }
 enum invalid_id = 0;
@@ -436,7 +436,7 @@ extern(C)
 struct Bindings {
     uint _start_canary = 0;
     Buffer[8] vertex_buffers;
-    int[8] vertex_buffer_offsets;
+    int[8] vertex_buffer_offsets = 0;
     Buffer index_buffer;
     int index_buffer_offset = 0;
     StageBindings vs;
@@ -450,11 +450,11 @@ struct BufferDesc {
     BufferType type;
     Usage usage;
     Range data;
-    const(char)* label;
-    uint[2] gl_buffers;
-    const(void)*[2] mtl_buffers;
-    const(void)* d3d11_buffer;
-    const(void)* wgpu_buffer;
+    const(char)* label = null;
+    uint[2] gl_buffers = 0;
+    const(void)*[2] mtl_buffers = null;
+    const(void)* d3d11_buffer = null;
+    const(void)* wgpu_buffer = null;
     uint _end_canary = 0;
 }
 extern(C)
@@ -474,14 +474,14 @@ struct ImageDesc {
     PixelFormat pixel_format;
     int sample_count = 0;
     ImageData data;
-    const(char)* label;
-    uint[2] gl_textures;
+    const(char)* label = null;
+    uint[2] gl_textures = 0;
     uint gl_texture_target = 0;
-    const(void)*[2] mtl_textures;
-    const(void)* d3d11_texture;
-    const(void)* d3d11_shader_resource_view;
-    const(void)* wgpu_texture;
-    const(void)* wgpu_texture_view;
+    const(void)*[2] mtl_textures = null;
+    const(void)* d3d11_texture = null;
+    const(void)* d3d11_shader_resource_view = null;
+    const(void)* wgpu_texture = null;
+    const(void)* wgpu_texture_view = null;
     uint _end_canary = 0;
 }
 extern(C)
@@ -498,22 +498,22 @@ struct SamplerDesc {
     BorderColor border_color;
     CompareFunc compare;
     uint max_anisotropy = 0;
-    const(char)* label;
+    const(char)* label = null;
     uint gl_sampler = 0;
-    const(void)* mtl_sampler;
-    const(void)* d3d11_sampler;
-    const(void)* wgpu_sampler;
+    const(void)* mtl_sampler = null;
+    const(void)* d3d11_sampler = null;
+    const(void)* wgpu_sampler = null;
     uint _end_canary = 0;
 }
 extern(C)
 struct ShaderAttrDesc {
-    const(char)* name;
-    const(char)* sem_name;
+    const(char)* name = null;
+    const(char)* sem_name = null;
     int sem_index = 0;
 }
 extern(C)
 struct ShaderUniformDesc {
-    const(char)* name;
+    const(char)* name = null;
     UniformType type;
     int array_count = 0;
 }
@@ -540,14 +540,14 @@ struct ShaderImageSamplerPairDesc {
     bool used = false;
     int image_slot = 0;
     int sampler_slot = 0;
-    const(char)* glsl_name;
+    const(char)* glsl_name = null;
 }
 extern(C)
 struct ShaderStageDesc {
-    const(char)* source;
+    const(char)* source = null;
     Range bytecode;
-    const(char)* entry;
-    const(char)* d3d11_target;
+    const(char)* entry = null;
+    const(char)* d3d11_target = null;
     ShaderUniformBlockDesc[4] uniform_blocks;
     ShaderImageDesc[12] images;
     ShaderSamplerDesc[8] samplers;
@@ -559,7 +559,7 @@ struct ShaderDesc {
     ShaderAttrDesc[16] attrs;
     ShaderStageDesc vs;
     ShaderStageDesc fs;
-    const(char)* label;
+    const(char)* label = null;
     uint _end_canary = 0;
 }
 extern(C)
@@ -636,7 +636,7 @@ struct PipelineDesc {
     int sample_count = 0;
     Color blend_color;
     bool alpha_to_coverage_enabled = false;
-    const(char)* label;
+    const(char)* label = null;
     uint _end_canary = 0;
 }
 extern(C)
@@ -651,70 +651,70 @@ struct PassDesc {
     PassAttachmentDesc[4] color_attachments;
     PassAttachmentDesc[4] resolve_attachments;
     PassAttachmentDesc depth_stencil_attachment;
-    const(char)* label;
+    const(char)* label = null;
     uint _end_canary = 0;
 }
 extern(C)
 struct TraceHooks {
-    void* user_data;
-    extern(C) void function(void*) reset_state_cache;
-    extern(C) void function(const BufferDesc *, Buffer, void*) make_buffer;
-    extern(C) void function(const ImageDesc *, Image, void*) make_image;
-    extern(C) void function(const SamplerDesc *, Sampler, void*) make_sampler;
-    extern(C) void function(const ShaderDesc *, Shader, void*) make_shader;
-    extern(C) void function(const PipelineDesc *, Pipeline, void*) make_pipeline;
-    extern(C) void function(const PassDesc *, Pass, void*) make_pass;
-    extern(C) void function(Buffer, void*) destroy_buffer;
-    extern(C) void function(Image, void*) destroy_image;
-    extern(C) void function(Sampler, void*) destroy_sampler;
-    extern(C) void function(Shader, void*) destroy_shader;
-    extern(C) void function(Pipeline, void*) destroy_pipeline;
-    extern(C) void function(Pass, void*) destroy_pass;
-    extern(C) void function(Buffer, const Range *, void*) update_buffer;
-    extern(C) void function(Image, const ImageData *, void*) update_image;
-    extern(C) void function(Buffer, const Range *, int, void*) append_buffer;
-    extern(C) void function(const PassAction *, int, int, void*) begin_default_pass;
-    extern(C) void function(Pass, const PassAction *, void*) begin_pass;
-    extern(C) void function(int, int, int, int, bool, void*) apply_viewport;
-    extern(C) void function(int, int, int, int, bool, void*) apply_scissor_rect;
-    extern(C) void function(Pipeline, void*) apply_pipeline;
-    extern(C) void function(const Bindings *, void*) apply_bindings;
-    extern(C) void function(ShaderStage, int, const Range *, void*) apply_uniforms;
-    extern(C) void function(int, int, int, void*) draw;
-    extern(C) void function(void*) end_pass;
-    extern(C) void function(void*) commit;
-    extern(C) void function(Buffer, void*) alloc_buffer;
-    extern(C) void function(Image, void*) alloc_image;
-    extern(C) void function(Sampler, void*) alloc_sampler;
-    extern(C) void function(Shader, void*) alloc_shader;
-    extern(C) void function(Pipeline, void*) alloc_pipeline;
-    extern(C) void function(Pass, void*) alloc_pass;
-    extern(C) void function(Buffer, void*) dealloc_buffer;
-    extern(C) void function(Image, void*) dealloc_image;
-    extern(C) void function(Sampler, void*) dealloc_sampler;
-    extern(C) void function(Shader, void*) dealloc_shader;
-    extern(C) void function(Pipeline, void*) dealloc_pipeline;
-    extern(C) void function(Pass, void*) dealloc_pass;
-    extern(C) void function(Buffer, const BufferDesc *, void*) init_buffer;
-    extern(C) void function(Image, const ImageDesc *, void*) init_image;
-    extern(C) void function(Sampler, const SamplerDesc *, void*) init_sampler;
-    extern(C) void function(Shader, const ShaderDesc *, void*) init_shader;
-    extern(C) void function(Pipeline, const PipelineDesc *, void*) init_pipeline;
-    extern(C) void function(Pass, const PassDesc *, void*) init_pass;
-    extern(C) void function(Buffer, void*) uninit_buffer;
-    extern(C) void function(Image, void*) uninit_image;
-    extern(C) void function(Sampler, void*) uninit_sampler;
-    extern(C) void function(Shader, void*) uninit_shader;
-    extern(C) void function(Pipeline, void*) uninit_pipeline;
-    extern(C) void function(Pass, void*) uninit_pass;
-    extern(C) void function(Buffer, void*) fail_buffer;
-    extern(C) void function(Image, void*) fail_image;
-    extern(C) void function(Sampler, void*) fail_sampler;
-    extern(C) void function(Shader, void*) fail_shader;
-    extern(C) void function(Pipeline, void*) fail_pipeline;
-    extern(C) void function(Pass, void*) fail_pass;
-    extern(C) void function(scope const(char)*, void*) push_debug_group;
-    extern(C) void function(void*) pop_debug_group;
+    void* user_data = null;
+    extern(C) void function(void*) reset_state_cache = null;
+    extern(C) void function(const BufferDesc *, Buffer, void*) make_buffer = null;
+    extern(C) void function(const ImageDesc *, Image, void*) make_image = null;
+    extern(C) void function(const SamplerDesc *, Sampler, void*) make_sampler = null;
+    extern(C) void function(const ShaderDesc *, Shader, void*) make_shader = null;
+    extern(C) void function(const PipelineDesc *, Pipeline, void*) make_pipeline = null;
+    extern(C) void function(const PassDesc *, Pass, void*) make_pass = null;
+    extern(C) void function(Buffer, void*) destroy_buffer = null;
+    extern(C) void function(Image, void*) destroy_image = null;
+    extern(C) void function(Sampler, void*) destroy_sampler = null;
+    extern(C) void function(Shader, void*) destroy_shader = null;
+    extern(C) void function(Pipeline, void*) destroy_pipeline = null;
+    extern(C) void function(Pass, void*) destroy_pass = null;
+    extern(C) void function(Buffer, const Range *, void*) update_buffer = null;
+    extern(C) void function(Image, const ImageData *, void*) update_image = null;
+    extern(C) void function(Buffer, const Range *, int, void*) append_buffer = null;
+    extern(C) void function(const PassAction *, int, int, void*) begin_default_pass = null;
+    extern(C) void function(Pass, const PassAction *, void*) begin_pass = null;
+    extern(C) void function(int, int, int, int, bool, void*) apply_viewport = null;
+    extern(C) void function(int, int, int, int, bool, void*) apply_scissor_rect = null;
+    extern(C) void function(Pipeline, void*) apply_pipeline = null;
+    extern(C) void function(const Bindings *, void*) apply_bindings = null;
+    extern(C) void function(ShaderStage, int, const Range *, void*) apply_uniforms = null;
+    extern(C) void function(int, int, int, void*) draw = null;
+    extern(C) void function(void*) end_pass = null;
+    extern(C) void function(void*) commit = null;
+    extern(C) void function(Buffer, void*) alloc_buffer = null;
+    extern(C) void function(Image, void*) alloc_image = null;
+    extern(C) void function(Sampler, void*) alloc_sampler = null;
+    extern(C) void function(Shader, void*) alloc_shader = null;
+    extern(C) void function(Pipeline, void*) alloc_pipeline = null;
+    extern(C) void function(Pass, void*) alloc_pass = null;
+    extern(C) void function(Buffer, void*) dealloc_buffer = null;
+    extern(C) void function(Image, void*) dealloc_image = null;
+    extern(C) void function(Sampler, void*) dealloc_sampler = null;
+    extern(C) void function(Shader, void*) dealloc_shader = null;
+    extern(C) void function(Pipeline, void*) dealloc_pipeline = null;
+    extern(C) void function(Pass, void*) dealloc_pass = null;
+    extern(C) void function(Buffer, const BufferDesc *, void*) init_buffer = null;
+    extern(C) void function(Image, const ImageDesc *, void*) init_image = null;
+    extern(C) void function(Sampler, const SamplerDesc *, void*) init_sampler = null;
+    extern(C) void function(Shader, const ShaderDesc *, void*) init_shader = null;
+    extern(C) void function(Pipeline, const PipelineDesc *, void*) init_pipeline = null;
+    extern(C) void function(Pass, const PassDesc *, void*) init_pass = null;
+    extern(C) void function(Buffer, void*) uninit_buffer = null;
+    extern(C) void function(Image, void*) uninit_image = null;
+    extern(C) void function(Sampler, void*) uninit_sampler = null;
+    extern(C) void function(Shader, void*) uninit_shader = null;
+    extern(C) void function(Pipeline, void*) uninit_pipeline = null;
+    extern(C) void function(Pass, void*) uninit_pass = null;
+    extern(C) void function(Buffer, void*) fail_buffer = null;
+    extern(C) void function(Image, void*) fail_image = null;
+    extern(C) void function(Sampler, void*) fail_sampler = null;
+    extern(C) void function(Shader, void*) fail_shader = null;
+    extern(C) void function(Pipeline, void*) fail_pipeline = null;
+    extern(C) void function(Pass, void*) fail_pass = null;
+    extern(C) void function(scope const(char)*, void*) push_debug_group = null;
+    extern(C) void function(void*) pop_debug_group = null;
 }
 extern(C)
 struct SlotInfo {
@@ -1164,39 +1164,39 @@ enum LogItem {
 }
 extern(C)
 struct MetalContextDesc {
-    const(void)* device;
-    extern(C) const(void)* function() renderpass_descriptor_cb;
-    extern(C) const(void)* function(void*) renderpass_descriptor_userdata_cb;
-    extern(C) const(void)* function() drawable_cb;
-    extern(C) const(void)* function(void*) drawable_userdata_cb;
-    void* user_data;
+    const(void)* device = null;
+    extern(C) const(void)* function() renderpass_descriptor_cb = null;
+    extern(C) const(void)* function(void*) renderpass_descriptor_userdata_cb = null;
+    extern(C) const(void)* function() drawable_cb = null;
+    extern(C) const(void)* function(void*) drawable_userdata_cb = null;
+    void* user_data = null;
 }
 extern(C)
 struct D3d11ContextDesc {
-    const(void)* device;
-    const(void)* device_context;
-    extern(C) const(void)* function() render_target_view_cb;
-    extern(C) const(void)* function(void*) render_target_view_userdata_cb;
-    extern(C) const(void)* function() depth_stencil_view_cb;
-    extern(C) const(void)* function(void*) depth_stencil_view_userdata_cb;
-    void* user_data;
+    const(void)* device = null;
+    const(void)* device_context = null;
+    extern(C) const(void)* function() render_target_view_cb = null;
+    extern(C) const(void)* function(void*) render_target_view_userdata_cb = null;
+    extern(C) const(void)* function() depth_stencil_view_cb = null;
+    extern(C) const(void)* function(void*) depth_stencil_view_userdata_cb = null;
+    void* user_data = null;
 }
 extern(C)
 struct WgpuContextDesc {
-    const(void)* device;
-    extern(C) const(void)* function() render_view_cb;
-    extern(C) const(void)* function(void*) render_view_userdata_cb;
-    extern(C) const(void)* function() resolve_view_cb;
-    extern(C) const(void)* function(void*) resolve_view_userdata_cb;
-    extern(C) const(void)* function() depth_stencil_view_cb;
-    extern(C) const(void)* function(void*) depth_stencil_view_userdata_cb;
-    void* user_data;
+    const(void)* device = null;
+    extern(C) const(void)* function() render_view_cb = null;
+    extern(C) const(void)* function(void*) render_view_userdata_cb = null;
+    extern(C) const(void)* function() resolve_view_cb = null;
+    extern(C) const(void)* function(void*) resolve_view_userdata_cb = null;
+    extern(C) const(void)* function() depth_stencil_view_cb = null;
+    extern(C) const(void)* function(void*) depth_stencil_view_userdata_cb = null;
+    void* user_data = null;
 }
 extern(C)
 struct GlContextDesc {
-    extern(C) uint function() default_framebuffer_cb;
-    extern(C) uint function(void*) default_framebuffer_userdata_cb;
-    void* user_data;
+    extern(C) uint function() default_framebuffer_cb = null;
+    extern(C) uint function(void*) default_framebuffer_userdata_cb = null;
+    void* user_data = null;
 }
 extern(C)
 struct ContextDesc {
@@ -1210,19 +1210,19 @@ struct ContextDesc {
 }
 extern(C)
 struct CommitListener {
-    extern(C) void function(void*) func;
-    void* user_data;
+    extern(C) void function(void*) func = null;
+    void* user_data = null;
 }
 extern(C)
 struct Allocator {
-    extern(C) void* function(size_t, void*) alloc_fn;
-    extern(C) void function(void*, void*) free_fn;
-    void* user_data;
+    extern(C) void* function(size_t, void*) alloc_fn = null;
+    extern(C) void function(void*, void*) free_fn = null;
+    void* user_data = null;
 }
 extern(C)
 struct Logger {
-    extern(C) void function(scope const(char)*, uint, uint, scope const(char)*, uint, scope const(char)*, void*) func;
-    void* user_data;
+    extern(C) void function(scope const(char)*, uint, uint, scope const(char)*, uint, scope const(char)*, void*) func = null;
+    void* user_data = null;
 }
 extern(C)
 struct Desc {
@@ -1675,102 +1675,102 @@ void discardContext(Context ctx_id) @trusted @nogc nothrow {
 }
 extern(C)
 struct D3d11BufferInfo {
-    const(void)* buf;
+    const(void)* buf = null;
 }
 extern(C)
 struct D3d11ImageInfo {
-    const(void)* tex2d;
-    const(void)* tex3d;
-    const(void)* res;
-    const(void)* srv;
+    const(void)* tex2d = null;
+    const(void)* tex3d = null;
+    const(void)* res = null;
+    const(void)* srv = null;
 }
 extern(C)
 struct D3d11SamplerInfo {
-    const(void)* smp;
+    const(void)* smp = null;
 }
 extern(C)
 struct D3d11ShaderInfo {
-    const(void)*[4] vs_cbufs;
-    const(void)*[4] fs_cbufs;
-    const(void)* vs;
-    const(void)* fs;
+    const(void)*[4] vs_cbufs = null;
+    const(void)*[4] fs_cbufs = null;
+    const(void)* vs = null;
+    const(void)* fs = null;
 }
 extern(C)
 struct D3d11PipelineInfo {
-    const(void)* il;
-    const(void)* rs;
-    const(void)* dss;
-    const(void)* bs;
+    const(void)* il = null;
+    const(void)* rs = null;
+    const(void)* dss = null;
+    const(void)* bs = null;
 }
 extern(C)
 struct D3d11PassInfo {
-    const(void)*[4] color_rtv;
-    const(void)*[4] resolve_rtv;
-    const(void)* dsv;
+    const(void)*[4] color_rtv = null;
+    const(void)*[4] resolve_rtv = null;
+    const(void)* dsv = null;
 }
 extern(C)
 struct MtlBufferInfo {
-    const(void)*[2] buf;
+    const(void)*[2] buf = null;
     int active_slot = 0;
 }
 extern(C)
 struct MtlImageInfo {
-    const(void)*[2] tex;
+    const(void)*[2] tex = null;
     int active_slot = 0;
 }
 extern(C)
 struct MtlSamplerInfo {
-    const(void)* smp;
+    const(void)* smp = null;
 }
 extern(C)
 struct MtlShaderInfo {
-    const(void)* vs_lib;
-    const(void)* fs_lib;
-    const(void)* vs_func;
-    const(void)* fs_func;
+    const(void)* vs_lib = null;
+    const(void)* fs_lib = null;
+    const(void)* vs_func = null;
+    const(void)* fs_func = null;
 }
 extern(C)
 struct MtlPipelineInfo {
-    const(void)* rps;
-    const(void)* dss;
+    const(void)* rps = null;
+    const(void)* dss = null;
 }
 extern(C)
 struct WgpuBufferInfo {
-    const(void)* buf;
+    const(void)* buf = null;
 }
 extern(C)
 struct WgpuImageInfo {
-    const(void)* tex;
-    const(void)* view;
+    const(void)* tex = null;
+    const(void)* view = null;
 }
 extern(C)
 struct WgpuSamplerInfo {
-    const(void)* smp;
+    const(void)* smp = null;
 }
 extern(C)
 struct WgpuShaderInfo {
-    const(void)* vs_mod;
-    const(void)* fs_mod;
-    const(void)* bgl;
+    const(void)* vs_mod = null;
+    const(void)* fs_mod = null;
+    const(void)* bgl = null;
 }
 extern(C)
 struct WgpuPipelineInfo {
-    const(void)* pip;
+    const(void)* pip = null;
 }
 extern(C)
 struct WgpuPassInfo {
-    const(void)*[4] color_view;
-    const(void)*[4] resolve_view;
-    const(void)* ds_view;
+    const(void)*[4] color_view = null;
+    const(void)*[4] resolve_view = null;
+    const(void)* ds_view = null;
 }
 extern(C)
 struct GlBufferInfo {
-    uint[2] buf;
+    uint[2] buf = 0;
     int active_slot = 0;
 }
 extern(C)
 struct GlImageInfo {
-    uint[2] tex;
+    uint[2] tex = 0;
     uint tex_target = 0;
     uint msaa_render_buffer = 0;
     int active_slot = 0;
@@ -1786,7 +1786,7 @@ struct GlShaderInfo {
 extern(C)
 struct GlPassInfo {
     uint frame_buffer = 0;
-    uint[4] msaa_resolve_framebuffer;
+    uint[4] msaa_resolve_framebuffer = 0;
 }
 extern(C) scope const(void)* sg_d3d11_device() @system @nogc nothrow;
 scope const(void)* d3d11Device() @trusted @nogc nothrow {

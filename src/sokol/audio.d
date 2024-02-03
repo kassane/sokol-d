@@ -42,14 +42,14 @@ enum LogItem {
 }
 extern(C)
 struct Logger {
-    extern(C) void function(scope const(char)*, uint, uint, scope const(char)*, uint, scope const(char)*, void*) func;
-    void* user_data;
+    extern(C) void function(scope const(char)*, uint, uint, scope const(char)*, uint, scope const(char)*, void*) func = null;
+    void* user_data = null;
 }
 extern(C)
 struct Allocator {
-    extern(C) void* function(size_t, void*) alloc_fn;
-    extern(C) void function(void*, void*) free_fn;
-    void* user_data;
+    extern(C) void* function(size_t, void*) alloc_fn = null;
+    extern(C) void function(void*, void*) free_fn = null;
+    void* user_data = null;
 }
 extern(C)
 struct Desc {
@@ -58,9 +58,9 @@ struct Desc {
     int buffer_frames = 0;
     int packet_frames = 0;
     int num_packets = 0;
-    extern(C) void function(float *, int, int) stream_cb;
-    extern(C) void function(float *, int, int, void*) stream_userdata_cb;
-    void* user_data;
+    extern(C) void function(float *, int, int) stream_cb = null;
+    extern(C) void function(float *, int, int, void*) stream_userdata_cb = null;
+    void* user_data = null;
     Allocator allocator;
     Logger logger;
 }

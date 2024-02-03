@@ -13,8 +13,8 @@ enum LogItem {
 }
 extern(C)
 struct Logger {
-    extern(C) void function(scope const(char)*, uint, uint, scope const(char)*, uint, scope const(char)*, void*) func;
-    void* user_data;
+    extern(C) void function(scope const(char)*, uint, uint, scope const(char)*, uint, scope const(char)*, void*) func = null;
+    void* user_data = null;
 }
 extern(C)
 struct Context {
@@ -22,7 +22,7 @@ struct Context {
 }
 extern(C)
 struct Range {
-    const(void)* ptr;
+    const(void)* ptr = null;
     size_t size = 0;
 }
 extern(C)
@@ -44,9 +44,9 @@ struct ContextDesc {
 }
 extern(C)
 struct Allocator {
-    extern(C) void* function(size_t, void*) alloc_fn;
-    extern(C) void function(void*, void*) free_fn;
-    void* user_data;
+    extern(C) void* function(size_t, void*) alloc_fn = null;
+    extern(C) void function(void*, void*) free_fn = null;
+    void* user_data = null;
 }
 extern(C)
 struct Desc {

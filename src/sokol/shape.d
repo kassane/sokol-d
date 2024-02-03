@@ -5,12 +5,12 @@ import sg = sokol.gfx;
 
 extern(C)
 struct Range {
-    const(void)* ptr;
+    const(void)* ptr = null;
     size_t size = 0;
 }
 extern(C)
 struct Mat4 {
-    float[4][4] m;
+    float[4][4] m = 0.0;
 }
 extern(C)
 struct Vertex {

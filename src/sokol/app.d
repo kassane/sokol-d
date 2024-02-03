@@ -207,7 +207,7 @@ struct Event {
 }
 extern(C)
 struct Range {
-    const(void)* ptr;
+    const(void)* ptr = null;
     size_t size = 0;
 }
 extern(C)
@@ -223,9 +223,9 @@ struct IconDesc {
 }
 extern(C)
 struct Allocator {
-    extern(C) void* function(size_t, void*) alloc_fn;
-    extern(C) void function(void*, void*) free_fn;
-    void* user_data;
+    extern(C) void* function(size_t, void*) alloc_fn = null;
+    extern(C) void function(void*, void*) free_fn = null;
+    void* user_data = null;
 }
 enum LogItem {
     Ok,
@@ -329,20 +329,20 @@ enum LogItem {
 }
 extern(C)
 struct Logger {
-    extern(C) void function(scope const(char)*, uint, uint, scope const(char)*, uint, scope const(char)*, void*) func;
-    void* user_data;
+    extern(C) void function(scope const(char)*, uint, uint, scope const(char)*, uint, scope const(char)*, void*) func = null;
+    void* user_data = null;
 }
 extern(C)
 struct Desc {
-    extern(C) void function() init_cb;
-    extern(C) void function() frame_cb;
-    extern(C) void function() cleanup_cb;
-    extern(C) void function(const Event *) event_cb;
-    void* user_data;
-    extern(C) void function(void*) init_userdata_cb;
-    extern(C) void function(void*) frame_userdata_cb;
-    extern(C) void function(void*) cleanup_userdata_cb;
-    extern(C) void function(const Event *, void*) event_userdata_cb;
+    extern(C) void function() init_cb = null;
+    extern(C) void function() frame_cb = null;
+    extern(C) void function() cleanup_cb = null;
+    extern(C) void function(const Event *) event_cb = null;
+    void* user_data = null;
+    extern(C) void function(void*) init_userdata_cb = null;
+    extern(C) void function(void*) frame_userdata_cb = null;
+    extern(C) void function(void*) cleanup_userdata_cb = null;
+    extern(C) void function(const Event *, void*) event_userdata_cb = null;
     int width = 0;
     int height = 0;
     int sample_count = 0;
@@ -350,7 +350,7 @@ struct Desc {
     bool high_dpi = false;
     bool fullscreen = false;
     bool alpha = false;
-    const(char)* window_title;
+    const(char)* window_title = null;
     bool enable_clipboard = false;
     int clipboard_size = 0;
     bool enable_dragndrop = false;
@@ -364,7 +364,7 @@ struct Desc {
     bool win32_console_utf8 = false;
     bool win32_console_create = false;
     bool win32_console_attach = false;
-    const(char)* html5_canvas_name;
+    const(char)* html5_canvas_name = null;
     bool html5_canvas_resize = false;
     bool html5_preserve_drawing_buffer = false;
     bool html5_premultiplied_alpha = false;
@@ -388,14 +388,14 @@ struct Html5FetchResponse {
     int file_index = 0;
     Range data;
     Range buffer;
-    void* user_data;
+    void* user_data = null;
 }
 extern(C)
 struct Html5FetchRequest {
     int dropped_file_index = 0;
-    extern(C) void function(const Html5FetchResponse *) callback;
+    extern(C) void function(const Html5FetchResponse *) callback = null;
     Range buffer;
-    void* user_data;
+    void* user_data = null;
 }
 enum MouseCursor {
     Default = 0,
