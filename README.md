@@ -36,6 +36,7 @@ zig build run-debugtext_print -Doptimize=ReleaseFast
 zig build run-mrt -Doptimize=ReleaseFast
 zig build run-saudio -Doptimize=ReleaseFast
 zig build run-sgl_context -Doptimize=ReleaseFast
+zig build run-sgl_points -Doptimize=ReleaseFast
 zig build run-user_data -Doptimize=ReleaseFast
 zig build run-triangle -Doptimize=ReleaseFast
 

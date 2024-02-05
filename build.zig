@@ -216,6 +216,7 @@ pub fn build(b: *Build) !void {
         "mrt",
         "saudio",
         "sgl_context",
+        "sgl_points",
         "debugtext_print",
         "user_data", // Need GC for user data [associative array]
     };

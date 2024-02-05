@@ -29,6 +29,7 @@ jobs:
         run: |
             dub build :clear
             dub build :sgl_context
+            dub build :sgl_points
             dub build :debugtext_print
             # dub build :cube
             # dub build :blend

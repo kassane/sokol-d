@@ -16,12 +16,14 @@ version (WebAssembly)
 {
     // zig stdlib no-libc math functions
     enum PI = 3.14159265358979323846264338327950288419716939937510;
+    double zig_cos(double value) @nogc nothrow @trusted;
+    double zig_floor(double value) @nogc nothrow @trusted;
+    double zig_sin(double value) @nogc nothrow @trusted;
     double zig_sqrt(size_t value) @nogc nothrow @trusted;
     double zig_sqrtf(double value) @nogc nothrow @trusted;
-    double zig_cos(double value) @nogc nothrow @trusted;
-    double zig_sin(double value) @nogc nothrow @trusted;
     double zig_tan(double value) @nogc nothrow @trusted;
     alias cos = zig_cos;
+    alias floor = zig_floor;
     alias sin = zig_sin;
     alias tan = zig_tan;
 
@@ -39,7 +41,7 @@ version (WebAssembly)
 }
 else
 {
-    public import core.stdc.math : sqrt, cos, sin, tan;
+    public import core.stdc.math : sqrt, cos, sin, tan, floor;
     public import std.math : PI;
 }
 

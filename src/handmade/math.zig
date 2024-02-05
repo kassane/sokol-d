@@ -17,3 +17,6 @@ export fn zig_sin(x: f64) callconv(.C) f64 {
 export fn zig_tan(x: f64) callconv(.C) f64 {
     return std.math.tan(x);
 }
+export fn zig_floor(x: f64) callconv(.C) f64 {
+    return std.math.floor(x);
+}
