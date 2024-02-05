@@ -7,43 +7,51 @@ import sgapp = sokol.glue;
 
 extern (C):
 
-struct ExampleUserData {
-    ubyte data;    
+struct ExampleUserData
+{
+    ubyte data;
     int[ubyte] map; // need druntime
 }
 
 void init() @safe
 {
-    sg.Desc gfx = {
-        context: sgapp.context(),
-        logger: {func: &log.slog_func}
-    };
+    sg.Desc gfx = {context: sgapp.context(),
+    logger: {func: &log.slog_func}};
     sg.setup(gfx);
 }
 
 void frame_userdata(scope void* userdata) @trusted
 {
     auto state = cast(ExampleUserData*) userdata;
-    
+
     state.data++;
-    
-    version(WebAssembly){
+
+    version (WebAssembly)
+    {
         // TODO support
     }
     else
     {
-        if (state.data % 13 == 0) {
-            state.map[state.data] = state.data * 13 / 3; 
+        if (state.data % 13 == 0)
+        {
+            state.map[state.data] = state.data * 13 / 3;
         }
-        if (state.data % 12 == 0 && state.data % 15 == 0) {
+        if (state.data % 12 == 0 && state.data % 15 == 0)
+        {
             state.map.clear();
-        } 
+        }
     }
-    debug {
+    debug
+    {
         import std.stdio : writeln;
-        try { 
+
+        try
+        {
             writeln(*state);
-        } catch (Exception) {}
+        }
+        catch (Exception)
+        {
+        }
     }
 
     sg.PassAction pass_action = {};
@@ -72,7 +80,6 @@ void main()
         sample_count: 4,
         win32_console_attach: true,
         icon: {sokol_default: true},
-        logger: {func: &log.func}
-    };
-    sapp.run(runner);
-}
+        logger: {func: &log.func}};
+        sapp.run(runner);
+    }

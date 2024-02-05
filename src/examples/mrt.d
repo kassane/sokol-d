@@ -24,7 +24,8 @@ extern (C):
 
 enum OFFSCREEN_SAMPLE_COUNT = 1;
 
-struct Offscreen {
+struct Offscreen
+{
     sg.PassAction pass_action;
     sg.PassDesc pass_desc;
     sg.Pass pass;
@@ -32,21 +33,25 @@ struct Offscreen {
     sg.Bindings bind;
 }
 
-struct Fsq {
+struct Fsq
+{
     sg.Pipeline pip;
     sg.Bindings bind;
 }
 
-struct Dbg {
+struct Dbg
+{
     sg.Pipeline pip;
     sg.Bindings bind;
 }
 
-struct Dflt {
+struct Dflt
+{
     sg.PassAction pass_action;
 }
 
-struct State {
+struct State
+{
     Offscreen offscreen;
     Fsq fsq;
     Dbg dbg;
@@ -60,13 +65,11 @@ static State state;
 
 void init() @trusted
 {
-    sg.Desc gfx = {
-        context: sgapp.context(),
-        logger: {func: &log.slog_func}
-    };
+    sg.Desc gfx = {context: sgapp.context(),
+    logger: {func: &log.slog_func}};
     sg.setup(gfx);
-    
-   // setup pass action for default render pass
+
+    // setup pass action for default render pass
     state.dflt.pass_action.colors[0].load_action = sg.LoadAction.Dontcare;
     state.dflt.pass_action.depth.load_action = sg.LoadAction.Dontcare;
     state.dflt.pass_action.stencil.load_action = sg.LoadAction.Dontcare;
@@ -96,48 +99,48 @@ void init() @trusted
 
     float[96] VERTICES = [
         // positions        brightness
-        -1.0, -1.0, -1.0,   1.0,
-         1.0, -1.0, -1.0,   1.0,
-         1.0,  1.0, -1.0,   1.0,
-        -1.0,  1.0, -1.0,   1.0,
+        -1.0, -1.0, -1.0, 1.0,
+        1.0, -1.0, -1.0, 1.0,
+        1.0, 1.0, -1.0, 1.0,
+        -1.0, 1.0, -1.0, 1.0,
 
-        -1.0, -1.0,  1.0,   0.8,
-         1.0, -1.0,  1.0,   0.8,
-         1.0,  1.0,  1.0,   0.8,
-        -1.0,  1.0,  1.0,   0.8,
+        -1.0, -1.0, 1.0, 0.8,
+        1.0, -1.0, 1.0, 0.8,
+        1.0, 1.0, 1.0, 0.8,
+        -1.0, 1.0, 1.0, 0.8,
 
-        -1.0, -1.0, -1.0,   0.6,
-        -1.0,  1.0, -1.0,   0.6,
-        -1.0,  1.0,  1.0,   0.6,
-        -1.0, -1.0,  1.0,   0.6,
+        -1.0, -1.0, -1.0, 0.6,
+        -1.0, 1.0, -1.0, 0.6,
+        -1.0, 1.0, 1.0, 0.6,
+        -1.0, -1.0, 1.0, 0.6,
 
-         1.0, -1.0, -1.0,   0.0,
-         1.0,  1.0, -1.0,   0.0,
-         1.0,  1.0,  1.0,   0.0,
-         1.0, -1.0,  1.0,   0.0,
+        1.0, -1.0, -1.0, 0.0,
+        1.0, 1.0, -1.0, 0.0,
+        1.0, 1.0, 1.0, 0.0,
+        1.0, -1.0, 1.0, 0.0,
 
-        -1.0, -1.0, -1.0,   0.5,
-        -1.0, -1.0,  1.0,   0.5,
-         1.0, -1.0,  1.0,   0.5,
-         1.0, -1.0, -1.0,   0.5,
+        -1.0, -1.0, -1.0, 0.5,
+        -1.0, -1.0, 1.0, 0.5,
+        1.0, -1.0, 1.0, 0.5,
+        1.0, -1.0, -1.0, 0.5,
 
-        -1.0,  1.0, -1.0,   0.7,
-        -1.0,  1.0,  1.0,   0.7,
-         1.0,  1.0,  1.0,   0.7,
-         1.0,  1.0, -1.0,   0.7,
+        -1.0, 1.0, -1.0, 0.7,
+        -1.0, 1.0, 1.0, 0.7,
+        1.0, 1.0, 1.0, 0.7,
+        1.0, 1.0, -1.0, 0.7,
     ];
 
     // create vertex buffer for a cube
-    sg.BufferDesc buf = { data: sgutil.asRange(&VERTICES[0]) };
+    sg.BufferDesc buf = {data: sgutil.asRange(&VERTICES[0])};
     auto cube_vbuf = sg.makeBuffer(buf);
 
     double[36] INDICES = [
-        0,  1,  2,   0,  2,  3,
-        6,  5,  4,   7,  6,  4,
-        8,  9,  10,  8,  10, 11,
-        14, 13, 12,  15, 14, 12,
-        16, 17, 18,  16, 18, 19,
-        22, 21, 20,  23, 22, 20,
+        0, 1, 2, 0, 2, 3,
+        6, 5, 4, 7, 6, 4,
+        8, 9, 10, 8, 10, 11,
+        14, 13, 12, 15, 14, 12,
+        16, 17, 18, 16, 18, 19,
+        22, 21, 20, 23, 22, 20,
     ];
 
     // index buffer for a cube
@@ -171,7 +174,7 @@ void init() @trusted
 
     float[8] QUAD_VERTICES = [0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0];
     // a vertex buffer to render a fullscreen quad
-    sg.BufferDesc quad_buf = { data: sgutil.asRange(&QUAD_VERTICES[0]) };
+    sg.BufferDesc quad_buf = {data: sgutil.asRange(&QUAD_VERTICES[0])};
     const quad_vbuf = sg.makeBuffer(quad_buf);
 
     // shader and pipeline object to render a fullscreen quad which composes
@@ -196,7 +199,8 @@ void init() @trusted
     // resource bindings to render the fullscreen quad (composed from the
     // offscreen render target textures
     state.fsq.bind.vertex_buffers[0] = quad_vbuf;
-    foreach (i;[0,1,2]) {
+    foreach (i; [0, 1, 2])
+    {
         state.fsq.bind.fs.images[i] = state.offscreen.pass_desc.color_attachments[i].image;
     }
     state.fsq.bind.fs.samplers[0] = smp;
@@ -218,12 +222,12 @@ void init() @trusted
 
 void frame()
 {
-    immutable (float) dt = (app.frameDuration() * 60.0);
+    immutable(float) dt = (app.frameDuration() * 60.0);
     state.rx += 1.0 * dt;
     state.ry += 2.0 * dt;
 
     // compute shader uniform data
-    shd.OffscreenParams offscreen_params = { mvp: compute_mvp(state.rx, state.ry) };
+    shd.OffscreenParams offscreen_params = {mvp: compute_mvp(state.rx, state.ry)};
     shd.FsqParams fsq_params = {
         offset: Vec2(sin(state.rx * 0.01) * 0.1, cos(state.ry * 0.01) * 0.1),
     };
@@ -250,7 +254,8 @@ void frame()
     sg.applyUniforms(sg.ShaderStage.Vs, shd.SLOT_FSQ_PARAMS, fsq_rg);
     sg.draw(0, 4, 1);
     sg.applyPipeline(state.dbg.pip);
-    foreach(i;[0,1,2]) {
+    foreach (i; [0, 1, 2])
+    {
         sg.applyViewport(i * 100, 0, 100, 100, false);
         state.dbg.bind.fs.images[0] = state.offscreen.pass_desc.color_attachments[i].image;
         sg.applyBindings(state.dbg.bind);
@@ -262,7 +267,7 @@ void frame()
 
 void event(const app.Event* ev)
 {
-    if(ev.type == app.EventType.Resized)
+    if (ev.type == app.EventType.Resized)
     {
         createOffscreenPass(ev.framebuffer_width, ev.framebuffer_height);
     }
@@ -294,7 +299,8 @@ void createOffscreenPass(int width, int height)
 {
     // destroy previous resources (can be called with invalid ids)
     sg.destroyPass(state.offscreen.pass);
-    foreach (att; state.offscreen.pass_desc.color_attachments) {
+    foreach (att; state.offscreen.pass_desc.color_attachments)
+    {
         sg.destroyImage(att.image);
     }
     sg.destroyImage(state.offscreen.pass_desc.depth_stencil_attachment.image);
@@ -309,20 +315,22 @@ void createOffscreenPass(int width, int height)
     sg.ImageDesc depth_img_desc = color_img_desc;
     depth_img_desc.pixel_format = sg.PixelFormat.Depth;
 
-    foreach (i; [0, 1, 2]) {
+    foreach (i; [0, 1, 2])
+    {
         state.offscreen.pass_desc.color_attachments[i].image = sg.makeImage(color_img_desc);
     }
     state.offscreen.pass_desc.depth_stencil_attachment.image = sg.makeImage(depth_img_desc);
     state.offscreen.pass = sg.makePass(state.offscreen.pass_desc);
 
     // update the fullscreen-quad texture bindings
-    foreach (i; [0, 1, 2]) {
+    foreach (i; [0, 1, 2])
+    {
         state.fsq.bind.fs.images[i] = state.offscreen.pass_desc.color_attachments[i].image;
     }
 
 }
 
-Mat4 compute_mvp(float rx, float ry) 
+Mat4 compute_mvp(float rx, float ry)
 {
     immutable proj = Mat4.perspective(60.0, app.widthf() / app.heightf(), 0.01, 10.0);
     immutable view = Mat4.lookAt(Vec3(0.0, 1.5, 6.0), Vec3.zero, Vec3.up);

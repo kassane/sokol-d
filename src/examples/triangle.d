@@ -14,79 +14,80 @@ import sgutil = sokol.utils;
 extern (C):
 @safe:
 
-struct State {
-    sg.Bindings bind;
-    sg.Pipeline pip;
+struct State
+{
+  static sg.Bindings bind;
+  static sg.Pipeline pip;
 }
-
-static State state;
 
 void init() @trusted
 {
-    sg.Desc gfx = {
-        context: sgapp.context(),
-        logger: {func: &log.slog_func}
-    };
-    sg.setup(gfx);
+  sg.Desc gfx = {context: sgapp.context(),
+  logger: {func: &log.slog_func}};
+  sg.setup(gfx);
+  State state;
 
-    // create vertex buffer with triangle vertices
-    float[21] vertices = [
-        // positions         colors
-        0.0,  0.5,  0.5, 1.0, 0.0, 0.0, 1.0,
-        0.5,  -0.5, 0.5, 0.0, 1.0, 0.0, 1.0,
-        -0.5, -0.5, 0.5, 0.0, 0.0, 1.0, 1.0,
-    ];
-    sg.BufferDesc buff = {data: sgutil.asRange(&vertices[0])};
-    state.bind.vertex_buffers[0] = sg.makeBuffer(buff);
+  // create vertex buffer with triangle vertices
+  float[21] vertices = [
+    // positions         colors
+    0.0, 0.5, 0.5, 1.0, 0.0, 0.0, 1.0,
+    0.5, -0.5, 0.5, 0.0, 1.0, 0.0, 1.0,
+    -0.5, -0.5, 0.5, 0.0, 0.0, 1.0, 1.0,
+  ];
+  sg.BufferDesc buff = {data: sgutil.asRange(&vertices[0])};
+  state.bind.vertex_buffers[0] = sg.makeBuffer(buff);
 
-    // create a shader and pipeline object
-    sg.ShaderDesc shader = shaderDesc();
-    const shd = sg.makeShader(shader);
-    sg.PipelineDesc pip_desc = { shader: shd };
-    pip_desc.layout.attrs[0].format = sg.VertexFormat.Float3;
-    pip_desc.layout.attrs[1].format = sg.VertexFormat.Float4;
-    state.pip = sg.makePipeline(pip_desc);
+  // create a shader and pipeline object
+  sg.ShaderDesc shader = shaderDesc();
+  const shd = sg.makeShader(shader);
+  sg.PipelineDesc pip_desc = {shader: shd};
+  pip_desc.layout.attrs[0].format = sg.VertexFormat.Float3;
+  pip_desc.layout.attrs[1].format = sg.VertexFormat.Float4;
+  state.pip = sg.makePipeline(pip_desc);
 }
 
 void frame()
 {
-    // default pass-action clears to grey
-    sg.PassAction pass_action;
-    sg.beginDefaultPass(pass_action, sapp.width(), sapp.height());
-    sg.applyPipeline(state.pip);
-    sg.applyBindings(state.bind);
-    sg.draw(0, 3, 1);
-    sg.endPass();
-    sg.commit();
+  State state;
+  // default pass-action clears to grey
+  sg.PassAction pass_action;
+  sg.beginDefaultPass(pass_action, sapp.width(), sapp.height());
+  sg.applyPipeline(state.pip);
+  sg.applyBindings(state.bind);
+  sg.draw(0, 3, 1);
+  sg.endPass();
+  sg.commit();
 }
 
 void cleanup()
 {
-    sg.shutdown();
+  sg.shutdown();
 }
 
 void main()
 {
-    sapp.Desc runner = {
-        window_title: "triangle.d",
-        init_cb: &init,
-        frame_cb: &frame,
-        cleanup_cb: &cleanup,
-        width: 800,
-        height: 600,
-        icon: {sokol_default: true},
-        logger: {func: &log.func}
-    };
-    sapp.run(runner);
+  sapp.Desc runner = {
+    window_title: "triangle.d",
+    init_cb: &init,
+    frame_cb: &frame,
+    cleanup_cb: &cleanup,
+    width: 800,
+    height: 600,
+    icon: {sokol_default: true},
+    logger: {func: &log.func}
+  };
+  sapp.run(runner);
 }
 
-sg.ShaderDesc shaderDesc() @trusted nothrow @nogc {
-	sg.ShaderDesc desc;
-	switch (sg.queryBackend) {
-		case sg.Backend.Glcore33:
-			desc.attrs[0].name = "position";
-			desc.attrs[1].name = "color0";
-			desc.vs.source = "
+sg.ShaderDesc shaderDesc() @trusted nothrow @nogc
+{
+  sg.ShaderDesc desc;
+  switch (sg.queryBackend)
+  {
+  case sg.Backend.Glcore33:
+    desc.attrs[0].name = "position";
+    desc.attrs[1].name = "color0";
+    desc.vs.source = "
                 #version 330
                 in vec4 position;
                 in vec4 color0;
@@ -95,18 +96,18 @@ sg.ShaderDesc shaderDesc() @trusted nothrow @nogc {
                   gl_Position = position;
                   color = color0;
                 }";
-			desc.fs.source = "
+    desc.fs.source = "
                 #version 330
                 in vec4 color;
                 out vec4 frag_color;
                 void main() {
                   frag_color = color;
                 }";
-			break;
-		case sg.Backend.D3d11:
-			desc.attrs[0].sem_name = "POS";
-			desc.attrs[1].sem_name = "COLOR";
-			desc.vs.source = "
+    break;
+  case sg.Backend.D3d11:
+    desc.attrs[0].sem_name = "POS";
+    desc.attrs[1].sem_name = "COLOR";
+    desc.vs.source = "
                 struct vs_in {
                   float4 pos: POS;
                   float4 color: COLOR;
@@ -122,14 +123,14 @@ sg.ShaderDesc shaderDesc() @trusted nothrow @nogc {
                   return outp;
                 }
             ";
-			desc.fs.source = "
+    desc.fs.source = "
                 float4 main(float4 color: COLOR0): SV_Target0 {
                   return color;
                 }
             ";
-			break;
-		case sg.Backend.Metal_macos:
-			desc.vs.source = "
+    break;
+  case sg.Backend.Metal_macos:
+    desc.vs.source = "
                 #include <metal_stdlib>
                 using namespace metal;
                 struct vs_in {
@@ -147,16 +148,16 @@ sg.ShaderDesc shaderDesc() @trusted nothrow @nogc {
                   return outp;
                 }
             ";
-			desc.fs.source = "
+    desc.fs.source = "
                 #include <metal_stdlib>
                 using namespace metal;
                 fragment float4 _main(float4 color [[stage_in]]) {
                   return color;
                 };
             ";
-			break;
-		default:
-			break;
-	}
-	return desc;
+    break;
+  default:
+    break;
+  }
+  return desc;
 }

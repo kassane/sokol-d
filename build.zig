@@ -350,10 +350,10 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
     var objpath: []const u8 = undefined; // needed for wasm build
     if (b.cache_root.path) |path| {
         // immutable state hash
-        objpath = b.pathJoin(&.{ path, "o", &b.cache.hash.peek() });
+        objpath = b.pathJoin(&.{ path, "o", &b.graph.cache.hash.peek() });
         try cmds.append(b.fmt("-od={s}", .{objpath}));
         // mutable state hash (ldc2 cache - llvm-ir2obj)
-        try cmds.append(b.fmt("-cache={s}", .{b.pathJoin(&.{ path, "o", &b.cache.hash.final() })}));
+        try cmds.append(b.fmt("-cache={s}", .{b.pathJoin(&.{ path, "o", &b.graph.cache.hash.final() })}));
     }
     // name object files uniquely (so the files don't collide)
     try cmds.append("-oq");

@@ -39,10 +39,8 @@ struct State
 
 void init()
 {
-    sg.Desc gfx = {
-        context: sglue.context(),
-        logger: {func: &log.func}
-    };
+    sg.Desc gfx = {context: sglue.context(),
+    logger: {func: &log.func}};
     sg.setup(gfx);
 
     sdtx.Desc desc = {
@@ -59,14 +57,17 @@ void init()
     sdtx.setup(desc);
 }
 
-void print_font(uint font_index, string title, ubyte r, ubyte g, ubyte b) {
+void print_font(uint font_index, string title, ubyte r, ubyte g, ubyte b)
+{
     sdtx.font(font_index);
     sdtx.color3b(r, g, b);
     sdtx.puts(&title[0]);
 
-    foreach (c; 32 .. 255) {
-        sdtx.putc(cast(char)c);
-        if ( ((c + 1) & 63) == 0) {
+    foreach (c; 32 .. 255)
+    {
+        sdtx.putc(cast(char) c);
+        if (((c + 1) & 63) == 0)
+        {
             sdtx.crlf();
         }
     }

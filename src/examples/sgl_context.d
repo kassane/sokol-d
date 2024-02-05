@@ -42,13 +42,10 @@ enum offscreen_sample_count = 1;
 enum offscreen_width = 32;
 enum offscreen_height = 32;
 
-
 void init()
 {
-    sg.Desc gfxd = {
-        context: sgapp.context(),
-        logger: {func: &slog.func}
-    };
+    sg.Desc gfxd = {context: sgapp.context(),
+    logger: {func: &slog.func}};
     sg.setup(gfxd);
 
     // setup sokol-gl with the default context compatible with the default
@@ -138,7 +135,7 @@ void frame()
     sgl.loadPipeline(state.display.sgl_pip);
     sgl.matrixModeProjection();
     sgl.perspective(sgl.asRadians(45.0), sapp.widthf() / sapp.heightf(), 0.1, 100.0);
-    immutable (float)[3] eye = [sin(a) * 6.0, sin(a) * 3.0, cos(a) * 6.0];
+    immutable(float)[3] eye = [sin(a) * 6.0, sin(a) * 3.0, cos(a) * 6.0];
     sgl.matrixModeModelview();
     sgl.lookat(eye[0], eye[1], eye[2], 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
     draw_cube();

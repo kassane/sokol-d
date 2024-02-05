@@ -15,12 +15,15 @@ extern (C):
 
 enum NUM_SAMPLES = 32;
 
-struct State {
+struct State
+{
     sg.PassAction pass_action = {
-        colors: [{
-            load_action: sg.LoadAction.Clear,
-            clear_value: { r: 1.0, g: 0.5, b: 0.0, a: 1.0 },
-        }]
+        colors: [
+            {
+                load_action: sg.LoadAction.Clear,
+                clear_value: {r: 1.0, g: 0.5, b: 0.0, a: 1.0},
+            }
+        ]
     };
     int even_odd;
     size_t sample_pos;
@@ -31,23 +34,24 @@ static State state;
 
 void init()
 {
-    sg.Desc gfx = {
-        context: sgapp.context(),
-        logger: {func: &log.slog_func}
-    };
+    sg.Desc gfx = {context: sgapp.context(),
+    logger: {func: &log.slog_func}};
     sg.setup(gfx);
     saudio.Desc audio = {logger: {func: &log.slog_func}};
     saudio.setup(audio);
 }
 
-void frame(){
+void frame()
+{
     immutable num_frames = saudio.expect();
 
-    foreach (_; 0..num_frames) {
+    foreach (_; 0 .. num_frames)
+    {
         state.even_odd += 1;
         state.sample_pos += 1;
 
-        if (state.sample_pos == NUM_SAMPLES) {
+        if (state.sample_pos == NUM_SAMPLES)
+        {
             state.sample_pos = 0;
             saudio.push(&state.samples[0], NUM_SAMPLES);
         }

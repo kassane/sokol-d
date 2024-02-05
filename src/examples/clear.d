@@ -16,10 +16,8 @@ __gshared sg.PassAction pass_action;
 
 void init()
 {
-    sg.Desc gfx = {
-        context: sgapp.context(),
-        logger: {func: &log.slog_func}
-    };
+    sg.Desc gfx = {context: sgapp.context(),
+    logger: {func: &log.slog_func}};
     sg.setup(gfx);
 
     pass_action.colors[0].load_action = sg.LoadAction.Clear;
@@ -28,11 +26,17 @@ void init()
     pass_action.colors[0].clear_value.b = 0;
     pass_action.colors[0].clear_value.a = 1;
 
-    debug { 
+    debug
+    {
         import std.stdio : writeln;
-        try { 
+
+        try
+        {
             writeln("Backend: ", sg.queryBackend());
-        } catch (Exception) {}
+        }
+        catch (Exception)
+        {
+        }
     }
 }
 
