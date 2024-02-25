@@ -165,8 +165,8 @@ enum AndroidTooltype {
 extern(C)
 struct Touchpoint {
     ulong identifier = 0;
-    float pos_x = 0.0;
-    float pos_y = 0.0;
+    float pos_x = 0.0f;
+    float pos_y = 0.0f;
     AndroidTooltype android_tooltype;
     bool changed = false;
 }
@@ -192,12 +192,12 @@ struct Event {
     bool key_repeat = false;
     uint modifiers = 0;
     Mousebutton mouse_button;
-    float mouse_x = 0.0;
-    float mouse_y = 0.0;
-    float mouse_dx = 0.0;
-    float mouse_dy = 0.0;
-    float scroll_x = 0.0;
-    float scroll_y = 0.0;
+    float mouse_x = 0.0f;
+    float mouse_y = 0.0f;
+    float mouse_dx = 0.0f;
+    float mouse_dy = 0.0f;
+    float scroll_x = 0.0f;
+    float scroll_y = 0.0f;
     int num_touches = 0;
     Touchpoint[8] touches;
     int window_width = 0;
@@ -575,13 +575,17 @@ extern(C) scope const(void)* sapp_metal_get_device() @system @nogc nothrow;
 scope const(void)* metalGetDevice() @trusted @nogc nothrow {
     return sapp_metal_get_device();
 }
-extern(C) scope const(void)* sapp_metal_get_renderpass_descriptor() @system @nogc nothrow;
-scope const(void)* metalGetRenderpassDescriptor() @trusted @nogc nothrow {
-    return sapp_metal_get_renderpass_descriptor();
+extern(C) scope const(void)* sapp_metal_get_current_drawable() @system @nogc nothrow;
+scope const(void)* metalGetCurrentDrawable() @trusted @nogc nothrow {
+    return sapp_metal_get_current_drawable();
 }
-extern(C) scope const(void)* sapp_metal_get_drawable() @system @nogc nothrow;
-scope const(void)* metalGetDrawable() @trusted @nogc nothrow {
-    return sapp_metal_get_drawable();
+extern(C) scope const(void)* sapp_metal_get_depth_stencil_texture() @system @nogc nothrow;
+scope const(void)* metalGetDepthStencilTexture() @trusted @nogc nothrow {
+    return sapp_metal_get_depth_stencil_texture();
+}
+extern(C) scope const(void)* sapp_metal_get_msaa_color_texture() @system @nogc nothrow;
+scope const(void)* metalGetMsaaColorTexture() @trusted @nogc nothrow {
+    return sapp_metal_get_msaa_color_texture();
 }
 extern(C) scope const(void)* sapp_macos_get_window() @system @nogc nothrow;
 scope const(void)* macosGetWindow() @trusted @nogc nothrow {
@@ -603,9 +607,13 @@ extern(C) scope const(void)* sapp_d3d11_get_swap_chain() @system @nogc nothrow;
 scope const(void)* d3d11GetSwapChain() @trusted @nogc nothrow {
     return sapp_d3d11_get_swap_chain();
 }
-extern(C) scope const(void)* sapp_d3d11_get_render_target_view() @system @nogc nothrow;
-scope const(void)* d3d11GetRenderTargetView() @trusted @nogc nothrow {
-    return sapp_d3d11_get_render_target_view();
+extern(C) scope const(void)* sapp_d3d11_get_render_view() @system @nogc nothrow;
+scope const(void)* d3d11GetRenderView() @trusted @nogc nothrow {
+    return sapp_d3d11_get_render_view();
+}
+extern(C) scope const(void)* sapp_d3d11_get_resolve_view() @system @nogc nothrow;
+scope const(void)* d3d11GetResolveView() @trusted @nogc nothrow {
+    return sapp_d3d11_get_resolve_view();
 }
 extern(C) scope const(void)* sapp_d3d11_get_depth_stencil_view() @system @nogc nothrow;
 scope const(void)* d3d11GetDepthStencilView() @trusted @nogc nothrow {
@@ -630,6 +638,10 @@ scope const(void)* wgpuGetResolveView() @trusted @nogc nothrow {
 extern(C) scope const(void)* sapp_wgpu_get_depth_stencil_view() @system @nogc nothrow;
 scope const(void)* wgpuGetDepthStencilView() @trusted @nogc nothrow {
     return sapp_wgpu_get_depth_stencil_view();
+}
+extern(C) uint sapp_gl_get_framebuffer() @system @nogc nothrow;
+uint glGetFramebuffer() @trusted @nogc nothrow {
+    return sapp_gl_get_framebuffer();
 }
 extern(C) scope const(void)* sapp_android_get_native_activity() @system @nogc nothrow;
 scope const(void)* androidGetNativeActivity() @trusted @nogc nothrow {

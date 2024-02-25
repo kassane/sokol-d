@@ -9,7 +9,7 @@ import sg = sokol.gfx;
 import app = sokol.app;
 import log = sokol.log;
 import handmade.math : Mat4, Vec3;
-import sgapp = sokol.glue;
+import sglue = sokol.glue;
 import shd = shaders.cube;
 import sgutil = sokol.utils : asRange;
 
@@ -43,7 +43,7 @@ static State state;
 
 void init() @trusted
 {
-    sg.Desc gfx = {context: sgapp.context(),
+    sg.Desc gfx = {environment: sglue.environment,
     logger: {func: &log.func}};
     sg.setup(gfx);
 
@@ -120,7 +120,8 @@ void frame()
 
     shd.VsParams vsParams = {mvp: computeVsParams(state.rx, state.ry)};
 
-    sg.beginDefaultPass(state.passAction, app.width(), app.height());
+    sg.Pass pass = {action: state.passAction, swapchain: sglue.swapchain};
+    sg.beginPass(pass);
 
     sg.Range r = sgutil.asRange(vsParams);
     sg.applyPipeline(state.pip);

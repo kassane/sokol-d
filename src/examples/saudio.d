@@ -7,7 +7,7 @@ module examples.saudio;
 import sg = sokol.gfx;
 import app = sokol.app;
 import log = sokol.log;
-import sgapp = sokol.glue;
+import sglue = sokol.glue;
 import saudio = sokol.audio;
 
 extern (C):
@@ -34,8 +34,10 @@ static State state;
 
 void init()
 {
-    sg.Desc gfx = {context: sgapp.context(),
-    logger: {func: &log.slog_func}};
+    sg.Desc gfx = {
+        environment: sglue.environment,
+        logger: {func: &log.slog_func}
+    };
     sg.setup(gfx);
     saudio.Desc audio = {logger: {func: &log.slog_func}};
     saudio.setup(audio);
@@ -59,7 +61,8 @@ void frame()
         state.samples[state.sample_pos] = (0 != (state.even_odd & 0x20)) ? 0.1 : -0.1;
     }
 
-    sg.beginDefaultPass(state.pass_action, app.width(), app.height());
+    sg.Pass pass = {action: state.pass_action, swapchain: sglue.swapchain};
+    sg.beginPass(pass);
     sg.endPass();
     sg.commit();
 }

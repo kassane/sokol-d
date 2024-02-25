@@ -3,7 +3,7 @@ module examples.user_data;
 import sg = sokol.gfx;
 import sapp = sokol.app;
 import log = sokol.log;
-import sgapp = sokol.glue;
+import sglue = sokol.glue;
 
 extern (C):
 
@@ -15,8 +15,10 @@ struct ExampleUserData
 
 void init() @safe
 {
-    sg.Desc gfx = {context: sgapp.context(),
-    logger: {func: &log.slog_func}};
+    sg.Desc gfx = {
+        environment: sglue.environment,
+        logger: {func: &log.slog_func}
+    };
     sg.setup(gfx);
 }
 
@@ -54,8 +56,9 @@ void frame_userdata(scope void* userdata) @trusted
         }
     }
 
-    sg.PassAction pass_action = {};
-    sg.beginDefaultPass(pass_action, sapp.width(), sapp.height());
+    sg.PassAction pass_action;
+    sg.Pass pass = {action: pass_action, swapchain: sglue.swapchain};
+    sg.beginPass(pass);
     sg.endPass();
     sg.commit();
 }
@@ -80,6 +83,7 @@ void main()
         sample_count: 4,
         win32_console_attach: true,
         icon: {sokol_default: true},
-        logger: {func: &log.func}};
-        sapp.run(runner);
-    }
+        logger: {func: &log.func}
+    };
+    sapp.run(runner);
+}
