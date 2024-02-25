@@ -10,8 +10,8 @@
     },
     .dependencies = .{
         .emsdk = .{
-            .url = "git+https://github.com/emscripten-core/emsdk#2aa74907151b2caa9da865fd0d36436fdce792f0",
-            .hash = "1220500fe26858fc95f2a1166df2ba1a419ab9af3219383b0e57026b0928739c8e57",
+            .url = "git+https://github.com/emscripten-core/emsdk#c18280c8f3f8f088b4337f0f6a5fdb2be0d67179",
+            .hash = "12203d61e8947f25993a86b4d73e2d91b4c1d96f1aa07c581b7dffba7cb5ca91bc35",
         },
         .wasmd = .{
             .url = "git+https://github.com/kassane/wasmd#067e21e29aea24ec936d6c6b859f7c9a79894f78",
