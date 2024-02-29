@@ -15,7 +15,7 @@ import sg = sokol.gfx;
 import app = sokol.app;
 import log = sokol.log;
 import handmade.math : Mat4, Vec3, Vec2, sin, cos;
-import sgapp = sokol.glue;
+import sglue = sokol.glue;
 import shd = shaders.mrt;
 import sgutil = sokol.utils : asRange;
 
@@ -27,8 +27,8 @@ enum OFFSCREEN_SAMPLE_COUNT = 1;
 struct Offscreen
 {
     sg.PassAction pass_action;
-    sg.PassDesc pass_desc;
-    sg.Pass pass;
+    sg.AttachmentsDesc atts_desc;
+    sg.Attachments atts;
     sg.Pipeline pip;
     sg.Bindings bind;
 }
@@ -65,7 +65,7 @@ static State state;
 
 void init() @trusted
 {
-    sg.Desc gfx = {context: sgapp.context(),
+    sg.Desc gfx = {environment: sglue.environment,
     logger: {func: &log.slog_func}};
     sg.setup(gfx);
 
@@ -95,7 +95,7 @@ void init() @trusted
 
     // setup the offscreen render pass and render target images,
     // this will also be called when the window resizes
-    createOffscreenPass(app.width(), app.height());
+    createOffscreenAttachments(app.width(), app.height());
 
     float[96] VERTICES = [
         // positions        brightness
@@ -201,7 +201,7 @@ void init() @trusted
     state.fsq.bind.vertex_buffers[0] = quad_vbuf;
     foreach (i; [0, 1, 2])
     {
-        state.fsq.bind.fs.images[i] = state.offscreen.pass_desc.color_attachments[i].image;
+        state.fsq.bind.fs.images[i] = state.offscreen.atts_desc.colors[i].image;
     }
     state.fsq.bind.fs.samplers[0] = smp;
 
@@ -233,7 +233,8 @@ void frame()
     };
 
     // render cube into MRT offscreen render targets
-    sg.beginPass(state.offscreen.pass, state.offscreen.pass_action);
+    sg.Pass pass_atts = {action: state.offscreen.pass_action, attachments: state.offscreen.atts};
+    sg.beginPass(pass_atts);
     sg.applyPipeline(state.offscreen.pip);
     sg.applyBindings(state.offscreen.bind);
     auto offs_rg = sgutil.asRange(offscreen_params);
@@ -247,7 +248,8 @@ void frame()
 
     // render fullscreen quad with the composed offscreen-render images,
     // 3 a small debug view quads at the bottom of the screen
-    sg.beginDefaultPass(state.dflt.pass_action, app.width(), app.height());
+    sg.Pass pass_swap = {action: state.dflt.pass_action, swapchain: sglue.swapchain};
+    sg.beginPass(pass_swap);
     sg.applyPipeline(state.fsq.pip);
     sg.applyBindings(state.fsq.bind);
     auto fsq_rg = sgutil.asRange(fsq_params);
@@ -257,7 +259,7 @@ void frame()
     foreach (i; [0, 1, 2])
     {
         sg.applyViewport(i * 100, 0, 100, 100, false);
-        state.dbg.bind.fs.images[0] = state.offscreen.pass_desc.color_attachments[i].image;
+        state.dbg.bind.fs.images[0] = state.offscreen.atts_desc.colors[i].image;
         sg.applyBindings(state.dbg.bind);
         sg.draw(0, 4, 1);
     }
@@ -269,7 +271,7 @@ void event(const app.Event* ev)
 {
     if (ev.type == app.EventType.Resized)
     {
-        createOffscreenPass(ev.framebuffer_width, ev.framebuffer_height);
+        createOffscreenAttachments(ev.framebuffer_width, ev.framebuffer_height);
     }
 }
 
@@ -295,15 +297,15 @@ void main()
     app.run(runner);
 }
 
-void createOffscreenPass(int width, int height)
+void createOffscreenAttachments(int width, int height)
 {
     // destroy previous resources (can be called with invalid ids)
-    sg.destroyPass(state.offscreen.pass);
-    foreach (att; state.offscreen.pass_desc.color_attachments)
+    sg.destroyAttachments(state.offscreen.atts);
+    foreach (att; state.offscreen.atts_desc.colors)
     {
         sg.destroyImage(att.image);
     }
-    sg.destroyImage(state.offscreen.pass_desc.depth_stencil_attachment.image);
+    sg.destroyImage(state.offscreen.atts_desc.depth_stencil.image);
 
     // create offscreen render target images and pass
     sg.ImageDesc color_img_desc = {
@@ -317,15 +319,15 @@ void createOffscreenPass(int width, int height)
 
     foreach (i; [0, 1, 2])
     {
-        state.offscreen.pass_desc.color_attachments[i].image = sg.makeImage(color_img_desc);
+        state.offscreen.atts_desc.colors[i].image = sg.makeImage(color_img_desc);
     }
-    state.offscreen.pass_desc.depth_stencil_attachment.image = sg.makeImage(depth_img_desc);
-    state.offscreen.pass = sg.makePass(state.offscreen.pass_desc);
+    state.offscreen.atts_desc.depth_stencil.image = sg.makeImage(depth_img_desc);
+    state.offscreen.atts = sg.makeAttachments(state.offscreen.atts_desc);
 
     // update the fullscreen-quad texture bindings
     foreach (i; [0, 1, 2])
     {
-        state.fsq.bind.fs.images[i] = state.offscreen.pass_desc.color_attachments[i].image;
+        state.fsq.bind.fs.images[i] = state.offscreen.atts_desc.colors[i].image;
     }
 
 }

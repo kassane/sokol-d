@@ -8,7 +8,7 @@ module examples.triangle;
 import sg = sokol.gfx;
 import sapp = sokol.app;
 import log = sokol.log;
-import sgapp = sokol.glue;
+import sglue = sokol.glue;
 import sgutil = sokol.utils;
 
 extern (C):
@@ -22,7 +22,7 @@ struct State
 
 void init() @trusted
 {
-  sg.Desc gfx = {context: sgapp.context(),
+  sg.Desc gfx = {environment: sglue.environment,
   logger: {func: &log.slog_func}};
   sg.setup(gfx);
   State state;
@@ -51,7 +51,8 @@ void frame()
   State state;
   // default pass-action clears to grey
   sg.PassAction pass_action;
-  sg.beginDefaultPass(pass_action, sapp.width(), sapp.height());
+  sg.Pass pass = {action: pass_action, swapchain: sglue.swapchain};
+  sg.beginPass(pass);
   sg.applyPipeline(state.pip);
   sg.applyBindings(state.bind);
   sg.draw(0, 3, 1);

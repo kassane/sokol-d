@@ -6,7 +6,7 @@
 module examples.clear;
 
 import sg = sokol.gfx;
-import sgapp = sokol.glue;
+import sglue = sokol.glue;
 import sapp = sokol.app;
 import log = sokol.log;
 
@@ -16,8 +16,10 @@ __gshared sg.PassAction pass_action;
 
 void init()
 {
-    sg.Desc gfx = {context: sgapp.context(),
-    logger: {func: &log.slog_func}};
+    sg.Desc gfx = {
+        environment: sglue.environment,
+        logger: {func: &log.slog_func}
+    };
     sg.setup(gfx);
 
     pass_action.colors[0].load_action = sg.LoadAction.Clear;
@@ -44,7 +46,8 @@ void frame()
 {
     const g = pass_action.colors[0].clear_value.g + 0.01;
     pass_action.colors[0].clear_value.g = g > 1.0 ? 0.0 : g;
-    sg.beginDefaultPass(pass_action, sapp.width(), sapp.height());
+    sg.Pass pass = {action: pass_action, swapchain: sglue.swapchain};
+    sg.beginPass(pass);
     sg.endPass();
     sg.commit();
 }

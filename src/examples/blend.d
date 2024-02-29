@@ -9,7 +9,7 @@ import sg = sokol.gfx;
 import app = sokol.app;
 import log = sokol.log;
 import handmade.math : Mat4, Vec3;
-import sgapp = sokol.glue;
+import sglue = sokol.glue;
 import sgutil = sokol.utils : asRange;
 import shd = shaders.blend;
 
@@ -20,7 +20,7 @@ immutable NUM_BLEND_FACTORS = 15;
 
 struct State
 {
-    float r;
+    float r = 0.0f;
     sg.Pipeline bg_pip;
     sg.Pipeline[NUM_BLEND_FACTORS][NUM_BLEND_FACTORS] pips;
     sg.Bindings bind;
@@ -41,7 +41,7 @@ void init() @trusted
 {
     sg.Desc gfx = {
         pipeline_pool_size: NUM_BLEND_FACTORS * NUM_BLEND_FACTORS + 1,
-        context: sgapp.context(),
+        environment: sglue.environment,
         logger: {func: &log.func}
     };
     sg.setup(gfx);
@@ -108,7 +108,8 @@ void frame()
     immutable view = Mat4.lookAt(Vec3(0.0, 0.0, 25.0), Vec3.zero(), Vec3.up());
     immutable view_proj = Mat4.mul(proj, view);
 
-    sg.beginDefaultPass(state.passAction, app.width(), app.height());
+    sg.Pass pass = {action: state.passAction, swapchain: sglue.swapchain};
+    sg.beginPass(pass);
 
     sg.Range r = sgutil.asRange(state.bg_fs_params);
     sg.applyPipeline(state.bg_pip);

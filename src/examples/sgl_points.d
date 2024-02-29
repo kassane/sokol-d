@@ -9,7 +9,7 @@
 module examples.sgl_points;
 
 import sg = sokol.gfx;
-import sgapp = sokol.glue;
+import sglue = sokol.glue;
 import sapp = sokol.app;
 import slog = sokol.log;
 import sgl = sokol.gl;
@@ -56,7 +56,7 @@ immutable float[3][16] pallete = [
 
 void init()
 {
-    sg.Desc gfxd = {context: sgapp.context(),
+    sg.Desc gfxd = {environment: sglue.environment,
     logger: {func: &slog.func}};
     sg.setup(gfxd);
 
@@ -88,7 +88,8 @@ void frame()
     }
     sgl.end();
 
-    sg.beginDefaultPass(state.pass_action, sapp.width, sapp.height);
+    sg.Pass pass = {action: state.pass_action, swapchain: sglue.swapchain};
+    sg.beginPass(pass);
     sgl.draw();
     sg.endPass();
     sg.commit();

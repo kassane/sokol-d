@@ -23,11 +23,7 @@ struct Pipeline {
     uint id = 0;
 }
 extern(C)
-struct Pass {
-    uint id = 0;
-}
-extern(C)
-struct Context {
+struct Attachments {
     uint id = 0;
 }
 extern(C)
@@ -50,10 +46,10 @@ enum max_mipmaps = 16;
 enum max_texturearray_layers = 128;
 extern(C)
 struct Color {
-    float r = 0.0;
-    float g = 0.0;
-    float b = 0.0;
-    float a = 0.0;
+    float r = 0.0f;
+    float g = 0.0f;
+    float b = 0.0f;
+    float a = 0.0f;
 }
 enum Backend {
     Glcore33,
@@ -164,7 +160,7 @@ struct Limits {
     int max_image_size_array = 0;
     int max_image_array_layers = 0;
     int max_vertex_attrs = 0;
-    int gl_max_vertex_uniform_vectors = 0;
+    int gl_max_vertex_uniform_components = 0;
     int gl_max_combined_texture_image_units = 0;
 }
 enum ResourceState {
@@ -411,7 +407,7 @@ extern(C)
 struct DepthAttachmentAction {
     LoadAction load_action;
     StoreAction store_action;
-    float clear_value = 0.0;
+    float clear_value = 0.0f;
 }
 extern(C)
 struct StencilAttachmentAction {
@@ -421,10 +417,51 @@ struct StencilAttachmentAction {
 }
 extern(C)
 struct PassAction {
-    uint _start_canary = 0;
     ColorAttachmentAction[4] colors;
     DepthAttachmentAction depth;
     StencilAttachmentAction stencil;
+}
+extern(C)
+struct MetalSwapchain {
+    const(void)* current_drawable = null;
+    const(void)* depth_stencil_texture = null;
+    const(void)* msaa_color_texture = null;
+}
+extern(C)
+struct D3d11Swapchain {
+    const(void)* render_view = null;
+    const(void)* resolve_view = null;
+    const(void)* depth_stencil_view = null;
+}
+extern(C)
+struct WgpuSwapchain {
+    const(void)* render_view = null;
+    const(void)* resolve_view = null;
+    const(void)* depth_stencil_view = null;
+}
+extern(C)
+struct GlSwapchain {
+    uint framebuffer = 0;
+}
+extern(C)
+struct Swapchain {
+    int width = 0;
+    int height = 0;
+    int sample_count = 0;
+    PixelFormat color_format;
+    PixelFormat depth_format;
+    MetalSwapchain metal;
+    D3d11Swapchain d3d11;
+    WgpuSwapchain wgpu;
+    GlSwapchain gl;
+}
+extern(C)
+struct Pass {
+    uint _start_canary = 0;
+    PassAction action;
+    Attachments attachments;
+    Swapchain swapchain;
+    const(char)* label = null;
     uint _end_canary = 0;
 }
 extern(C)
@@ -493,8 +530,8 @@ struct SamplerDesc {
     Wrap wrap_u;
     Wrap wrap_v;
     Wrap wrap_w;
-    float min_lod = 0.0;
-    float max_lod = 0.0;
+    float min_lod = 0.0f;
+    float max_lod = 0.0f;
     BorderColor border_color;
     CompareFunc compare;
     uint max_anisotropy = 0;
@@ -600,9 +637,9 @@ struct DepthState {
     PixelFormat pixel_format;
     CompareFunc compare;
     bool write_enabled = false;
-    float bias = 0.0;
-    float bias_slope_scale = 0.0;
-    float bias_clamp = 0.0;
+    float bias = 0.0f;
+    float bias_slope_scale = 0.0f;
+    float bias_clamp = 0.0f;
 }
 extern(C)
 struct BlendState {
@@ -640,17 +677,17 @@ struct PipelineDesc {
     uint _end_canary = 0;
 }
 extern(C)
-struct PassAttachmentDesc {
+struct AttachmentDesc {
     Image image;
     int mip_level = 0;
     int slice = 0;
 }
 extern(C)
-struct PassDesc {
+struct AttachmentsDesc {
     uint _start_canary = 0;
-    PassAttachmentDesc[4] color_attachments;
-    PassAttachmentDesc[4] resolve_attachments;
-    PassAttachmentDesc depth_stencil_attachment;
+    AttachmentDesc[4] colors;
+    AttachmentDesc[4] resolves;
+    AttachmentDesc depth_stencil;
     const(char)* label = null;
     uint _end_canary = 0;
 }
@@ -663,18 +700,17 @@ struct TraceHooks {
     extern(C) void function(const SamplerDesc *, Sampler, void*) make_sampler = null;
     extern(C) void function(const ShaderDesc *, Shader, void*) make_shader = null;
     extern(C) void function(const PipelineDesc *, Pipeline, void*) make_pipeline = null;
-    extern(C) void function(const PassDesc *, Pass, void*) make_pass = null;
+    extern(C) void function(const AttachmentsDesc *, Attachments, void*) make_attachments = null;
     extern(C) void function(Buffer, void*) destroy_buffer = null;
     extern(C) void function(Image, void*) destroy_image = null;
     extern(C) void function(Sampler, void*) destroy_sampler = null;
     extern(C) void function(Shader, void*) destroy_shader = null;
     extern(C) void function(Pipeline, void*) destroy_pipeline = null;
-    extern(C) void function(Pass, void*) destroy_pass = null;
+    extern(C) void function(Attachments, void*) destroy_attachments = null;
     extern(C) void function(Buffer, const Range *, void*) update_buffer = null;
     extern(C) void function(Image, const ImageData *, void*) update_image = null;
     extern(C) void function(Buffer, const Range *, int, void*) append_buffer = null;
-    extern(C) void function(const PassAction *, int, int, void*) begin_default_pass = null;
-    extern(C) void function(Pass, const PassAction *, void*) begin_pass = null;
+    extern(C) void function(const Pass *, void*) begin_pass = null;
     extern(C) void function(int, int, int, int, bool, void*) apply_viewport = null;
     extern(C) void function(int, int, int, int, bool, void*) apply_scissor_rect = null;
     extern(C) void function(Pipeline, void*) apply_pipeline = null;
@@ -688,31 +724,31 @@ struct TraceHooks {
     extern(C) void function(Sampler, void*) alloc_sampler = null;
     extern(C) void function(Shader, void*) alloc_shader = null;
     extern(C) void function(Pipeline, void*) alloc_pipeline = null;
-    extern(C) void function(Pass, void*) alloc_pass = null;
+    extern(C) void function(Attachments, void*) alloc_attachments = null;
     extern(C) void function(Buffer, void*) dealloc_buffer = null;
     extern(C) void function(Image, void*) dealloc_image = null;
     extern(C) void function(Sampler, void*) dealloc_sampler = null;
     extern(C) void function(Shader, void*) dealloc_shader = null;
     extern(C) void function(Pipeline, void*) dealloc_pipeline = null;
-    extern(C) void function(Pass, void*) dealloc_pass = null;
+    extern(C) void function(Attachments, void*) dealloc_attachments = null;
     extern(C) void function(Buffer, const BufferDesc *, void*) init_buffer = null;
     extern(C) void function(Image, const ImageDesc *, void*) init_image = null;
     extern(C) void function(Sampler, const SamplerDesc *, void*) init_sampler = null;
     extern(C) void function(Shader, const ShaderDesc *, void*) init_shader = null;
     extern(C) void function(Pipeline, const PipelineDesc *, void*) init_pipeline = null;
-    extern(C) void function(Pass, const PassDesc *, void*) init_pass = null;
+    extern(C) void function(Attachments, const AttachmentsDesc *, void*) init_attachments = null;
     extern(C) void function(Buffer, void*) uninit_buffer = null;
     extern(C) void function(Image, void*) uninit_image = null;
     extern(C) void function(Sampler, void*) uninit_sampler = null;
     extern(C) void function(Shader, void*) uninit_shader = null;
     extern(C) void function(Pipeline, void*) uninit_pipeline = null;
-    extern(C) void function(Pass, void*) uninit_pass = null;
+    extern(C) void function(Attachments, void*) uninit_attachments = null;
     extern(C) void function(Buffer, void*) fail_buffer = null;
     extern(C) void function(Image, void*) fail_image = null;
     extern(C) void function(Sampler, void*) fail_sampler = null;
     extern(C) void function(Shader, void*) fail_shader = null;
     extern(C) void function(Pipeline, void*) fail_pipeline = null;
-    extern(C) void function(Pass, void*) fail_pass = null;
+    extern(C) void function(Attachments, void*) fail_attachments = null;
     extern(C) void function(scope const(char)*, void*) push_debug_group = null;
     extern(C) void function(void*) pop_debug_group = null;
 }
@@ -720,7 +756,6 @@ extern(C)
 struct SlotInfo {
     ResourceState state;
     uint res_id = 0;
-    uint ctx_id = 0;
 }
 extern(C)
 struct BufferInfo {
@@ -752,7 +787,7 @@ struct PipelineInfo {
     SlotInfo slot;
 }
 extern(C)
-struct PassInfo {
+struct AttachmentsInfo {
     SlotInfo slot;
 }
 extern(C)
@@ -967,13 +1002,7 @@ enum LogItem {
     Wgpu_shader_create_bindgroup_layout_failed,
     Wgpu_create_pipeline_layout_failed,
     Wgpu_create_render_pipeline_failed,
-    Wgpu_pass_create_texture_view_failed,
-    Uninit_buffer_active_context_mismatch,
-    Uninit_image_active_context_mismatch,
-    Uninit_sampler_active_context_mismatch,
-    Uninit_shader_active_context_mismatch,
-    Uninit_pipeline_active_context_mismatch,
-    Uninit_pass_active_context_mismatch,
+    Wgpu_attachments_create_texture_view_failed,
     Identical_commit_listener,
     Commit_listener_array_full,
     Trace_hooks_not_enabled,
@@ -982,31 +1011,32 @@ enum LogItem {
     Dealloc_sampler_invalid_state,
     Dealloc_shader_invalid_state,
     Dealloc_pipeline_invalid_state,
-    Dealloc_pass_invalid_state,
+    Dealloc_attachments_invalid_state,
     Init_buffer_invalid_state,
     Init_image_invalid_state,
     Init_sampler_invalid_state,
     Init_shader_invalid_state,
     Init_pipeline_invalid_state,
-    Init_pass_invalid_state,
+    Init_attachments_invalid_state,
     Uninit_buffer_invalid_state,
     Uninit_image_invalid_state,
     Uninit_sampler_invalid_state,
     Uninit_shader_invalid_state,
     Uninit_pipeline_invalid_state,
-    Uninit_pass_invalid_state,
+    Uninit_attachments_invalid_state,
     Fail_buffer_invalid_state,
     Fail_image_invalid_state,
     Fail_sampler_invalid_state,
     Fail_shader_invalid_state,
     Fail_pipeline_invalid_state,
-    Fail_pass_invalid_state,
+    Fail_attachments_invalid_state,
     Buffer_pool_exhausted,
     Image_pool_exhausted,
     Sampler_pool_exhausted,
     Shader_pool_exhausted,
     Pipeline_pool_exhausted,
     Pass_pool_exhausted,
+    Beginpass_attachment_invalid,
     Draw_without_bindings,
     Validate_bufferdesc_canary,
     Validate_bufferdesc_size,
@@ -1066,46 +1096,78 @@ enum LogItem {
     Validate_pipelinedesc_no_attrs,
     Validate_pipelinedesc_layout_stride4,
     Validate_pipelinedesc_attr_semantics,
-    Validate_passdesc_canary,
-    Validate_passdesc_no_attachments,
-    Validate_passdesc_no_cont_color_atts,
-    Validate_passdesc_image,
-    Validate_passdesc_miplevel,
-    Validate_passdesc_face,
-    Validate_passdesc_layer,
-    Validate_passdesc_slice,
-    Validate_passdesc_image_no_rt,
-    Validate_passdesc_color_inv_pixelformat,
-    Validate_passdesc_depth_inv_pixelformat,
-    Validate_passdesc_image_sizes,
-    Validate_passdesc_image_sample_counts,
-    Validate_passdesc_resolve_color_image_msaa,
-    Validate_passdesc_resolve_image,
-    Validate_passdesc_resolve_sample_count,
-    Validate_passdesc_resolve_miplevel,
-    Validate_passdesc_resolve_face,
-    Validate_passdesc_resolve_layer,
-    Validate_passdesc_resolve_slice,
-    Validate_passdesc_resolve_image_no_rt,
-    Validate_passdesc_resolve_image_sizes,
-    Validate_passdesc_resolve_image_format,
-    Validate_passdesc_depth_image,
-    Validate_passdesc_depth_miplevel,
-    Validate_passdesc_depth_face,
-    Validate_passdesc_depth_layer,
-    Validate_passdesc_depth_slice,
-    Validate_passdesc_depth_image_no_rt,
-    Validate_passdesc_depth_image_sizes,
-    Validate_passdesc_depth_image_sample_count,
-    Validate_beginpass_pass,
+    Validate_attachmentsdesc_canary,
+    Validate_attachmentsdesc_no_attachments,
+    Validate_attachmentsdesc_no_cont_color_atts,
+    Validate_attachmentsdesc_image,
+    Validate_attachmentsdesc_miplevel,
+    Validate_attachmentsdesc_face,
+    Validate_attachmentsdesc_layer,
+    Validate_attachmentsdesc_slice,
+    Validate_attachmentsdesc_image_no_rt,
+    Validate_attachmentsdesc_color_inv_pixelformat,
+    Validate_attachmentsdesc_depth_inv_pixelformat,
+    Validate_attachmentsdesc_image_sizes,
+    Validate_attachmentsdesc_image_sample_counts,
+    Validate_attachmentsdesc_resolve_color_image_msaa,
+    Validate_attachmentsdesc_resolve_image,
+    Validate_attachmentsdesc_resolve_sample_count,
+    Validate_attachmentsdesc_resolve_miplevel,
+    Validate_attachmentsdesc_resolve_face,
+    Validate_attachmentsdesc_resolve_layer,
+    Validate_attachmentsdesc_resolve_slice,
+    Validate_attachmentsdesc_resolve_image_no_rt,
+    Validate_attachmentsdesc_resolve_image_sizes,
+    Validate_attachmentsdesc_resolve_image_format,
+    Validate_attachmentsdesc_depth_image,
+    Validate_attachmentsdesc_depth_miplevel,
+    Validate_attachmentsdesc_depth_face,
+    Validate_attachmentsdesc_depth_layer,
+    Validate_attachmentsdesc_depth_slice,
+    Validate_attachmentsdesc_depth_image_no_rt,
+    Validate_attachmentsdesc_depth_image_sizes,
+    Validate_attachmentsdesc_depth_image_sample_count,
+    Validate_beginpass_canary,
+    Validate_beginpass_attachments_exists,
+    Validate_beginpass_attachments_valid,
     Validate_beginpass_color_attachment_image,
     Validate_beginpass_resolve_attachment_image,
     Validate_beginpass_depthstencil_attachment_image,
+    Validate_beginpass_swapchain_expect_width,
+    Validate_beginpass_swapchain_expect_width_notset,
+    Validate_beginpass_swapchain_expect_height,
+    Validate_beginpass_swapchain_expect_height_notset,
+    Validate_beginpass_swapchain_expect_samplecount,
+    Validate_beginpass_swapchain_expect_samplecount_notset,
+    Validate_beginpass_swapchain_expect_colorformat,
+    Validate_beginpass_swapchain_expect_colorformat_notset,
+    Validate_beginpass_swapchain_expect_depthformat_notset,
+    Validate_beginpass_swapchain_metal_expect_currentdrawable,
+    Validate_beginpass_swapchain_metal_expect_currentdrawable_notset,
+    Validate_beginpass_swapchain_metal_expect_depthstenciltexture,
+    Validate_beginpass_swapchain_metal_expect_depthstenciltexture_notset,
+    Validate_beginpass_swapchain_metal_expect_msaacolortexture,
+    Validate_beginpass_swapchain_metal_expect_msaacolortexture_notset,
+    Validate_beginpass_swapchain_d3d11_expect_renderview,
+    Validate_beginpass_swapchain_d3d11_expect_renderview_notset,
+    Validate_beginpass_swapchain_d3d11_expect_resolveview,
+    Validate_beginpass_swapchain_d3d11_expect_resolveview_notset,
+    Validate_beginpass_swapchain_d3d11_expect_depthstencilview,
+    Validate_beginpass_swapchain_d3d11_expect_depthstencilview_notset,
+    Validate_beginpass_swapchain_wgpu_expect_renderview,
+    Validate_beginpass_swapchain_wgpu_expect_renderview_notset,
+    Validate_beginpass_swapchain_wgpu_expect_resolveview,
+    Validate_beginpass_swapchain_wgpu_expect_resolveview_notset,
+    Validate_beginpass_swapchain_wgpu_expect_depthstencilview,
+    Validate_beginpass_swapchain_wgpu_expect_depthstencilview_notset,
+    Validate_beginpass_swapchain_gl_expect_framebuffer_notset,
     Validate_apip_pipeline_valid_id,
     Validate_apip_pipeline_exists,
     Validate_apip_pipeline_valid,
     Validate_apip_shader_exists,
     Validate_apip_shader_valid,
+    Validate_apip_curpass_attachments_exists,
+    Validate_apip_curpass_attachments_valid,
     Validate_apip_att_count,
     Validate_apip_color_format,
     Validate_apip_depth_format,
@@ -1163,50 +1225,30 @@ enum LogItem {
     Validation_failed,
 }
 extern(C)
-struct MetalContextDesc {
-    const(void)* device = null;
-    extern(C) const(void)* function() renderpass_descriptor_cb = null;
-    extern(C) const(void)* function(void*) renderpass_descriptor_userdata_cb = null;
-    extern(C) const(void)* function() drawable_cb = null;
-    extern(C) const(void)* function(void*) drawable_userdata_cb = null;
-    void* user_data = null;
+struct EnvironmentDefaults {
+    PixelFormat color_format;
+    PixelFormat depth_format;
+    int sample_count = 0;
 }
 extern(C)
-struct D3d11ContextDesc {
+struct MetalEnvironment {
+    const(void)* device = null;
+}
+extern(C)
+struct D3d11Environment {
     const(void)* device = null;
     const(void)* device_context = null;
-    extern(C) const(void)* function() render_target_view_cb = null;
-    extern(C) const(void)* function(void*) render_target_view_userdata_cb = null;
-    extern(C) const(void)* function() depth_stencil_view_cb = null;
-    extern(C) const(void)* function(void*) depth_stencil_view_userdata_cb = null;
-    void* user_data = null;
 }
 extern(C)
-struct WgpuContextDesc {
+struct WgpuEnvironment {
     const(void)* device = null;
-    extern(C) const(void)* function() render_view_cb = null;
-    extern(C) const(void)* function(void*) render_view_userdata_cb = null;
-    extern(C) const(void)* function() resolve_view_cb = null;
-    extern(C) const(void)* function(void*) resolve_view_userdata_cb = null;
-    extern(C) const(void)* function() depth_stencil_view_cb = null;
-    extern(C) const(void)* function(void*) depth_stencil_view_userdata_cb = null;
-    void* user_data = null;
 }
 extern(C)
-struct GlContextDesc {
-    extern(C) uint function() default_framebuffer_cb = null;
-    extern(C) uint function(void*) default_framebuffer_userdata_cb = null;
-    void* user_data = null;
-}
-extern(C)
-struct ContextDesc {
-    int color_format = 0;
-    int depth_format = 0;
-    int sample_count = 0;
-    MetalContextDesc metal;
-    D3d11ContextDesc d3d11;
-    WgpuContextDesc wgpu;
-    GlContextDesc gl;
+struct Environment {
+    EnvironmentDefaults defaults;
+    MetalEnvironment metal;
+    D3d11Environment d3d11;
+    WgpuEnvironment wgpu;
 }
 extern(C)
 struct CommitListener {
@@ -1232,17 +1274,17 @@ struct Desc {
     int sampler_pool_size = 0;
     int shader_pool_size = 0;
     int pipeline_pool_size = 0;
-    int pass_pool_size = 0;
-    int context_pool_size = 0;
+    int attachments_pool_size = 0;
     int uniform_buffer_size = 0;
     int max_commit_listeners = 0;
     bool disable_validation = false;
     bool mtl_force_managed_storage_mode = false;
+    bool mtl_use_command_buffer_with_retained_references = false;
     bool wgpu_disable_bindgroups_cache = false;
     int wgpu_bindgroups_cache_size = 0;
     Allocator allocator;
     Logger logger;
-    ContextDesc context;
+    Environment environment;
     uint _end_canary = 0;
 }
 extern(C) void sg_setup(const Desc *) @system @nogc nothrow;
@@ -1301,9 +1343,9 @@ extern(C) Pipeline sg_make_pipeline(const PipelineDesc *) @system @nogc nothrow;
 Pipeline makePipeline(ref PipelineDesc desc) @trusted @nogc nothrow {
     return sg_make_pipeline(&desc);
 }
-extern(C) Pass sg_make_pass(const PassDesc *) @system @nogc nothrow;
-Pass makePass(ref PassDesc desc) @trusted @nogc nothrow {
-    return sg_make_pass(&desc);
+extern(C) Attachments sg_make_attachments(const AttachmentsDesc *) @system @nogc nothrow;
+Attachments makeAttachments(ref AttachmentsDesc desc) @trusted @nogc nothrow {
+    return sg_make_attachments(&desc);
 }
 extern(C) void sg_destroy_buffer(Buffer) @system @nogc nothrow;
 void destroyBuffer(Buffer buf) @trusted @nogc nothrow {
@@ -1325,9 +1367,9 @@ extern(C) void sg_destroy_pipeline(Pipeline) @system @nogc nothrow;
 void destroyPipeline(Pipeline pip) @trusted @nogc nothrow {
     sg_destroy_pipeline(pip);
 }
-extern(C) void sg_destroy_pass(Pass) @system @nogc nothrow;
-void destroyPass(Pass pass) @trusted @nogc nothrow {
-    sg_destroy_pass(pass);
+extern(C) void sg_destroy_attachments(Attachments) @system @nogc nothrow;
+void destroyAttachments(Attachments atts) @trusted @nogc nothrow {
+    sg_destroy_attachments(atts);
 }
 extern(C) void sg_update_buffer(Buffer, const Range *) @system @nogc nothrow;
 void updateBuffer(Buffer buf, ref Range data) @trusted @nogc nothrow {
@@ -1349,17 +1391,9 @@ extern(C) bool sg_query_buffer_will_overflow(Buffer, size_t) @system @nogc nothr
 bool queryBufferWillOverflow(Buffer buf, size_t size) @trusted @nogc nothrow {
     return sg_query_buffer_will_overflow(buf, size);
 }
-extern(C) void sg_begin_default_pass(const PassAction *, int, int) @system @nogc nothrow;
-void beginDefaultPass(ref PassAction pass_action, int width, int height) @trusted @nogc nothrow {
-    sg_begin_default_pass(&pass_action, width, height);
-}
-extern(C) void sg_begin_default_passf(const PassAction *, float, float) @system @nogc nothrow;
-void beginDefaultPassf(ref PassAction pass_action, float width, float height) @trusted @nogc nothrow {
-    sg_begin_default_passf(&pass_action, width, height);
-}
-extern(C) void sg_begin_pass(Pass, const PassAction *) @system @nogc nothrow;
-void beginPass(Pass pass, ref PassAction pass_action) @trusted @nogc nothrow {
-    sg_begin_pass(pass, &pass_action);
+extern(C) void sg_begin_pass(const Pass *) @system @nogc nothrow;
+void beginPass(ref Pass pass) @trusted @nogc nothrow {
+    sg_begin_pass(&pass);
 }
 extern(C) void sg_apply_viewport(int, int, int, int, bool) @system @nogc nothrow;
 void applyViewport(int x, int y, int width, int height, bool origin_top_left) @trusted @nogc nothrow {
@@ -1449,9 +1483,9 @@ extern(C) ResourceState sg_query_pipeline_state(Pipeline) @system @nogc nothrow;
 ResourceState queryPipelineState(Pipeline pip) @trusted @nogc nothrow {
     return sg_query_pipeline_state(pip);
 }
-extern(C) ResourceState sg_query_pass_state(Pass) @system @nogc nothrow;
-ResourceState queryPassState(Pass pass) @trusted @nogc nothrow {
-    return sg_query_pass_state(pass);
+extern(C) ResourceState sg_query_attachments_state(Attachments) @system @nogc nothrow;
+ResourceState queryAttachmentsState(Attachments atts) @trusted @nogc nothrow {
+    return sg_query_attachments_state(atts);
 }
 extern(C) BufferInfo sg_query_buffer_info(Buffer) @system @nogc nothrow;
 BufferInfo queryBufferInfo(Buffer buf) @trusted @nogc nothrow {
@@ -1473,9 +1507,9 @@ extern(C) PipelineInfo sg_query_pipeline_info(Pipeline) @system @nogc nothrow;
 PipelineInfo queryPipelineInfo(Pipeline pip) @trusted @nogc nothrow {
     return sg_query_pipeline_info(pip);
 }
-extern(C) PassInfo sg_query_pass_info(Pass) @system @nogc nothrow;
-PassInfo queryPassInfo(Pass pass) @trusted @nogc nothrow {
-    return sg_query_pass_info(pass);
+extern(C) AttachmentsInfo sg_query_attachments_info(Attachments) @system @nogc nothrow;
+AttachmentsInfo queryAttachmentsInfo(Attachments atts) @trusted @nogc nothrow {
+    return sg_query_attachments_info(atts);
 }
 extern(C) BufferDesc sg_query_buffer_desc(Buffer) @system @nogc nothrow;
 BufferDesc queryBufferDesc(Buffer buf) @trusted @nogc nothrow {
@@ -1497,9 +1531,9 @@ extern(C) PipelineDesc sg_query_pipeline_desc(Pipeline) @system @nogc nothrow;
 PipelineDesc queryPipelineDesc(Pipeline pip) @trusted @nogc nothrow {
     return sg_query_pipeline_desc(pip);
 }
-extern(C) PassDesc sg_query_pass_desc(Pass) @system @nogc nothrow;
-PassDesc queryPassDesc(Pass pass) @trusted @nogc nothrow {
-    return sg_query_pass_desc(pass);
+extern(C) AttachmentsDesc sg_query_attachments_desc(Attachments) @system @nogc nothrow;
+AttachmentsDesc queryAttachmentsDesc(Attachments atts) @trusted @nogc nothrow {
+    return sg_query_attachments_desc(atts);
 }
 extern(C) BufferDesc sg_query_buffer_defaults(const BufferDesc *) @system @nogc nothrow;
 BufferDesc queryBufferDefaults(ref BufferDesc desc) @trusted @nogc nothrow {
@@ -1521,9 +1555,9 @@ extern(C) PipelineDesc sg_query_pipeline_defaults(const PipelineDesc *) @system 
 PipelineDesc queryPipelineDefaults(ref PipelineDesc desc) @trusted @nogc nothrow {
     return sg_query_pipeline_defaults(&desc);
 }
-extern(C) PassDesc sg_query_pass_defaults(const PassDesc *) @system @nogc nothrow;
-PassDesc queryPassDefaults(ref PassDesc desc) @trusted @nogc nothrow {
-    return sg_query_pass_defaults(&desc);
+extern(C) AttachmentsDesc sg_query_attachments_defaults(const AttachmentsDesc *) @system @nogc nothrow;
+AttachmentsDesc queryAttachmentsDefaults(ref AttachmentsDesc desc) @trusted @nogc nothrow {
+    return sg_query_attachments_defaults(&desc);
 }
 extern(C) Buffer sg_alloc_buffer() @system @nogc nothrow;
 Buffer allocBuffer() @trusted @nogc nothrow {
@@ -1545,9 +1579,9 @@ extern(C) Pipeline sg_alloc_pipeline() @system @nogc nothrow;
 Pipeline allocPipeline() @trusted @nogc nothrow {
     return sg_alloc_pipeline();
 }
-extern(C) Pass sg_alloc_pass() @system @nogc nothrow;
-Pass allocPass() @trusted @nogc nothrow {
-    return sg_alloc_pass();
+extern(C) Attachments sg_alloc_attachments() @system @nogc nothrow;
+Attachments allocAttachments() @trusted @nogc nothrow {
+    return sg_alloc_attachments();
 }
 extern(C) void sg_dealloc_buffer(Buffer) @system @nogc nothrow;
 void deallocBuffer(Buffer buf) @trusted @nogc nothrow {
@@ -1569,9 +1603,9 @@ extern(C) void sg_dealloc_pipeline(Pipeline) @system @nogc nothrow;
 void deallocPipeline(Pipeline pip) @trusted @nogc nothrow {
     sg_dealloc_pipeline(pip);
 }
-extern(C) void sg_dealloc_pass(Pass) @system @nogc nothrow;
-void deallocPass(Pass pass) @trusted @nogc nothrow {
-    sg_dealloc_pass(pass);
+extern(C) void sg_dealloc_attachments(Attachments) @system @nogc nothrow;
+void deallocAttachments(Attachments attachments) @trusted @nogc nothrow {
+    sg_dealloc_attachments(attachments);
 }
 extern(C) void sg_init_buffer(Buffer, const BufferDesc *) @system @nogc nothrow;
 void initBuffer(Buffer buf, ref BufferDesc desc) @trusted @nogc nothrow {
@@ -1593,9 +1627,9 @@ extern(C) void sg_init_pipeline(Pipeline, const PipelineDesc *) @system @nogc no
 void initPipeline(Pipeline pip, ref PipelineDesc desc) @trusted @nogc nothrow {
     sg_init_pipeline(pip, &desc);
 }
-extern(C) void sg_init_pass(Pass, const PassDesc *) @system @nogc nothrow;
-void initPass(Pass pass, ref PassDesc desc) @trusted @nogc nothrow {
-    sg_init_pass(pass, &desc);
+extern(C) void sg_init_attachments(Attachments, const AttachmentsDesc *) @system @nogc nothrow;
+void initAttachments(Attachments attachments, ref AttachmentsDesc desc) @trusted @nogc nothrow {
+    sg_init_attachments(attachments, &desc);
 }
 extern(C) void sg_uninit_buffer(Buffer) @system @nogc nothrow;
 void uninitBuffer(Buffer buf) @trusted @nogc nothrow {
@@ -1617,9 +1651,9 @@ extern(C) void sg_uninit_pipeline(Pipeline) @system @nogc nothrow;
 void uninitPipeline(Pipeline pip) @trusted @nogc nothrow {
     sg_uninit_pipeline(pip);
 }
-extern(C) void sg_uninit_pass(Pass) @system @nogc nothrow;
-void uninitPass(Pass pass) @trusted @nogc nothrow {
-    sg_uninit_pass(pass);
+extern(C) void sg_uninit_attachments(Attachments) @system @nogc nothrow;
+void uninitAttachments(Attachments atts) @trusted @nogc nothrow {
+    sg_uninit_attachments(atts);
 }
 extern(C) void sg_fail_buffer(Buffer) @system @nogc nothrow;
 void failBuffer(Buffer buf) @trusted @nogc nothrow {
@@ -1641,9 +1675,9 @@ extern(C) void sg_fail_pipeline(Pipeline) @system @nogc nothrow;
 void failPipeline(Pipeline pip) @trusted @nogc nothrow {
     sg_fail_pipeline(pip);
 }
-extern(C) void sg_fail_pass(Pass) @system @nogc nothrow;
-void failPass(Pass pass) @trusted @nogc nothrow {
-    sg_fail_pass(pass);
+extern(C) void sg_fail_attachments(Attachments) @system @nogc nothrow;
+void failAttachments(Attachments atts) @trusted @nogc nothrow {
+    sg_fail_attachments(atts);
 }
 extern(C) void sg_enable_frame_stats() @system @nogc nothrow;
 void enableFrameStats() @trusted @nogc nothrow {
@@ -1660,18 +1694,6 @@ bool frameStatsEnabled() @trusted @nogc nothrow {
 extern(C) FrameStats sg_query_frame_stats() @system @nogc nothrow;
 FrameStats queryFrameStats() @trusted @nogc nothrow {
     return sg_query_frame_stats();
-}
-extern(C) Context sg_setup_context() @system @nogc nothrow;
-Context setupContext() @trusted @nogc nothrow {
-    return sg_setup_context();
-}
-extern(C) void sg_activate_context(Context) @system @nogc nothrow;
-void activateContext(Context ctx_id) @trusted @nogc nothrow {
-    sg_activate_context(ctx_id);
-}
-extern(C) void sg_discard_context(Context) @system @nogc nothrow;
-void discardContext(Context ctx_id) @trusted @nogc nothrow {
-    sg_discard_context(ctx_id);
 }
 extern(C)
 struct D3d11BufferInfo {
@@ -1703,7 +1725,7 @@ struct D3d11PipelineInfo {
     const(void)* bs = null;
 }
 extern(C)
-struct D3d11PassInfo {
+struct D3d11AttachmentsInfo {
     const(void)*[4] color_rtv = null;
     const(void)*[4] resolve_rtv = null;
     const(void)* dsv = null;
@@ -1758,7 +1780,7 @@ struct WgpuPipelineInfo {
     const(void)* pip = null;
 }
 extern(C)
-struct WgpuPassInfo {
+struct WgpuAttachmentsInfo {
     const(void)*[4] color_view = null;
     const(void)*[4] resolve_view = null;
     const(void)* ds_view = null;
@@ -1784,8 +1806,8 @@ struct GlShaderInfo {
     uint prog = 0;
 }
 extern(C)
-struct GlPassInfo {
-    uint frame_buffer = 0;
+struct GlAttachmentsInfo {
+    uint framebuffer = 0;
     uint[4] msaa_resolve_framebuffer = 0;
 }
 extern(C) scope const(void)* sg_d3d11_device() @system @nogc nothrow;
@@ -1816,9 +1838,9 @@ extern(C) D3d11PipelineInfo sg_d3d11_query_pipeline_info(Pipeline) @system @nogc
 D3d11PipelineInfo d3d11QueryPipelineInfo(Pipeline pip) @trusted @nogc nothrow {
     return sg_d3d11_query_pipeline_info(pip);
 }
-extern(C) D3d11PassInfo sg_d3d11_query_pass_info(Pass) @system @nogc nothrow;
-D3d11PassInfo d3d11QueryPassInfo(Pass pass) @trusted @nogc nothrow {
-    return sg_d3d11_query_pass_info(pass);
+extern(C) D3d11AttachmentsInfo sg_d3d11_query_attachments_info(Attachments) @system @nogc nothrow;
+D3d11AttachmentsInfo d3d11QueryAttachmentsInfo(Attachments atts) @trusted @nogc nothrow {
+    return sg_d3d11_query_attachments_info(atts);
 }
 extern(C) scope const(void)* sg_mtl_device() @system @nogc nothrow;
 scope const(void)* mtlDevice() @trusted @nogc nothrow {
@@ -1884,9 +1906,9 @@ extern(C) WgpuPipelineInfo sg_wgpu_query_pipeline_info(Pipeline) @system @nogc n
 WgpuPipelineInfo wgpuQueryPipelineInfo(Pipeline pip) @trusted @nogc nothrow {
     return sg_wgpu_query_pipeline_info(pip);
 }
-extern(C) WgpuPassInfo sg_wgpu_query_pass_info(Pass) @system @nogc nothrow;
-WgpuPassInfo wgpuQueryPassInfo(Pass pass) @trusted @nogc nothrow {
-    return sg_wgpu_query_pass_info(pass);
+extern(C) WgpuAttachmentsInfo sg_wgpu_query_attachments_info(Attachments) @system @nogc nothrow;
+WgpuAttachmentsInfo wgpuQueryAttachmentsInfo(Attachments atts) @trusted @nogc nothrow {
+    return sg_wgpu_query_attachments_info(atts);
 }
 extern(C) GlBufferInfo sg_gl_query_buffer_info(Buffer) @system @nogc nothrow;
 GlBufferInfo glQueryBufferInfo(Buffer buf) @trusted @nogc nothrow {
@@ -1904,7 +1926,7 @@ extern(C) GlShaderInfo sg_gl_query_shader_info(Shader) @system @nogc nothrow;
 GlShaderInfo glQueryShaderInfo(Shader shd) @trusted @nogc nothrow {
     return sg_gl_query_shader_info(shd);
 }
-extern(C) GlPassInfo sg_gl_query_pass_info(Pass) @system @nogc nothrow;
-GlPassInfo glQueryPassInfo(Pass pass) @trusted @nogc nothrow {
-    return sg_gl_query_pass_info(pass);
+extern(C) GlAttachmentsInfo sg_gl_query_attachments_info(Attachments) @system @nogc nothrow;
+GlAttachmentsInfo glQueryAttachmentsInfo(Attachments atts) @trusted @nogc nothrow {
+    return sg_gl_query_attachments_info(atts);
 }

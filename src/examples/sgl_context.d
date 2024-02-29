@@ -7,7 +7,7 @@
 module examples.sgl_context;
 
 import sg = sokol.gfx;
-import sgapp = sokol.glue;
+import sglue = sokol.glue;
 import sapp = sokol.app;
 import slog = sokol.log;
 import sgl = sokol.gl;
@@ -19,7 +19,7 @@ extern (C):
 struct Offscreen
 {
     sg.PassAction pass_action;
-    sg.Pass pass;
+    sg.Attachments attachments;
     sg.Image img;
     sgl.Context sgl_ctx;
 }
@@ -44,7 +44,7 @@ enum offscreen_height = 32;
 
 void init()
 {
-    sg.Desc gfxd = {context: sgapp.context(),
+    sg.Desc gfxd = {environment: sglue.environment,
     logger: {func: &slog.func}};
     sg.setup(gfxd);
 
@@ -85,7 +85,7 @@ void init()
     };
     state.offscreen.sgl_ctx = sgl.makeContext(ctd);
 
-    // create an offscreen render target texture, pass and pass-action
+    // create an offscreen render target texture, pass-attachments object and pass-action
     sg.ImageDesc imgd = {
         render_target: true,
         width: offscreen_width,
@@ -95,9 +95,9 @@ void init()
     };
     state.offscreen.img = sg.makeImage(imgd);
 
-    sg.PassDesc pass_desc;
-    pass_desc.color_attachments[0].image = state.offscreen.img;
-    state.offscreen.pass = sg.makePass(pass_desc);
+    sg.AttachmentsDesc attachmentDesc;
+    attachmentDesc.colors[0].image = state.offscreen.img;
+    state.offscreen.attachments = sg.makeAttachments(attachmentDesc);
 
     state.offscreen.pass_action.colors[0].load_action = sg.LoadAction.Clear;
     state.offscreen.pass_action.colors[0].clear_value.r = 0.0;
@@ -141,10 +141,16 @@ void frame()
     draw_cube();
 
     // do the actual offscreen and display rendering in sokol-gfx passes
-    sg.beginPass(state.offscreen.pass, state.offscreen.pass_action);
+    sg.Pass pass1 = {
+        action: state.offscreen.pass_action, attachments: state.offscreen.attachments
+    };
+    sg.beginPass(pass1);
     sgl.contextDraw(state.offscreen.sgl_ctx);
     sg.endPass();
-    sg.beginDefaultPass(state.display.pass_action, sapp.width(), sapp.height());
+    sg.Pass pass2 = {
+        action: state.display.pass_action, swapchain: sglue.swapchain
+    };
+    sg.beginPass(pass2);
     sgl.contextDraw(sgl.defaultContext());
     sg.endPass();
     sg.commit();

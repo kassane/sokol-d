@@ -39,7 +39,7 @@ struct State
 
 void init()
 {
-    sg.Desc gfx = {context: sglue.context(),
+    sg.Desc gfx = {environment: sglue.environment,
     logger: {func: &log.func}};
     sg.setup(gfx);
 
@@ -88,7 +88,8 @@ void frame()
     print_font(FONT_C64, "C64:\n", 0x79, 0x86, 0xcb);
     print_font(FONT_ORIC, "Oric Atmos:\n", 0xff, 0x98, 0x00);
 
-    sg.beginDefaultPass(state.passAction, sapp.width(), sapp.height());
+    sg.Pass pass = {action: state.passAction, swapchain: sglue.swapchain};
+    sg.beginPass(pass);
     sdtx.draw();
     sg.endPass();
     sg.commit();

@@ -35,8 +35,8 @@ extern(C)
 struct ContextDesc {
     int max_commands = 0;
     int char_buf_size = 0;
-    float canvas_width = 0.0;
-    float canvas_height = 0.0;
+    float canvas_width = 0.0f;
+    float canvas_height = 0.0f;
     int tab_width = 0;
     sg.PixelFormat color_format;
     sg.PixelFormat depth_format;

@@ -10,13 +10,13 @@ struct Range {
 }
 extern(C)
 struct Mat4 {
-    float[4][4] m = 0.0;
+    float[4][4] m = 0.0f;
 }
 extern(C)
 struct Vertex {
-    float x = 0.0;
-    float y = 0.0;
-    float z = 0.0;
+    float x = 0.0f;
+    float y = 0.0f;
+    float z = 0.0f;
     uint normal = 0;
     ushort u = 0;
     ushort v = 0;
@@ -51,8 +51,8 @@ struct Buffer {
 }
 extern(C)
 struct Plane {
-    float width = 0.0;
-    float depth = 0.0;
+    float width = 0.0f;
+    float depth = 0.0f;
     ushort tiles = 0;
     uint color = 0;
     bool random_colors = false;
@@ -61,9 +61,9 @@ struct Plane {
 }
 extern(C)
 struct Box {
-    float width = 0.0;
-    float height = 0.0;
-    float depth = 0.0;
+    float width = 0.0f;
+    float height = 0.0f;
+    float depth = 0.0f;
     ushort tiles = 0;
     uint color = 0;
     bool random_colors = false;
@@ -72,7 +72,7 @@ struct Box {
 }
 extern(C)
 struct Sphere {
-    float radius = 0.0;
+    float radius = 0.0f;
     ushort slices = 0;
     ushort stacks = 0;
     uint color = 0;
@@ -82,8 +82,8 @@ struct Sphere {
 }
 extern(C)
 struct Cylinder {
-    float radius = 0.0;
-    float height = 0.0;
+    float radius = 0.0f;
+    float height = 0.0f;
     ushort slices = 0;
     ushort stacks = 0;
     uint color = 0;
@@ -93,8 +93,8 @@ struct Cylinder {
 }
 extern(C)
 struct Torus {
-    float radius = 0.0;
-    float ring_radius = 0.0;
+    float radius = 0.0f;
+    float ring_radius = 0.0f;
     ushort sides = 0;
     ushort rings = 0;
     uint color = 0;
