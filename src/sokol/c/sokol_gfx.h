@@ -4716,6 +4716,15 @@ inline int sg_append_buffer(sg_buffer buf_id, const sg_range& data) { return sg_
     #endif
 #endif
 
+#if defined(SOKOL_GLES3)
+    // on WebGL2, GL_FRAMEBUFFER_UNDEFINED technically doesn't exist (it is defined
+    // in the Emscripten headers, but may not exist in other WebGL2 shims)
+    // see: https://github.com/floooh/sokol/pull/933
+    #ifndef GL_FRAMEBUFFER_UNDEFINED
+    #define GL_FRAMEBUFFER_UNDEFINED 0x8219
+    #endif
+#endif
+
 // ███████ ████████ ██████  ██    ██  ██████ ████████ ███████
 // ██         ██    ██   ██ ██    ██ ██         ██    ██
 // ███████    ██    ██████  ██    ██ ██         ██    ███████
@@ -8685,10 +8694,10 @@ _SOKOL_PRIVATE void _sg_gl_end_pass(void) {
                 invalidate_atts[att_index++] = (GLenum)(GL_COLOR_ATTACHMENT0 + i);
             }
         }
-        if (_sg.gl.depth_store_action == SG_STOREACTION_DONTCARE) {
+        if ((_sg.gl.depth_store_action == SG_STOREACTION_DONTCARE) && (_sg.cur_pass.atts->cmn.depth_stencil.image_id.id != SG_INVALID_ID)) {
             invalidate_atts[att_index++] = GL_DEPTH_ATTACHMENT;
         }
-        if (_sg.gl.stencil_store_action == SG_STOREACTION_DONTCARE) {
+        if ((_sg.gl.stencil_store_action == SG_STOREACTION_DONTCARE) && (_sg.cur_pass.atts->cmn.depth_stencil.image_id.id != SG_INVALID_ID)) {
             invalidate_atts[att_index++] = GL_STENCIL_ATTACHMENT;
         }
         if (att_index > 0) {
@@ -16104,7 +16113,6 @@ _SOKOL_PRIVATE bool _sg_validate_begin_pass(const sg_pass* pass) {
                 _SG_VALIDATE(pass->swapchain.d3d11.render_view == 0, VALIDATE_BEGINPASS_SWAPCHAIN_D3D11_EXPECT_RENDERVIEW_NOTSET);
                 _SG_VALIDATE(pass->swapchain.d3d11.depth_stencil_view == 0, VALIDATE_BEGINPASS_SWAPCHAIN_D3D11_EXPECT_DEPTHSTENCILVIEW_NOTSET);
                 _SG_VALIDATE(pass->swapchain.d3d11.resolve_view == 0, VALIDATE_BEGINPASS_SWAPCHAIN_D3D11_EXPECT_RESOLVEVIEW_NOTSET);
-                // FIXME: resolve_view
             #elif defined(SOKOL_WGPU)
                 _SG_VALIDATE(pass->swapchain.wgpu.render_view == 0, VALIDATE_BEGINPASS_SWAPCHAIN_WGPU_EXPECT_RENDERVIEW_NOTSET);
                 _SG_VALIDATE(pass->swapchain.wgpu.depth_stencil_view == 0, VALIDATE_BEGINPASS_SWAPCHAIN_WGPU_EXPECT_DEPTHSTENCILVIEW_NOTSET);
