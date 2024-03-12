@@ -374,6 +374,8 @@ struct Desc {
     bool html5_bubble_wheel_events = false;
     bool html5_bubble_key_events = false;
     bool html5_bubble_char_events = false;
+    bool html5_use_emsc_set_main_loop = false;
+    bool html5_emsc_set_main_loop_simulate_infinite_loop = false;
     bool ios_keyboard_resizes_canvas = false;
 }
 enum Html5FetchError {

@@ -1716,6 +1716,8 @@ typedef struct sapp_desc {
     bool html5_bubble_wheel_events;     // same for wheel events
     bool html5_bubble_key_events;       // if true, bubble up *all* key events to browser, not just key events that represent characters
     bool html5_bubble_char_events;      // if true, bubble up character events to browser
+    bool html5_use_emsc_set_main_loop;  // if true, use emscripten_set_main_loop() instead of emscripten_request_animation_frame_loop()
+    bool html5_emsc_set_main_loop_simulate_infinite_loop;   // this will be passed as the simulate_infinite_loop arg to emscripten_set_main_loop()
     bool ios_keyboard_resizes_canvas;   // if true, showing the iOS keyboard shrinks the canvas
 } sapp_desc;
 
@@ -2594,7 +2596,7 @@ typedef struct {
     PFNWGLGETEXTENSIONSSTRINGARBPROC GetExtensionsStringARB;
     PFNWGLCREATECONTEXTATTRIBSARBPROC CreateContextAttribsARB;
     // special case glGetIntegerv
-    void (*GetIntegerv)(uint32_t pname, int32_t* data);
+    void (WINAPI *GetIntegerv)(uint32_t pname, int32_t* data);
     bool ext_swap_control;
     bool arb_multisample;
     bool arb_pixel_format;
@@ -4751,7 +4753,7 @@ _SOKOL_PRIVATE void _sapp_ios_show_keyboard(bool shown) {
 #if defined(_SAPP_EMSCRIPTEN)
 
 #if defined(EM_JS_DEPS)
-EM_JS_DEPS(sokol_app, "$withStackSave,$allocateUTF8OnStack");
+EM_JS_DEPS(sokol_app, "$withStackSave,$stringToUTF8OnStack");
 #endif
 
 #ifdef __cplusplus
@@ -4868,7 +4870,7 @@ EM_JS(void, sapp_js_add_clipboard_listener, (void), {
     Module.sokol_paste = (event) => {
         const pasted_str = event.clipboardData.getData('text');
         withStackSave(() => {
-            const cstr = allocateUTF8OnStack(pasted_str);
+            const cstr = stringToUTF8OnStack(pasted_str);
             __sapp_emsc_onpaste(cstr);
         });
     };
@@ -4925,7 +4927,7 @@ EM_JS(void, sapp_js_add_dragndrop_listeners, (const char* canvas_name_cstr), {
         __sapp_emsc_begin_drop(files.length);
         for (let i = 0; i < files.length; i++) {
             withStackSave(() => {
-                const cstr = allocateUTF8OnStack(files[i].name);
+                const cstr = stringToUTF8OnStack(files[i].name);
                 __sapp_emsc_drop(i, cstr);
             });
         }
@@ -5854,7 +5856,7 @@ _SOKOL_PRIVATE void _sapp_emsc_unregister_eventhandlers(void) {
     #endif
 }
 
-_SOKOL_PRIVATE EM_BOOL _sapp_emsc_frame(double time, void* userData) {
+_SOKOL_PRIVATE EM_BOOL _sapp_emsc_frame_animation_loop(double time, void* userData) {
     _SOKOL_UNUSED(userData);
     _sapp_timing_external(&_sapp.timing, time / 1000.0);
 
@@ -5879,6 +5881,13 @@ _SOKOL_PRIVATE EM_BOOL _sapp_emsc_frame(double time, void* userData) {
         return EM_FALSE;
     }
     return EM_TRUE;
+}
+
+_SOKOL_PRIVATE void _sapp_emsc_frame_main_loop(void) {
+    const double time = emscripten_performance_now();
+    if (!_sapp_emsc_frame_animation_loop(time, 0)) {
+        emscripten_cancel_main_loop();
+    }
 }
 
 _SOKOL_PRIVATE void _sapp_emsc_run(const sapp_desc* desc) {
@@ -5911,8 +5920,11 @@ _SOKOL_PRIVATE void _sapp_emsc_run(const sapp_desc* desc) {
     sapp_set_icon(&desc->icon);
 
     // start the frame loop
-    emscripten_request_animation_frame_loop(_sapp_emsc_frame, 0);
-
+    if (_sapp.desc.html5_use_emsc_set_main_loop) {
+        emscripten_set_main_loop(_sapp_emsc_frame_main_loop, 0, _sapp.desc.html5_emsc_set_main_loop_simulate_infinite_loop);
+    } else {
+        emscripten_request_animation_frame_loop(_sapp_emsc_frame_animation_loop, 0);
+    }
     // NOT A BUG: do not call _sapp_discard_state() here, instead this is
     // called in _sapp_emsc_frame() when the application is ordered to quit
 }
@@ -6601,7 +6613,7 @@ _SOKOL_PRIVATE void _sapp_wgl_init(void) {
     SOKOL_ASSERT(_sapp.wgl.GetCurrentDC);
     _sapp.wgl.MakeCurrent = (PFN_wglMakeCurrent)(void*) GetProcAddress(_sapp.wgl.opengl32, "wglMakeCurrent");
     SOKOL_ASSERT(_sapp.wgl.MakeCurrent);
-    _sapp.wgl.GetIntegerv = (void(*)(uint32_t, int32_t*)) GetProcAddress(_sapp.wgl.opengl32, "glGetIntegerv");
+    _sapp.wgl.GetIntegerv = (void(WINAPI*)(uint32_t, int32_t*)) GetProcAddress(_sapp.wgl.opengl32, "glGetIntegerv");
     SOKOL_ASSERT(_sapp.wgl.GetIntegerv);
 
     _sapp.wgl.msg_hwnd = CreateWindowExW(WS_EX_OVERLAPPEDWINDOW,

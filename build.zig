@@ -504,8 +504,13 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
     try cmds.append(b.fmt("-mtriple={s}", .{mtriple}));
 
     // cpu model (e.g. "baseline")
-    if (options.target.query.isNative())
-        try cmds.append(b.fmt("-mcpu={s}", .{builtin.cpu.model.name}));
+    if (options.target.query.isNative()) {
+        const cpu_model = if (options.target.result.isDarwin())
+            builtin.cpu.model.llvm_name orelse "generic"
+        else
+            builtin.cpu.model.name;
+        try cmds.append(b.fmt("-mcpu={s}", .{cpu_model}));
+    }
 
     const outputDir = switch (options.kind) {
         .lib => "lib",
@@ -582,7 +587,7 @@ pub const DCompileStep = struct {
     target: Build.ResolvedTarget,
     optimize: std.builtin.OptimizeMode = .Debug,
     kind: CompileStep.Kind = .exe,
-    linkage: CompileStep.Linkage = .static,
+    linkage: std.builtin.LinkMode = .static,
     betterC: bool = false,
     sources: []const []const u8,
     dflags: []const []const u8,
