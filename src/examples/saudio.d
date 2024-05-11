@@ -15,21 +15,16 @@ extern (C):
 
 enum NUM_SAMPLES = 32;
 
-struct State
-{
+struct State {
     sg.PassAction pass_action = {
         colors: [
-            {
-                load_action: sg.LoadAction.Clear,
-                clear_value: {r: 1.0, g: 0.5, b: 0.0, a: 1.0},
-            }
+            { load_action: sg.LoadAction.Clear, clear_value: {r: 1.0, g: 0.5, b: 0.0, a: 1.0} },
         ]
     };
     int even_odd;
     size_t sample_pos;
     float[NUM_SAMPLES] samples;
 }
-
 static State state;
 
 void init()

@@ -37,7 +37,7 @@ struct State
 
 static State state;
 
-void init() @trusted
+void init()
 {
     sg.Desc gfx = {
         pipeline_pool_size: NUM_BLEND_FACTORS * NUM_BLEND_FACTORS + 1,

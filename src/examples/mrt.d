@@ -63,7 +63,7 @@ struct State
 
 static State state;
 
-void init() @trusted
+void init()
 {
     sg.Desc gfx = {environment: sglue.environment,
     logger: {func: &log.slog_func}};
