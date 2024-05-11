@@ -18,14 +18,12 @@ import handmade.math : sin, cos, floor;
 extern (C):
 @safe:
 
-struct RGB
-{
+struct RGB {
     float r = 0.0, g = 0.0, b = 0.0;
 }
 
-struct State
-{
-    static sg.PassAction pass_action = {
+struct State {
+    sg.PassAction pass_action = {
         colors: [
             {
                 load_action: sg.LoadAction.Clear,
@@ -34,8 +32,9 @@ struct State
         ]
     };
 }
+static State state;
 
-immutable float[3][16] pallete = [
+immutable float[3][16] palette = [
     [0.957, 0.263, 0.212],
     [0.914, 0.118, 0.388],
     [0.612, 0.153, 0.690],
@@ -54,26 +53,24 @@ immutable float[3][16] pallete = [
     [1.000, 0.341, 0.133],
 ];
 
-void init()
-{
-    sg.Desc gfxd = {environment: sglue.environment,
-    logger: {func: &slog.func}};
-    sg.setup(gfxd);
-
-    sgl.Desc gld = {logger: {func: &slog.func}};
-    sgl.setup(gld);
+void init() {
+    sg.Desc gfx = {
+        environment: sglue.environment(),
+        logger: { func: &slog.func }
+    };
+    sg.setup(gfx);
+    sgl.Desc gl = {
+        logger: { func: &slog.func }
+    };
+    sgl.setup(gl);
 }
 
-void frame()
-{
+void frame() {
     immutable float angle = sapp.frameCount() % 360.0;
-    State state;
-
     sgl.defaults();
     sgl.beginPoints();
     float psize = 5.0;
-    foreach (i; 0 .. 360)
-    {
+    foreach (i; 0 .. 360) {
         auto a = sgl.asRadians(angle + i);
         auto color = computeColor(((sapp.frameCount() + i) % 300) / 300.0);
         auto r = sin(a * 4.0);
@@ -88,21 +85,19 @@ void frame()
     }
     sgl.end();
 
-    sg.Pass pass = {action: state.pass_action, swapchain: sglue.swapchain};
+    sg.Pass pass = { action: state.pass_action, swapchain: sglue.swapchain() };
     sg.beginPass(pass);
     sgl.draw();
     sg.endPass();
     sg.commit();
 }
 
-void cleanup()
-{
+void cleanup() {
     sgl.shutdown();
     sg.shutdown();
 }
 
-void main()
-{
+void main() {
     sapp.Desc runner = {
         window_title: "sgl-points.d",
         init_cb: &init,
@@ -116,13 +111,12 @@ void main()
     sapp.run(runner);
 }
 
-RGB computeColor(float t)
-{
+RGB computeColor(float t) {
     const(size_t) idx0 = cast(size_t)(t * 16) % 16;
     const(size_t) idx1 = cast(size_t)(idx0 + 1) % 16;
     const l = (t * 16) - floor(t * 16);
-    const c0 = pallete[idx0];
-    const c1 = pallete[idx1];
+    const c0 = palette[idx0];
+    const c1 = palette[idx1];
     RGB rgb = {
         r: (c0[0] * (1 - l)) + (c1[0] * l),
         g: (c0[1] * (1 - l)) + (c1[1] * l),
