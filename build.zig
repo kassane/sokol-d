@@ -218,7 +218,7 @@ pub fn build(b: *Build) !void {
         "saudio",
         "sgl_context",
         "sgl_points",
-        "debugtext_print",
+        "debugtext",
         "user_data", // Need GC for user data [associative array]
     };
 
@@ -630,6 +630,7 @@ fn buildShaders(b: *Build) void {
     const sokol_tools_bin_dir = "../sokol-tools-bin/bin/";
     const shaders_dir = "src/shaders/";
     const shaders = .{
+        "triangle.glsl",
         "bufferoffsets.glsl",
         "cube.glsl",
         "instancing.glsl",
