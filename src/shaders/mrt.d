@@ -14,7 +14,7 @@ extern(C):
     Overview:
     =========
     Shader program: 'dbg':
-        Get shader desc: dbg_shader_desc(sg.query_backend());
+        Get shader desc: dbg_shader_desc(sg.queryBackend());
         Vertex shader: vs_dbg
             Attributes:
                 ATTR_VS_DBG_POS => 0
@@ -31,7 +31,7 @@ extern(C):
                 Image: tex
                 Sampler: smp
     Shader program: 'fsq':
-        Get shader desc: fsq_shader_desc(sg.query_backend());
+        Get shader desc: fsq_shader_desc(sg.queryBackend());
         Vertex shader: vs_fsq
             Attributes:
                 ATTR_VS_FSQ_POS => 0
@@ -67,7 +67,7 @@ extern(C):
                 Image: tex2
                 Sampler: smp
     Shader program: 'offscreen':
-        Get shader desc: offscreen_shader_desc(sg.query_backend());
+        Get shader desc: offscreen_shader_desc(sg.queryBackend());
         Vertex shader: vs_offscreen
             Attributes:
                 ATTR_VS_OFFSCREEN_POS => 0

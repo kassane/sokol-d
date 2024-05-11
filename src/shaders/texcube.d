@@ -14,7 +14,7 @@ extern(C):
     Overview:
     =========
     Shader program: 'texcube':
-        Get shader desc: texcube_shader_desc(sg.query_backend());
+        Get shader desc: texcube_shader_desc(sg.queryBackend());
         Vertex shader: vs
             Attributes:
                 ATTR_VS_POS => 0

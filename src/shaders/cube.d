@@ -14,7 +14,7 @@ extern(C):
     Overview:
     =========
     Shader program: 'cube':
-        Get shader desc: cube_shader_desc(sg.query_backend());
+        Get shader desc: cube_shader_desc(sg.queryBackend());
         Vertex shader: vs
             Attributes:
                 ATTR_VS_POSITION => 0

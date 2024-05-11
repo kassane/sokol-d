@@ -14,7 +14,7 @@ extern(C):
     Overview:
     =========
     Shader program: 'default':
-        Get shader desc: default_shader_desc(sg.query_backend());
+        Get shader desc: default_shader_desc(sg.queryBackend());
         Vertex shader: vs_default
             Attributes:
                 ATTR_VS_DEFAULT_POSITION => 0
@@ -36,7 +36,7 @@ extern(C):
                 Image: tex
                 Sampler: smp
     Shader program: 'offscreen':
-        Get shader desc: offscreen_shader_desc(sg.query_backend());
+        Get shader desc: offscreen_shader_desc(sg.queryBackend());
         Vertex shader: vs_offscreen
             Attributes:
                 ATTR_VS_OFFSCREEN_POSITION => 0

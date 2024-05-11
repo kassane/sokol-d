@@ -14,7 +14,7 @@ extern(C):
     Overview:
     =========
     Shader program: 'instancing':
-        Get shader desc: instancing_shader_desc(sg.query_backend());
+        Get shader desc: instancing_shader_desc(sg.queryBackend());
         Vertex shader: vs
             Attributes:
                 ATTR_VS_POS => 0

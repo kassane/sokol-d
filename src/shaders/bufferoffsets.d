@@ -13,7 +13,7 @@ extern(C):
     Overview:
     =========
     Shader program: 'bufferoffsets':
-        Get shader desc: bufferoffsets_shader_desc(sg.query_backend());
+        Get shader desc: bufferoffsets_shader_desc(sg.queryBackend());
         Vertex shader: vs
             Attributes:
                 ATTR_VS_POSITION => 0

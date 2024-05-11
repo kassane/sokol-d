@@ -14,7 +14,7 @@ extern(C):
     Overview:
     =========
     Shader program: 'bg':
-        Get shader desc: bg_shader_desc(sg.query_backend());
+        Get shader desc: bg_shader_desc(sg.queryBackend());
         Vertex shader: vs_bg
             Attributes:
                 ATTR_VS_BG_POSITION => 0
@@ -23,7 +23,7 @@ extern(C):
                 D struct: BgFsParams
                 Bind slot: SLOT_BG_FS_PARAMS => 0
     Shader program: 'quad':
-        Get shader desc: quad_shader_desc(sg.query_backend());
+        Get shader desc: quad_shader_desc(sg.queryBackend());
         Vertex shader: vs_quad
             Attributes:
                 ATTR_VS_QUAD_POSITION => 0
