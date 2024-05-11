@@ -58,14 +58,14 @@ struct Desc {
     int buffer_frames = 0;
     int packet_frames = 0;
     int num_packets = 0;
-    extern(C) void function(float *, int, int) stream_cb = null;
-    extern(C) void function(float *, int, int, void*) stream_userdata_cb = null;
+    extern(C) void function(scope float *, int, int) stream_cb = null;
+    extern(C) void function(scope float *, int, int, void*) stream_userdata_cb = null;
     void* user_data = null;
     Allocator allocator;
     Logger logger;
 }
-extern(C) void saudio_setup(const Desc *) @system @nogc nothrow;
-void setup(ref Desc desc) @trusted @nogc nothrow {
+extern(C) void saudio_setup(scope const Desc *) @system @nogc nothrow;
+void setup(scope ref Desc desc) @trusted @nogc nothrow {
     saudio_setup(&desc);
 }
 extern(C) void saudio_shutdown() @system @nogc nothrow;
@@ -104,7 +104,7 @@ extern(C) int saudio_expect() @system @nogc nothrow;
 int expect() @trusted @nogc nothrow {
     return saudio_expect();
 }
-extern(C) int saudio_push(const float *, int) @system @nogc nothrow;
-int push(const float * frames, int num_frames) @trusted @nogc nothrow {
+extern(C) int saudio_push(scope const float *, int) @system @nogc nothrow;
+int push(scope const float * frames, int num_frames) @trusted @nogc nothrow {
     return saudio_push(frames, num_frames);
 }

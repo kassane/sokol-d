@@ -57,8 +57,8 @@ struct Desc {
     Allocator allocator;
     Logger logger;
 }
-extern(C) void sdtx_setup(const Desc *) @system @nogc nothrow;
-void setup(ref Desc desc) @trusted @nogc nothrow {
+extern(C) void sdtx_setup(scope const Desc *) @system @nogc nothrow;
+void setup(scope ref Desc desc) @trusted @nogc nothrow {
     sdtx_setup(&desc);
 }
 extern(C) void sdtx_shutdown() @system @nogc nothrow;
@@ -89,8 +89,8 @@ extern(C) FontDesc sdtx_font_oric() @system @nogc nothrow;
 FontDesc fontOric() @trusted @nogc nothrow {
     return sdtx_font_oric();
 }
-extern(C) Context sdtx_make_context(const ContextDesc *) @system @nogc nothrow;
-Context makeContext(ref ContextDesc desc) @trusted @nogc nothrow {
+extern(C) Context sdtx_make_context(scope const ContextDesc *) @system @nogc nothrow;
+Context makeContext(scope ref ContextDesc desc) @trusted @nogc nothrow {
     return sdtx_make_context(&desc);
 }
 extern(C) void sdtx_destroy_context(Context) @system @nogc nothrow;

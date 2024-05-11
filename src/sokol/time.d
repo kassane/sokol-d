@@ -18,8 +18,8 @@ extern(C) ulong stm_since(ulong) @system @nogc nothrow;
 ulong since(ulong start_ticks) @trusted @nogc nothrow {
     return stm_since(start_ticks);
 }
-extern(C) ulong stm_laptime(ulong *) @system @nogc nothrow;
-ulong laptime(ulong * last_time) @trusted @nogc nothrow {
+extern(C) ulong stm_laptime(scope ulong *) @system @nogc nothrow;
+ulong laptime(scope ulong * last_time) @trusted @nogc nothrow {
     return stm_laptime(last_time);
 }
 extern(C) ulong stm_round_to_common_refresh_rate(ulong) @system @nogc nothrow;

@@ -337,12 +337,12 @@ struct Desc {
     extern(C) void function() init_cb = null;
     extern(C) void function() frame_cb = null;
     extern(C) void function() cleanup_cb = null;
-    extern(C) void function(const Event *) event_cb = null;
+    extern(C) void function(scope const Event *) event_cb = null;
     void* user_data = null;
     extern(C) void function(void*) init_userdata_cb = null;
     extern(C) void function(void*) frame_userdata_cb = null;
     extern(C) void function(void*) cleanup_userdata_cb = null;
-    extern(C) void function(const Event *, void*) event_userdata_cb = null;
+    extern(C) void function(scope const Event *, void*) event_userdata_cb = null;
     int width = 0;
     int height = 0;
     int sample_count = 0;
@@ -395,7 +395,7 @@ struct Html5FetchResponse {
 extern(C)
 struct Html5FetchRequest {
     int dropped_file_index = 0;
-    extern(C) void function(const Html5FetchResponse *) callback = null;
+    extern(C) void function(scope const Html5FetchResponse *) callback = null;
     Range buffer;
     void* user_data = null;
 }
@@ -537,8 +537,8 @@ extern(C) void sapp_set_window_title(scope const(char)*) @system @nogc nothrow;
 void setWindowTitle(scope const(char)* str) @trusted @nogc nothrow {
     sapp_set_window_title(str);
 }
-extern(C) void sapp_set_icon(const IconDesc *) @system @nogc nothrow;
-void setIcon(ref IconDesc icon_desc) @trusted @nogc nothrow {
+extern(C) void sapp_set_icon(scope const IconDesc *) @system @nogc nothrow;
+void setIcon(scope ref IconDesc icon_desc) @trusted @nogc nothrow {
     sapp_set_icon(&icon_desc);
 }
 extern(C) int sapp_get_num_dropped_files() @system @nogc nothrow;
@@ -549,8 +549,8 @@ extern(C) scope const(char)* sapp_get_dropped_file_path(int) @system @nogc nothr
 scope const(char)* getDroppedFilePath(int index) @trusted @nogc nothrow {
     return sapp_get_dropped_file_path(index);
 }
-extern(C) void sapp_run(const Desc *) @system @nogc nothrow;
-void run(ref Desc desc) @trusted @nogc nothrow {
+extern(C) void sapp_run(scope const Desc *) @system @nogc nothrow;
+void run(scope ref Desc desc) @trusted @nogc nothrow {
     sapp_run(&desc);
 }
 extern(C) scope const(void)* sapp_egl_get_display() @system @nogc nothrow;
@@ -569,8 +569,8 @@ extern(C) uint sapp_html5_get_dropped_file_size(int) @system @nogc nothrow;
 uint html5GetDroppedFileSize(int index) @trusted @nogc nothrow {
     return sapp_html5_get_dropped_file_size(index);
 }
-extern(C) void sapp_html5_fetch_dropped_file(const Html5FetchRequest *) @system @nogc nothrow;
-void html5FetchDroppedFile(ref Html5FetchRequest request) @trusted @nogc nothrow {
+extern(C) void sapp_html5_fetch_dropped_file(scope const Html5FetchRequest *) @system @nogc nothrow;
+void html5FetchDroppedFile(scope ref Html5FetchRequest request) @trusted @nogc nothrow {
     sapp_html5_fetch_dropped_file(&request);
 }
 extern(C) scope const(void)* sapp_metal_get_device() @system @nogc nothrow;
