@@ -645,6 +645,14 @@ extern(C) uint sapp_gl_get_framebuffer() @system @nogc nothrow;
 uint glGetFramebuffer() @trusted @nogc nothrow {
     return sapp_gl_get_framebuffer();
 }
+extern(C) int sapp_gl_get_major_version() @system @nogc nothrow;
+int glGetMajorVersion() @trusted @nogc nothrow {
+    return sapp_gl_get_major_version();
+}
+extern(C) int sapp_gl_get_minor_version() @system @nogc nothrow;
+int glGetMinorVersion() @trusted @nogc nothrow {
+    return sapp_gl_get_minor_version();
+}
 extern(C) scope const(void)* sapp_android_get_native_activity() @system @nogc nothrow;
 scope const(void)* androidGetNativeActivity() @trusted @nogc nothrow {
     return sapp_android_get_native_activity();

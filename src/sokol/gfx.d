@@ -39,6 +39,7 @@ enum max_vertex_buffers = 8;
 enum max_shaderstage_images = 12;
 enum max_shaderstage_samplers = 8;
 enum max_shaderstage_imagesamplerpairs = 12;
+enum max_shaderstage_storagebuffers = 8;
 enum max_shaderstage_ubs = 4;
 enum max_ub_members = 16;
 enum max_vertex_attributes = 16;
@@ -52,7 +53,7 @@ struct Color {
     float a = 0.0f;
 }
 enum Backend {
-    Glcore33,
+    Glcore,
     Gles3,
     D3d11,
     Metal_ios,
@@ -128,8 +129,10 @@ enum PixelFormat {
     Etc2_rgb8a1,
     Etc2_rgba8,
     Etc2_srgb8a8,
-    Etc2_rg11,
-    Etc2_rg11sn,
+    Eac_r11,
+    Eac_r11sn,
+    Eac_rg11,
+    Eac_rg11sn,
     Astc_4x4_rgba,
     Astc_4x4_srgba,
     Num,
@@ -151,6 +154,7 @@ struct Features {
     bool image_clamp_to_border = false;
     bool mrt_independent_blend_state = false;
     bool mrt_independent_write_mask = false;
+    bool storage_buffer = false;
 }
 extern(C)
 struct Limits {
@@ -181,6 +185,7 @@ enum BufferType {
     Default,
     Vertexbuffer,
     Indexbuffer,
+    Storagebuffer,
     Num,
 }
 enum IndexType {
@@ -468,6 +473,7 @@ extern(C)
 struct StageBindings {
     Image[12] images;
     Sampler[8] samplers;
+    Buffer[8] storage_buffers;
 }
 extern(C)
 struct Bindings {
@@ -561,6 +567,11 @@ struct ShaderUniformBlockDesc {
     ShaderUniformDesc[16] uniforms;
 }
 extern(C)
+struct ShaderStorageBufferDesc {
+    bool used = false;
+    bool readonly = false;
+}
+extern(C)
 struct ShaderImageDesc {
     bool used = false;
     bool multisampled = false;
@@ -586,6 +597,7 @@ struct ShaderStageDesc {
     const(char)* entry = null;
     const(char)* d3d11_target = null;
     ShaderUniformBlockDesc[4] uniform_blocks;
+    ShaderStorageBufferDesc[8] storage_buffers;
     ShaderImageDesc[12] images;
     ShaderSamplerDesc[8] samplers;
     ShaderImageSamplerPairDesc[12] image_sampler_pairs;
@@ -874,6 +886,7 @@ struct FrameStatsMetalBindings {
     uint num_set_vertex_buffer = 0;
     uint num_set_vertex_texture = 0;
     uint num_set_vertex_sampler_state = 0;
+    uint num_set_fragment_buffer = 0;
     uint num_set_fragment_texture = 0;
     uint num_set_fragment_sampler_state = 0;
 }
@@ -953,6 +966,7 @@ enum LogItem {
     Gl_framebuffer_status_incomplete_multisample,
     Gl_framebuffer_status_unknown,
     D3d11_create_buffer_failed,
+    D3d11_create_buffer_srv_failed,
     D3d11_create_depth_texture_unsupported_pixel_format,
     D3d11_create_depth_texture_failed,
     D3d11_create_2d_texture_unsupported_pixel_format,
@@ -999,6 +1013,7 @@ enum LogItem {
     Wgpu_create_shader_module_failed,
     Wgpu_shader_too_many_images,
     Wgpu_shader_too_many_samplers,
+    Wgpu_shader_too_many_storagebuffers,
     Wgpu_shader_create_bindgroup_layout_failed,
     Wgpu_create_pipeline_layout_failed,
     Wgpu_create_render_pipeline_failed,
@@ -1043,6 +1058,8 @@ enum LogItem {
     Validate_bufferdesc_data,
     Validate_bufferdesc_data_size,
     Validate_bufferdesc_no_data,
+    Validate_bufferdesc_storagebuffer_supported,
+    Validate_bufferdesc_storagebuffer_size_multiple_4,
     Validate_imagedata_nodata,
     Validate_imagedata_data_size,
     Validate_imagedesc_canary,
@@ -1076,6 +1093,8 @@ enum LogItem {
     Validate_shaderdesc_ub_size_mismatch,
     Validate_shaderdesc_ub_array_count,
     Validate_shaderdesc_ub_std140_array_type,
+    Validate_shaderdesc_no_cont_storagebuffers,
+    Validate_shaderdesc_storagebuffer_readonly,
     Validate_shaderdesc_no_cont_images,
     Validate_shaderdesc_no_cont_samplers,
     Validate_shaderdesc_image_sampler_pair_image_slot_out_of_range,
@@ -1089,11 +1108,10 @@ enum LogItem {
     Validate_shaderdesc_image_not_referenced_by_image_sampler_pairs,
     Validate_shaderdesc_sampler_not_referenced_by_image_sampler_pairs,
     Validate_shaderdesc_no_cont_image_sampler_pairs,
-    Validate_shaderdesc_attr_semantics,
     Validate_shaderdesc_attr_string_too_long,
     Validate_pipelinedesc_canary,
     Validate_pipelinedesc_shader,
-    Validate_pipelinedesc_no_attrs,
+    Validate_pipelinedesc_no_cont_attrs,
     Validate_pipelinedesc_layout_stride4,
     Validate_pipelinedesc_attr_semantics,
     Validate_attachmentsdesc_canary,
@@ -1197,6 +1215,10 @@ enum LogItem {
     Validate_abnd_vs_expected_nonfiltering_sampler,
     Validate_abnd_vs_unexpected_sampler_binding,
     Validate_abnd_vs_smp_exists,
+    Validate_abnd_vs_expected_storagebuffer_binding,
+    Validate_abnd_vs_storagebuffer_exists,
+    Validate_abnd_vs_storagebuffer_binding_buffertype,
+    Validate_abnd_vs_unexpected_storagebuffer_binding,
     Validate_abnd_fs_expected_image_binding,
     Validate_abnd_fs_img_exists,
     Validate_abnd_fs_image_type_mismatch,
@@ -1210,6 +1232,10 @@ enum LogItem {
     Validate_abnd_fs_expected_nonfiltering_sampler,
     Validate_abnd_fs_unexpected_sampler_binding,
     Validate_abnd_fs_smp_exists,
+    Validate_abnd_fs_expected_storagebuffer_binding,
+    Validate_abnd_fs_storagebuffer_exists,
+    Validate_abnd_fs_storagebuffer_binding_buffertype,
+    Validate_abnd_fs_unexpected_storagebuffer_binding,
     Validate_aub_no_pipeline,
     Validate_aub_no_ub_at_slot,
     Validate_aub_size,
