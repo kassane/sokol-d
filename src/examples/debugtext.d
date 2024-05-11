@@ -3,7 +3,7 @@
 //
 //  Test sokol_debugtext.h
 //------------------------------------------------------------------------------
-module examples.debugtext_print;
+module examples.debugtext;
 
 import sg = sokol.gfx;
 import sglue = sokol.glue;
