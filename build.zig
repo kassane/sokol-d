@@ -86,7 +86,7 @@ pub fn buildLibSokol(b: *Build, options: LibSokolOptions) !*CompileStep {
     const backend_cflags = switch (backend) {
         .d3d11 => "-DSOKOL_D3D11",
         .metal => "-DSOKOL_METAL",
-        .gl => "-DSOKOL_GLCORE33",
+        .gl => "-DSOKOL_GLCORE",
         .gles3 => "-DSOKOL_GLES3",
         .wgpu => "-DSOKOL_WGPU",
         else => @panic("unknown sokol backend"),
@@ -661,7 +661,7 @@ fn buildShaders(b: *Build) void {
             "-o",
             shaders_dir ++ shader[0 .. shader.len - 5] ++ ".d",
             "-l",
-            "glsl330:metal_macos:hlsl4:glsl300es:wgsl",
+            "glsl430:metal_macos:hlsl4:glsl300es:wgsl",
             "-f",
             "sokol_d",
         });
