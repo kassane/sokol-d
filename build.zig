@@ -176,8 +176,8 @@ pub fn buildLibSokol(b: *Build, options: LibSokolOptions) !*CompileStep {
             .flags = cflags,
         });
     }
-    if (sharedlib)
-        b.installArtifact(lib);
+
+    b.installArtifact(lib);
     return lib;
 }
 

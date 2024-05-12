@@ -1,7 +1,7 @@
 name "sokol-d"
-version "0.1.0"
+version "0.1.1"
 description "D bindings for sokol"
-authors "Matheus Catarino França <matheus-catarino@hotmail.com>"
+authors "Matheus Catarino França" "Andre Weissflog"
 copyright "Copyright 2023-2024 - Matheus Catarino França"
 license "Zlib"
 buildType "debug" {
@@ -35,10 +35,13 @@ subPackage {
 	sourceFiles "src/examples/clear.d"
 	libs "sokol"
 	dflags "-preview=all" "-i"
+	libs "X11" "Xcursor" "Xi" "GL" "asound" platform="linux"
+	lflags "-lObjC" "-all_load" "-framework" "Cocoa" "-framework" "QuartzCore" "-framework" "Foundation" "-framework" "MetalKit" "-framework" "Metal" "-framework" "AudioToolbox" platform="osx"
+	libs "user32" "gdi32" "kernel32" "dxgi" "d3d11" "ole32" platform="windows"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
 	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/saudio.d" "src/examples/debugtext.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/shaders/*.d"
-	preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast"
+	preBuildCommands "zig build -Doptimize=ReleaseFast"
 }
 subPackage {
 	name "sgl_context"
@@ -47,10 +50,13 @@ subPackage {
 	sourceFiles "src/examples/sgl_context.d"
 	libs "sokol"
 	dflags "-preview=all" "-i"
+	libs "X11" "Xcursor" "Xi" "GL" "asound" platform="linux"
+	lflags "-lObjC" "-all_load" "-framework" "Cocoa" "-framework" "QuartzCore" "-framework" "Foundation" "-framework" "MetalKit" "-framework" "Metal" "-framework" "AudioToolbox" platform="osx"
+	libs "user32" "gdi32" "kernel32" "dxgi" "d3d11" "ole32" platform="windows"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
 	excludedSourceFiles "src/examples/clear.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/saudio.d" "src/examples/debugtext.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/shaders/*.d"
-	preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast"
+	preBuildCommands "zig build -Doptimize=ReleaseFast"
 }
 subPackage {
 	name "sgl_points"
@@ -59,10 +65,13 @@ subPackage {
 	sourceFiles "src/examples/sgl_points.d"
 	libs "sokol"
 	dflags "-preview=all" "-i"
+	libs "X11" "Xcursor" "Xi" "GL" "asound" platform="linux"
+	lflags "-lObjC" "-all_load" "-framework" "Cocoa" "-framework" "QuartzCore" "-framework" "Foundation" "-framework" "MetalKit" "-framework" "Metal" "-framework" "AudioToolbox" platform="osx"
+	libs "user32" "gdi32" "kernel32" "dxgi" "d3d11" "ole32" platform="windows"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
 	excludedSourceFiles "src/examples/clear.d" "src/examples/triangle.d" "src/examples/sgl_context.d" "src/examples/saudio.d" "src/examples/debugtext.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/shaders/*.d"
-	preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast"
+	preBuildCommands "zig build -Doptimize=ReleaseFast"
 }
 subPackage {
 	name "debugtext"
@@ -71,10 +80,13 @@ subPackage {
 	sourceFiles "src/examples/debugtext.d"
 	libs "sokol"
 	dflags "-preview=all" "-i"
+	libs "X11" "Xcursor" "Xi" "GL" "asound" platform="linux"
+	lflags "-lObjC" "-all_load" "-framework" "Cocoa" "-framework" "QuartzCore" "-framework" "Foundation" "-framework" "MetalKit" "-framework" "Metal" "-framework" "AudioToolbox" platform="osx"
+	libs "user32" "gdi32" "kernel32" "dxgi" "d3d11" "ole32" platform="windows"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
 	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/saudio.d" "src/examples/clear.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/shaders/*.d"
-	preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast"
+	preBuildCommands "zig build -Doptimize=ReleaseFast"
 }
 subPackage {
 	name "triangle"
@@ -83,10 +95,13 @@ subPackage {
 	sourceFiles "src/examples/triangle.d"
 	libs "sokol"
 	dflags "-preview=all" "-i"
+	libs "X11" "Xcursor" "Xi" "GL" "asound" platform="linux"
+	lflags "-lObjC" "-all_load" "-framework" "Cocoa" "-framework" "QuartzCore" "-framework" "Foundation" "-framework" "MetalKit" "-framework" "Metal" "-framework" "AudioToolbox" platform="osx"
+	libs "user32" "gdi32" "kernel32" "dxgi" "d3d11" "ole32" platform="windows"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
 	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/clear.d" "src/examples/sgl_points.d" "src/examples/saudio.d" "src/examples/debugtext.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/shaders/*.d"
-	preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast"
+	preBuildCommands "zig build -Doptimize=ReleaseFast"
 }
 subPackage {
 	name "blend"
@@ -95,10 +110,13 @@ subPackage {
 	sourceFiles "src/examples/blend.d"
 	libs "sokol"
 	dflags "-preview=all" "-i"
+	libs "X11" "Xcursor" "Xi" "GL" "asound" platform="linux"
+	lflags "-lObjC" "-all_load" "-framework" "Cocoa" "-framework" "QuartzCore" "-framework" "Foundation" "-framework" "MetalKit" "-framework" "Metal" "-framework" "AudioToolbox" platform="osx"
+	libs "user32" "gdi32" "kernel32" "dxgi" "d3d11" "ole32" platform="windows"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
 	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/debugtext.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/shaders/*.d"
-	preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast"
+	preBuildCommands "zig build -Doptimize=ReleaseFast"
 }
 subPackage {
 	name "saudio"
@@ -107,10 +125,13 @@ subPackage {
 	sourceFiles "src/examples/saudio.d"
 	libs "sokol"
 	dflags "-preview=all" "-i"
+	libs "X11" "Xcursor" "Xi" "GL" "asound" platform="linux"
+	lflags "-lObjC" "-all_load" "-framework" "Cocoa" "-framework" "QuartzCore" "-framework" "Foundation" "-framework" "MetalKit" "-framework" "Metal" "-framework" "AudioToolbox" platform="osx"
+	libs "user32" "gdi32" "kernel32" "dxgi" "d3d11" "ole32" platform="windows"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
 	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/clear.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/debugtext.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/shaders/*.d"
-	preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast"
+	preBuildCommands "zig build -Doptimize=ReleaseFast"
 }
 subPackage {
 	name "mrt"
@@ -119,10 +140,13 @@ subPackage {
 	sourceFiles "src/examples/mrt.d"
 	libs "sokol"
 	dflags "-preview=all" "-i"
+	libs "X11" "Xcursor" "Xi" "GL" "asound" platform="linux"
+	lflags "-lObjC" "-all_load" "-framework" "Cocoa" "-framework" "QuartzCore" "-framework" "Foundation" "-framework" "MetalKit" "-framework" "Metal" "-framework" "AudioToolbox" platform="osx"
+	libs "user32" "gdi32" "kernel32" "dxgi" "d3d11" "ole32" platform="windows"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
 	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/debugtext.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/shaders/*.d"
-	preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast"
+	preBuildCommands "zig build -Doptimize=ReleaseFast"
 }
 subPackage {
 	name "cube"
@@ -131,10 +155,13 @@ subPackage {
 	sourceFiles "src/examples/cube.d"
 	libs "sokol"
 	dflags "-preview=all" "-i"
+	libs "X11" "Xcursor" "Xi" "GL" "asound" platform="linux"
+	lflags "-lObjC" "-all_load" "-framework" "Cocoa" "-framework" "QuartzCore" "-framework" "Foundation" "-framework" "MetalKit" "-framework" "Metal" "-framework" "AudioToolbox" platform="osx"
+	libs "user32" "gdi32" "kernel32" "dxgi" "d3d11" "ole32" platform="windows"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
 	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/debugtext.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/user_data.d" "src/examples/mrt.d" "src/examples/blend.d" "src/shaders/*.d"
-	preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast"
+	preBuildCommands "zig build -Doptimize=ReleaseFast"
 }
 subPackage {
 	name "user_data"
@@ -143,8 +170,11 @@ subPackage {
 	sourceFiles "src/examples/user_data.d"
 	libs "sokol"
 	dflags "-preview=all" "-i"
+	libs "X11" "Xcursor" "Xi" "GL" "asound" platform="linux"
+	lflags "-lObjC" "-all_load" "-framework" "Cocoa" "-framework" "QuartzCore" "-framework" "Foundation" "-framework" "MetalKit" "-framework" "Metal" "-framework" "AudioToolbox" platform="osx"
+	libs "user32" "gdi32" "kernel32" "dxgi" "d3d11" "ole32" platform="windows"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
 	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/debugtext.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/cube.d" "src/examples/mrt.d" "src/examples/blend.d" "src/shaders/*.d"
-	preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast"
+	preBuildCommands "zig build -Doptimize=ReleaseFast"
 }
