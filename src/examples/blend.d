@@ -73,7 +73,6 @@ void init() {
     sg.PipelineDesc pip_desc = {
         shader: sg.makeShader(shd.quad_shader_desc(sg.queryBackend())),
         layout: {
-            buffers: [ { stride: 28 } ],
             attrs: [
                 shd.ATTR_VS_QUAD_POSITION: { format: sg.VertexFormat.Float3 },
                 shd.ATTR_VS_QUAD_COLOR0: { format: sg.VertexFormat.Float4 },
