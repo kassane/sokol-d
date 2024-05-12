@@ -102,23 +102,23 @@ struct Torus {
     bool merge = false;
     Mat4 transform;
 }
-extern(C) Buffer sshape_build_plane(scope const Buffer *, scope const Plane *) @system @nogc nothrow;
+extern(C) Buffer sshape_build_plane(const Buffer *, const Plane *) @system @nogc nothrow;
 Buffer buildPlane(scope ref Buffer buf, scope ref Plane params) @trusted @nogc nothrow {
     return sshape_build_plane(&buf, &params);
 }
-extern(C) Buffer sshape_build_box(scope const Buffer *, scope const Box *) @system @nogc nothrow;
+extern(C) Buffer sshape_build_box(const Buffer *, const Box *) @system @nogc nothrow;
 Buffer buildBox(scope ref Buffer buf, scope ref Box params) @trusted @nogc nothrow {
     return sshape_build_box(&buf, &params);
 }
-extern(C) Buffer sshape_build_sphere(scope const Buffer *, scope const Sphere *) @system @nogc nothrow;
+extern(C) Buffer sshape_build_sphere(const Buffer *, const Sphere *) @system @nogc nothrow;
 Buffer buildSphere(scope ref Buffer buf, scope ref Sphere params) @trusted @nogc nothrow {
     return sshape_build_sphere(&buf, &params);
 }
-extern(C) Buffer sshape_build_cylinder(scope const Buffer *, scope const Cylinder *) @system @nogc nothrow;
+extern(C) Buffer sshape_build_cylinder(const Buffer *, const Cylinder *) @system @nogc nothrow;
 Buffer buildCylinder(scope ref Buffer buf, scope ref Cylinder params) @trusted @nogc nothrow {
     return sshape_build_cylinder(&buf, &params);
 }
-extern(C) Buffer sshape_build_torus(scope const Buffer *, scope const Torus *) @system @nogc nothrow;
+extern(C) Buffer sshape_build_torus(const Buffer *, const Torus *) @system @nogc nothrow;
 Buffer buildTorus(scope ref Buffer buf, scope ref Torus params) @trusted @nogc nothrow {
     return sshape_build_torus(&buf, &params);
 }
@@ -142,15 +142,15 @@ extern(C) Sizes sshape_torus_sizes(uint, uint) @system @nogc nothrow;
 Sizes torusSizes(uint sides, uint rings) @trusted @nogc nothrow {
     return sshape_torus_sizes(sides, rings);
 }
-extern(C) ElementRange sshape_element_range(scope const Buffer *) @system @nogc nothrow;
+extern(C) ElementRange sshape_element_range(const Buffer *) @system @nogc nothrow;
 ElementRange elementRange(scope ref Buffer buf) @trusted @nogc nothrow {
     return sshape_element_range(&buf);
 }
-extern(C) sg.BufferDesc sshape_vertex_buffer_desc(scope const Buffer *) @system @nogc nothrow;
+extern(C) sg.BufferDesc sshape_vertex_buffer_desc(const Buffer *) @system @nogc nothrow;
 sg.BufferDesc vertexBufferDesc(scope ref Buffer buf) @trusted @nogc nothrow {
     return sshape_vertex_buffer_desc(&buf);
 }
-extern(C) sg.BufferDesc sshape_index_buffer_desc(scope const Buffer *) @system @nogc nothrow;
+extern(C) sg.BufferDesc sshape_index_buffer_desc(const Buffer *) @system @nogc nothrow;
 sg.BufferDesc indexBufferDesc(scope ref Buffer buf) @trusted @nogc nothrow {
     return sshape_index_buffer_desc(&buf);
 }
@@ -190,11 +190,11 @@ extern(C) uint sshape_color_3b(ubyte, ubyte, ubyte) @system @nogc nothrow;
 uint color3b(ubyte r, ubyte g, ubyte b) @trusted @nogc nothrow {
     return sshape_color_3b(r, g, b);
 }
-extern(C) Mat4 sshape_mat4(scope const float *) @system @nogc nothrow;
+extern(C) Mat4 sshape_mat4(const float *) @system @nogc nothrow;
 Mat4 mat4(scope const float * m) @trusted @nogc nothrow {
     return sshape_mat4(m);
 }
-extern(C) Mat4 sshape_mat4_transpose(scope const float *) @system @nogc nothrow;
+extern(C) Mat4 sshape_mat4_transpose(const float *) @system @nogc nothrow;
 Mat4 mat4Transpose(scope const float * m) @trusted @nogc nothrow {
     return sshape_mat4_transpose(m);
 }

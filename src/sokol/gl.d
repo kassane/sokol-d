@@ -14,7 +14,7 @@ enum LogItem {
 }
 extern(C)
 struct Logger {
-    extern(C) void function(scope const(char)*, uint, uint, scope const(char)*, uint, scope const(char)*, void*) func = null;
+    extern(C) void function(const(char)*, uint, uint, const(char)*, uint, const(char)*, void*) func = null;
     void* user_data = null;
 }
 extern(C)
@@ -61,7 +61,7 @@ struct Desc {
     Allocator allocator;
     Logger logger;
 }
-extern(C) void sgl_setup(scope const Desc *) @system @nogc nothrow;
+extern(C) void sgl_setup(const Desc *) @system @nogc nothrow;
 void setup(scope ref Desc desc) @trusted @nogc nothrow {
     sgl_setup(&desc);
 }
@@ -85,7 +85,7 @@ extern(C) Error sgl_context_error(Context) @system @nogc nothrow;
 Error contextError(Context ctx) @trusted @nogc nothrow {
     return sgl_context_error(ctx);
 }
-extern(C) Context sgl_make_context(scope const ContextDesc *) @system @nogc nothrow;
+extern(C) Context sgl_make_context(const ContextDesc *) @system @nogc nothrow;
 Context makeContext(scope ref ContextDesc desc) @trusted @nogc nothrow {
     return sgl_make_context(&desc);
 }
@@ -121,11 +121,11 @@ extern(C) void sgl_context_draw_layer(Context, int) @system @nogc nothrow;
 void contextDrawLayer(Context ctx, int layer_id) @trusted @nogc nothrow {
     sgl_context_draw_layer(ctx, layer_id);
 }
-extern(C) Pipeline sgl_make_pipeline(scope const sg.PipelineDesc *) @system @nogc nothrow;
+extern(C) Pipeline sgl_make_pipeline(const sg.PipelineDesc *) @system @nogc nothrow;
 Pipeline makePipeline(scope ref sg.PipelineDesc desc) @trusted @nogc nothrow {
     return sgl_make_pipeline(&desc);
 }
-extern(C) Pipeline sgl_context_make_pipeline(Context, scope const sg.PipelineDesc *) @system @nogc nothrow;
+extern(C) Pipeline sgl_context_make_pipeline(Context, const sg.PipelineDesc *) @system @nogc nothrow;
 Pipeline contextMakePipeline(Context ctx, scope ref sg.PipelineDesc desc) @trusted @nogc nothrow {
     return sgl_context_make_pipeline(ctx, &desc);
 }
@@ -201,19 +201,19 @@ extern(C) void sgl_load_identity() @system @nogc nothrow;
 void loadIdentity() @trusted @nogc nothrow {
     sgl_load_identity();
 }
-extern(C) void sgl_load_matrix(scope const float *) @system @nogc nothrow;
+extern(C) void sgl_load_matrix(const float *) @system @nogc nothrow;
 void loadMatrix(scope const float * m) @trusted @nogc nothrow {
     sgl_load_matrix(m);
 }
-extern(C) void sgl_load_transpose_matrix(scope const float *) @system @nogc nothrow;
+extern(C) void sgl_load_transpose_matrix(const float *) @system @nogc nothrow;
 void loadTransposeMatrix(scope const float * m) @trusted @nogc nothrow {
     sgl_load_transpose_matrix(m);
 }
-extern(C) void sgl_mult_matrix(scope const float *) @system @nogc nothrow;
+extern(C) void sgl_mult_matrix(const float *) @system @nogc nothrow;
 void multMatrix(scope const float * m) @trusted @nogc nothrow {
     sgl_mult_matrix(m);
 }
-extern(C) void sgl_mult_transpose_matrix(scope const float *) @system @nogc nothrow;
+extern(C) void sgl_mult_transpose_matrix(const float *) @system @nogc nothrow;
 void multTransposeMatrix(scope const float * m) @trusted @nogc nothrow {
     sgl_mult_transpose_matrix(m);
 }
