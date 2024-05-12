@@ -39,6 +39,7 @@ enum max_vertex_buffers = 8;
 enum max_shaderstage_images = 12;
 enum max_shaderstage_samplers = 8;
 enum max_shaderstage_imagesamplerpairs = 12;
+enum max_shaderstage_storagebuffers = 8;
 enum max_shaderstage_ubs = 4;
 enum max_ub_members = 16;
 enum max_vertex_attributes = 16;
@@ -52,7 +53,7 @@ struct Color {
     float a = 0.0f;
 }
 enum Backend {
-    Glcore33,
+    Glcore,
     Gles3,
     D3d11,
     Metal_ios,
@@ -128,8 +129,10 @@ enum PixelFormat {
     Etc2_rgb8a1,
     Etc2_rgba8,
     Etc2_srgb8a8,
-    Etc2_rg11,
-    Etc2_rg11sn,
+    Eac_r11,
+    Eac_r11sn,
+    Eac_rg11,
+    Eac_rg11sn,
     Astc_4x4_rgba,
     Astc_4x4_srgba,
     Num,
@@ -151,6 +154,7 @@ struct Features {
     bool image_clamp_to_border = false;
     bool mrt_independent_blend_state = false;
     bool mrt_independent_write_mask = false;
+    bool storage_buffer = false;
 }
 extern(C)
 struct Limits {
@@ -181,6 +185,7 @@ enum BufferType {
     Default,
     Vertexbuffer,
     Indexbuffer,
+    Storagebuffer,
     Num,
 }
 enum IndexType {
@@ -468,6 +473,7 @@ extern(C)
 struct StageBindings {
     Image[12] images;
     Sampler[8] samplers;
+    Buffer[8] storage_buffers;
 }
 extern(C)
 struct Bindings {
@@ -561,6 +567,11 @@ struct ShaderUniformBlockDesc {
     ShaderUniformDesc[16] uniforms;
 }
 extern(C)
+struct ShaderStorageBufferDesc {
+    bool used = false;
+    bool readonly = false;
+}
+extern(C)
 struct ShaderImageDesc {
     bool used = false;
     bool multisampled = false;
@@ -586,6 +597,7 @@ struct ShaderStageDesc {
     const(char)* entry = null;
     const(char)* d3d11_target = null;
     ShaderUniformBlockDesc[4] uniform_blocks;
+    ShaderStorageBufferDesc[8] storage_buffers;
     ShaderImageDesc[12] images;
     ShaderSamplerDesc[8] samplers;
     ShaderImageSamplerPairDesc[12] image_sampler_pairs;
@@ -749,7 +761,7 @@ struct TraceHooks {
     extern(C) void function(Shader, void*) fail_shader = null;
     extern(C) void function(Pipeline, void*) fail_pipeline = null;
     extern(C) void function(Attachments, void*) fail_attachments = null;
-    extern(C) void function(scope const(char)*, void*) push_debug_group = null;
+    extern(C) void function(const(char)*, void*) push_debug_group = null;
     extern(C) void function(void*) pop_debug_group = null;
 }
 extern(C)
@@ -874,6 +886,7 @@ struct FrameStatsMetalBindings {
     uint num_set_vertex_buffer = 0;
     uint num_set_vertex_texture = 0;
     uint num_set_vertex_sampler_state = 0;
+    uint num_set_fragment_buffer = 0;
     uint num_set_fragment_texture = 0;
     uint num_set_fragment_sampler_state = 0;
 }
@@ -953,6 +966,7 @@ enum LogItem {
     Gl_framebuffer_status_incomplete_multisample,
     Gl_framebuffer_status_unknown,
     D3d11_create_buffer_failed,
+    D3d11_create_buffer_srv_failed,
     D3d11_create_depth_texture_unsupported_pixel_format,
     D3d11_create_depth_texture_failed,
     D3d11_create_2d_texture_unsupported_pixel_format,
@@ -999,6 +1013,7 @@ enum LogItem {
     Wgpu_create_shader_module_failed,
     Wgpu_shader_too_many_images,
     Wgpu_shader_too_many_samplers,
+    Wgpu_shader_too_many_storagebuffers,
     Wgpu_shader_create_bindgroup_layout_failed,
     Wgpu_create_pipeline_layout_failed,
     Wgpu_create_render_pipeline_failed,
@@ -1043,6 +1058,8 @@ enum LogItem {
     Validate_bufferdesc_data,
     Validate_bufferdesc_data_size,
     Validate_bufferdesc_no_data,
+    Validate_bufferdesc_storagebuffer_supported,
+    Validate_bufferdesc_storagebuffer_size_multiple_4,
     Validate_imagedata_nodata,
     Validate_imagedata_data_size,
     Validate_imagedesc_canary,
@@ -1076,6 +1093,8 @@ enum LogItem {
     Validate_shaderdesc_ub_size_mismatch,
     Validate_shaderdesc_ub_array_count,
     Validate_shaderdesc_ub_std140_array_type,
+    Validate_shaderdesc_no_cont_storagebuffers,
+    Validate_shaderdesc_storagebuffer_readonly,
     Validate_shaderdesc_no_cont_images,
     Validate_shaderdesc_no_cont_samplers,
     Validate_shaderdesc_image_sampler_pair_image_slot_out_of_range,
@@ -1089,11 +1108,10 @@ enum LogItem {
     Validate_shaderdesc_image_not_referenced_by_image_sampler_pairs,
     Validate_shaderdesc_sampler_not_referenced_by_image_sampler_pairs,
     Validate_shaderdesc_no_cont_image_sampler_pairs,
-    Validate_shaderdesc_attr_semantics,
     Validate_shaderdesc_attr_string_too_long,
     Validate_pipelinedesc_canary,
     Validate_pipelinedesc_shader,
-    Validate_pipelinedesc_no_attrs,
+    Validate_pipelinedesc_no_cont_attrs,
     Validate_pipelinedesc_layout_stride4,
     Validate_pipelinedesc_attr_semantics,
     Validate_attachmentsdesc_canary,
@@ -1197,6 +1215,10 @@ enum LogItem {
     Validate_abnd_vs_expected_nonfiltering_sampler,
     Validate_abnd_vs_unexpected_sampler_binding,
     Validate_abnd_vs_smp_exists,
+    Validate_abnd_vs_expected_storagebuffer_binding,
+    Validate_abnd_vs_storagebuffer_exists,
+    Validate_abnd_vs_storagebuffer_binding_buffertype,
+    Validate_abnd_vs_unexpected_storagebuffer_binding,
     Validate_abnd_fs_expected_image_binding,
     Validate_abnd_fs_img_exists,
     Validate_abnd_fs_image_type_mismatch,
@@ -1210,6 +1232,10 @@ enum LogItem {
     Validate_abnd_fs_expected_nonfiltering_sampler,
     Validate_abnd_fs_unexpected_sampler_binding,
     Validate_abnd_fs_smp_exists,
+    Validate_abnd_fs_expected_storagebuffer_binding,
+    Validate_abnd_fs_storagebuffer_exists,
+    Validate_abnd_fs_storagebuffer_binding_buffertype,
+    Validate_abnd_fs_unexpected_storagebuffer_binding,
     Validate_aub_no_pipeline,
     Validate_aub_no_ub_at_slot,
     Validate_aub_size,
@@ -1263,7 +1289,7 @@ struct Allocator {
 }
 extern(C)
 struct Logger {
-    extern(C) void function(scope const(char)*, uint, uint, scope const(char)*, uint, scope const(char)*, void*) func = null;
+    extern(C) void function(const(char)*, uint, uint, const(char)*, uint, const(char)*, void*) func = null;
     void* user_data = null;
 }
 extern(C)
@@ -1288,7 +1314,7 @@ struct Desc {
     uint _end_canary = 0;
 }
 extern(C) void sg_setup(const Desc *) @system @nogc nothrow;
-void setup(ref Desc desc) @trusted @nogc nothrow {
+void setup(scope ref Desc desc) @trusted @nogc nothrow {
     sg_setup(&desc);
 }
 extern(C) void sg_shutdown() @system @nogc nothrow;
@@ -1304,10 +1330,10 @@ void resetStateCache() @trusted @nogc nothrow {
     sg_reset_state_cache();
 }
 extern(C) TraceHooks sg_install_trace_hooks(const TraceHooks *) @system @nogc nothrow;
-TraceHooks installTraceHooks(ref TraceHooks trace_hooks) @trusted @nogc nothrow {
+TraceHooks installTraceHooks(scope ref TraceHooks trace_hooks) @trusted @nogc nothrow {
     return sg_install_trace_hooks(&trace_hooks);
 }
-extern(C) void sg_push_debug_group(scope const(char)*) @system @nogc nothrow;
+extern(C) void sg_push_debug_group(const(char)*) @system @nogc nothrow;
 void pushDebugGroup(scope const(char)* name) @trusted @nogc nothrow {
     sg_push_debug_group(name);
 }
@@ -1324,27 +1350,27 @@ bool removeCommitListener(CommitListener listener) @trusted @nogc nothrow {
     return sg_remove_commit_listener(listener);
 }
 extern(C) Buffer sg_make_buffer(const BufferDesc *) @system @nogc nothrow;
-Buffer makeBuffer(ref BufferDesc desc) @trusted @nogc nothrow {
+Buffer makeBuffer(scope ref BufferDesc desc) @trusted @nogc nothrow {
     return sg_make_buffer(&desc);
 }
 extern(C) Image sg_make_image(const ImageDesc *) @system @nogc nothrow;
-Image makeImage(ref ImageDesc desc) @trusted @nogc nothrow {
+Image makeImage(scope ref ImageDesc desc) @trusted @nogc nothrow {
     return sg_make_image(&desc);
 }
 extern(C) Sampler sg_make_sampler(const SamplerDesc *) @system @nogc nothrow;
-Sampler makeSampler(ref SamplerDesc desc) @trusted @nogc nothrow {
+Sampler makeSampler(scope ref SamplerDesc desc) @trusted @nogc nothrow {
     return sg_make_sampler(&desc);
 }
 extern(C) Shader sg_make_shader(const ShaderDesc *) @system @nogc nothrow;
-Shader makeShader(ref ShaderDesc desc) @trusted @nogc nothrow {
+Shader makeShader(scope ref ShaderDesc desc) @trusted @nogc nothrow {
     return sg_make_shader(&desc);
 }
 extern(C) Pipeline sg_make_pipeline(const PipelineDesc *) @system @nogc nothrow;
-Pipeline makePipeline(ref PipelineDesc desc) @trusted @nogc nothrow {
+Pipeline makePipeline(scope ref PipelineDesc desc) @trusted @nogc nothrow {
     return sg_make_pipeline(&desc);
 }
 extern(C) Attachments sg_make_attachments(const AttachmentsDesc *) @system @nogc nothrow;
-Attachments makeAttachments(ref AttachmentsDesc desc) @trusted @nogc nothrow {
+Attachments makeAttachments(scope ref AttachmentsDesc desc) @trusted @nogc nothrow {
     return sg_make_attachments(&desc);
 }
 extern(C) void sg_destroy_buffer(Buffer) @system @nogc nothrow;
@@ -1372,15 +1398,15 @@ void destroyAttachments(Attachments atts) @trusted @nogc nothrow {
     sg_destroy_attachments(atts);
 }
 extern(C) void sg_update_buffer(Buffer, const Range *) @system @nogc nothrow;
-void updateBuffer(Buffer buf, ref Range data) @trusted @nogc nothrow {
+void updateBuffer(Buffer buf, scope ref Range data) @trusted @nogc nothrow {
     sg_update_buffer(buf, &data);
 }
 extern(C) void sg_update_image(Image, const ImageData *) @system @nogc nothrow;
-void updateImage(Image img, ref ImageData data) @trusted @nogc nothrow {
+void updateImage(Image img, scope ref ImageData data) @trusted @nogc nothrow {
     sg_update_image(img, &data);
 }
 extern(C) int sg_append_buffer(Buffer, const Range *) @system @nogc nothrow;
-int appendBuffer(Buffer buf, ref Range data) @trusted @nogc nothrow {
+int appendBuffer(Buffer buf, scope ref Range data) @trusted @nogc nothrow {
     return sg_append_buffer(buf, &data);
 }
 extern(C) bool sg_query_buffer_overflow(Buffer) @system @nogc nothrow;
@@ -1392,7 +1418,7 @@ bool queryBufferWillOverflow(Buffer buf, size_t size) @trusted @nogc nothrow {
     return sg_query_buffer_will_overflow(buf, size);
 }
 extern(C) void sg_begin_pass(const Pass *) @system @nogc nothrow;
-void beginPass(ref Pass pass) @trusted @nogc nothrow {
+void beginPass(scope ref Pass pass) @trusted @nogc nothrow {
     sg_begin_pass(&pass);
 }
 extern(C) void sg_apply_viewport(int, int, int, int, bool) @system @nogc nothrow;
@@ -1416,11 +1442,11 @@ void applyPipeline(Pipeline pip) @trusted @nogc nothrow {
     sg_apply_pipeline(pip);
 }
 extern(C) void sg_apply_bindings(const Bindings *) @system @nogc nothrow;
-void applyBindings(ref Bindings bindings) @trusted @nogc nothrow {
+void applyBindings(scope ref Bindings bindings) @trusted @nogc nothrow {
     sg_apply_bindings(&bindings);
 }
 extern(C) void sg_apply_uniforms(ShaderStage, uint, const Range *) @system @nogc nothrow;
-void applyUniforms(ShaderStage stage, uint ub_index, ref Range data) @trusted @nogc nothrow {
+void applyUniforms(ShaderStage stage, uint ub_index, scope ref Range data) @trusted @nogc nothrow {
     sg_apply_uniforms(stage, ub_index, &data);
 }
 extern(C) void sg_draw(uint, uint, uint) @system @nogc nothrow;
@@ -1536,27 +1562,27 @@ AttachmentsDesc queryAttachmentsDesc(Attachments atts) @trusted @nogc nothrow {
     return sg_query_attachments_desc(atts);
 }
 extern(C) BufferDesc sg_query_buffer_defaults(const BufferDesc *) @system @nogc nothrow;
-BufferDesc queryBufferDefaults(ref BufferDesc desc) @trusted @nogc nothrow {
+BufferDesc queryBufferDefaults(scope ref BufferDesc desc) @trusted @nogc nothrow {
     return sg_query_buffer_defaults(&desc);
 }
 extern(C) ImageDesc sg_query_image_defaults(const ImageDesc *) @system @nogc nothrow;
-ImageDesc queryImageDefaults(ref ImageDesc desc) @trusted @nogc nothrow {
+ImageDesc queryImageDefaults(scope ref ImageDesc desc) @trusted @nogc nothrow {
     return sg_query_image_defaults(&desc);
 }
 extern(C) SamplerDesc sg_query_sampler_defaults(const SamplerDesc *) @system @nogc nothrow;
-SamplerDesc querySamplerDefaults(ref SamplerDesc desc) @trusted @nogc nothrow {
+SamplerDesc querySamplerDefaults(scope ref SamplerDesc desc) @trusted @nogc nothrow {
     return sg_query_sampler_defaults(&desc);
 }
 extern(C) ShaderDesc sg_query_shader_defaults(const ShaderDesc *) @system @nogc nothrow;
-ShaderDesc queryShaderDefaults(ref ShaderDesc desc) @trusted @nogc nothrow {
+ShaderDesc queryShaderDefaults(scope ref ShaderDesc desc) @trusted @nogc nothrow {
     return sg_query_shader_defaults(&desc);
 }
 extern(C) PipelineDesc sg_query_pipeline_defaults(const PipelineDesc *) @system @nogc nothrow;
-PipelineDesc queryPipelineDefaults(ref PipelineDesc desc) @trusted @nogc nothrow {
+PipelineDesc queryPipelineDefaults(scope ref PipelineDesc desc) @trusted @nogc nothrow {
     return sg_query_pipeline_defaults(&desc);
 }
 extern(C) AttachmentsDesc sg_query_attachments_defaults(const AttachmentsDesc *) @system @nogc nothrow;
-AttachmentsDesc queryAttachmentsDefaults(ref AttachmentsDesc desc) @trusted @nogc nothrow {
+AttachmentsDesc queryAttachmentsDefaults(scope ref AttachmentsDesc desc) @trusted @nogc nothrow {
     return sg_query_attachments_defaults(&desc);
 }
 extern(C) Buffer sg_alloc_buffer() @system @nogc nothrow;
@@ -1608,27 +1634,27 @@ void deallocAttachments(Attachments attachments) @trusted @nogc nothrow {
     sg_dealloc_attachments(attachments);
 }
 extern(C) void sg_init_buffer(Buffer, const BufferDesc *) @system @nogc nothrow;
-void initBuffer(Buffer buf, ref BufferDesc desc) @trusted @nogc nothrow {
+void initBuffer(Buffer buf, scope ref BufferDesc desc) @trusted @nogc nothrow {
     sg_init_buffer(buf, &desc);
 }
 extern(C) void sg_init_image(Image, const ImageDesc *) @system @nogc nothrow;
-void initImage(Image img, ref ImageDesc desc) @trusted @nogc nothrow {
+void initImage(Image img, scope ref ImageDesc desc) @trusted @nogc nothrow {
     sg_init_image(img, &desc);
 }
 extern(C) void sg_init_sampler(Sampler, const SamplerDesc *) @system @nogc nothrow;
-void initSampler(Sampler smg, ref SamplerDesc desc) @trusted @nogc nothrow {
+void initSampler(Sampler smg, scope ref SamplerDesc desc) @trusted @nogc nothrow {
     sg_init_sampler(smg, &desc);
 }
 extern(C) void sg_init_shader(Shader, const ShaderDesc *) @system @nogc nothrow;
-void initShader(Shader shd, ref ShaderDesc desc) @trusted @nogc nothrow {
+void initShader(Shader shd, scope ref ShaderDesc desc) @trusted @nogc nothrow {
     sg_init_shader(shd, &desc);
 }
 extern(C) void sg_init_pipeline(Pipeline, const PipelineDesc *) @system @nogc nothrow;
-void initPipeline(Pipeline pip, ref PipelineDesc desc) @trusted @nogc nothrow {
+void initPipeline(Pipeline pip, scope ref PipelineDesc desc) @trusted @nogc nothrow {
     sg_init_pipeline(pip, &desc);
 }
 extern(C) void sg_init_attachments(Attachments, const AttachmentsDesc *) @system @nogc nothrow;
-void initAttachments(Attachments attachments, ref AttachmentsDesc desc) @trusted @nogc nothrow {
+void initAttachments(Attachments attachments, scope ref AttachmentsDesc desc) @trusted @nogc nothrow {
     sg_init_attachments(attachments, &desc);
 }
 extern(C) void sg_uninit_buffer(Buffer) @system @nogc nothrow;
@@ -1810,11 +1836,11 @@ struct GlAttachmentsInfo {
     uint framebuffer = 0;
     uint[4] msaa_resolve_framebuffer = 0;
 }
-extern(C) scope const(void)* sg_d3d11_device() @system @nogc nothrow;
+extern(C) const(void)* sg_d3d11_device() @system @nogc nothrow;
 scope const(void)* d3d11Device() @trusted @nogc nothrow {
     return sg_d3d11_device();
 }
-extern(C) scope const(void)* sg_d3d11_device_context() @system @nogc nothrow;
+extern(C) const(void)* sg_d3d11_device_context() @system @nogc nothrow;
 scope const(void)* d3d11DeviceContext() @trusted @nogc nothrow {
     return sg_d3d11_device_context();
 }
@@ -1842,11 +1868,11 @@ extern(C) D3d11AttachmentsInfo sg_d3d11_query_attachments_info(Attachments) @sys
 D3d11AttachmentsInfo d3d11QueryAttachmentsInfo(Attachments atts) @trusted @nogc nothrow {
     return sg_d3d11_query_attachments_info(atts);
 }
-extern(C) scope const(void)* sg_mtl_device() @system @nogc nothrow;
+extern(C) const(void)* sg_mtl_device() @system @nogc nothrow;
 scope const(void)* mtlDevice() @trusted @nogc nothrow {
     return sg_mtl_device();
 }
-extern(C) scope const(void)* sg_mtl_render_command_encoder() @system @nogc nothrow;
+extern(C) const(void)* sg_mtl_render_command_encoder() @system @nogc nothrow;
 scope const(void)* mtlRenderCommandEncoder() @trusted @nogc nothrow {
     return sg_mtl_render_command_encoder();
 }
@@ -1870,19 +1896,19 @@ extern(C) MtlPipelineInfo sg_mtl_query_pipeline_info(Pipeline) @system @nogc not
 MtlPipelineInfo mtlQueryPipelineInfo(Pipeline pip) @trusted @nogc nothrow {
     return sg_mtl_query_pipeline_info(pip);
 }
-extern(C) scope const(void)* sg_wgpu_device() @system @nogc nothrow;
+extern(C) const(void)* sg_wgpu_device() @system @nogc nothrow;
 scope const(void)* wgpuDevice() @trusted @nogc nothrow {
     return sg_wgpu_device();
 }
-extern(C) scope const(void)* sg_wgpu_queue() @system @nogc nothrow;
+extern(C) const(void)* sg_wgpu_queue() @system @nogc nothrow;
 scope const(void)* wgpuQueue() @trusted @nogc nothrow {
     return sg_wgpu_queue();
 }
-extern(C) scope const(void)* sg_wgpu_command_encoder() @system @nogc nothrow;
+extern(C) const(void)* sg_wgpu_command_encoder() @system @nogc nothrow;
 scope const(void)* wgpuCommandEncoder() @trusted @nogc nothrow {
     return sg_wgpu_command_encoder();
 }
-extern(C) scope const(void)* sg_wgpu_render_pass_encoder() @system @nogc nothrow;
+extern(C) const(void)* sg_wgpu_render_pass_encoder() @system @nogc nothrow;
 scope const(void)* wgpuRenderPassEncoder() @trusted @nogc nothrow {
     return sg_wgpu_render_pass_encoder();
 }

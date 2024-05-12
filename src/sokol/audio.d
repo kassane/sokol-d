@@ -42,7 +42,7 @@ enum LogItem {
 }
 extern(C)
 struct Logger {
-    extern(C) void function(scope const(char)*, uint, uint, scope const(char)*, uint, scope const(char)*, void*) func = null;
+    extern(C) void function(const(char)*, uint, uint, const(char)*, uint, const(char)*, void*) func = null;
     void* user_data = null;
 }
 extern(C)
@@ -65,7 +65,7 @@ struct Desc {
     Logger logger;
 }
 extern(C) void saudio_setup(const Desc *) @system @nogc nothrow;
-void setup(ref Desc desc) @trusted @nogc nothrow {
+void setup(scope ref Desc desc) @trusted @nogc nothrow {
     saudio_setup(&desc);
 }
 extern(C) void saudio_shutdown() @system @nogc nothrow;
@@ -105,6 +105,6 @@ int expect() @trusted @nogc nothrow {
     return saudio_expect();
 }
 extern(C) int saudio_push(const float *, int) @system @nogc nothrow;
-int push(const float * frames, int num_frames) @trusted @nogc nothrow {
+int push(scope const float * frames, int num_frames) @trusted @nogc nothrow {
     return saudio_push(frames, num_frames);
 }

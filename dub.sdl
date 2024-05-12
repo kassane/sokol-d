@@ -34,9 +34,10 @@ subPackage {
 	targetPath "build"
 	sourceFiles "src/examples/clear.d"
 	libs "sokol"
+	dflags "-preview=all" "-i"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
-	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/saudio.d" "src/examples/debugtext_print.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/shaders/*.d"
+	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/saudio.d" "src/examples/debugtext.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/shaders/*.d"
 	preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast"
 }
 subPackage {
@@ -45,9 +46,10 @@ subPackage {
 	targetPath "build"
 	sourceFiles "src/examples/sgl_context.d"
 	libs "sokol"
+	dflags "-preview=all" "-i"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
-	excludedSourceFiles "src/examples/clear.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/saudio.d" "src/examples/debugtext_print.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/shaders/*.d"
+	excludedSourceFiles "src/examples/clear.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/saudio.d" "src/examples/debugtext.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/shaders/*.d"
 	preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast"
 }
 subPackage {
@@ -56,17 +58,19 @@ subPackage {
 	targetPath "build"
 	sourceFiles "src/examples/sgl_points.d"
 	libs "sokol"
+	dflags "-preview=all" "-i"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
-	excludedSourceFiles "src/examples/clear.d" "src/examples/triangle.d" "src/examples/sgl_context.d" "src/examples/saudio.d" "src/examples/debugtext_print.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/shaders/*.d"
+	excludedSourceFiles "src/examples/clear.d" "src/examples/triangle.d" "src/examples/sgl_context.d" "src/examples/saudio.d" "src/examples/debugtext.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/shaders/*.d"
 	preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast"
 }
 subPackage {
-	name "debugtext_print"
+	name "debugtext"
 	targetType "executable"
 	targetPath "build"
-	sourceFiles "src/examples/debugtext_print.d"
+	sourceFiles "src/examples/debugtext.d"
 	libs "sokol"
+	dflags "-preview=all" "-i"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
 	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/saudio.d" "src/examples/clear.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/shaders/*.d"
@@ -78,9 +82,10 @@ subPackage {
 	targetPath "build"
 	sourceFiles "src/examples/triangle.d"
 	libs "sokol"
+	dflags "-preview=all" "-i"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
-	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/clear.d" "src/examples/sgl_points.d" "src/examples/saudio.d" "src/examples/debugtext_print.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/shaders/*.d"
+	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/clear.d" "src/examples/sgl_points.d" "src/examples/saudio.d" "src/examples/debugtext.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/shaders/*.d"
 	preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast"
 }
 subPackage {
@@ -89,9 +94,10 @@ subPackage {
 	targetPath "build"
 	sourceFiles "src/examples/blend.d"
 	libs "sokol"
+	dflags "-preview=all" "-i"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
-	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/debugtext_print.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/shaders/*.d"
+	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/debugtext.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/shaders/*.d"
 	preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast"
 }
 subPackage {
@@ -100,9 +106,10 @@ subPackage {
 	targetPath "build"
 	sourceFiles "src/examples/saudio.d"
 	libs "sokol"
+	dflags "-preview=all" "-i"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
-	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/clear.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/debugtext_print.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/shaders/*.d"
+	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/clear.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/debugtext.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/shaders/*.d"
 	preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast"
 }
 subPackage {
@@ -111,9 +118,10 @@ subPackage {
 	targetPath "build"
 	sourceFiles "src/examples/mrt.d"
 	libs "sokol"
+	dflags "-preview=all" "-i"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
-	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/debugtext_print.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/shaders/*.d"
+	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/debugtext.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/shaders/*.d"
 	preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast"
 }
 subPackage {
@@ -122,9 +130,10 @@ subPackage {
 	targetPath "build"
 	sourceFiles "src/examples/cube.d"
 	libs "sokol"
+	dflags "-preview=all" "-i"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
-	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/debugtext_print.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/user_data.d" "src/examples/mrt.d" "src/examples/blend.d" "src/shaders/*.d"
+	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/debugtext.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/user_data.d" "src/examples/mrt.d" "src/examples/blend.d" "src/shaders/*.d"
 	preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast"
 }
 subPackage {
@@ -133,8 +142,9 @@ subPackage {
 	targetPath "build"
 	sourceFiles "src/examples/user_data.d"
 	libs "sokol"
+	dflags "-preview=all" "-i"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
-	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/debugtext_print.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/cube.d" "src/examples/mrt.d" "src/examples/blend.d" "src/shaders/*.d"
+	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/debugtext.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/cube.d" "src/examples/mrt.d" "src/examples/blend.d" "src/shaders/*.d"
 	preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast"
 }

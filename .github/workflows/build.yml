@@ -17,7 +17,7 @@ jobs:
       - uses: dlang-community/setup-dlang@v1
         with:
           compiler: ldc-master
-      
+
       - name: prepare-linux
         if: runner.os == 'Linux'
         run: |
@@ -30,11 +30,11 @@ jobs:
             dub build :clear
             dub build :sgl_context
             dub build :sgl_points
-            dub build :debugtext_print
-            # dub build :cube
-            # dub build :blend
+            dub build :debugtext
+            dub build :cube
+            dub build :blend
             dub build :triangle
-            # dub build :mrt
+            dub build :mrt
             dub build :user_data
 
       - name: (Zig) Running Test

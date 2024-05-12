@@ -16,36 +16,43 @@ import handmade.math : sin, cos;
 extern (C):
 @safe:
 
-struct Offscreen
-{
-    sg.PassAction pass_action;
+struct Offscreen {
     sg.Attachments attachments;
     sg.Image img;
     sgl.Context sgl_ctx;
+    sg.PassAction pass_action = {
+        colors: [
+            { load_action: sg.LoadAction.Clear, clear_value: { r: 0, g: 0, b: 0, a: 1} },
+        ]
+    };
 }
 
-struct Display
-{
-    sg.PassAction pass_action;
+struct Display {
     sg.Sampler smp;
     sgl.Pipeline sgl_pip;
+    sg.PassAction pass_action = {
+        colors: [
+            { load_action: sg.LoadAction.Clear, clear_value: { r: 0.5, g: 0.7, b: 1.0, a: 1.0 } },
+        ],
+    };
 }
 
-struct State
-{
-    static Display display;
-    static Offscreen offscreen;
+struct State {
+    Display display;
+    Offscreen offscreen;
 }
+static State state;
 
 enum offscreen_pixel_format = sg.PixelFormat.Rgba8;
 enum offscreen_sample_count = 1;
 enum offscreen_width = 32;
 enum offscreen_height = 32;
 
-void init()
-{
-    sg.Desc gfxd = {environment: sglue.environment,
-    logger: {func: &slog.func}};
+void init() {
+    sg.Desc gfxd = {
+        environment: sglue.environment(),
+        logger: { func: &slog.func }
+    };
     sg.setup(gfxd);
 
     // setup sokol-gl with the default context compatible with the default
@@ -55,22 +62,17 @@ void init()
     sgl.Desc gld = {
         max_vertices: 64,
         max_commands: 16,
-        logger: {func: &slog.func}
+        logger: { func: &slog.func },
     };
     sgl.setup(gld);
-
-    State state;
-    // initialize a pass action struct for the default pass to clear to a light-blue color
-    state.display.pass_action.colors[0].load_action = sg.LoadAction.Clear;
-    state.display.pass_action.colors[0].clear_value.r = 0.5;
-    state.display.pass_action.colors[0].clear_value.g = 0.7;
-    state.display.pass_action.colors[0].clear_value.b = 1.0;
-    state.display.pass_action.colors[0].clear_value.a = 1.0;
 
     // create a sokol-gl pipeline object for 3D rendering into the default pass
     sg.PipelineDesc pld = {
         cull_mode: sg.CullMode.Back,
-        depth: {write_enabled: true, compare: sg.CompareFunc.Less_equal}
+        depth: {
+            write_enabled: true,
+            compare: sg.CompareFunc.Less_equal
+        },
     };
     state.display.sgl_pip = sgl.contextMakePipeline(sgl.defaultContext, pld);
 
@@ -95,15 +97,12 @@ void init()
     };
     state.offscreen.img = sg.makeImage(imgd);
 
-    sg.AttachmentsDesc attachmentDesc;
-    attachmentDesc.colors[0].image = state.offscreen.img;
-    state.offscreen.attachments = sg.makeAttachments(attachmentDesc);
-
-    state.offscreen.pass_action.colors[0].load_action = sg.LoadAction.Clear;
-    state.offscreen.pass_action.colors[0].clear_value.r = 0.0;
-    state.offscreen.pass_action.colors[0].clear_value.g = 0.0;
-    state.offscreen.pass_action.colors[0].clear_value.b = 0.0;
-    state.offscreen.pass_action.colors[0].clear_value.a = 1.0;
+    sg.AttachmentsDesc attd = {
+        colors: [
+            { image: state.offscreen.img }
+        ]
+    };
+    state.offscreen.attachments = sg.makeAttachments(attd);
 
     // sampler for sampling the offscreen render target
     sg.SamplerDesc smd = {
@@ -115,10 +114,8 @@ void init()
     state.display.smp = sg.makeSampler(smd);
 }
 
-void frame()
-{
+void frame() {
     immutable float a = sgl.asRadians(sapp.frameCount());
-    State state;
 
     // draw a rotating quad into the offscreen render target texture
     sgl.setContext(state.offscreen.sgl_ctx);
@@ -141,29 +138,29 @@ void frame()
     draw_cube();
 
     // do the actual offscreen and display rendering in sokol-gfx passes
-    sg.Pass pass1 = {
-        action: state.offscreen.pass_action, attachments: state.offscreen.attachments
+    sg.Pass offscreen_pass = {
+        action: state.offscreen.pass_action,
+        attachments: state.offscreen.attachments
     };
-    sg.beginPass(pass1);
+    sg.beginPass(offscreen_pass);
     sgl.contextDraw(state.offscreen.sgl_ctx);
     sg.endPass();
-    sg.Pass pass2 = {
-        action: state.display.pass_action, swapchain: sglue.swapchain
+    sg.Pass display_pass = {
+        action: state.display.pass_action,
+        swapchain: sglue.swapchain
     };
-    sg.beginPass(pass2);
+    sg.beginPass(display_pass);
     sgl.contextDraw(sgl.defaultContext());
     sg.endPass();
     sg.commit();
 }
 
-void cleanup()
-{
+void cleanup() {
     sgl.shutdown();
     sg.shutdown();
 }
 
-void main()
-{
+void main() {
     sapp.Desc runner = {
         window_title: "sgl-context.d",
         init_cb: &init,
@@ -172,14 +169,13 @@ void main()
         width: 800,
         height: 600,
         sample_count: 4,
-        logger: {func: &slog.func},
-        icon: {sokol_default: true}
+        logger: { func: &slog.func },
+        icon: { sokol_default: true }
     };
     sapp.run(runner);
 }
 
-void draw_quad()
-{
+void draw_quad() {
     sgl.beginQuads();
     sgl.v2fC3b(0.0, -1.0, 255, 0, 0);
     sgl.v2fC3b(1.0, 0.0, 0, 0, 255);
@@ -188,8 +184,7 @@ void draw_quad()
     sgl.end();
 }
 
-void draw_cube()
-{
+void draw_cube() {
     sgl.beginQuads();
     sgl.v3fT2f(-1.0, 1.0, -1.0, 0.0, 1.0);
     sgl.v3fT2f(1.0, 1.0, -1.0, 1.0, 1.0);

@@ -13,7 +13,7 @@ enum LogItem {
 }
 extern(C)
 struct Logger {
-    extern(C) void function(scope const(char)*, uint, uint, scope const(char)*, uint, scope const(char)*, void*) func = null;
+    extern(C) void function(const(char)*, uint, uint, const(char)*, uint, const(char)*, void*) func = null;
     void* user_data = null;
 }
 extern(C)
@@ -58,7 +58,7 @@ struct Desc {
     Logger logger;
 }
 extern(C) void sdtx_setup(const Desc *) @system @nogc nothrow;
-void setup(ref Desc desc) @trusted @nogc nothrow {
+void setup(scope ref Desc desc) @trusted @nogc nothrow {
     sdtx_setup(&desc);
 }
 extern(C) void sdtx_shutdown() @system @nogc nothrow;
@@ -90,7 +90,7 @@ FontDesc fontOric() @trusted @nogc nothrow {
     return sdtx_font_oric();
 }
 extern(C) Context sdtx_make_context(const ContextDesc *) @system @nogc nothrow;
-Context makeContext(ref ContextDesc desc) @trusted @nogc nothrow {
+Context makeContext(scope ref ContextDesc desc) @trusted @nogc nothrow {
     return sdtx_make_context(&desc);
 }
 extern(C) void sdtx_destroy_context(Context) @system @nogc nothrow;
@@ -197,11 +197,11 @@ extern(C) void sdtx_putc(char) @system @nogc nothrow;
 void putc(char c) @trusted @nogc nothrow {
     sdtx_putc(c);
 }
-extern(C) void sdtx_puts(scope const(char)*) @system @nogc nothrow;
+extern(C) void sdtx_puts(const(char)*) @system @nogc nothrow;
 void puts(scope const(char)* str) @trusted @nogc nothrow {
     sdtx_puts(str);
 }
-extern(C) void sdtx_putr(scope const(char)*, int) @system @nogc nothrow;
+extern(C) void sdtx_putr(const(char)*, int) @system @nogc nothrow;
 void putr(scope const(char)* str, int len) @trusted @nogc nothrow {
     sdtx_putr(str, len);
 }

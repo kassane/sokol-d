@@ -86,7 +86,7 @@ pub fn buildLibSokol(b: *Build, options: LibSokolOptions) !*CompileStep {
     const backend_cflags = switch (backend) {
         .d3d11 => "-DSOKOL_D3D11",
         .metal => "-DSOKOL_METAL",
-        .gl => "-DSOKOL_GLCORE33",
+        .gl => "-DSOKOL_GLCORE",
         .gles3 => "-DSOKOL_GLES3",
         .wgpu => "-DSOKOL_WGPU",
         else => @panic("unknown sokol backend"),
@@ -218,7 +218,7 @@ pub fn build(b: *Build) !void {
         "saudio",
         "sgl_context",
         "sgl_points",
-        "debugtext_print",
+        "debugtext",
         "user_data", // Need GC for user data [associative array]
     };
 
@@ -359,10 +359,6 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
     }
     // name object files uniquely (so the files don't collide)
     try cmds.append("-oq");
-
-    // remove object files after success build, and put them in a unique temp directory
-    if (options.kind != .obj)
-        try cmds.append("-cleanup-obj");
 
     // disable LLVM-IR verifier
     // https://llvm.org/docs/Passes.html#verify-module-verifier
@@ -630,6 +626,7 @@ fn buildShaders(b: *Build) void {
     const sokol_tools_bin_dir = "../sokol-tools-bin/bin/";
     const shaders_dir = "src/shaders/";
     const shaders = .{
+        "triangle.glsl",
         "bufferoffsets.glsl",
         "cube.glsl",
         "instancing.glsl",
@@ -661,7 +658,7 @@ fn buildShaders(b: *Build) void {
             "-o",
             shaders_dir ++ shader[0 .. shader.len - 5] ++ ".d",
             "-l",
-            "glsl330:metal_macos:hlsl4:glsl300es:wgsl",
+            "glsl430:metal_macos:hlsl4:glsl300es:wgsl",
             "-f",
             "sokol_d",
         });
