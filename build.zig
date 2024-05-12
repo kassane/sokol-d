@@ -360,10 +360,6 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
     // name object files uniquely (so the files don't collide)
     try cmds.append("-oq");
 
-    // remove object files after success build, and put them in a unique temp directory
-    if (options.kind != .obj)
-        try cmds.append("-cleanup-obj");
-
     // disable LLVM-IR verifier
     // https://llvm.org/docs/Passes.html#verify-module-verifier
     try cmds.append("-disable-verify");
