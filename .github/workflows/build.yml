@@ -31,10 +31,10 @@ jobs:
             dub build :sgl_context
             dub build :sgl_points
             dub build :debugtext
-            # dub build :cube
-            # dub build :blend
+            dub build :cube
+            dub build :blend
             dub build :triangle
-            # dub build :mrt
+            dub build :mrt
             dub build :user_data
 
       - name: (Zig) Running Test
