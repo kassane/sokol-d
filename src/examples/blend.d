@@ -10,7 +10,6 @@ import app = sokol.app;
 import log = sokol.log;
 import handmade.math : Mat4, Vec3;
 import sglue = sokol.glue;
-import sgutil = sokol.utils : asRange;
 import shd = shaders.blend;
 
 extern (C):

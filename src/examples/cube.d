@@ -11,7 +11,6 @@ import log = sokol.log;
 import handmade.math : Mat4, Vec3;
 import sglue = sokol.glue;
 import shd = shaders.cube;
-import sgutil = sokol.utils : asRange;
 
 extern (C):
 @safe:

@@ -9,7 +9,6 @@ import sg = sokol.gfx;
 import sapp = sokol.app;
 import log = sokol.log;
 import sglue = sokol.glue;
-import sgutil = sokol.utils;
 import shd = shaders.triangle;
 
 extern (C):
