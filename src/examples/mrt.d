@@ -267,7 +267,7 @@ void frame()
     sg.commit();
 }
 
-void event(scope const app.Event* ev)
+void event(const app.Event* ev)
 {
     if (ev.type == app.EventType.Resized)
     {
