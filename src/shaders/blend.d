@@ -14,7 +14,7 @@ extern(C):
     Overview:
     =========
     Shader program: 'bg':
-        Get shader desc: bg_shader_desc(sg.queryBackend());
+        Get shader desc: bgShaderDesc(sg.queryBackend());
         Vertex shader: vs_bg
             Attributes:
                 ATTR_VS_BG_POSITION => 0
@@ -23,7 +23,7 @@ extern(C):
                 D struct: BgFsParams
                 Bind slot: SLOT_BG_FS_PARAMS => 0
     Shader program: 'quad':
-        Get shader desc: quad_shader_desc(sg.queryBackend());
+        Get shader desc: quadShaderDesc(sg.queryBackend());
         Vertex shader: vs_quad
             Attributes:
                 ATTR_VS_QUAD_POSITION => 0
@@ -1096,7 +1096,7 @@ __gshared char[376] FS_QUAD_SOURCE_WGSL = [
     0x69,0x6e,0x5f,0x6f,0x75,0x74,0x28,0x66,0x72,0x61,0x67,0x5f,0x63,0x6f,0x6c,0x6f,
     0x72,0x29,0x3b,0x0a,0x7d,0x0a,0x0a,0x00,
 ];
-sg.ShaderDesc bg_shader_desc(sg.Backend backend) @trusted @nogc nothrow {
+sg.ShaderDesc bgShaderDesc(sg.Backend backend) @trusted @nogc nothrow {
     sg.ShaderDesc desc;
     desc.label = "bg_shader";
     switch (backend) {
@@ -1156,7 +1156,7 @@ sg.ShaderDesc bg_shader_desc(sg.Backend backend) @trusted @nogc nothrow {
     }
     return desc;
 }
-sg.ShaderDesc quad_shader_desc(sg.Backend backend) @trusted @nogc nothrow {
+sg.ShaderDesc quadShaderDesc(sg.Backend backend) @trusted @nogc nothrow {
     sg.ShaderDesc desc;
     desc.label = "quad_shader";
     switch (backend) {

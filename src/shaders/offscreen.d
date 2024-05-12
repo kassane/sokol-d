@@ -14,7 +14,7 @@ extern(C):
     Overview:
     =========
     Shader program: 'default':
-        Get shader desc: default_shader_desc(sg.queryBackend());
+        Get shader desc: defaultShaderDesc(sg.queryBackend());
         Vertex shader: vs_default
             Attributes:
                 ATTR_VS_DEFAULT_POSITION => 0
@@ -36,7 +36,7 @@ extern(C):
                 Image: tex
                 Sampler: smp
     Shader program: 'offscreen':
-        Get shader desc: offscreen_shader_desc(sg.queryBackend());
+        Get shader desc: offscreenShaderDesc(sg.queryBackend());
         Vertex shader: vs_offscreen
             Attributes:
                 ATTR_VS_OFFSCREEN_POSITION => 0
@@ -1335,7 +1335,7 @@ __gshared char[980] FS_DEFAULT_SOURCE_WGSL = [
     0x75,0x74,0x28,0x66,0x72,0x61,0x67,0x5f,0x63,0x6f,0x6c,0x6f,0x72,0x29,0x3b,0x0a,
     0x7d,0x0a,0x0a,0x00,
 ];
-sg.ShaderDesc default_shader_desc(sg.Backend backend) @trusted @nogc nothrow {
+sg.ShaderDesc defaultShaderDesc(sg.Backend backend) @trusted @nogc nothrow {
     sg.ShaderDesc desc;
     desc.label = "default_shader";
     switch (backend) {
@@ -1450,7 +1450,7 @@ sg.ShaderDesc default_shader_desc(sg.Backend backend) @trusted @nogc nothrow {
     }
     return desc;
 }
-sg.ShaderDesc offscreen_shader_desc(sg.Backend backend) @trusted @nogc nothrow {
+sg.ShaderDesc offscreenShaderDesc(sg.Backend backend) @trusted @nogc nothrow {
     sg.ShaderDesc desc;
     desc.label = "offscreen_shader";
     switch (backend) {

@@ -101,7 +101,7 @@ void init() {
                 shd.ATTR_VS_COLOR0: { format: sg.VertexFormat.Float4 },
             ],
         },
-        shader: sg.makeShader(shd.cube_shader_desc(sg.queryBackend())),
+        shader: sg.makeShader(shd.cubeShaderDesc(sg.queryBackend())),
         index_type: sg.IndexType.Uint16,
         cull_mode: sg.CullMode.Back,
         depth: {

@@ -58,7 +58,7 @@ void init() {
     state.bind.vertex_buffers[0] = sg.makeBuffer(vbufd);
 
     sg.PipelineDesc pld = {
-        shader: sg.makeShader(shd.bg_shader_desc(sg.queryBackend())),
+        shader: sg.makeShader(shd.bgShaderDesc(sg.queryBackend())),
         layout: {
             buffers: [ { stride: 28 } ],
             attrs: [
@@ -70,7 +70,7 @@ void init() {
     state.bg_pip = sg.makePipeline(pld);
 
     sg.PipelineDesc pip_desc = {
-        shader: sg.makeShader(shd.quad_shader_desc(sg.queryBackend())),
+        shader: sg.makeShader(shd.quadShaderDesc(sg.queryBackend())),
         layout: {
             attrs: [
                 shd.ATTR_VS_QUAD_POSITION: { format: sg.VertexFormat.Float3 },

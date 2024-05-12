@@ -14,7 +14,7 @@ extern(C):
     Overview:
     =========
     Shader program: 'shapes':
-        Get shader desc: shapes_shader_desc(sg.queryBackend());
+        Get shader desc: shapesShaderDesc(sg.queryBackend());
         Vertex shader: vs
             Attributes:
                 ATTR_VS_POSITION => 0
@@ -787,7 +787,7 @@ __gshared char[376] FS_SOURCE_WGSL = [
     0x69,0x6e,0x5f,0x6f,0x75,0x74,0x28,0x66,0x72,0x61,0x67,0x5f,0x63,0x6f,0x6c,0x6f,
     0x72,0x29,0x3b,0x0a,0x7d,0x0a,0x0a,0x00,
 ];
-sg.ShaderDesc shapes_shader_desc(sg.Backend backend) @trusted @nogc nothrow {
+sg.ShaderDesc shapesShaderDesc(sg.Backend backend) @trusted @nogc nothrow {
     sg.ShaderDesc desc;
     desc.label = "shapes_shader";
     switch (backend) {

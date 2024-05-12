@@ -13,7 +13,7 @@ extern(C):
     Overview:
     =========
     Shader program: 'bufferoffsets':
-        Get shader desc: bufferoffsets_shader_desc(sg.queryBackend());
+        Get shader desc: bufferoffsetsShaderDesc(sg.queryBackend());
         Vertex shader: vs
             Attributes:
                 ATTR_VS_POSITION => 0
@@ -495,7 +495,7 @@ __gshared char[376] FS_SOURCE_WGSL = [
     0x69,0x6e,0x5f,0x6f,0x75,0x74,0x28,0x66,0x72,0x61,0x67,0x5f,0x63,0x6f,0x6c,0x6f,
     0x72,0x29,0x3b,0x0a,0x7d,0x0a,0x0a,0x00,
 ];
-sg.ShaderDesc bufferoffsets_shader_desc(sg.Backend backend) @trusted @nogc nothrow {
+sg.ShaderDesc bufferoffsetsShaderDesc(sg.Backend backend) @trusted @nogc nothrow {
     sg.ShaderDesc desc;
     desc.label = "bufferoffsets_shader";
     switch (backend) {

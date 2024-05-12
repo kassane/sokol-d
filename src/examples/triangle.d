@@ -44,7 +44,7 @@ static void init() {
 
     // create a shader and pipeline object
     sg.PipelineDesc pip_desc = {
-        shader: sg.makeShader(shd.triangle_shader_desc(sg.queryBackend())),
+        shader: sg.makeShader(shd.triangleShaderDesc(sg.queryBackend())),
         layout: {
             attrs: [
                 shd.ATTR_VS_POSITION: { format: sg.VertexFormat.Float3 },

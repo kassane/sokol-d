@@ -145,7 +145,7 @@ void init() {
                 shd.ATTR_VS_OFFSCREEN_BRIGHT0: { format: sg.VertexFormat.Float },
             ]
         },
-        shader: sg.makeShader(shd.offscreen_shader_desc(sg.queryBackend())),
+        shader: sg.makeShader(shd.offscreenShaderDesc(sg.queryBackend())),
         index_type: sg.IndexType.Uint16,
         cull_mode: sg.CullMode.Back,
         sample_count: OFFSCREEN_SAMPLE_COUNT,
@@ -173,7 +173,7 @@ void init() {
                 shd.ATTR_VS_FSQ_POS: { format: sg.VertexFormat.Float2 },
             ]
         },
-        shader: sg.makeShader(shd.fsq_shader_desc(sg.queryBackend())),
+        shader: sg.makeShader(shd.fsqShaderDesc(sg.queryBackend())),
         primitive_type: sg.PrimitiveType.Triangle_strip,
     };
     state.fsq.pip = sg.makePipeline(fsq_pip_desc);
@@ -202,7 +202,7 @@ void init() {
                 shd.ATTR_VS_DBG_POS: { format: sg.VertexFormat.Float2 },
             ]
         },
-        shader: sg.makeShader(shd.dbg_shader_desc(sg.queryBackend())),
+        shader: sg.makeShader(shd.dbgShaderDesc(sg.queryBackend())),
         primitive_type: sg.PrimitiveType.Triangle_strip,
     };
     state.dbg.pip = sg.makePipeline(dbg_pip_desc);

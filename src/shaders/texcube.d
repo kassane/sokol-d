@@ -14,7 +14,7 @@ extern(C):
     Overview:
     =========
     Shader program: 'texcube':
-        Get shader desc: texcube_shader_desc(sg.queryBackend());
+        Get shader desc: texcubeShaderDesc(sg.queryBackend());
         Vertex shader: vs
             Attributes:
                 ATTR_VS_POS => 0
@@ -700,7 +700,7 @@ __gshared char[630] FS_SOURCE_WGSL = [
     0x5f,0x6f,0x75,0x74,0x28,0x66,0x72,0x61,0x67,0x5f,0x63,0x6f,0x6c,0x6f,0x72,0x29,
     0x3b,0x0a,0x7d,0x0a,0x0a,0x00,
 ];
-sg.ShaderDesc texcube_shader_desc(sg.Backend backend) @trusted @nogc nothrow {
+sg.ShaderDesc texcubeShaderDesc(sg.Backend backend) @trusted @nogc nothrow {
     sg.ShaderDesc desc;
     desc.label = "texcube_shader";
     switch (backend) {

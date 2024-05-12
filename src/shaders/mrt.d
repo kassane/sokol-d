@@ -14,7 +14,7 @@ extern(C):
     Overview:
     =========
     Shader program: 'dbg':
-        Get shader desc: dbg_shader_desc(sg.queryBackend());
+        Get shader desc: dbgShaderDesc(sg.queryBackend());
         Vertex shader: vs_dbg
             Attributes:
                 ATTR_VS_DBG_POS => 0
@@ -31,7 +31,7 @@ extern(C):
                 Image: tex
                 Sampler: smp
     Shader program: 'fsq':
-        Get shader desc: fsq_shader_desc(sg.queryBackend());
+        Get shader desc: fsqShaderDesc(sg.queryBackend());
         Vertex shader: vs_fsq
             Attributes:
                 ATTR_VS_FSQ_POS => 0
@@ -67,7 +67,7 @@ extern(C):
                 Image: tex2
                 Sampler: smp
     Shader program: 'offscreen':
-        Get shader desc: offscreen_shader_desc(sg.queryBackend());
+        Get shader desc: offscreenShaderDesc(sg.queryBackend());
         Vertex shader: vs_offscreen
             Attributes:
                 ATTR_VS_OFFSCREEN_POS => 0
@@ -2027,7 +2027,7 @@ __gshared char[590] FS_DBG_SOURCE_WGSL = [
     0x75,0x72,0x6e,0x20,0x6d,0x61,0x69,0x6e,0x5f,0x6f,0x75,0x74,0x28,0x66,0x72,0x61,
     0x67,0x5f,0x63,0x6f,0x6c,0x6f,0x72,0x29,0x3b,0x0a,0x7d,0x0a,0x0a,0x00,
 ];
-sg.ShaderDesc dbg_shader_desc(sg.Backend backend) @trusted @nogc nothrow {
+sg.ShaderDesc dbgShaderDesc(sg.Backend backend) @trusted @nogc nothrow {
     sg.ShaderDesc desc;
     desc.label = "dbg_shader";
     switch (backend) {
@@ -2118,7 +2118,7 @@ sg.ShaderDesc dbg_shader_desc(sg.Backend backend) @trusted @nogc nothrow {
     }
     return desc;
 }
-sg.ShaderDesc fsq_shader_desc(sg.Backend backend) @trusted @nogc nothrow {
+sg.ShaderDesc fsqShaderDesc(sg.Backend backend) @trusted @nogc nothrow {
     sg.ShaderDesc desc;
     desc.label = "fsq_shader";
     switch (backend) {
@@ -2299,7 +2299,7 @@ sg.ShaderDesc fsq_shader_desc(sg.Backend backend) @trusted @nogc nothrow {
     }
     return desc;
 }
-sg.ShaderDesc offscreen_shader_desc(sg.Backend backend) @trusted @nogc nothrow {
+sg.ShaderDesc offscreenShaderDesc(sg.Backend backend) @trusted @nogc nothrow {
     sg.ShaderDesc desc;
     desc.label = "offscreen_shader";
     switch (backend) {
