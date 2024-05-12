@@ -32,8 +32,8 @@ enum ATTR_VS_TEXCOORD = 2;
 enum ATTR_VS_COLOR0 = 3;
 enum SLOT_VS_PARAMS = 0;
 struct VsParams {
-    align(16) float draw_mode;
-    align(1) ubyte[12] _pad_4;
+    align(16) float draw_mode = 0;
+    align(1) ubyte[12] _pad_4 = 0;
     align(1) m.Mat4 mvp;
 }
 /*

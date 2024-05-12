@@ -39,8 +39,8 @@ enum ATTR_VS_QUAD_COLOR0 = 1;
 enum SLOT_BG_FS_PARAMS = 0;
 enum SLOT_QUAD_VS_PARAMS = 0;
 struct BgFsParams {
-    align(16) float tick;
-    align(1) ubyte[12] _pad_4;
+    align(16) float tick = 0;
+    align(1) ubyte[12] _pad_4 = 0;
 }
 struct QuadVsParams {
     align(16) m.Mat4 mvp;

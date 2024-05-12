@@ -93,7 +93,7 @@ struct OffscreenParams {
 }
 struct FsqParams {
     align(16) m.Vec2 offset;
-    align(1) ubyte[8] _pad_8;
+    align(1) ubyte[8] _pad_8 = 0;
 }
 /*
     #version 430
