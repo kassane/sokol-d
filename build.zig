@@ -501,10 +501,7 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
 
     // cpu model (e.g. "baseline")
     if (options.target.query.isNative()) {
-        const cpu_model = if (options.target.result.isDarwin())
-            builtin.cpu.model.llvm_name orelse "generic"
-        else
-            builtin.cpu.model.name;
+        const cpu_model = builtin.cpu.model.llvm_name orelse "generic";
         try cmds.append(b.fmt("-mcpu={s}", .{cpu_model}));
     }
 
