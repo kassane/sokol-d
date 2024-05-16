@@ -8,14 +8,14 @@ Auto-generated [D](https://dlang.org) bindings for the [sokol headers](https://g
 #### Targets
 
 - Native
-- Wasm (`-Dtarget=wasm32-emscripten`)
+- Wasm (`-Dtarget=wasm32-emscripten-none`)
 
 ## BUILD
 
 **Required**
 
 - [zig](https://ziglang.org/download) v0.12.0 or master
-- [ldc](https://ldc-developers.github.io) v1.36.0 or latest-CI (nightly)
+- [ldc](https://ldc-developers.github.io) v1.38.0 or latest-CI (nightly)
 
 Supported platforms are: Windows, macOS, Linux (with X11)
 
@@ -23,22 +23,22 @@ On Linux install the following packages: libglu1-mesa-dev, mesa-common-dev, xorg
 
 ```bash
 # build sokol library + all examples [default: static library]
-zig build -Doptimize=ReleaseFast
+zig build -Doptimize=ReleaseSafe
 
 # build sokol shared library + all examples
-zig build -Doptimize=ReleaseFast -Dshared
+zig build -Doptimize=ReleaseSafe -Dshared
 
 # Run Examples
-zig build run-blend -Doptimize=ReleaseFast
-zig build run-clear -Doptimize=ReleaseFast
-zig build run-cube -Doptimize=ReleaseFast
-zig build run-debugtext -Doptimize=ReleaseFast
-zig build run-mrt -Doptimize=ReleaseFast
-zig build run-saudio -Doptimize=ReleaseFast
-zig build run-sgl_context -Doptimize=ReleaseFast
-zig build run-sgl_points -Doptimize=ReleaseFast
-zig build run-user_data -Doptimize=ReleaseFast
-zig build run-triangle -Doptimize=ReleaseFast
+zig build run-blend -Doptimize=ReleaseSafe
+zig build run-clear -Doptimize=ReleaseSafe
+zig build run-cube -Doptimize=ReleaseSafe
+zig build run-debugtext -Doptimize=ReleaseSafe
+zig build run-mrt -Doptimize=ReleaseSafe
+zig build run-saudio -Doptimize=ReleaseSafe
+zig build run-sgl_context -Doptimize=ReleaseSafe
+zig build run-sgl_points -Doptimize=ReleaseSafe
+zig build run-user_data -Doptimize=ReleaseSafe
+zig build run-triangle -Doptimize=ReleaseSafe
 
 zig build --help
 # Project-Specific Options:
