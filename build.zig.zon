@@ -4,9 +4,11 @@
     .min_zig_version = "0.12.0",
     .paths = .{
         "src",
+        "tools",
         "build.zig",
+        "build.zig.zon",
         "LICENSE",
-        "Readme.md",
+        "README.md",
     },
     .dependencies = .{
         .emsdk = .{
