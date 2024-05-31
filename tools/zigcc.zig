@@ -55,7 +55,7 @@ pub fn main() !void {
         }
     }
 
-    var proc = std.ChildProcess.init(cmds.items, allocator);
+    var proc = std.process.Child.init(cmds.items, allocator);
 
     // See all flags
     // std.debug.print("debug flags: ", .{});
