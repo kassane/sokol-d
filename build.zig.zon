@@ -11,6 +11,14 @@
         "README.md",
     },
     .dependencies = .{
+        .cimgui = .{
+            .url = "git+https://github.com/kassane/cimgui#5c8026c21976e017b890f806eb74b5f210dc638c",
+            .hash = "1220f9e9b72baa5fa8fdfffad4b2be4b668cfecd4b18478687f1a8baf3b885724108",
+        },
+        .imgui = .{
+            .url = "git+https://github.com/ocornut/imgui.git#v1.90.7",
+            .hash = "122072b125179c7cbdbbee8fa81d22a1050a950ad61cfeefee8dc0dca5423b5d05b9",
+        },
         .emsdk = .{
             .url = "git+https://github.com/emscripten-core/emsdk?ref=3.1.60#ce74ca2b1c968f897150bdc55daa9e3c12a3fefc",
             .hash = "1220122266f201c6c3a774f7a5edd60e4b1b9655e345bca525360bed2ff9fcb479a8",
