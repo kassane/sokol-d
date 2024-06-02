@@ -15,7 +15,7 @@ Auto-generated [D](https://dlang.org) bindings for the [sokol headers](https://g
 **Required**
 
 - [zig](https://ziglang.org/download) v0.12.0 or master
-- [ldc](https://ldc-developers.github.io) v1.38.0 or latest-CI (nightly)
+- [ldc](https://ldc-developers.github.io) v1.39.0 or latest-CI (nightly)
 
 Supported platforms are: Windows, macOS, Linux (with X11)
 
