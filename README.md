@@ -3,12 +3,16 @@
 
 Auto-generated [D](https://dlang.org) bindings for the [sokol headers](https://github.com/floooh/sokol).
 
-#### Status: Experimental
-
 #### Targets
 
 - Native
 - Wasm (`-Dtarget=wasm32-emscripten-none`)
+
+By default, the backend 3D API will be selected based on the target platform:
+
+- macOS: Metal
+- Windows: D3D11
+- Linux: GL
 
 ## BUILD
 
@@ -39,26 +43,32 @@ zig build run-sgl_context -Doptimize=ReleaseSafe
 zig build run-sgl_points -Doptimize=ReleaseSafe
 zig build run-user_data -Doptimize=ReleaseSafe
 zig build run-triangle -Doptimize=ReleaseSafe
+zig build run-imgui -Doptimize=ReleaseSafe
+zig build run-droptest -Doptimize=ReleaseSafe
 
 zig build --help
 # Project-Specific Options:
-#   -Dgl=[bool]                  Force OpenGL (default: false)
-#   -Dwgpu=[bool]                Force WebGPU (default: false, web only)
-#   -Dx11=[bool]                 Force X11 (default: true, Linux only)
-#   -Dwayland=[bool]             Force Wayland (default: false, Linux only, not supported in main-line headers)
-#   -Degl=[bool]                 Force EGL (default: false, Linux only)
-#   -Dtarget=[string]            The CPU architecture, OS, and ABI to build for
-#   -Dcpu=[string]               Target CPU features to add or subtract
-#   -Doptimize=[enum]            Prioritize performance, safety, or binary size (-O flag)
-#                                  Supported Values:
-#                                    Debug
-#                                    ReleaseSafe
-#                                    ReleaseFast
-#                                    ReleaseSmall
-#   -Dshared=[bool]              Build sokol dynamic library (default: static)
-#   -DbetterC=[bool]             Omit generating some runtime information and helper functions (default: false)
-#   -DzigCC=[bool]               Use zig cc as compiler and linker (default: false)
+#  -Dgl=[bool]                  Force OpenGL (default: false)
+#  -Dwgpu=[bool]                Force WebGPU (default: false, web only)
+#  -Dx11=[bool]                 Force X11 (default: true, Linux only)
+#  -Dwayland=[bool]             Force Wayland (default: false, Linux only, not supported in main-line headers)
+#  -Degl=[bool]                 Force EGL (default: false, Linux only)
+#  -Dimgui=[bool]               Add support for sokol_imgui.h bindings
+#  -Dartifact=[bool]            Build artifacts (default: false)
+#  -DbetterC=[bool]             Omit generating some runtime information and helper functions #(default: false)
+#  -DzigCC=[bool]               Use zig cc as compiler and linker (default: false)
+#  -Dtarget=[string]            The CPU architecture, OS, and ABI to build for
+#  -Dcpu=[string]               Target CPU features to add or subtract
+#  -Ddynamic-linker=[string]    Path to interpreter on the target system
+#  -Doptimize=[enum]            Prioritize performance, safety, or binary size
+#                                 Supported Values:
+#                                   Debug
+#                                   ReleaseSafe
+#                                   ReleaseFast
+#                                   ReleaseSmall
+#  -Dshared=[bool]              Build sokol dynamic library (default: static)
 ```
+(also run `zig build -l` to get a list of build targets)
 
 ## Shaders
 
