@@ -77,11 +77,13 @@ pub fn buildLibSokol(b: *Build, options: LibSokolOptions) !*CompileStep {
             return error.Wasm32EmscriptenExpected;
         }
         // one-time setup of Emscripten SDK
-        if (try emSdkSetupStep(b, options.emsdk.?)) |emsdk_setup| {
-            lib.step.dependOn(&emsdk_setup.step);
+        if (!options.with_sokol_imgui) {
+            if (try emSdkSetupStep(b, options.emsdk.?)) |emsdk_setup| {
+                lib.step.dependOn(&emsdk_setup.step);
+            }
+            // add the Emscripten system include seach path
+            lib.addIncludePath(emSdkLazyPath(b, options.emsdk.?, &.{ "upstream", "emscripten", "cache", "sysroot", "include" }));
         }
-        // add the Emscripten system include seach path
-        lib.addIncludePath(emSdkLazyPath(b, options.emsdk.?, &.{ "upstream", "emscripten", "cache", "sysroot", "include" }));
     }
 
     // resolve .auto backend into specific backend by platform
@@ -186,7 +188,11 @@ pub fn buildLibSokol(b: *Build, options: LibSokolOptions) !*CompileStep {
             .file = b.path(csrc_root ++ "sokol_imgui.c"),
             .flags = cflags,
         });
-        const cimgui = try buildImgui(b, lib);
+        const cimgui = try buildImgui(b, .{
+            .target = options.target,
+            .optimize = options.optimize,
+            .emsdk = options.emsdk,
+        });
         for (cimgui.root_module.include_dirs.items) |dir| {
             try lib.root_module.include_dirs.append(b.allocator, dir);
         }
@@ -287,39 +293,36 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
     // ldmd2: ldc2 wrapped w/ dmd flags
     const ldc = try b.findProgram(&.{"ldmd2"}, &.{});
 
-    var cmds = std.ArrayList([]const u8).init(b.allocator);
-    defer cmds.deinit();
-
     // D compiler
-    try cmds.append(ldc);
+    var ldc_exec = b.addSystemCommand(&.{ldc});
+    ldc_exec.setName(options.name);
 
     // set kind of build
     switch (options.kind) {
         .@"test" => {
-            try cmds.append("-unittest");
-            try cmds.append("-main");
+            ldc_exec.addArgs(&.{ "-unittest", "-main" });
         },
-        .obj => try cmds.append("-c"),
+        .obj => ldc_exec.addArg("-c"),
         else => {},
     }
 
     if (options.kind == .lib) {
         if (options.linkage == .dynamic) {
-            try cmds.append("-shared");
+            ldc_exec.addArg("-shared");
             if (options.target.result.os.tag == .windows) {
-                try cmds.append("-fvisibility=public");
-                try cmds.append("--dllimport=all");
+                ldc_exec.addArg("-fvisibility=public");
+                ldc_exec.addArg("--dllimport=all");
             }
         } else {
-            try cmds.append("-lib");
+            ldc_exec.addArg("-lib");
             if (options.target.result.os.tag == .windows)
-                try cmds.append("--dllimport=defaultLibsOnly");
-            try cmds.append("-fvisibility=hidden");
+                ldc_exec.addArg("--dllimport=defaultLibsOnly");
+            ldc_exec.addArg("-fvisibility=hidden");
         }
     }
 
     for (options.dflags) |dflag| {
-        try cmds.append(dflag);
+        ldc_exec.addArg(dflag);
     }
 
     if (options.ldflags) |ldflags| {
@@ -327,110 +330,110 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
             if (ldflag[0] == '-') {
                 @panic("ldflags: add library name only!");
             }
-            try cmds.append(b.fmt("-L-l{s}", .{ldflag}));
+            ldc_exec.addArg(b.fmt("-L-l{s}", .{ldflag}));
         }
     }
 
     // betterC disable druntime and phobos
     if (options.betterC)
-        try cmds.append("-betterC");
+        ldc_exec.addArg("-betterC");
 
     switch (options.optimize) {
         .Debug => {
-            try cmds.append("-debug");
-            try cmds.append("-d-debug");
-            try cmds.append("-gc"); // debuginfo for non D dbg
-            try cmds.append("-g"); // debuginfo for D dbg
-            try cmds.append("-gf");
-            try cmds.append("-gs");
-            try cmds.append("-vgc");
-            try cmds.append("-vtls");
-            try cmds.append("-verrors=context");
-            try cmds.append("-boundscheck=on");
+            ldc_exec.addArg("-debug");
+            ldc_exec.addArg("-d-debug");
+            ldc_exec.addArg("-gc"); // debuginfo for non D dbg
+            ldc_exec.addArg("-g"); // debuginfo for D dbg
+            ldc_exec.addArg("-gf");
+            ldc_exec.addArg("-gs");
+            ldc_exec.addArg("-vgc");
+            ldc_exec.addArg("-vtls");
+            ldc_exec.addArg("-verrors=context");
+            ldc_exec.addArg("-boundscheck=on");
         },
         .ReleaseSafe => {
-            try cmds.append("-O3");
-            try cmds.append("-release");
-            try cmds.append("-enable-inlining");
-            try cmds.append("-boundscheck=safeonly");
+            ldc_exec.addArg("-O3");
+            ldc_exec.addArg("-release");
+            ldc_exec.addArg("-enable-inlining");
+            ldc_exec.addArg("-boundscheck=safeonly");
         },
         .ReleaseFast => {
-            try cmds.append("-O3");
-            try cmds.append("-release");
-            try cmds.append("-enable-inlining");
-            try cmds.append("-boundscheck=off");
+            ldc_exec.addArg("-O3");
+            ldc_exec.addArg("-release");
+            ldc_exec.addArg("-enable-inlining");
+            ldc_exec.addArg("-boundscheck=off");
         },
         .ReleaseSmall => {
-            try cmds.append("-Oz");
-            try cmds.append("-release");
-            try cmds.append("-enable-inlining");
-            try cmds.append("-boundscheck=off");
+            ldc_exec.addArg("-Oz");
+            ldc_exec.addArg("-release");
+            ldc_exec.addArg("-enable-inlining");
+            ldc_exec.addArg("-boundscheck=off");
         },
     }
 
     // Print character (column) numbers in diagnostics
-    try cmds.append("-vcolumns");
+    ldc_exec.addArg("-vcolumns");
 
     // object file output (zig-cache/o/{hash_id}/*.o)
     var objpath: []const u8 = undefined; // needed for wasm build
     if (b.cache_root.path) |path| {
         // immutable state hash
         objpath = b.pathJoin(&.{ path, "o", &b.graph.cache.hash.peek() });
-        try cmds.append(b.fmt("-od={s}", .{objpath}));
+        ldc_exec.addArg(b.fmt("-od={s}", .{objpath}));
         // mutable state hash (ldc2 cache - llvm-ir2obj)
-        try cmds.append(b.fmt("-cache={s}", .{b.pathJoin(&.{ path, "o", &b.graph.cache.hash.final() })}));
+        ldc_exec.addArg(b.fmt("-cache={s}", .{b.pathJoin(&.{ path, "o", &b.graph.cache.hash.final() })}));
     }
 
     // disable LLVM-IR verifier
     // https://llvm.org/docs/Passes.html#verify-module-verifier
-    try cmds.append("-disable-verify");
+    ldc_exec.addArg("-disable-verify");
 
     // keep all function bodies in .di files
-    try cmds.append("-Hkeep-all-bodies");
+    ldc_exec.addArg("-Hkeep-all-bodies");
 
     // automatically finds needed library files and builds
-    try cmds.append("-i");
+    ldc_exec.addArg("-i");
 
     // sokol include path
-    try cmds.append(b.fmt("-I{s}", .{b.pathJoin(&.{ rootPath(), "src" })}));
+    ldc_exec.addArg(b.fmt("-I{s}", .{b.pathJoin(&.{ rootPath(), "src" })}));
 
     // D-packages include path
     if (options.d_packages) |d_packages| {
         for (d_packages) |pkg| {
-            try cmds.append(b.fmt("-I{s}", .{pkg}));
+            ldc_exec.addArg(b.fmt("-I{s}", .{pkg}));
         }
     }
 
     // D Source files
     for (options.sources) |src| {
-        try cmds.append(src);
+        ldc_exec.addArg(src);
     }
 
     // linker flags
     // GNU LD
     if (options.target.result.os.tag == .linux and !options.zig_cc) {
-        try cmds.append("-L--no-as-needed");
+        ldc_exec.addArg("-L--no-as-needed");
     }
     // LLD (not working in zld)
     if (options.target.result.isDarwin() and !options.zig_cc) {
         // https://github.com/ldc-developers/ldc/issues/4501
-        try cmds.append("-L-w"); // hide linker warnings
+        ldc_exec.addArg("-L-w"); // hide linker warnings
     }
 
     if (options.target.result.isWasm()) {
-        try cmds.append("--d-version=CarelessAlocation");
-        try cmds.append("-L-allow-undefined");
+        ldc_exec.addArg("--d-version=CarelessAlocation");
+        ldc_exec.addArg("-L-allow-undefined");
     }
 
     if (b.verbose) {
-        try cmds.append("-vdmd");
-        try cmds.append("-Xcc=-v");
+        ldc_exec.addArg("-vdmd");
+        ldc_exec.addArg("-Xcc=-v");
     }
 
     if (options.artifact) |lib_sokol| {
         if (lib_sokol.linkage == .dynamic or options.linkage == .dynamic) {
             // linking the druntime/Phobos as dynamic libraries
-            try cmds.append("-link-defaultlib-shared");
+            ldc_exec.addArg("-link-defaultlib-shared");
         }
 
         // C include path
@@ -442,20 +445,20 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
                 include_dir.path_system.getPath(b)
             else
                 include_dir.path_after.getPath(b);
-            try cmds.append(b.fmt("-P-I{s}", .{path}));
+            ldc_exec.addArg(b.fmt("-P-I{s}", .{path}));
         }
 
         // library paths
         for (lib_sokol.root_module.lib_paths.items) |libpath| {
             if (libpath.getPath(b).len > 0) // skip empty paths
-                try cmds.append(b.fmt("-L-L{s}", .{libpath.getPath(b)}));
+                ldc_exec.addArg(b.fmt("-L-L{s}", .{libpath.getPath(b)}));
         }
 
         // link system libs
         for (lib_sokol.root_module.link_objects.items) |link_object| {
             if (link_object != .system_lib) continue;
             const system_lib = link_object.system_lib;
-            try cmds.append(b.fmt("-L-l{s}", .{system_lib.name}));
+            ldc_exec.addArg(b.fmt("-L-l{s}", .{system_lib.name}));
         }
         // C flags
         for (lib_sokol.root_module.link_objects.items) |link_object| {
@@ -463,49 +466,49 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
             const c_source_file = link_object.c_source_file;
             for (c_source_file.flags) |flag|
                 if (flag.len > 0) // skip empty flags
-                    try cmds.append(b.fmt("-Xcc={s}", .{flag}));
+                    ldc_exec.addArg(b.fmt("-Xcc={s}", .{flag}));
             break;
         }
         // C defines
         for (lib_sokol.root_module.c_macros.items) |cdefine| {
             if (cdefine.len > 0) // skip empty cdefines
-                try cmds.append(b.fmt("-P-D{s}", .{cdefine}));
+                ldc_exec.addArg(b.fmt("-P-D{s}", .{cdefine}));
             break;
         }
 
         if (lib_sokol.dead_strip_dylibs) {
-            try cmds.append("-L=-dead_strip");
+            ldc_exec.addArg("-L=-dead_strip");
         }
         // Darwin frameworks
         if (options.target.result.isDarwin()) {
             var it = lib_sokol.root_module.frameworks.iterator();
             while (it.next()) |framework| {
-                try cmds.append(b.fmt("-L-framework", .{}));
-                try cmds.append(b.fmt("-L{s}", .{framework.key_ptr.*}));
+                ldc_exec.addArg(b.fmt("-L-framework", .{}));
+                ldc_exec.addArg(b.fmt("-L{s}", .{framework.key_ptr.*}));
             }
         }
 
         if (lib_sokol.root_module.sanitize_thread) |tsan| {
             if (tsan)
-                try cmds.append("--fsanitize=thread");
+                ldc_exec.addArg("--fsanitize=thread");
         }
 
         // zig enable sanitize=undefined by default
         if (lib_sokol.root_module.sanitize_c) |ubsan| {
             if (ubsan)
-                try cmds.append("--fsanitize=address");
+                ldc_exec.addArg("--fsanitize=address");
         }
 
         if (lib_sokol.root_module.omit_frame_pointer) |enabled| {
             if (enabled)
-                try cmds.append("--frame-pointer=none")
+                ldc_exec.addArg("--frame-pointer=none")
             else
-                try cmds.append("--frame-pointer=all");
+                ldc_exec.addArg("--frame-pointer=all");
         }
 
         // link-time optimization
         if (lib_sokol.want_lto) |enabled|
-            if (enabled) try cmds.append("--flto=full");
+            if (enabled) ldc_exec.addArg("--flto=full");
     }
 
     // ldc2 doesn't support zig native (a.k.a: native-native or native)
@@ -518,10 +521,10 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
     else
         b.fmt("{s}-{s}-{s}", .{ @tagName(options.target.result.cpu.arch), @tagName(options.target.result.os.tag), @tagName(options.target.result.abi) });
 
-    try cmds.append(b.fmt("-mtriple={s}", .{mtriple}));
+    ldc_exec.addArg(b.fmt("-mtriple={s}", .{mtriple}));
 
     const cpu_model = options.target.result.cpu.model.llvm_name orelse "generic";
-    try cmds.append(b.fmt("-mcpu={s}", .{cpu_model}));
+    ldc_exec.addArg(b.fmt("-mcpu={s}", .{cpu_model}));
 
     const outputDir = switch (options.kind) {
         .lib => "lib",
@@ -532,11 +535,7 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
 
     // output file
     if (options.kind != .obj)
-        try cmds.append(b.fmt("-of={s}", .{b.pathJoin(&.{ b.install_prefix, outputDir, options.name })}));
-
-    // run the command
-    var ldc_exec = b.addSystemCommand(cmds.items);
-    ldc_exec.setName(options.name);
+        ldc_exec.addArg(b.fmt("-of={s}", .{b.pathJoin(&.{ b.install_prefix, outputDir, options.name })}));
 
     if (options.zig_cc) {
         const zcc = buildZigCC(b);
@@ -849,8 +848,12 @@ fn emSdkSetupStep(b: *Build, emsdk: *Build.Dependency) !?*Build.Step.Run {
         return null;
     }
 }
-
-fn buildImgui(b: *Build, options: *CompileStep) !*CompileStep {
+const libImGuiOptions = struct {
+    target: Build.ResolvedTarget,
+    optimize: std.builtin.OptimizeMode,
+    emsdk: ?*Build.Dependency,
+};
+fn buildImgui(b: *Build, options: libImGuiOptions) !*CompileStep {
     const imgui_cpp = b.dependency("imgui", .{});
     const imgui_cpp_dir = imgui_cpp.path("");
     const cimgui = b.dependency("cimgui", .{});
@@ -858,8 +861,8 @@ fn buildImgui(b: *Build, options: *CompileStep) !*CompileStep {
 
     const libimgui = b.addStaticLibrary(.{
         .name = "cimgui",
-        .target = options.root_module.resolved_target.?,
-        .optimize = options.root_module.optimize.?,
+        .target = options.target,
+        .optimize = options.optimize,
     });
     if (libimgui.linkage == .static)
         libimgui.pie = true
@@ -867,12 +870,13 @@ fn buildImgui(b: *Build, options: *CompileStep) !*CompileStep {
         libimgui.root_module.pic = true;
     libimgui.addIncludePath(cimgui_dir);
     libimgui.addIncludePath(imgui_cpp_dir);
-    libimgui.defineCMacro("IMGUI_DISABLE_OBSOLETE_FUNCTIONS", "1");
-    for (options.root_module.include_dirs.items) |include| {
-        try libimgui.root_module.include_dirs.append(b.allocator, include);
+    if (libimgui.rootModuleTarget().isWasm()) {
+        if (try emSdkSetupStep(b, options.emsdk.?)) |emsdk_setup| {
+            libimgui.step.dependOn(&emsdk_setup.step);
+        }
+        // add the Emscripten system include seach path
+        libimgui.addIncludePath(emSdkLazyPath(b, options.emsdk.?, &.{ "upstream", "emscripten", "cache", "sysroot", "include" }));
     }
-    if (libimgui.rootModuleTarget().isWasm())
-        libimgui.defineCMacro("IMGUI_DISABLE_FILE_FUNCTIONS", null);
     libimgui.addCSourceFiles(.{
         .root = cimgui_dir,
         .files = &.{
@@ -918,5 +922,6 @@ fn buildImgui(b: *Build, options: *CompileStep) !*CompileStep {
     } else {
         libimgui.linkLibC();
     }
+
     return libimgui;
 }
