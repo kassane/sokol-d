@@ -885,6 +885,11 @@ fn buildImgui(b: *Build, options: libImGuiOptions) !*CompileStep {
         .flags = &.{
             "-Wall",
             "-Wextra",
+            "-fno-rtti",
+            "-fno-exceptions",
+            "-Wno-unused-parameter",
+            "-Wno-missing-field-initializers",
+            "-fno-threadsafe-statics",
         },
     });
     libimgui.addCSourceFiles(.{
@@ -899,6 +904,11 @@ fn buildImgui(b: *Build, options: libImGuiOptions) !*CompileStep {
         .flags = &.{
             "-Wall",
             "-Wextra",
+            "-fno-rtti",
+            "-fno-exceptions",
+            "-Wno-unused-parameter",
+            "-Wno-missing-field-initializers",
+            "-fno-threadsafe-statics",
         },
     });
     libimgui.root_module.sanitize_c = false;
