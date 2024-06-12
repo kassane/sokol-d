@@ -18,7 +18,7 @@ By default, the backend 3D API will be selected based on the target platform:
 
 **Required**
 
-- [zig](https://ziglang.org/download) v0.12.0 or master
+- [zig](https://ziglang.org/download) v0.13.0 or master
 - [ldc](https://ldc-developers.github.io) v1.39.0 or latest-CI (nightly)
 
 Supported platforms are: Windows, macOS, Linux (with X11)
@@ -43,8 +43,8 @@ zig build run-sgl_context -Doptimize=ReleaseSafe
 zig build run-sgl_points -Doptimize=ReleaseSafe
 zig build run-user_data -Doptimize=ReleaseSafe
 zig build run-triangle -Doptimize=ReleaseSafe
-zig build run-imgui -Doptimize=ReleaseSafe
-zig build run-droptest -Doptimize=ReleaseSafe
+zig build run-imgui -Doptimize=ReleaseSafe -Dimgui
+zig build run-droptest -Doptimize=ReleaseSafe -Dimgui
 
 zig build --help
 # Project-Specific Options:
