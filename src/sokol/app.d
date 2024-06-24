@@ -243,7 +243,7 @@ enum LogItem {
     Win32_wgl_set_pixelformat_failed,
     Win32_wgl_arb_create_context_required,
     Win32_wgl_arb_create_context_profile_required,
-    Win32_wgl_opengl_3_2_not_supported,
+    Win32_wgl_opengl_version_not_supported,
     Win32_wgl_opengl_profile_not_supported,
     Win32_wgl_incompatible_device_context,
     Win32_wgl_create_context_attribs_failed_other,
