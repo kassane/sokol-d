@@ -662,7 +662,9 @@ pub fn buildZigCC(b: *Build) *CompileStep {
 
 // a separate step to compile shaders, expects the shader compiler in ../sokol-tools-bin/
 fn buildShaders(b: *Build) void {
-    const sokol_tools_bin_dir = "../sokol-tools-bin/bin/";
+    const shdc_dep = b.dependency("shdc", .{}).path("").getPath(b);
+
+    const sokol_tools_bin_dir = b.pathJoin(&.{ shdc_dep, "bin" });
     const shaders_dir = "src/shaders/";
     const shaders = .{
         "triangle.glsl",
@@ -687,7 +689,7 @@ fn buildShaders(b: *Build) void {
         std.log.warn("unsupported host platform, skipping shader compiler step", .{});
         return;
     }
-    const shdc_path = b.findProgram(&.{"sokol-shdc"}, &.{}) catch sokol_tools_bin_dir ++ optional_shdc.?;
+    const shdc_path = b.findProgram(&.{"sokol-shdc"}, &.{}) catch b.pathJoin(&.{ sokol_tools_bin_dir, optional_shdc.? });
     const shdc_step = b.step("shaders", "Compile shaders (needs ../sokol-tools-bin)");
     inline for (shaders) |shader| {
         const cmd = b.addSystemCommand(&.{

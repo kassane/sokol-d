@@ -1,7 +1,7 @@
 .{
     .name = "sokol-d",
     .version = "0.1.3",
-    .min_zig_version = "0.12.0",
+    .min_zig_version = "0.13.0",
     .paths = .{
         "src",
         "tools",
@@ -20,8 +20,12 @@
             .hash = "122072b125179c7cbdbbee8fa81d22a1050a950ad61cfeefee8dc0dca5423b5d05b9",
         },
         .emsdk = .{
-            .url = "git+https://github.com/emscripten-core/emsdk#3.1.61",
-            .hash = "12200ba39d83227f5de08287b043b011a2eb855cdb077f4b165edce30564ba73400e",
+            .url = "git+https://github.com/emscripten-core/emsdk#3.1.64",
+            .hash = "12206bb1c8206a3e50d43db0711e6b9e0485758265abadf6ffccee37839bb0283c6e",
+        },
+        .shdc = .{
+            .url = "git+https://github.com/floooh/sokol-tools-bin#c28c168552817738639cb3b81484bbd88b723388",
+            .hash = "1220c6f628a11f7fe4d865a92c88290393c06ea352c3ed88b833580346a4bed59972",
         },
     },
 }
