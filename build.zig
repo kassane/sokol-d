@@ -578,7 +578,7 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
             .use_emmalloc = true,
             .use_filesystem = false,
             .release_use_lto = options.artifact.?.want_lto orelse false,
-            .shell_file_path = "src/sokol/web/shell.html",
+            .shell_file_path = b.path("src/sokol/web/shell.html"),
             // NOTE: This is required to make the Zig @returnAddress() builtin work,
             // which is used heavily in the stdlib allocator code (not just
             // the GeneralPurposeAllocator).
@@ -724,7 +724,7 @@ pub const EmLinkOptions = struct {
     use_webgl2: bool = false,
     use_emmalloc: bool = false,
     use_filesystem: bool = true,
-    shell_file_path: ?[]const u8 = null,
+    shell_file_path: ?Build.LazyPath,
     extra_args: []const []const u8 = &.{},
 };
 
@@ -761,7 +761,7 @@ pub fn emLinkStep(b: *Build, options: EmLinkOptions) !*Build.Step.InstallDir {
         emcc.addArg("-sMALLOC='emmalloc'");
     }
     if (options.shell_file_path) |shell_file_path| {
-        emcc.addArg(b.fmt("--shell-file={s}", .{shell_file_path}));
+        emcc.addPrefixedFileArg("--shell-file=", shell_file_path);
     }
     for (options.extra_args) |arg| {
         emcc.addArg(arg);
