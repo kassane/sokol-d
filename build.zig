@@ -352,22 +352,13 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
             ldc_exec.addArg("-boundscheck=on");
         },
         .ReleaseSafe => {
-            ldc_exec.addArg("-O3");
-            ldc_exec.addArg("-release");
-            ldc_exec.addArg("-enable-inlining");
-            ldc_exec.addArg("-boundscheck=safeonly");
+            ldc_exec.addArgs(&.{ "-O2", "-boundscheck=safeonly" });
         },
         .ReleaseFast => {
-            ldc_exec.addArg("-O3");
-            ldc_exec.addArg("-release");
-            ldc_exec.addArg("-enable-inlining");
-            ldc_exec.addArg("-boundscheck=off");
+            ldc_exec.addArgs(&.{ "-O3", "-boundscheck=off" });
         },
         .ReleaseSmall => {
-            ldc_exec.addArg("-Oz");
-            ldc_exec.addArg("-release");
-            ldc_exec.addArg("-enable-inlining");
-            ldc_exec.addArg("-boundscheck=off");
+            ldc_exec.addArgs(&.{ "-Oz", "-boundscheck=off" });
         },
     }
 
