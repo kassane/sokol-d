@@ -25,14 +25,15 @@ extern(C)
 struct Context {
     uint id = 0;
 }
-enum Error {
-    No_error = 0,
-    Vertices_full,
-    Uniforms_full,
-    Commands_full,
-    Stack_overflow,
-    Stack_underflow,
-    No_context,
+extern(C)
+struct Error {
+    bool any = false;
+    bool vertices_full = false;
+    bool uniforms_full = false;
+    bool commands_full = false;
+    bool stack_overflow = false;
+    bool stack_underflow = false;
+    bool no_context = false;
 }
 extern(C)
 struct ContextDesc {
@@ -104,6 +105,14 @@ Context getContext() @trusted @nogc nothrow {
 extern(C) Context sgl_default_context() @system @nogc nothrow;
 Context defaultContext() @trusted @nogc nothrow {
     return sgl_default_context();
+}
+extern(C) int sgl_num_vertices() @system @nogc nothrow;
+int numVertices() @trusted @nogc nothrow {
+    return sgl_num_vertices();
+}
+extern(C) int sgl_num_commands() @system @nogc nothrow;
+int numCommands() @trusted @nogc nothrow {
+    return sgl_num_commands();
 }
 extern(C) void sgl_draw() @system @nogc nothrow;
 void draw() @trusted @nogc nothrow {
