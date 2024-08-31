@@ -920,6 +920,7 @@ struct FrameStatsWgpuBindings {
     uint num_bindgroup_cache_hits = 0;
     uint num_bindgroup_cache_misses = 0;
     uint num_bindgroup_cache_collisions = 0;
+    uint num_bindgroup_cache_invalidates = 0;
     uint num_bindgroup_cache_hash_vs_key_mismatch = 0;
 }
 extern(C)
