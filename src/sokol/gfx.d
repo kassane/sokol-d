@@ -1305,6 +1305,7 @@ struct Desc {
     int uniform_buffer_size = 0;
     int max_commit_listeners = 0;
     bool disable_validation = false;
+    bool d3d11_shader_debugging = false;
     bool mtl_force_managed_storage_mode = false;
     bool mtl_use_command_buffer_with_retained_references = false;
     bool wgpu_disable_bindgroups_cache = false;
