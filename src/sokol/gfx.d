@@ -243,7 +243,6 @@ enum PrimitiveType {
 }
 enum Filter {
     Default,
-    None,
     Nearest,
     Linear,
     Num,
@@ -1079,8 +1078,6 @@ enum LogItem {
     Validate_imagedesc_dynamic_no_data,
     Validate_imagedesc_compressed_immutable,
     Validate_samplerdesc_canary,
-    Validate_samplerdesc_minfilter_none,
-    Validate_samplerdesc_magfilter_none,
     Validate_samplerdesc_anistropic_requires_linear_filtering,
     Validate_shaderdesc_canary,
     Validate_shaderdesc_source,
