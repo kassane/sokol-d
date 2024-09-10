@@ -898,6 +898,10 @@ fn buildImgui(b: *Build, options: libImGuiOptions) !*CompileStep {
         .target = options.target,
         .optimize = options.optimize,
     });
+
+    // libimgui compilation depends on file tree
+    libimgui.step.dependOn(&wf.step);
+
     if (libimgui.linkage == .static)
         libimgui.pie = true
     else if (libimgui.linkage == .static)
