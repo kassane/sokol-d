@@ -9,37 +9,36 @@ import sg = sokol.gfx;
 import sapp = sokol.app;
 import log = sokol.log;
 import sglue = sokol.glue;
-import shd = shaders.triangle;
+import shd = examples.shaders.triangle;
 
 extern (C):
 @safe:
 
-struct State {
+struct State
+{
     sg.Bindings bind;
     sg.Pipeline pip;
 }
+
 static State state;
 
-static void init() {
+static void init()
+{
     sg.Desc sg_desc = {
         environment: sglue.environment(),
-        logger: { func: &log.slog_func },
+        logger: {func: &log.slog_func},
     };
     sg.setup(sg_desc);
 
     // create vertex buffer with triangle vertices
     float[21] vertices = [
         // positions      colors
-        0.0,   0.5, 0.5,  1.0, 0.0, 0.0, 1.0,
-        0.5,  -0.5, 0.5,  0.0, 1.0, 0.0, 1.0,
-        -0.5, -0.5, 0.5,  0.0, 0.0, 1.0, 1.0,
+        0.0, 0.5, 0.5, 1.0, 0.0, 0.0, 1.0,
+        0.5, -0.5, 0.5, 0.0, 1.0, 0.0, 1.0,
+        -0.5, -0.5, 0.5, 0.0, 0.0, 1.0, 1.0,
     ];
-    sg.BufferDesc buf_desc = {
-        data: {
-            ptr: vertices.ptr,
-            size: vertices.sizeof,
-        }
-    };
+    sg.BufferDesc buf_desc = {data: {ptr: vertices.ptr,
+    size: vertices.sizeof,}};
     state.bind.vertex_buffers[0] = sg.makeBuffer(buf_desc);
 
     // create a shader and pipeline object
@@ -47,17 +46,18 @@ static void init() {
         shader: sg.makeShader(shd.triangleShaderDesc(sg.queryBackend())),
         layout: {
             attrs: [
-                shd.ATTR_VS_POSITION: { format: sg.VertexFormat.Float3 },
-                shd.ATTR_VS_COLOR0:   { format: sg.VertexFormat.Float4 },
+                shd.ATTR_VS_POSITION: {format: sg.VertexFormat.Float3},
+                shd.ATTR_VS_COLOR0: {format: sg.VertexFormat.Float4},
             ],
         }
     };
     state.pip = sg.makePipeline(pip_desc);
 }
 
-static void frame() {
+static void frame()
+{
     // default pass-action clears to grey
-    sg.Pass pass = { swapchain: sglue.swapchain() };
+    sg.Pass pass = {swapchain: sglue.swapchain()};
     sg.beginPass(pass);
     sg.applyPipeline(state.pip);
     sg.applyBindings(state.bind);
@@ -66,11 +66,13 @@ static void frame() {
     sg.commit();
 }
 
-static void cleanup() {
+static void cleanup()
+{
     sg.shutdown();
 }
 
-void main() {
+void main()
+{
     sapp.Desc runner = {
         window_title: "triangle.d",
         init_cb: &init,

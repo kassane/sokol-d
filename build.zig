@@ -325,6 +325,15 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
         ldc_exec.addArg(dflag);
     }
 
+    if (options.includePaths) |includePath| {
+        for (includePath) |path| {
+            if (path[0] == '-') {
+                @panic("add includepath only!");
+            }
+            ldc_exec.addArg(b.fmt("-I{s}", .{path}));
+        }
+    }
+
     if (options.ldflags) |ldflags| {
         for (ldflags) |ldflag| {
             if (ldflag[0] == '-') {
@@ -618,6 +627,7 @@ pub const DCompileStep = struct {
     betterC: bool = false,
     sources: []const []const u8,
     dflags: []const []const u8,
+    includePaths: ?[]const []const u8 = null,
     ldflags: ?[]const []const u8 = null,
     name: []const u8,
     zig_cc: bool = false,
@@ -656,7 +666,7 @@ fn buildShaders(b: *Build) void {
     const shdc_dep = b.dependency("shdc", .{}).path("").getPath(b);
 
     const sokol_tools_bin_dir = b.pathJoin(&.{ shdc_dep, "bin" });
-    const shaders_dir = "src/shaders/";
+    const shaders_dir = "src/examples/shaders/";
     const shaders = .{
         "triangle.glsl",
         "bufferoffsets.glsl",
@@ -868,7 +878,13 @@ fn buildImgui(b: *Build, options: libImGuiOptions) !*CompileStep {
             libimgui.step.dependOn(&emsdk_setup.step);
         }
         // add the Emscripten system include seach path
-        libimgui.addIncludePath(emSdkLazyPath(b, options.emsdk.?, &.{ "upstream", "emscripten", "cache", "sysroot", "include" }));
+        libimgui.addIncludePath(emSdkLazyPath(b, options.emsdk.?, &.{
+            "upstream",
+            "emscripten",
+            "cache",
+            "sysroot",
+            "include",
+        }));
     }
     libimgui.addCSourceFiles(.{
         .root = cimgui_dir,

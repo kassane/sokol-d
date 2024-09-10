@@ -10,12 +10,13 @@ import app = sokol.app;
 import log = sokol.log;
 import handmade.math : Mat4, Vec3;
 import sglue = sokol.glue;
-import shd = shaders.cube;
+import shd = examples.shaders.cube;
 
 extern (C):
 @safe:
 
-struct State {
+struct State
+{
     float rx = 0;
     float ry = 0;
 
@@ -25,23 +26,23 @@ struct State {
         colors: [
             {
                 load_action: sg.LoadAction.Clear,
-                clear_value: { r: 0.25, g: 0.5, b: 0.75, a: 1.0 }
+                clear_value: {r: 0.25, g: 0.5, b: 0.75, a: 1.0}
             }
         ]
     };
 
-    Mat4 view() {
+    Mat4 view()
+    {
         return Mat4.lookAt(Vec3(0.0, 1.5, 6.0), Vec3.zero(), Vec3.up());
     }
 }
 
 static State state;
 
-void init() {
-    sg.Desc gfxd = {
-        environment: sglue.environment,
-        logger: { func: &log.func }
-    };
+void init()
+{
+    sg.Desc gfxd = {environment: sglue.environment,
+    logger: {func: &log.func}};
     sg.setup(gfxd);
 
     float[168] vertices = [
@@ -75,9 +76,7 @@ void init() {
         1.0, 1.0, 1.0, 1.0, 0.0, 0.5, 1.0,
         1.0, 1.0, -1.0, 1.0, 0.0, 0.5, 1.0
     ];
-    sg.BufferDesc vbufd = {
-        data: { ptr: vertices.ptr, size: vertices.sizeof },
-    };
+    sg.BufferDesc vbufd = {data: {ptr: vertices.ptr, size: vertices.sizeof},};
     state.bind.vertex_buffers[0] = sg.makeBuffer(vbufd);
 
     ushort[36] indices = [
@@ -90,52 +89,53 @@ void init() {
     ];
     sg.BufferDesc ibufd = {
         type: sg.BufferType.Indexbuffer,
-        data: { ptr: indices.ptr, size: indices.sizeof },
+        data: {ptr: indices.ptr, size: indices.sizeof},
     };
     state.bind.index_buffer = sg.makeBuffer(ibufd);
 
     sg.PipelineDesc pld = {
         layout: {
             attrs: [
-                shd.ATTR_VS_POSITION: { format: sg.VertexFormat.Float3 },
-                shd.ATTR_VS_COLOR0: { format: sg.VertexFormat.Float4 },
+                shd.ATTR_VS_POSITION: {format: sg.VertexFormat.Float3},
+                shd.ATTR_VS_COLOR0: {format: sg.VertexFormat.Float4},
             ],
         },
         shader: sg.makeShader(shd.cubeShaderDesc(sg.queryBackend())),
         index_type: sg.IndexType.Uint16,
         cull_mode: sg.CullMode.Back,
-        depth: {
-            write_enabled: true,
-            compare: sg.CompareFunc.Less_equal
-        },
+        depth: {write_enabled: true,
+        compare: sg.CompareFunc.Less_equal},
     };
     state.pip = sg.makePipeline(pld);
 }
 
-void frame() {
+void frame()
+{
     immutable float t = cast(float)(app.frameDuration() * 60.0);
 
     state.rx += 1.0 * t;
     state.ry += 2.0 * t;
 
-    shd.VsParams vsParams = { mvp: computeMvp(state.rx, state.ry) };
+    shd.VsParams vsParams = {mvp: computeMvp(state.rx, state.ry)};
 
-    sg.Pass pass = { action: state.passAction, swapchain: sglue.swapchain() };
+    sg.Pass pass = {action: state.passAction, swapchain: sglue.swapchain()};
     sg.beginPass(pass);
     sg.applyPipeline(state.pip);
     sg.applyBindings(state.bind);
-    sg.Range r = { ptr: &vsParams, size: vsParams.sizeof };
+    sg.Range r = {ptr: &vsParams, size: vsParams.sizeof};
     sg.applyUniforms(sg.ShaderStage.Vs, shd.SLOT_VS_PARAMS, r);
     sg.draw(0, 36, 1);
     sg.endPass();
     sg.commit();
 }
 
-void cleanup() {
+void cleanup()
+{
     sg.shutdown();
 }
 
-Mat4 computeMvp(float rx, float ry) {
+Mat4 computeMvp(float rx, float ry)
+{
     immutable proj = Mat4.perspective(60.0, app.widthf() / app.heightf(), 0.01, 10.0);
     immutable rxm = Mat4.rotate(rx, Vec3(1.0, 0.0, 0.0));
     immutable rym = Mat4.rotate(ry, Vec3(0.0, 1.0, 0.0));
@@ -144,7 +144,8 @@ Mat4 computeMvp(float rx, float ry) {
     return Mat4.mul(view_proj, model);
 }
 
-void main() {
+void main()
+{
     app.Desc runner = {
         window_title: "cube.d",
         init_cb: &init,
@@ -153,8 +154,8 @@ void main() {
         width: 800,
         height: 600,
         sample_count: 4,
-        icon: { sokol_default: true },
-        logger: { func: &log.func }
+        icon: {sokol_default: true},
+        logger: {func: &log.func}
     };
     app.run(runner);
 }
