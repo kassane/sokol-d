@@ -1,5 +1,5 @@
 name "sokol-d"
-version "0.1.3"
+version "0.1.4"
 description "D bindings for sokol"
 authors "Matheus Catarino França" "Andre Weissflog"
 copyright "Copyright 2023-2024 - Matheus Catarino França"

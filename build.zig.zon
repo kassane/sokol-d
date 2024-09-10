@@ -1,6 +1,6 @@
 .{
     .name = "sokol-d",
-    .version = "0.1.3",
+    .version = "0.1.4",
     .min_zig_version = "0.13.0",
     .paths = .{
         "src",
@@ -12,16 +12,16 @@
     },
     .dependencies = .{
         .cimgui = .{
-            .url = "git+https://github.com/cimgui/cimgui.git#1.91.1",
-            .hash = "122067e25fdf4d7117ba3de74d6403d61cd5c9c783b7eae974038132eb97f4ff1609",
+            .url = "git+https://github.com/kassane/cimgui#37b676a46c38f97e983b2e288741544ae6693c94",
+            .hash = "1220196b0ea3187c56ac1a319af951f85d6cd404c58f1401da8ffe0f1584ac3f2a3a",
         },
         .imgui = .{
-            .url = "git+https://github.com/ocornut/imgui.git#v1.91.1",
-            .hash = "1220ae2947eb39d1512e1dde5b9d044dd40f25772551ca203acf9ba9c4de6cefbdcd",
+            .url = "git+https://github.com/ocornut/imgui#v1.91.1-docking",
+            .hash = "1220e3bfc93a0cf459fd9984a9d6f5f8664ce34982b9c11f75973f6341c29baae2b8",
         },
         .emsdk = .{
-            .url = "git+https://github.com/emscripten-core/emsdk#3.1.64",
-            .hash = "12206bb1c8206a3e50d43db0711e6b9e0485758265abadf6ffccee37839bb0283c6e",
+            .url = "git+https://github.com/emscripten-core/emsdk#3.1.66",
+            .hash = "1220146d92ca77f3cabb151fd035f6fa2ea03481ea07f3358ec912f17acdba791a8a",
         },
         .shdc = .{
             .url = "git+https://github.com/floooh/sokol-tools-bin#c28c168552817738639cb3b81484bbd88b723388",
