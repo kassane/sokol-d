@@ -886,9 +886,12 @@ const libImGuiOptions = struct {
 };
 fn buildImgui(b: *Build, options: libImGuiOptions) !*CompileStep {
     const imgui_cpp = b.dependency("imgui", .{});
-    const imgui_cpp_dir = imgui_cpp.path("");
     const cimgui = b.dependency("cimgui", .{});
-    const cimgui_dir = cimgui.path("");
+
+    // create file tree for cimgui and imgui
+    const wf = b.addNamedWriteFiles("cimgui");
+    const cimgui_dir = wf.addCopyDirectory(cimgui.path(""), "", .{});
+    const imgui_cpp_dir = wf.addCopyDirectory(imgui_cpp.path(""), "imgui", .{});
 
     const libimgui = b.addStaticLibrary(.{
         .name = "cimgui",
