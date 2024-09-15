@@ -375,8 +375,8 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*std.Build.Step.InstallDi
     ldc_exec.addArg("-vcolumns");
 
     const extFile = switch (options.kind) {
-        .exe, .@"test" => if (options.target.result.os.tag == .windows) ".exe" else "",
-        .lib => if (options.target.result.abi == .msvc) ".lib" else ".a",
+        .exe, .@"test" => std.Target.exeFileExt(options.target.result),
+        .lib => if (options.linkage == .static) std.Target.staticLibSuffix(options.target.result) else std.Target.dynamicLibSuffix(options.target.result),
         .obj => if (options.target.result.os.tag == .windows) ".obj" else ".o",
     };
     // object file output (zig-cache/o/{hash_id}/*.o)
