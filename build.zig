@@ -289,7 +289,7 @@ pub fn build(b: *Build) !void {
 }
 
 // Use LDC2 (https://github.com/ldc-developers/ldc) to compile the D examples
-pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
+pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*std.Build.Step.InstallDir {
     // ldmd2: ldc2 wrapped w/ dmd flags
     const ldc = try b.findProgram(&.{"ldmd2"}, &.{});
 
@@ -326,11 +326,11 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
     }
 
     if (options.includePaths) |includePath| {
-        for (includePath) |path| {
-            if (path[0] == '-') {
+        for (includePath) |dir| {
+            if (dir[0] == '-') {
                 @panic("add includepath only!");
             }
-            ldc_exec.addArg(b.fmt("-I{s}", .{path}));
+            ldc_exec.addArg(b.fmt("-I{s}", .{dir}));
         }
     }
 
@@ -374,14 +374,20 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
     // Print character (column) numbers in diagnostics
     ldc_exec.addArg("-vcolumns");
 
+    const extFile = switch (options.kind) {
+        .exe, .@"test" => std.Target.exeFileExt(options.target.result),
+        .lib => if (options.linkage == .static) std.Target.staticLibSuffix(options.target.result) else std.Target.dynamicLibSuffix(options.target.result),
+        .obj => if (options.target.result.os.tag == .windows) ".obj" else ".o",
+    };
     // object file output (zig-cache/o/{hash_id}/*.o)
-    var objpath: []const u8 = undefined; // needed for wasm build
-    if (b.cache_root.path) |path| {
-        // immutable state hash
-        objpath = b.pathJoin(&.{ path, "o", &b.graph.cache.hash.peek() });
-        ldc_exec.addArg(b.fmt("-od={s}", .{objpath}));
+    const objpath = ldc_exec.addPrefixedOutputFileArg("-of=", try std.mem.concat(b.allocator, u8, &.{ options.name, extFile }));
+    if (b.cache_root.path) |dir| {
         // mutable state hash (ldc2 cache - llvm-ir2obj)
-        ldc_exec.addArg(b.fmt("-cache={s}", .{b.pathJoin(&.{ path, "o", &b.graph.cache.hash.final() })}));
+        ldc_exec.addArg(b.fmt("-cache={s}", .{b.pathJoin(&.{
+            dir,
+            "o",
+            &b.graph.cache.hash.final(),
+        })}));
     }
 
     // disable LLVM-IR verifier
@@ -406,7 +412,7 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
 
     // D Source files
     for (options.sources) |src| {
-        ldc_exec.addArg(src);
+        ldc_exec.addFileArg(path(b, src));
     }
 
     // linker flags
@@ -439,13 +445,13 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
         // C include path
         for (lib_sokol.root_module.include_dirs.items) |include_dir| {
             if (include_dir == .other_step) continue;
-            const path = if (include_dir == .path)
+            const dir = if (include_dir == .path)
                 include_dir.path.getPath(b)
             else if (include_dir == .path_system)
                 include_dir.path_system.getPath(b)
             else
                 include_dir.path_after.getPath(b);
-            ldc_exec.addArg(b.fmt("-P-I{s}", .{path}));
+            ldc_exec.addArg(b.fmt("-P-I{s}", .{dir}));
         }
 
         // library paths
@@ -534,8 +540,16 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
     };
 
     // output file
-    if (options.kind != .obj)
-        ldc_exec.addArg(b.fmt("-of={s}", .{b.pathJoin(&.{ b.install_prefix, outputDir, options.name })}));
+    const installdir = b.addInstallDirectory(.{
+        .install_dir = .prefix,
+        .source_dir = objpath.dirname(),
+        .install_subdir = outputDir,
+        .exclude_extensions = &.{
+            "o",
+            "obj",
+        },
+    });
+    installdir.step.dependOn(&ldc_exec.step);
 
     if (options.zig_cc) {
         const zcc = buildZigCC(b);
@@ -549,7 +563,7 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
     }
 
     const example_run = b.addSystemCommand(&.{b.pathJoin(&.{ b.install_path, outputDir, options.name })});
-    example_run.step.dependOn(&ldc_exec.step);
+    example_run.step.dependOn(&installdir.step);
 
     const run = if (options.kind != .@"test")
         b.step(b.fmt("run-{s}", .{options.name}), b.fmt("Run {s} example", .{options.name}))
@@ -559,12 +573,7 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
     if (options.target.result.isWasm()) {
         // get D object file and put it in the wasm artifact
         const artifact = addArtifact(b, options);
-        artifact.addObjectFile(.{
-            .src_path = .{
-                .sub_path = b.fmt("{s}/{s}.o", .{ objpath, options.name }),
-                .owner = b,
-            },
-        });
+        artifact.addObjectFile(objpath);
         artifact.linkLibrary(options.artifact.?);
         artifact.step.dependOn(&ldc_exec.step);
         const backend = resolveSokolBackend(options.backend, options.target.result);
@@ -593,7 +602,11 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
     } else {
         if (options.artifact) |lib_sokol| {
             if (lib_sokol.rootModuleTarget().os.tag == .windows and lib_sokol.isDynamicLibrary()) {
-                ldc_exec.addArg(b.pathJoin(&.{ b.install_path, "lib", b.fmt("{s}.lib", .{lib_sokol.name}) }));
+                ldc_exec.addArg(b.pathJoin(&.{
+                    b.install_path,
+                    "lib",
+                    b.fmt("{s}.lib", .{lib_sokol.name}),
+                }));
             } else {
                 ldc_exec.addArtifactArg(lib_sokol);
                 var it = lib_sokol.root_module.iterateDependencies(lib_sokol, false);
@@ -616,7 +629,7 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*RunStep {
         }
         run.dependOn(&example_run.step);
     }
-    return ldc_exec;
+    return installdir;
 }
 
 pub const DCompileStep = struct {
@@ -646,6 +659,19 @@ pub fn addArtifact(b: *Build, options: DCompileStep) *Build.Step.Compile {
         .linkage = options.linkage,
         .kind = options.kind,
     });
+}
+
+pub fn path(b: *std.Build, sub_path: []const u8) std.Build.LazyPath {
+    if (std.fs.path.isAbsolute(sub_path)) {
+        return .{
+            .cwd_relative = sub_path,
+        };
+    } else return .{
+        .src_path = .{
+            .owner = b,
+            .sub_path = sub_path,
+        },
+    };
 }
 
 // -------------------------- Others Configuration --------------------------
