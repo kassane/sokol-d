@@ -279,6 +279,7 @@ enum LogItem {
     Linux_x11_open_display_failed,
     Linux_x11_query_system_dpi_failed,
     Linux_x11_dropped_file_uri_wrong_scheme,
+    Linux_x11_failed_to_become_owner_of_clipboard,
     Android_unsupported_input_event_input_cb,
     Android_unsupported_input_event_main_cb,
     Android_read_msg_failed,
