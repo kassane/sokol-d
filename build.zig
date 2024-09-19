@@ -203,12 +203,13 @@ pub fn buildLibSokol(b: *Build, options: LibSokolOptions) !*CompileStep {
 
 pub fn build(b: *Build) !void {
     const opt_use_gl = b.option(bool, "gl", "Force OpenGL (default: false)") orelse false;
+    const opt_use_gles3 = b.option(bool, "gles3", "Force OpenGL ES3 (default: false)") orelse false;
     const opt_use_wgpu = b.option(bool, "wgpu", "Force WebGPU (default: false, web only)") orelse false;
     const opt_use_x11 = b.option(bool, "x11", "Force X11 (default: true, Linux only)") orelse true;
     const opt_use_wayland = b.option(bool, "wayland", "Force Wayland (default: false, Linux only, not supported in main-line headers)") orelse false;
     const opt_use_egl = b.option(bool, "egl", "Force EGL (default: false, Linux only)") orelse false;
     const opt_with_sokol_imgui = b.option(bool, "imgui", "Add support for sokol_imgui.h bindings") orelse false;
-    const sokol_backend: SokolBackend = if (opt_use_gl) .gl else if (opt_use_wgpu) .wgpu else .auto;
+    const sokol_backend: SokolBackend = if (opt_use_gl) .gl else if (opt_use_gles3) .gles3 else if (opt_use_wgpu) .wgpu else .auto;
 
     // LDC-options options
     const dub_artifact = b.option(bool, "artifact", "Build artifacts (default: false)") orelse false;
@@ -588,12 +589,7 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*std.Build.Step.InstallDi
             .use_filesystem = false,
             .release_use_lto = options.artifact.?.want_lto orelse false,
             .shell_file_path = b.path("src/sokol/web/shell.html"),
-            // NOTE: This is required to make the Zig @returnAddress() builtin work,
-            // which is used heavily in the stdlib allocator code (not just
-            // the GeneralPurposeAllocator).
-            // The Emscripten runtime error message when the option is missing is:
-            // Cannot use convertFrameToPC (needed by __builtin_return_address) without -sUSE_OFFSET_CONVERTER
-            .extra_args = &.{"-sUSE_OFFSET_CONVERTER=1"},
+            .extra_args = &.{"-sSTACK_SIZE=512KB"},
         });
         link_step.step.dependOn(&ldc_exec.step);
         const emrun = emRunStep(b, .{ .name = options.name, .emsdk = options.emsdk.? });
@@ -760,7 +756,11 @@ pub fn emLinkStep(b: *Build, options: EmLinkOptions) !*Build.Step.InstallDir {
     const emcc = b.addSystemCommand(&.{emcc_path});
     emcc.setName("emcc"); // hide emcc path
     if (options.optimize == .Debug) {
-        emcc.addArgs(&.{ "-Og", "-sSAFE_HEAP=1", "-sSTACK_OVERFLOW_CHECK=1" });
+        emcc.addArgs(&.{
+            "-Og",
+            "-sSAFE_HEAP=1",
+            "-sSTACK_OVERFLOW_CHECK=1",
+        });
     } else {
         emcc.addArg("-sASSERTIONS=0");
         if (options.optimize == .ReleaseSmall) {
