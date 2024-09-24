@@ -276,7 +276,7 @@ pub fn build(b: *Build) !void {
             b.getInstallStep().dependOn(&ldc.step);
         }
     }
-    buildShaders(b);
+    buildShaders(b, target);
 
     // build tests
     // fixme: not building on Windows libsokol w/ kind test (missing cc [??])
@@ -684,7 +684,7 @@ pub fn buildZigCC(b: *Build) *CompileStep {
 }
 
 // a separate step to compile shaders, expects the shader compiler in ../sokol-tools-bin/
-fn buildShaders(b: *Build) void {
+fn buildShaders(b: *Build, target: Build.ResolvedTarget) void {
     const shdc_dep = b.dependency("shdc", .{}).path("").getPath(b);
 
     const sokol_tools_bin_dir = b.pathJoin(&.{ shdc_dep, "bin" });
@@ -714,6 +714,8 @@ fn buildShaders(b: *Build) void {
     }
     const shdc_path = b.findProgram(&.{"sokol-shdc"}, &.{}) catch b.pathJoin(&.{ sokol_tools_bin_dir, optional_shdc.? });
     const shdc_step = b.step("shaders", "Compile shaders (needs ../sokol-tools-bin)");
+    const glsl = if (target.result.isDarwin()) "glsl410" else "glsl430";
+    const slang = glsl ++ ":metal_macos:hlsl5:glsl300es:wgsl";
     inline for (shaders) |shader| {
         const cmd = b.addSystemCommand(&.{
             shdc_path,
@@ -722,7 +724,7 @@ fn buildShaders(b: *Build) void {
             "-o",
             shaders_dir ++ shader[0 .. shader.len - 5] ++ ".d",
             "-l",
-            "glsl430:metal_macos:hlsl4:glsl300es:wgsl",
+            slang,
             "-f",
             "sokol_d",
         });
