@@ -16,8 +16,8 @@
             .hash = "12204b1441f1407af838a3e6f8423ee9cb2cf7b07114ec077b1ec0a233d4b78672c9",
         },
         .imgui = .{
-            .url = "git+https://github.com/ocornut/imgui#v1.91.2-docking",
-            .hash = "1220388fad9c32584aec3bba9ccdf7d240ab4e81999e0e567a2d832e54177d908daf",
+            .url = "git+https://github.com/ocornut/imgui#v1.91.3-docking",
+            .hash = "1220028f6acbeeb6b05837301353a91fb05dbe6ca283a7c3277efee43a5b98c57838",
         },
         .emsdk = .{
             .url = "git+https://github.com/emscripten-core/emsdk#3.1.67",

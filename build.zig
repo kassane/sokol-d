@@ -197,6 +197,9 @@ pub fn buildLibSokol(b: *Build, options: LibSokolOptions) !*CompileStep {
             try lib.root_module.include_dirs.append(b.allocator, dir);
         }
         lib.linkLibrary(cimgui);
+        // TODO: this is a hack to get the cimgui.h header into the include path
+        const cimgui_include = b.dependency("cimgui", .{}).path("");
+        lib.addIncludePath(cimgui_include);
     }
     return lib;
 }
@@ -899,15 +902,15 @@ fn buildImgui(b: *Build, options: libImGuiOptions) !*CompileStep {
         .optimize = options.optimize,
     });
 
-    // libimgui compilation depends on file tree
-    libimgui.step.dependOn(&wf.step);
-
     if (libimgui.linkage == .static)
         libimgui.pie = true
     else if (libimgui.linkage == .static)
         libimgui.root_module.pic = true;
-    libimgui.addIncludePath(cimgui_dir);
-    libimgui.addIncludePath(imgui_cpp_dir);
+
+    // FIXME: this is a hack to make cimgui work on build.zig | NOT USE C/IMGUI INCLUDES (get BUILD [Step] ERRORS)
+    // libimgui.addIncludePath(cimgui_dir);
+    // libimgui.addAfterIncludePath(imgui_cpp_dir);
+
     if (libimgui.rootModuleTarget().isWasm()) {
         if (try emSdkSetupStep(b, options.emsdk.?)) |emsdk_setup| {
             libimgui.step.dependOn(&emsdk_setup.step);
