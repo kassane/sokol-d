@@ -12,16 +12,16 @@
     },
     .dependencies = .{
         .cimgui = .{
-            .url = "git+https://github.com/cimgui/cimgui#8268b6748b40d38d08df75c15af46024f90cd7d9",
-            .hash = "12204b1441f1407af838a3e6f8423ee9cb2cf7b07114ec077b1ec0a233d4b78672c9",
+            .url = "git+https://github.com/cimgui/cimgui#1.91.3",
+            .hash = "1220b459b09242ad64353ca1f26ec48fd81c2a4ccdd5c4e088c14848488d2e0c2514",
         },
         .imgui = .{
-            .url = "git+https://github.com/ocornut/imgui#v1.91.3-docking",
-            .hash = "1220028f6acbeeb6b05837301353a91fb05dbe6ca283a7c3277efee43a5b98c57838",
+            .url = "git+https://github.com/ocornut/imgui#v1.91.3",
+            .hash = "1220dbde2c4211686e4d0431c0969fe48af2bd7f859d3eab9ee22b3c64750d86c408",
         },
         .emsdk = .{
-            .url = "git+https://github.com/emscripten-core/emsdk#3.1.67",
-            .hash = "12208a21e4a62ced46244c44c6215ff99c03c0d384ec3afea04b32c4b8ecb1baa41a",
+            .url = "git+https://github.com/emscripten-core/emsdk#3.1.68",
+            .hash = "122084d460283a7f621f64817c12a4689dacda8c8b02cf9c46747a3572c2166bee83",
         },
         .shdc = .{
             .url = "git+https://github.com/floooh/sokol-tools-bin#0732ba3f61dcfd0d0988f4c351421d84ec8b67e4",
