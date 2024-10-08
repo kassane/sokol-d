@@ -197,6 +197,9 @@ pub fn buildLibSokol(b: *Build, options: LibSokolOptions) !*CompileStep {
             try lib.root_module.include_dirs.append(b.allocator, dir);
         }
         lib.linkLibrary(cimgui);
+        // TODO: this is a hack to get the cimgui.h header into the include path
+        const cimgui_include = b.dependency("cimgui", .{}).path("");
+        lib.addIncludePath(cimgui_include);
     }
     return lib;
 }
@@ -886,21 +889,28 @@ const libImGuiOptions = struct {
 };
 fn buildImgui(b: *Build, options: libImGuiOptions) !*CompileStep {
     const imgui_cpp = b.dependency("imgui", .{});
-    const imgui_cpp_dir = imgui_cpp.path("");
     const cimgui = b.dependency("cimgui", .{});
-    const cimgui_dir = cimgui.path("");
+
+    // create file tree for cimgui and imgui
+    const wf = b.addNamedWriteFiles("cimgui");
+    const cimgui_dir = wf.addCopyDirectory(cimgui.path(""), "", .{});
+    const imgui_cpp_dir = wf.addCopyDirectory(imgui_cpp.path(""), "imgui", .{});
 
     const libimgui = b.addStaticLibrary(.{
         .name = "cimgui",
         .target = options.target,
         .optimize = options.optimize,
     });
+
     if (libimgui.linkage == .static)
         libimgui.pie = true
     else if (libimgui.linkage == .static)
         libimgui.root_module.pic = true;
-    libimgui.addIncludePath(cimgui_dir);
-    libimgui.addIncludePath(imgui_cpp_dir);
+
+    // FIXME: this is a hack to make cimgui work on build.zig | NOT USE C/IMGUI INCLUDES (get BUILD [Step] ERRORS)
+    // libimgui.addIncludePath(cimgui_dir);
+    // libimgui.addAfterIncludePath(imgui_cpp_dir);
+
     if (libimgui.rootModuleTarget().isWasm()) {
         if (try emSdkSetupStep(b, options.emsdk.?)) |emsdk_setup| {
             libimgui.step.dependOn(&emsdk_setup.step);
