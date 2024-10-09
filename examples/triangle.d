@@ -11,7 +11,7 @@ import sg = sokol.gfx;
 import sapp = sokol.app;
 import log = sokol.log;
 import sglue = sokol.glue;
-import shd = examples.shaders.triangle;
+import shd = shaders.triangle;
 
 extern (C):
 @safe:
@@ -86,4 +86,12 @@ void main()
         logger: {func: &log.func}
     };
     sapp.run(runner);
+}
+
+version (WebAssembly)
+{
+    debug
+    {
+        import emscripten.assertd;
+    }
 }

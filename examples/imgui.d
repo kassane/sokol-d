@@ -13,7 +13,7 @@ import sgapp = sokol.glue;
 import sapp = sokol.app;
 import simgui = sokol.imgui;
 import log = sokol.log;
-import imgui;
+import imgui.cimgui;
 
 extern (C):
 @safe:
@@ -101,4 +101,12 @@ void main() @safe nothrow
         logger: {func: &log.func}
     };
     sapp.run(runner);
+}
+
+version (WebAssembly)
+{
+    debug
+    {
+        import emscripten.assertd;
+    }
 }

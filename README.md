@@ -6,92 +6,111 @@ Auto-generated [D](https://dlang.org) bindings for the [sokol headers](https://g
 
 #### Targets
 
-- Native
-- Wasm (`-Dtarget=wasm32-emscripten-none`) - LTO enabled on release-mode.
-
 By default, the backend 3D API will be selected based on the target platform:
 
 - macOS: Metal
 - Windows: D3D11
-- Linux: GL
+- Linux: GL/Wayland
+- Wasm (LDC2 required) - WebGL3/WebGPU support
 
-## BUILD
+#### Usage - template project
 
-**Required**
+```console
+dub init -t sokol-d
+```
 
-- [zig](https://ziglang.org/download) v0.14.0 or master
-- [ldc](https://ldc-developers.github.io) v1.40.0 or latest-CI (nightly)
+## Build Requirements
 
-Supported platforms are: Windows, macOS, Linux (with X11)
+- [D Compiler](https://dlang.org/download.html) (DMD/LDC2/GDC)
+- C/C++ compiler (GCC/Clang/MSVC)
+- Linux dependencies: libglu1-mesa-dev, mesa-common-dev, xorg-dev, libasound-dev (for X11/Wayland, GL and ALSA development)
 
-On Linux install the following packages: libglu1-mesa-dev, mesa-common-dev, xorg-dev, libasound-dev (or generally: the dev packages required for X11, GL and ALSA development)
+## Building Native Examples
+
+1. First, build the sokol static library:
+```bash
+dub build -c sokol-static
+```
+
+2. Then build and run any example:
+```bash
+cd examples
+dub :triangle -c native
+dub :cube -c native
+dub :imgui -c native
+```
+
+## Building WebAssembly Examples
+
+1. First, build sokol for WebAssembly:
+```bash
+# For WebGL2
+dub build -c sokol-wasm-webgl
+
+# For WebGPU
+dub build -c sokol-wasm-wgpu
+```
+
+2. Then build any example for WASM:
+```bash
+cd examples
+dub :triangle -c wasm     # for WebGL2
+# or
+dub :triangle -c wgpu     # for WebGPU
+```
+
+### All Configurations
 
 ```bash
-# build sokol library + all examples [default: static library]
-zig build
-
-# build sokol shared library + all examples
-zig build -Dshared
-
-# build sokol library only
-zig build -Dartifact
-
-# Run Examples
-zig build run-blend
-zig build run-bufferoffsets
-zig build run-clear
-zig build run-cube
-zig build run-debugtext
-zig build run-mrt
-zig build run-saudio
-zig build run-instancing
-zig build run-offscreen
-zig build run-sgl_context
-zig build run-sgl_points
-zig build run-user_data
-zig build run-noninterleaved
-zig build run-texcube
-zig build run-quad
-zig build run-triangle
-zig build run-shapes
-zig build run-vertexpull
-zig build run-imgui -Dimgui # optional: -Dimgui-version=docking
-zig build run-droptest -Dimgui # optional: -Dimgui-version=docking
-
-zig build --help
-# Project-Specific Options:
-#   -Dgl=[bool]                  Force OpenGL (default: false)
-#   -Dgles3=[bool]               Force OpenGL ES3 (default: false)
-#   -Dwgpu=[bool]                Force WebGPU (default: false, web only)
-#   -Dx11=[bool]                 Force X11 (default: true, Linux only)
-#   -Dwayland=[bool]             Force Wayland (default: false, Linux only, not supported in main-line headers)
-#   -Degl=[bool]                 Force EGL (default: false, Linux only)
-#   -Dimgui=[bool]               Add support for sokol_imgui.h bindings
-#   -Dsokol_imgui_cprefix=[string] Override Dear ImGui C bindings prefix for sokol_imgui.h (see SOKOL_IMGUI_CPREFIX)
-#   -Dcimgui_header_path=[string] Override the Dear ImGui C bindings header name (default: cimgui.h)
-#   -Dimgui-version=[enum]       Select ImGui version to use
-#                                  Supported Values:
-#                                    default
-#                                    docking
-#   -Dubsan=[bool]               Enable undefined behavior sanitizer
-#   -Dtsan=[bool]                Enable thread sanitizer
-#   -Dartifact=[bool]            Build artifacts (default: false)
-#   -DbetterC=[bool]             Omit generating some runtime information and helper functions (default: false)
-#   -DzigCC=[bool]               Use zig cc as compiler and linker (default: false)
-#   -Dshaders=[bool]             Build shaders (default: false)
-#   -Dtarget=[string]            The CPU architecture, OS, and ABI to build for
-#   -Dcpu=[string]               Target CPU features to add or subtract
-#   -Dofmt=[string]              Target object format
-#   -Ddynamic-linker=[string]    Path to interpreter on the target system
-#   -Doptimize=[enum]            Prioritize performance, safety, or binary size
-#                                  Supported Values:
-#                                    Debug
-#                                    ReleaseSafe
-#                                    ReleaseFast
-#                                    ReleaseSmall
-#   -Dshared=[bool]              Build sokol dynamic library (default: static)
+dub build --print-configs    
+Available configurations:
+    sokol-static [default]   # Static library build
+    sokol-shared             # Shared/dynamic library build
+    sokol-wayland-static     # Wayland static build for Linux
+    sokol-wayland-shared     # Wayland shared build for Linux
+    imgui-static             # Sokol + Dear ImGui static build
+    imgui-shared             # Sokol + Dear ImGui shared build  
+    imgui-wgles3             # Sokol + Dear ImGui WebGL ES3 build
+    imgui-wgpu               # Sokol + Dear ImGui WebGPU build
+    sokol-wgles3             # WebGL ES3 build
+    sokol-wgpu               # WebGPU build
+    genshaders               # [re]Generate shader code
 ```
-(also run `zig build -l` to get a list of build targets)
+
+## Additional Build Options
+
+### Library Types
+- Static library: `dub build -c sokol-static`
+- Shared library: `dub build -c sokol-shared`
+
+### Linux Display Server
+- X11 (default with static): `dub build -c sokol-static`
+- Wayland static: `dub build -c sokol-wayland-static`
+- Wayland shared: `dub build -c sokol-wayland-shared`
+
+### Build Modes
+Available for all configurations:
+- Debug: `-b debug`
+- Release: `-b release`
+- Release (no bounds checking): `-b release-nobounds`
+- Release (better C): `-b release-betterc`
+
+## Available Examples
+- blend
+- bufferoffsets
+- clear
+- cube
+- debugtext
+- droptest
+- imgui
+- instancing
+- instancingcompute
+- saudio
+- sglcontext
+- sglpoints
+- triangle
+
+See [examples](examples)
 
 ## Shaders
 
@@ -99,7 +118,7 @@ Checkout [sokol-tools](https://github.com/floooh/sokol-tools) for a sokol shader
 here have been compiled using it with `-f sokol_d`!
 
 ```bash
-zig build -Dshaders # (re)generate D bindings from shaders.
+dub -c genshaders
 ```
 
 <br>

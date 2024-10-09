@@ -86,3 +86,11 @@ void main()
     };
     sapp.run(runner);
 }
+
+version (WebAssembly)
+{
+    debug
+    {
+        import emscripten.assertd;
+    }
+}

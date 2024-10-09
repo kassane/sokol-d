@@ -13,7 +13,7 @@ import app = sokol.app;
 import log = sokol.log;
 import handmade.math : Mat4, Vec3;
 import sglue = sokol.glue;
-import shd = examples.shaders.instancing;
+import shd = shaders.instancing;
 
 extern (C):
 @safe nothrow @nogc:
@@ -74,13 +74,12 @@ void init()
     ];
     sg.BufferDesc ibufd = {
         usage: {index_buffer: true},
-        data: {ptr: indices.ptr, size: indices.sizeof}
-    };
-    state.bind.index_buffer = sg.makeBuffer(ibufd);
+        data: {ptr: indices.ptr, size: indices.sizeof}};
+        state.bind.index_buffer = sg.makeBuffer(ibufd);
 
-    sg.BufferDesc vbufd1 = {
-        usage: {stream_update: true},
-        size: max_particles * Vec3.sizeof
+        sg.BufferDesc vbufd1 = {
+            usage: {stream_update: true},
+            size: max_particles * Vec3.sizeof
     };
     state.bind.vertex_buffers[1] = sg.makeBuffer(vbufd1);
 
@@ -88,74 +87,71 @@ void init()
         layout: {
             attrs: [
                 shd.ATTR_INSTANCING_POS: {
-                    format: sg.VertexFormat.Float3, buffer_index: 0
-                },
-                shd.ATTR_INSTANCING_COLOR0: {
-                    format: sg.VertexFormat.Float4, buffer_index: 0
-                },
-                shd.ATTR_INSTANCING_INST_POS: {
-                    format: sg.VertexFormat.Float3, buffer_index: 1
-                }
-            ],
+                    format: sg.VertexFormat.Float3, buffer_index: 0},
+                    shd.ATTR_INSTANCING_COLOR0 : {
+                        format: sg.VertexFormat.Float4, buffer_index: 0
         },
-        shader: sg.makeShader(shd.instancingShaderDesc(sg.queryBackend())),
-        index_type: sg.IndexType.Uint16,
-        cull_mode: sg.CullMode.Back,
-        depth: {
-            write_enabled: true, 
+        shd.ATTR_INSTANCING_INST_POS : {
+            format: sg.VertexFormat.Float3, buffer_index: 1
+                }],
+                    },
+            shader: sg.makeShader(shd.instancingShaderDesc(sg.queryBackend())),
+            index_type: sg.IndexType.Uint16,
+            cull_mode: sg.CullMode.Back,
+            depth: {write_enabled: true,
             compare: sg.CompareFunc.Less_equal
         },
+        };
+        pld.layout.buffers[1].step_func = sg.VertexStep.Per_instance;
+        state.pip = sg.makePipeline(pld);
+    }
+
+    void frame()
+    {
+        immutable float frame_time = cast(float) app.frameDuration();
+
+        // emit new particles
+        foreach (i; 0 .. num_particles_emitted_per_frame)
+        {
+            if (state.cur_num_particles < max_particles)
+            {
+                state.pos[state.cur_num_particles] = Vec3.zero();
+                state.vel[state.cur_num_particles] = Vec3(
+                    rand(-0.5, 0.5),
+                    rand(2.0, 2.5),
+                    rand(-0.5, 0.5)
+                );
+                state.cur_num_particles++;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        // update particle positions
+        foreach (i; 0 .. max_particles)
+        {
+            Vec3* vel = &state.vel[i];
+            Vec3* pos = &state.pos[i];
+            vel.y -= 1.0 * frame_time;
+            *pos = Vec3.add(*pos, Vec3.mul(*vel, frame_time));
+            if (pos.y < -2.0)
+            {
+                pos.y = -1.8;
+                vel.y = -vel.y;
+                *vel = Vec3.mul(*vel, 0.8);
+            }
+        }
+
+        sg.Range ub = {ptr: &state.pos, size: state.pos.sizeof};
+        sg.updateBuffer(state.bind.vertex_buffers[1], ub);
+        state.ry += 1.0 * frame_time;
+
+        shd.VsParams vsParams = computeMvp(1.0, state.ry);
+
+        sg.Pass pass = {action: state.passAction, swapchain: sglue.swapchain()
     };
-    pld.layout.buffers[1].step_func = sg.VertexStep.Per_instance;
-    state.pip = sg.makePipeline(pld);
-}
-
-void frame()
-{
-    immutable float frame_time = cast(float) app.frameDuration();
-
-    // emit new particles
-    foreach (i; 0 .. num_particles_emitted_per_frame)
-    {
-        if (state.cur_num_particles < max_particles)
-        {
-            state.pos[state.cur_num_particles] = Vec3.zero();
-            state.vel[state.cur_num_particles] = Vec3(
-                rand(-0.5, 0.5),
-                rand(2.0, 2.5),
-                rand(-0.5, 0.5)
-            );
-            state.cur_num_particles++;
-        }
-        else
-        {
-            break;
-        }
-    }
-
-    // update particle positions
-    foreach (i; 0 .. max_particles)
-    {
-        Vec3* vel = &state.vel[i];
-        Vec3* pos = &state.pos[i];
-        vel.y -= 1.0 * frame_time;
-        *pos = Vec3.add(*pos, Vec3.mul(*vel, frame_time));
-        if (pos.y < -2.0)
-        {
-            pos.y = -1.8;
-            vel.y = -vel.y;
-            *vel = Vec3.mul(*vel, 0.8);
-        }
-    }
-
-    sg.Range ub = {ptr: &state.pos, size: state.pos.sizeof};
-    sg.updateBuffer(state.bind.vertex_buffers[1], ub);
-    state.ry += 1.0 * frame_time;
-
-    shd.VsParams vsParams = computeMvp(1.0, state.ry);
-
-    sg.Pass pass = {action: state.passAction, swapchain: sglue.swapchain()
-            };
     sg.beginPass(pass);
     sg.applyPipeline(state.pip);
     sg.applyBindings(state.bind);
@@ -217,4 +213,12 @@ uint xorshift32()
 float rand(inout(float) min, inout(float) max)
 {
     return (cast(float)(xorshift32 & 0xFFFF) / 0x10000) * (max - min) + min;
+}
+
+version (WebAssembly)
+{
+    debug
+    {
+        import emscripten.assertd;
+    }
 }

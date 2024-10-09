@@ -12,7 +12,7 @@ import app = sokol.app;
 import log = sokol.log;
 import handmade.math : Mat4, Vec3;
 import sglue = sokol.glue;
-import shd = examples.shaders.blend;
+import shd = shaders.blend;
 
 extern (C):
 @safe:
@@ -168,4 +168,12 @@ void main()
         logger: {func: &log.func}
     };
     app.run(runner);
+}
+
+version (WebAssembly)
+{
+    debug
+    {
+        import emscripten.assertd;
+    }
 }

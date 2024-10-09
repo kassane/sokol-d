@@ -18,7 +18,7 @@ import app = sokol.app;
 import log = sokol.log;
 import handmade.math : Mat4, Vec3, Vec2, sin, cos;
 import sglue = sokol.glue;
-import shd = examples.shaders.mrt;
+import shd = shaders.mrt;
 
 extern (C):
 @safe:
@@ -352,4 +352,12 @@ Mat4 computeMvp(float rx, float ry)
     immutable view_proj = Mat4.mul(proj, view);
 
     return Mat4.mul(view_proj, model);
+}
+
+version (WebAssembly)
+{
+    debug
+    {
+        import emscripten.assertd;
+    }
 }

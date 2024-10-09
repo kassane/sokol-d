@@ -12,7 +12,7 @@ import app = sokol.app;
 import log = sokol.log;
 import handmade.math : Mat4, Vec3;
 import sglue = sokol.glue;
-import shd = examples.shaders.texcube;
+import shd = shaders.texcube;
 
 extern (C):
 @safe:
@@ -193,3 +193,11 @@ void main()
     app.run(runner);
 }
 // dfmt on
+
+version (WebAssembly)
+{
+    debug
+    {
+        import emscripten.assertd;
+    }
+}

@@ -1,0 +1,44 @@
+{
+	"name": "init-exec",
+	"description": "A minimal sokol-d application.",
+	"dependencies": {
+		"sokol-d": "~>0.2.1"
+	},
+	"targetPath": "build",
+	"targetType": "executable",
+	"environments": {
+		"SOKOL_ROOTPATH": "${SOKOL_D_PACKAGE_DIR}"
+	},
+	"configurations": [
+		{
+			"name": "native",
+			"subConfigurations": {
+				"sokol-d": "sokol-static"
+			}
+		},
+		{
+			"name": "wasm",
+			"targetType": "staticLibrary",
+			"postBuildCommands": [
+				"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=gles3 --link=${DUB_PACKAGE} --verbose",
+				"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --run=${DUB_PACKAGE} --verbose"
+			],
+			"targetName": "${DUB_PACKAGE}",
+			"subConfigurations": {
+				"sokol-d": "sokol-wgles3"
+			}
+		},
+		{
+			"name": "wgpu",
+			"targetType": "staticLibrary",
+			"postBuildCommands": [
+				"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=wgpu --link=${DUB_PACKAGE} --verbose",
+				"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --run=${DUB_PACKAGE} --verbose"
+			],
+			"targetName": "${DUB_PACKAGE}",
+			"subConfigurations": {
+				"sokol-d": "sokol-wgpu"
+			}
+		}
+	]
+}
