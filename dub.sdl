@@ -7,7 +7,6 @@ license "Zlib"
 targetType "executable"
 
 sourceFiles "build.d"
-postBuildCommands "./sokol-d"
 
 buildType "debug" {
 	buildOptions "debugMode" "debugInfo"
