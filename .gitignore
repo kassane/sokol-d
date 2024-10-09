@@ -26,9 +26,13 @@ docs/
 build/
 build
 bin/
+sokol-d
 
 # Code coverage
 *.lst
 
-# Zig build
+# hidden folder
 .*/
+
+# vendor
+vendor/

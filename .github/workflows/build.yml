@@ -22,4 +22,4 @@ jobs:
             sudo apt-get install libglu1-mesa-dev mesa-common-dev xorg-dev libasound-dev
 
       - name: (Dub) Build Native
-        run: dub -- --download-emsdk --download-zig
+        run: dub -- --download-emsdk --download-zig --download-imgui --download-sokol-tools

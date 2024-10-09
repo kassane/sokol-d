@@ -7,17 +7,21 @@ This software is provided 'as-is', without any express or implied warranty.
 In no event will the authors be held liable for any damages arising from the
 use of this software.
 */
-
+module build;
 import std;
 
-void main(string[] args)
+enum emsdk_version = "3.1.70";
+enum imgui_version = "1.91.4";
+enum zig_version = "0.13.0";
+
+void main(string[] args) @safe
 {
     // Parse command line arguments
     bool help = false;
     string compiler = findProgram("gcc");
     string target = "native";
     string optimize = "debug";
-    bool downloadEmsdk = false, downloadZig = false;
+    bool downloadEmsdk = false, downloadZig = false, downloadIMGUI = false, downloadSHDC = false;
     SokolBackend sokol_backend = SokolBackend.auto_;
 
     bool opt_use_gl = false;
@@ -58,20 +62,30 @@ void main(string[] args)
         {
             downloadZig = true;
         }
+        else if (arg == "--download-imgui")
+        {
+            downloadIMGUI = true;
+        }
+        else if (arg == "--download-sokol-tools")
+        {
+            downloadSHDC = true;
+        }
     }
 
     if (args.length < 2 || help)
     {
         writeln("Usage: dub run -- [options]");
         writeln("Options:");
-        writeln("  --help                 Show this help message");
+        writeln("  --help                   Show this help message");
         writeln(
-            "  --backend=<backend>     Select backend (auto, d3d11, metal, gl, gles3, wgpu)");
-        writeln("  --toolchain=<compiler>  Select C toolchain (gcc, clang, emcc)");
-        writeln("  --optimize=<level>      Select optimization level (debug, release)");
-        writeln("  --target=<target>      Select target (native, wasm, android)");
-        writeln("  --download-emsdk       Download and setup Emscripten SDK");
-        writeln("  --download-zig       Download and setup Zig toolchain");
+            "  --backend=<backend>          Select backend (auto, d3d11, metal, gl, gles3, wgpu)");
+        writeln("  --toolchain=<compiler>   Select C toolchain (gcc, clang, emcc)");
+        writeln("  --optimize=<level>       Select optimization level (debug, release)");
+        writeln("  --target=<target>        Select target (native, wasm, android)");
+        writeln("  --download-emsdk         Download and setup Emscripten SDK");
+        writeln("  --download-zig           Download and setup Zig toolchain");
+        writeln("  --download-imgui         Download and build imgui");
+        writeln("  --download-sokol-tools   Download and setup sokol-tools");
         return;
     }
     else
@@ -81,6 +95,8 @@ void main(string[] args)
         writeln("Using target: ", target);
         writeln("Using optimize: ", optimize);
         writeln("Using backend: ", sokol_backend);
+        writeln("Get imgui-libs: ", downloadIMGUI);
+        writeln("Get sokol-tools: ", downloadSHDC);
         writeln("Get EmSDK: ", downloadEmsdk);
         writeln("Get Zig: ", downloadZig);
     }
@@ -96,113 +112,167 @@ void main(string[] args)
         with_sokol_imgui: opt_with_sokol_imgui,
     };
 
-    // buildLibSokol(options);
-
     // Download and setup Emscripten SDK if requested
     if (downloadEmsdk)
-    {
-        getEmSDK();
-    }
+        getEmSDK;
+    if (downloadIMGUI)
+        getIMGUI;
     if (downloadZig)
-    {
-        getZigToolchain();
-    }
+        getZigToolchain;
+    if (downloadSHDC)
+        buildShaders;
+
+    // build libsokol
+    buildLibSokol(options);
 }
 
-void getZigToolchain()
+void getZigToolchain() @safe
 {
     writeln("Downloading and setting up Zig toolchain...");
+    string rootpath = absolutePath(buildPath("vendor", "zig"));
 
     version (Windows)
-        string ext = ".zip", exe = ".exe";
+        immutable string ext = ".zip", exe = ".exe";
     else
-        string ext = ".tar.xz", exe = "";
+        immutable string ext = ".tar.xz", exe = "";
 
     version (Windows)
-        string os = "windows";
+        immutable string os = "windows";
     else version (Linux)
-        string os = "linux";
+        immutable string os = "linux";
     else version (OSX)
-        string os = "macos";
+        immutable string os = "macos";
     else version (FreeBSD)
-        string os = "freebsd";
+        immutable string os = "freebsd";
 
     version (X86_64)
-        string arch = "x86_64";
+        immutable string arch = "x86_64";
     else version (X86)
-        string arch = "x86";
+        immutable string arch = "x86";
     else version (AArch64)
-        string arch = "aarch64";
+        immutable string arch = "aarch64";
 
-    string zig_version = "0.13.0";
-
-    string filename = fmt("zig-%s-%s-%s", os, arch, zig_version);
+    immutable string filename = fmt("zig-%s-%s-%s", os, arch, zig_version);
     writeln("file: ", filename ~ ext);
+    writeln("rootpath: ", rootpath);
+
+    scope (exit)
+    {
+        if (exists(filename ~ ext))
+            remove(filename ~ ext);
+    }
 
     // Check if the file already exists
-    if (!exists(filename ~ ext))
+    if (!exists(rootpath))
+    {
         download(fmt("https://ziglang.org/download/%s/%s", zig_version, filename ~ ext), filename ~ ext);
 
-    // Extract Zig toolchain
-    if (ext.endsWith("zip"))
-        extractZip(filename ~ ext, ".zig");
-    else
-        extractTarXZ(filename ~ ext, ".zig");
+        // Extract Zig toolchain
+        if (ext.endsWith("zip"))
+            extractZip(filename ~ ext, rootpath);
+        else
+            extractTarXZ(filename ~ ext, rootpath);
+    }
 
     version (Windows)
-        auto res = execute(["./.zig/zig" ~ exe, "version"]);
+        auto res = execute([rootpath ~ "/zig" ~ exe, "version"]);
     else
-        auto res = execute([fmt("./.zig/%s/zig", filename) ~ exe, "version"]);
+        auto res = execute([
+        absolutePath(buildPath(rootpath, fmt("%s", filename), "zig")) ~ exe,
+        "version"
+    ]);
     enforce(res.status == 0, "Failed to run Zig toolchain");
     writefln("zig version: %s", res.output);
 }
 
-void getEmSDK()
+void getEmSDK() @safe
 {
     writeln("Downloading and setting up Emscripten SDK");
+    string rootpath = absolutePath(buildPath("vendor", "emsdk"));
 
     // Download EMSDK
     if (!exists("emsdk.zip"))
-        download("https://github.com/emscripten-core/emsdk/archive/master.zip", "emsdk.zip");
+        download(fmt("https://github.com/emscripten-core/emsdk/archive/refs/tags/%s.zip", emsdk_version), "emsdk.zip");
 
     // Extract EMSDK
-    extractZip("emsdk.zip", ".emsdk");
+    if (!exists(rootpath))
+        extractZip("emsdk.zip", rootpath);
 
     version (Windows)
-        string ext = ".bat";
+        immutable string ext = ".bat";
     else
-        string ext = "";
+        immutable string ext = "";
 
-    // Setup EMSDK
-    version (Posix)
-    {
-        auto result = execute(["chmod", "+x", "./.emsdk/emsdk" ~ ext]);
-        enforce(result.status == 0, "Failed to chmod .emsdk/emsdk");
-    }
-
-    auto pid = spawnProcess(["./.emsdk/emsdk" ~ ext, "install", "latest"]);
-    wait(pid);
-
-    pid = spawnProcess(["./.emsdk/emsdk" ~ ext, "activate", "latest"]);
-    wait(pid);
+    writeln("rootpath: ", rootpath);
+    emSdkSetupStep(rootpath);
 }
 
-void extractTarXZ(string tarFile, string destination)
+void getIMGUI() @safe
+{
+    writeln("Downloading IMGUI");
+    string rootpath = absolutePath(buildPath("vendor", "cimgui"));
+    string filename = "imgui.zip";
+
+    scope (exit)
+    {
+        if (exists(filename))
+            remove(filename);
+        if (exists("c" ~ filename))
+            remove("c" ~ filename);
+    }
+
+    if (!exists(rootpath))
+    {
+        download(fmt("https://github.com/cimgui/cimgui/archive/refs/tags/%s.zip", imgui_version), "c" ~ filename);
+        download(fmt("https://github.com/ocornut/imgui/archive/refs/tags/v%s.zip", imgui_version), filename);
+        extractZip("c" ~ filename, rootpath);
+        extractZip(filename, buildPath(rootpath, "imgui"));
+    }
+    writeln("rootpath: ", rootpath);
+}
+
+string getSHDC() @safe
+{
+    writeln("Downloading and setting up sokol-tools");
+    immutable string rootpath = absolutePath(buildPath("vendor", "shdc"));
+    immutable string filename = "shdc.zip";
+
+    // Download sokol-tools
+    if (!exists(rootpath))
+        download("https://github.com/floooh/sokol-tools-bin/archive/refs/heads/master.zip", filename);
+    else if (exists(filename))
+        scope (exit)
+            remove(filename);
+
+    // Extract sokol-tools
+    if (!exists(rootpath))
+        extractZip(filename, rootpath);
+
+    version (Windows)
+        immutable string ext = ".bat";
+    else
+        immutable string ext = "";
+
+    writeln("rootpath: ", rootpath);
+    return rootpath;
+}
+
+void extractTarXZ(string tarFile, string destination) @safe
 {
     if (exists(destination))
         rmdirRecurse(destination);
 
-    mkdir(destination);
+    mkdirRecurse(destination);
     auto pid = spawnProcess([
         "tar", "xf", tarFile, fmt("--directory=%s", destination)
     ]);
     enforce(pid.wait() == 0, "Extraction failed");
 }
 
-void extractZip(string zipFile, string destination)
+void extractZip(string zipFile, string destination) @trusted
 {
-    scope archive = new ZipArchive(read(zipFile));
-    std.stdio.writeln("unpacking:");
+    ZipArchive archive = new ZipArchive(read(zipFile)); // unsafe/@system
+    writeln("unpacking: ", zipFile);
     string prefix;
 
     if (exists(zipFile))
@@ -211,7 +281,7 @@ void extractZip(string zipFile, string destination)
     if (exists(destination))
         rmdirRecurse(destination);
 
-    mkdir(destination);
+    mkdirRecurse(destination);
 
     foreach (name, _; archive.directory)
     {
@@ -224,7 +294,6 @@ void extractZip(string zipFile, string destination)
             continue;
 
         string path = buildPath(destination, chompPrefix(name, prefix));
-        std.stdio.writeln(path);
         auto dir = dirName(path);
         if (!dir.empty && !dir.exists)
             mkdirRecurse(dir);
@@ -233,13 +302,13 @@ void extractZip(string zipFile, string destination)
     }
 }
 
-void download(string url, string fileName)
+void download(string url, string fileName) @trusted
 {
 
     auto buf = appender!(ubyte[])();
     size_t contentLength;
 
-    auto http = HTTP(url);
+    auto http = HTTP(url); // unsafe/@system (need libcurl)
     http.method = HTTP.Method.get;
     http.onReceiveHeader((in k, in v) {
         if (k == "content-length")
@@ -247,9 +316,9 @@ void download(string url, string fileName)
     });
     http.onReceive((data) {
         buf.put(data);
-        std.stdio.writef("%sk/%sk\r", buf.data.length / 1024,
+        writef("%sk/%sk\r", buf.data.length / 1024,
             contentLength ? to!string(contentLength / 1024) : "?");
-        std.stdio.stdout.flush();
+        stdout.flush();
         return data.length;
     });
     http.dataTimeout = dur!"msecs"(0);
@@ -257,7 +326,7 @@ void download(string url, string fileName)
     immutable sc = http.statusLine().code;
     enforce(sc / 100 == 2 || sc == 302,
         fmt("HTTP request returned status code %s", sc));
-    std.stdio.writeln("done                    ");
+    writeln("done                    ");
 
     auto file = File(fileName, "wb");
     scope (success)
@@ -289,7 +358,7 @@ struct LibSokolOptions
 }
 
 // Helper function to resolve .auto backend based on target platform
-SokolBackend resolveSokolBackend(SokolBackend backend, string target)
+SokolBackend resolveSokolBackend(SokolBackend backend, string target) @safe
 {
     if (backend != SokolBackend.auto_)
     {
@@ -317,13 +386,8 @@ SokolBackend resolveSokolBackend(SokolBackend backend, string target)
     }
 }
 
-string rootPath()
-{
-    return __FILE__.dirName;
-}
-
 // Build sokol into a static library
-void buildLibSokol(LibSokolOptions options)
+void buildLibSokol(LibSokolOptions options) @safe
 {
     bool sharedlib = false;
 
@@ -407,14 +471,258 @@ string findProgram(string programName) @safe
         }
     }
     throw new Exception("Could not find program: " ~ programName);
-    // return null;
 }
 
-string fmt(Args...)(string fmt, auto ref Args args)
+string fmt(Args...)(string fmt, auto ref Args args) @safe
 {
-    import std.array, std.format;
-
     auto app = appender!string();
     formattedWrite(app, fmt, args);
     return app.data;
+}
+
+// Struct to hold options for Emscripten linking
+struct EmLinkOptions
+{
+    string target;
+    string optimize;
+    string lib_main;
+    string emsdk;
+    bool release_use_closure = true;
+    bool release_use_lto = false;
+    bool use_webgpu = false;
+    bool use_webgl2 = false;
+    bool use_emmalloc = false;
+    bool use_filesystem = true;
+    string shell_file_path;
+    string[] extra_args;
+}
+
+// Function to create an Emscripten link step
+void emLinkStep(EmLinkOptions options) @safe
+{
+    string emcc_path = buildPath(options.emsdk, "upstream", "emscripten", "emcc");
+    string[] emcc_cmd = [emcc_path];
+
+    if (options.optimize == "Debug")
+    {
+        emcc_cmd ~= ["-Og", "-sSAFE_HEAP=1", "-sSTACK_OVERFLOW_CHECK=1"];
+    }
+    else
+    {
+        emcc_cmd ~= "-sASSERTIONS=0";
+        if (options.optimize == "ReleaseSmall")
+        {
+            emcc_cmd ~= "-Oz";
+        }
+        else
+        {
+            emcc_cmd ~= "-O3";
+        }
+        if (options.release_use_lto)
+        {
+            emcc_cmd ~= "-flto";
+        }
+        if (options.release_use_closure)
+        {
+            emcc_cmd ~= ["--closure", "1"];
+        }
+    }
+
+    if (options.use_webgpu)
+    {
+        emcc_cmd ~= "-sUSE_WEBGPU=1";
+    }
+    if (options.use_webgl2)
+    {
+        emcc_cmd ~= "-sUSE_WEBGL2=1";
+    }
+    if (!options.use_filesystem)
+    {
+        emcc_cmd ~= "-sNO_FILESYSTEM=1";
+    }
+    if (options.use_emmalloc)
+    {
+        emcc_cmd ~= "-sMALLOC='emmalloc'";
+    }
+    if (options.shell_file_path)
+    {
+        emcc_cmd ~= "--shell-file=" ~ options.shell_file_path;
+    }
+
+    emcc_cmd ~= options.extra_args;
+
+    // Add the main lib and its dependencies
+    emcc_cmd ~= options.lib_main;
+    // Note: You'll need to implement dependency scanning logic here
+
+    string out_file = options.lib_main ~ ".html";
+    emcc_cmd ~= ["-o", out_file];
+
+    // Execute the emcc command
+    auto result = execute(emcc_cmd);
+    if (result.status != 0)
+    {
+        writeln("Error: emcc command failed");
+        writeln(result.output);
+    }
+
+    // Install the output files
+    string install_dir = "web";
+    mkdirRecurse(install_dir);
+    copy(out_file, buildPath(install_dir, out_file.baseName));
+    copy(options.lib_main ~ ".wasm", buildPath(install_dir, options.lib_main ~ ".wasm"));
+    copy(options.lib_main ~ ".js", buildPath(install_dir, options.lib_main ~ ".js"));
+}
+
+// Struct to hold options for Emscripten run
+struct EmRunOptions
+{
+    string name;
+    string emsdk;
+}
+
+// Function to create an Emscripten run step
+void emRunStep(EmRunOptions options) @safe
+{
+    string emrun_path = buildPath(options.emsdk, "upstream", "emscripten", "emrun");
+    string[] emrun_cmd = [emrun_path, buildPath("web", options.name ~ ".html")];
+
+    // Execute the emrun command
+    auto result = execute(emrun_cmd);
+    if (result.status != 0)
+    {
+        writeln("Error: emrun command failed");
+        writeln(result.output);
+    }
+}
+
+// Helper function to build a path from the emsdk root and provided path components
+string emSdkPath(string emsdk, string[] subPaths) @safe
+{
+    return absolutePath(buildPath(emsdk ~ subPaths));
+}
+
+// Function to create an Emscripten SDK setup step
+void emSdkSetupStep(string emsdk) @safe
+{
+    string dot_emsc_path = buildPath(emsdk, ".emscripten");
+    if (!exists(dot_emsc_path))
+    {
+        string[] emsdk_cmd;
+        version (Windows)
+        {
+            emsdk_cmd = [buildPath(emsdk, "emsdk.bat")];
+        }
+        else
+        {
+            emsdk_cmd = ["bash", buildPath(emsdk, "emsdk")];
+        }
+
+        auto status = wait(spawnProcess(emsdk_cmd ~ ["install", "latest"]));
+        if (status != 0)
+        {
+            throw new Exception("Error: emsdk install failed");
+        }
+
+        status = wait(spawnProcess(emsdk_cmd ~ ["activate", "latest"]));
+        if (status != 0)
+        {
+            throw new Exception("Error: emsdk activate failed");
+        }
+    }
+}
+
+// a separate step to compile shaders, expects the shader compiler in ../sokol-tools-bin/
+void buildShaders() @safe
+{
+    immutable string sokolToolsBinDir = buildPath(getSHDC, "bin");
+    immutable string shadersDir = buildPath("src", "examples", "shaders");
+    immutable string[] shaders = [
+        "triangle.glsl",
+        "bufferoffsets.glsl",
+        "cube.glsl",
+        "instancing.glsl",
+        "mrt.glsl",
+        "noninterleaved.glsl",
+        "offscreen.glsl",
+        "quad.glsl",
+        "shapes.glsl",
+        "texcube.glsl",
+        "blend.glsl"
+    ];
+
+    string optionalShdc;
+    version (Windows)
+    {
+        optionalShdc = buildPath("win32", "sokol-shdc.exe");
+    }
+    else version (linux)
+    {
+        optionalShdc = buildPath("linux", "sokol-shdc");
+    }
+    else version (OSX)
+    {
+        version (AArch64)
+        {
+            optionalShdc = buildPath("osx_arm64", "sokol-shdc");
+        }
+        else
+        {
+            optionalShdc = buildPath("osx", "sokol-shdc");
+        }
+    }
+
+    if (optionalShdc is null)
+    {
+        writeln("Warning: unsupported host platform, skipping shader compiler step");
+        return;
+    }
+
+    immutable string shdcPath = buildPath(sokolToolsBinDir, optionalShdc);
+
+    version (OSX)
+        immutable string glsl = "glsl410";
+    else
+        immutable string glsl = "glsl430";
+    string slang = glsl ~ ":metal_macos:hlsl5:glsl300es:wgsl";
+
+    // need chmod permissions on Posix (Linux/MacOS)
+    version (Posix)
+    {
+        int status = wait(spawnProcess([
+            "chmod",
+            "+x",
+            shdcPath,
+        ]));
+        if (status != 0)
+        {
+            throw new Exception("Error: failed to set permissions on shader compiler");
+        }
+    }
+    else
+    {
+        // fix shadowing for Windows
+        int status = 0;
+    }
+
+    foreach (shader; shaders)
+    {
+        status = wait(spawnProcess([
+            shdcPath,
+            "-i",
+            buildPath(shadersDir, shader),
+            "-o",
+            buildPath(shadersDir, shader[0 .. $ - 5]) ~ ".d",
+            "-l",
+            slang,
+            "-f",
+            "sokol_d",
+            "--reflection",
+        ]));
+        if (status != 0)
+        {
+            throw new Exception("Error: shader compiler failed");
+        }
+
+    }
 }
