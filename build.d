@@ -112,6 +112,7 @@ void main(string[] args)
 void getZigToolchain()
 {
     writeln("Downloading and setting up Zig toolchain...");
+    string rootpath = absolutePath("vendor/zig");
 
     version (Windows)
         string ext = ".zip", exe = ".exe";
@@ -138,6 +139,7 @@ void getZigToolchain()
 
     string filename = fmt("zig-%s-%s-%s", os, arch, zig_version);
     writeln("file: ", filename ~ ext);
+    writeln("rootpath: ", rootpath);
 
     // Check if the file already exists
     if (!exists(filename ~ ext))
@@ -145,15 +147,15 @@ void getZigToolchain()
 
     // Extract Zig toolchain
     if (ext.endsWith("zip"))
-        extractZip(filename ~ ext, "vendor/zig");
+        extractZip(filename ~ ext, rootpath);
     else
-        extractTarXZ(filename ~ ext, "vendor/zig");
+        extractTarXZ(filename ~ ext, rootpath);
 
     version (Windows)
-        auto res = execute([rootPath() ~ "/vendor/zig/zig" ~ exe, "version"]);
+        auto res = execute([rootpath ~ "/zig" ~ exe, "version"]);
     else
         auto res = execute([
-        rootPath() ~ fmt("/vendor/zig/%s/zig", filename) ~ exe, "version"
+        absolutePath(fmt("vendor/zig/%s/zig", filename)) ~ exe, "version"
     ]);
     enforce(res.status == 0, "Failed to run Zig toolchain");
     writefln("zig version: %s", res.output);
@@ -162,13 +164,15 @@ void getZigToolchain()
 void getEmSDK()
 {
     writeln("Downloading and setting up Emscripten SDK");
+    string rootpath = absolutePath("vendor/emsdk");
 
     // Download EMSDK
     if (!exists("emsdk.zip"))
         download("https://github.com/emscripten-core/emsdk/archive/refs/tags/3.1.68.zip", "emsdk.zip");
 
     // Extract EMSDK
-    extractZip("emsdk.zip", "vendor/emsdk");
+    if (!exists(rootpath))
+        extractZip("emsdk.zip", rootpath);
 
     version (Windows)
         string ext = ".bat";
@@ -176,23 +180,39 @@ void getEmSDK()
         string ext = "";
 
     // Setup EMSDK
-    version (Posix)
-    {
-        auto result = execute([
-            "chmod", "+x", rootPath() ~ "/vendor/emsdk/emsdk" ~ ext
-        ]);
-        enforce(result.status == 0, "Failed to run chmod in emsdk");
-    }
+    // version (Posix)
+    // {
+    //     auto result = execute([
+    //         "chmod", "+x", rootPath() ~ "/vendor/emsdk/emsdk" ~ ext
+    //     ]);
+    //     enforce(result.status == 0, "Failed to run chmod in emsdk");
+    // }
+    writeln("rootpath: ", rootpath);
+    emSdkSetupStep(rootpath);
 
-    auto pid = spawnProcess([
-        rootPath() ~ "/vendor/emsdk/emsdk" ~ ext, "install", "latest"
-    ]);
-    wait(pid);
+    // EmLinkOptions link_options = {
+    //     target: "wasm32-emscripten",
+    //     optimize: "Release",
+    //     lib_main: "your_main_lib",
+    //     emsdk: emsdk,
+    // };
+    // emLinkStep(link_options);
 
-    pid = spawnProcess([
-        rootPath() ~ "/vendor/emsdk/emsdk" ~ ext, "activate", "latest"
-    ]);
-    wait(pid);
+    // EmRunOptions run_options = {
+    //     name: "your_app_name",
+    //     emsdk: emsdk,
+    // };
+    // emRunStep(run_options);
+
+    // auto pid = spawnProcess([
+    //     rootPath() ~ "/vendor/emsdk/emsdk" ~ ext, "install", "latest"
+    // ]);
+    // wait(pid);
+
+    // pid = spawnProcess([
+    //     rootPath() ~ "/vendor/emsdk/emsdk" ~ ext, "activate", "latest"
+    // ]);
+    // wait(pid);
 }
 
 void extractTarXZ(string tarFile, string destination)
@@ -325,11 +345,6 @@ SokolBackend resolveSokolBackend(SokolBackend backend, string target)
     }
 }
 
-string rootPath()
-{
-    return __FILE__.dirName;
-}
-
 // Build sokol into a static library
 void buildLibSokol(LibSokolOptions options)
 {
@@ -425,4 +440,168 @@ string fmt(Args...)(string fmt, auto ref Args args)
     auto app = appender!string();
     formattedWrite(app, fmt, args);
     return app.data;
+}
+
+// Struct to hold options for Emscripten linking
+struct EmLinkOptions
+{
+    string target;
+    string optimize;
+    string lib_main;
+    string emsdk;
+    bool release_use_closure = true;
+    bool release_use_lto = false;
+    bool use_webgpu = false;
+    bool use_webgl2 = false;
+    bool use_emmalloc = false;
+    bool use_filesystem = true;
+    string shell_file_path;
+    string[] extra_args;
+}
+
+// Function to create an Emscripten link step
+void emLinkStep(EmLinkOptions options)
+{
+    string emcc_path = buildPath(options.emsdk, "upstream", "emscripten", "emcc");
+    string[] emcc_cmd = [emcc_path];
+
+    if (options.optimize == "Debug")
+    {
+        emcc_cmd ~= ["-Og", "-sSAFE_HEAP=1", "-sSTACK_OVERFLOW_CHECK=1"];
+    }
+    else
+    {
+        emcc_cmd ~= "-sASSERTIONS=0";
+        if (options.optimize == "ReleaseSmall")
+        {
+            emcc_cmd ~= "-Oz";
+        }
+        else
+        {
+            emcc_cmd ~= "-O3";
+        }
+        if (options.release_use_lto)
+        {
+            emcc_cmd ~= "-flto";
+        }
+        if (options.release_use_closure)
+        {
+            emcc_cmd ~= ["--closure", "1"];
+        }
+    }
+
+    if (options.use_webgpu)
+    {
+        emcc_cmd ~= "-sUSE_WEBGPU=1";
+    }
+    if (options.use_webgl2)
+    {
+        emcc_cmd ~= "-sUSE_WEBGL2=1";
+    }
+    if (!options.use_filesystem)
+    {
+        emcc_cmd ~= "-sNO_FILESYSTEM=1";
+    }
+    if (options.use_emmalloc)
+    {
+        emcc_cmd ~= "-sMALLOC='emmalloc'";
+    }
+    if (options.shell_file_path)
+    {
+        emcc_cmd ~= "--shell-file=" ~ options.shell_file_path;
+    }
+
+    emcc_cmd ~= options.extra_args;
+
+    // Add the main lib and its dependencies
+    emcc_cmd ~= options.lib_main;
+    // Note: You'll need to implement dependency scanning logic here
+
+    string out_file = options.lib_main ~ ".html";
+    emcc_cmd ~= ["-o", out_file];
+
+    // Execute the emcc command
+    auto result = execute(emcc_cmd);
+    if (result.status != 0)
+    {
+        writeln("Error: emcc command failed");
+        writeln(result.output);
+    }
+
+    // Install the output files
+    string install_dir = "web";
+    mkdirRecurse(install_dir);
+    copy(out_file, buildPath(install_dir, out_file.baseName));
+    copy(options.lib_main ~ ".wasm", buildPath(install_dir, options.lib_main ~ ".wasm"));
+    copy(options.lib_main ~ ".js", buildPath(install_dir, options.lib_main ~ ".js"));
+}
+
+// Struct to hold options for Emscripten run
+struct EmRunOptions
+{
+    string name;
+    string emsdk;
+}
+
+// Function to create an Emscripten run step
+void emRunStep(EmRunOptions options)
+{
+    string emrun_path = buildPath(options.emsdk, "upstream", "emscripten", "emrun");
+    string[] emrun_cmd = [emrun_path, buildPath("web", options.name ~ ".html")];
+
+    // Execute the emrun command
+    auto result = execute(emrun_cmd);
+    if (result.status != 0)
+    {
+        writeln("Error: emrun command failed");
+        writeln(result.output);
+    }
+}
+
+// Helper function to build a path from the emsdk root and provided path components
+string emSdkPath(string emsdk, string[] subPaths)
+{
+    return absolutePath(buildPath(emsdk ~ subPaths));
+}
+
+// Function to create an Emscripten SDK setup step
+void emSdkSetupStep(string emsdk)
+{
+    string dot_emsc_path = buildPath(emsdk, ".emscripten");
+    if (!exists(dot_emsc_path))
+    {
+        string[] emsdk_cmd;
+        version (Windows)
+        {
+            emsdk_cmd = [buildPath(emsdk, "emsdk.bat")];
+        }
+        else
+        {
+            emsdk_cmd = ["bash", buildPath(emsdk, "emsdk")];
+        }
+
+        auto install_result = execute(emsdk_cmd ~ ["install", "latest"]);
+        if (install_result.status != 0)
+        {
+            writeln("Error: emsdk install failed");
+            writeln(install_result.output);
+            return;
+        }
+        else
+        {
+            writeln(install_result.output);
+        }
+
+        auto activate_result = execute(emsdk_cmd ~ ["activate", "latest"]);
+        if (activate_result.status != 0)
+        {
+            writeln("Error: emsdk activate failed");
+            writeln(activate_result.output);
+            return;
+        }
+        else
+        {
+            writeln(activate_result.output);
+        }
+    }
 }
