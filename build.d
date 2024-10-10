@@ -96,7 +96,7 @@ void main(string[] args)
         with_sokol_imgui: opt_with_sokol_imgui,
     };
 
-    // buildLibSokol(options);
+    buildLibSokol(options);
 
     // Download and setup Emscripten SDK if requested
     if (downloadEmsdk)
@@ -145,14 +145,16 @@ void getZigToolchain()
 
     // Extract Zig toolchain
     if (ext.endsWith("zip"))
-        extractZip(filename ~ ext, ".zig");
+        extractZip(filename ~ ext, "vendor/zig");
     else
-        extractTarXZ(filename ~ ext, ".zig");
+        extractTarXZ(filename ~ ext, "vendor/zig");
 
     version (Windows)
-        auto res = execute(["./.zig/zig" ~ exe, "version"]);
+        auto res = execute([rootPath() ~ "/vendor/zig/zig" ~ exe, "version"]);
     else
-        auto res = execute([fmt("./.zig/%s/zig", filename) ~ exe, "version"]);
+        auto res = execute([
+        rootPath() ~ fmt("/vendor/zig/%s/zig", filename) ~ exe, "version"
+    ]);
     enforce(res.status == 0, "Failed to run Zig toolchain");
     writefln("zig version: %s", res.output);
 }
@@ -163,10 +165,10 @@ void getEmSDK()
 
     // Download EMSDK
     if (!exists("emsdk.zip"))
-        download("https://github.com/emscripten-core/emsdk/archive/master.zip", "emsdk.zip");
+        download("https://github.com/emscripten-core/emsdk/archive/refs/tags/3.1.68.zip", "emsdk.zip");
 
     // Extract EMSDK
-    extractZip("emsdk.zip", ".emsdk");
+    extractZip("emsdk.zip", "vendor/emsdk");
 
     version (Windows)
         string ext = ".bat";
@@ -176,14 +178,20 @@ void getEmSDK()
     // Setup EMSDK
     version (Posix)
     {
-        auto result = execute(["chmod", "+x", "./.emsdk/emsdk" ~ ext]);
-        enforce(result.status == 0, "Failed to chmod .emsdk/emsdk");
+        auto result = execute([
+            "chmod", "+x", rootPath() ~ "/vendor/emsdk/emsdk" ~ ext
+        ]);
+        enforce(result.status == 0, "Failed to run chmod in emsdk");
     }
 
-    auto pid = spawnProcess(["./.emsdk/emsdk" ~ ext, "install", "latest"]);
+    auto pid = spawnProcess([
+        rootPath() ~ "/vendor/emsdk/emsdk" ~ ext, "install", "latest"
+    ]);
     wait(pid);
 
-    pid = spawnProcess(["./.emsdk/emsdk" ~ ext, "activate", "latest"]);
+    pid = spawnProcess([
+        rootPath() ~ "/vendor/emsdk/emsdk" ~ ext, "activate", "latest"
+    ]);
     wait(pid);
 }
 
@@ -192,7 +200,7 @@ void extractTarXZ(string tarFile, string destination)
     if (exists(destination))
         rmdirRecurse(destination);
 
-    mkdir(destination);
+    mkdirRecurse(destination);
     auto pid = spawnProcess([
         "tar", "xf", tarFile, fmt("--directory=%s", destination)
     ]);
@@ -211,7 +219,7 @@ void extractZip(string zipFile, string destination)
     if (exists(destination))
         rmdirRecurse(destination);
 
-    mkdir(destination);
+    mkdirRecurse(destination);
 
     foreach (name, _; archive.directory)
     {
