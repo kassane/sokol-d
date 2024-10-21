@@ -46,8 +46,8 @@ static void init()
         shader: sg.makeShader(shd.triangleShaderDesc(sg.queryBackend())),
         layout: {
             attrs: [
-                shd.ATTR_VS_POSITION: {format: sg.VertexFormat.Float3},
-                shd.ATTR_VS_COLOR0: {format: sg.VertexFormat.Float4},
+                shd.ATTR_TRIANGLE_POSITION: {format: sg.VertexFormat.Float3},
+                shd.ATTR_TRIANGLE_COLOR0: {format: sg.VertexFormat.Float4},
             ],
         }
     };
