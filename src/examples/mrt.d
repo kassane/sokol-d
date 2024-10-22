@@ -158,8 +158,8 @@ void init()
     sg.PipelineDesc offscreen_pip_desc = {
         layout: {
             attrs: [
-                shd.ATTR_VS_OFFSCREEN_POS: {format: sg.VertexFormat.Float3},
-                shd.ATTR_VS_OFFSCREEN_BRIGHT0: {format: sg.VertexFormat.Float},
+                shd.ATTR_OFFSCREEN_POS: {format: sg.VertexFormat.Float3},
+                shd.ATTR_OFFSCREEN_BRIGHT0: {format: sg.VertexFormat.Float},
             ]
         },
         shader: sg.makeShader(shd.offscreenShaderDesc(sg.queryBackend())),
@@ -187,7 +187,7 @@ void init()
     sg.PipelineDesc fsq_pip_desc = {
         layout: {
             attrs: [
-                shd.ATTR_VS_FSQ_POS: {format: sg.VertexFormat.Float2},
+                shd.ATTR_FSQ_POS: {format: sg.VertexFormat.Float2},
             ]
         },
         shader: sg.makeShader(shd.fsqShaderDesc(sg.queryBackend())),
@@ -209,15 +209,15 @@ void init()
     state.fsq.bind.vertex_buffers[0] = quad_vbuf;
     foreach (i; [0, 1, 2])
     {
-        state.fsq.bind.fs.images[i] = state.offscreen.atts_desc.colors[i].image;
+        state.fsq.bind.images[i] = state.offscreen.atts_desc.colors[i].image;
     }
-    state.fsq.bind.fs.samplers[0] = smp;
+    state.fsq.bind.samplers[shd.SMP_SMP] = smp;
 
     // shader, pipeline and resource bindings to render debug visualization quads
     sg.PipelineDesc dbg_pip_desc = {
         layout: {
             attrs: [
-                shd.ATTR_VS_DBG_POS: {format: sg.VertexFormat.Float2},
+                shd.ATTR_DBG_POS: {format: sg.VertexFormat.Float2},
             ]
         },
         shader: sg.makeShader(shd.dbgShaderDesc(sg.queryBackend())),
@@ -228,7 +228,7 @@ void init()
     // resource bindings to render the debug visualization
     // (the required images will be filled in during rendering)
     state.dbg.bind.vertex_buffers[0] = quad_vbuf;
-    state.dbg.bind.fs.samplers[0] = smp;
+    state.dbg.bind.samplers[shd.SMP_SMP] = smp;
 }
 
 void frame()
@@ -253,7 +253,7 @@ void frame()
     sg.applyPipeline(state.offscreen.pip);
     sg.applyBindings(state.offscreen.bind);
     sg.Range offs_rg = {ptr: &offscreen_params, offscreen_params.sizeof};
-    sg.applyUniforms(sg.ShaderStage.Vs, shd.SLOT_OFFSCREEN_PARAMS, offs_rg);
+    sg.applyUniforms(shd.UB_OFFSCREEN_PARAMS, offs_rg);
     sg.draw(0, 36, 1);
     sg.endPass();
 
@@ -266,13 +266,13 @@ void frame()
     sg.applyPipeline(state.fsq.pip);
     sg.applyBindings(state.fsq.bind);
     sg.Range fsq_rg = {ptr: &fsq_params, size: fsq_params.sizeof};
-    sg.applyUniforms(sg.ShaderStage.Vs, shd.SLOT_FSQ_PARAMS, fsq_rg);
+    sg.applyUniforms(shd.UB_FSQ_PARAMS, fsq_rg);
     sg.draw(0, 4, 1);
     sg.applyPipeline(state.dbg.pip);
     foreach (i; [0, 1, 2])
     {
         sg.applyViewport(i * 100, 0, 100, 100, false);
-        state.dbg.bind.fs.images[0] = state.offscreen.atts_desc.colors[i].image;
+        state.dbg.bind.images[shd.IMG_TEX] = state.offscreen.atts_desc.colors[i].image;
         sg.applyBindings(state.dbg.bind);
         sg.draw(0, 4, 1);
     }
@@ -340,7 +340,7 @@ void createOffscreenAttachments(int width, int height)
     // update the fullscreen-quad texture bindings
     foreach (i; [0, 1, 2])
     {
-        state.fsq.bind.fs.images[i] = state.offscreen.atts_desc.colors[i].image;
+        state.fsq.bind.images[i] = state.offscreen.atts_desc.colors[i].image;
     }
 }
 

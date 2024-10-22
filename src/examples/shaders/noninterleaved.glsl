@@ -5,7 +5,7 @@
 @ctype mat4 m.Mat4
 
 @vs vs
-uniform vs_params {
+layout(binding=0) uniform vs_params {
     mat4 mvp;
 };
 
@@ -29,5 +29,3 @@ void main() {
 @end
 
 @program noninterleaved vs fs
-
-
