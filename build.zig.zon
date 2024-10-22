@@ -12,12 +12,12 @@
     },
     .dependencies = .{
         .cimgui = .{
-            .url = "git+https://github.com/cimgui/cimgui#1.91.3",
-            .hash = "1220b459b09242ad64353ca1f26ec48fd81c2a4ccdd5c4e088c14848488d2e0c2514",
+            .url = "git+https://github.com/cimgui/cimgui.git#1.91.4",
+            .hash = "1220be5b165d8fb8fdb46e8c2fc21ba719a498d76484605d2b715e7976ea718343a9",
         },
         .imgui = .{
-            .url = "git+https://github.com/ocornut/imgui#v1.91.3",
-            .hash = "1220dbde2c4211686e4d0431c0969fe48af2bd7f859d3eab9ee22b3c64750d86c408",
+            .url = "git+https://github.com/ocornut/imgui.git#v1.91.4",
+            .hash = "12207f4440f54bfe95e03ec5e54019e5663a5e38b5245cc993cfc814b03eb2f3e894",
         },
         .emsdk = .{
             .url = "git+https://github.com/emscripten-core/emsdk#3.1.68",
