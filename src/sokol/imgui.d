@@ -82,12 +82,12 @@ extern(C) ImageDesc simgui_query_image_desc(Image) @system @nogc nothrow;
 ImageDesc queryImageDesc(Image img) @trusted @nogc nothrow {
     return simgui_query_image_desc(img);
 }
-extern(C) void* simgui_imtextureid(Image) @system @nogc nothrow;
-scope void* imtextureid(Image img) @trusted @nogc nothrow {
+extern(C) ulong simgui_imtextureid(Image) @system @nogc nothrow;
+ulong imtextureid(Image img) @trusted @nogc nothrow {
     return simgui_imtextureid(img);
 }
-extern(C) Image simgui_image_from_imtextureid(void*) @system @nogc nothrow;
-Image imageFromImtextureid(scope void* im_texture_id) @trusted @nogc nothrow {
+extern(C) Image simgui_image_from_imtextureid(ulong) @system @nogc nothrow;
+Image imageFromImtextureid(ulong im_texture_id) @trusted @nogc nothrow {
     return simgui_image_from_imtextureid(im_texture_id);
 }
 extern(C) void simgui_add_focus_event(bool) @system @nogc nothrow;
