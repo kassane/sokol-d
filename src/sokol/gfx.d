@@ -1454,8 +1454,8 @@ extern(C) void sg_apply_bindings(const Bindings *) @system @nogc nothrow;
 void applyBindings(scope ref Bindings bindings) @trusted @nogc nothrow {
     sg_apply_bindings(&bindings);
 }
-extern(C) void sg_apply_uniforms(int, const Range *) @system @nogc nothrow;
-void applyUniforms(int ub_slot, scope ref Range data) @trusted @nogc nothrow {
+extern(C) void sg_apply_uniforms(uint, const Range *) @system @nogc nothrow;
+void applyUniforms(uint ub_slot, scope ref Range data) @trusted @nogc nothrow {
     sg_apply_uniforms(ub_slot, &data);
 }
 extern(C) void sg_draw(uint, uint, uint) @system @nogc nothrow;
