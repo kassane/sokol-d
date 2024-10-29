@@ -11,6 +11,7 @@ use of this software.
 import std;
 
 enum emsdk_version = "3.1.70";
+enum imgui_version = "1.91.4";
 enum zig_version = "0.13.0";
 
 void main(string[] args) @safe
@@ -20,7 +21,7 @@ void main(string[] args) @safe
     string compiler = findProgram("gcc");
     string target = "native";
     string optimize = "debug";
-    bool downloadEmsdk = false, downloadZig = false;
+    bool downloadEmsdk = false, downloadZig = false, downloadIMGUI = false, downloadSHDC = false;
     SokolBackend sokol_backend = SokolBackend.auto_;
 
     bool opt_use_gl = false;
@@ -61,20 +62,30 @@ void main(string[] args) @safe
         {
             downloadZig = true;
         }
+        else if (arg == "--download-imgui")
+        {
+            downloadIMGUI = true;
+        }
+        else if (arg == "--download-sokol-tools")
+        {
+            downloadSHDC = true;
+        }
     }
 
     if (args.length < 2 || help)
     {
         writeln("Usage: dub run -- [options]");
         writeln("Options:");
-        writeln("  --help                 Show this help message");
+        writeln("  --help                   Show this help message");
         writeln(
-            "  --backend=<backend>     Select backend (auto, d3d11, metal, gl, gles3, wgpu)");
-        writeln("  --toolchain=<compiler>  Select C toolchain (gcc, clang, emcc)");
-        writeln("  --optimize=<level>      Select optimization level (debug, release)");
-        writeln("  --target=<target>      Select target (native, wasm, android)");
-        writeln("  --download-emsdk       Download and setup Emscripten SDK");
-        writeln("  --download-zig       Download and setup Zig toolchain");
+            "  --backend=<backend>          Select backend (auto, d3d11, metal, gl, gles3, wgpu)");
+        writeln("  --toolchain=<compiler>   Select C toolchain (gcc, clang, emcc)");
+        writeln("  --optimize=<level>       Select optimization level (debug, release)");
+        writeln("  --target=<target>        Select target (native, wasm, android)");
+        writeln("  --download-emsdk         Download and setup Emscripten SDK");
+        writeln("  --download-zig           Download and setup Zig toolchain");
+        writeln("  --download-imgui         Download and build imgui");
+        writeln("  --download-sokol-tools   Download and setup sokol-tools");
         return;
     }
     else
@@ -84,6 +95,8 @@ void main(string[] args) @safe
         writeln("Using target: ", target);
         writeln("Using optimize: ", optimize);
         writeln("Using backend: ", sokol_backend);
+        writeln("Get imgui-libs: ", downloadIMGUI);
+        writeln("Get sokol-tools: ", downloadSHDC);
         writeln("Get EmSDK: ", downloadEmsdk);
         writeln("Get Zig: ", downloadZig);
     }
@@ -99,17 +112,18 @@ void main(string[] args) @safe
         with_sokol_imgui: opt_with_sokol_imgui,
     };
 
-    buildLibSokol(options);
-
     // Download and setup Emscripten SDK if requested
     if (downloadEmsdk)
-    {
-        getEmSDK();
-    }
+        getEmSDK;
+    if (downloadIMGUI)
+        getIMGUI;
     if (downloadZig)
-    {
-        getZigToolchain();
-    }
+        getZigToolchain;
+    if (downloadSHDC)
+        buildShaders;
+
+    // build libsokol
+    buildLibSokol(options);
 }
 
 void getZigToolchain() @safe
@@ -193,6 +207,56 @@ void getEmSDK() @safe
     emSdkSetupStep(rootpath);
 }
 
+void getIMGUI() @safe
+{
+    writeln("Downloading IMGUI");
+    string rootpath = absolutePath(buildPath("vendor", "cimgui"));
+    string filename = "imgui.zip";
+
+    scope (exit)
+    {
+        if (exists(filename))
+            remove(filename);
+        if (exists("c" ~ filename))
+            remove("c" ~ filename);
+    }
+
+    if (!exists(rootpath))
+    {
+        download(fmt("https://github.com/cimgui/cimgui/archive/refs/tags/%s.zip", imgui_version), "c" ~ filename);
+        download(fmt("https://github.com/ocornut/imgui/archive/refs/tags/v%s.zip", imgui_version), filename);
+        extractZip("c" ~ filename, rootpath);
+        extractZip(filename, buildPath(rootpath, "imgui"));
+    }
+    writeln("rootpath: ", rootpath);
+}
+
+string getSHDC() @safe
+{
+    writeln("Downloading and setting up sokol-tools");
+    immutable string rootpath = absolutePath(buildPath("vendor", "shdc"));
+    immutable string filename = "shdc.zip";
+
+    // Download sokol-tools
+    if (!exists(rootpath))
+        download("https://github.com/floooh/sokol-tools-bin/archive/refs/heads/master.zip", filename);
+    else if (exists(filename))
+        scope (exit)
+            remove(filename);
+
+    // Extract sokol-tools
+    if (!exists(rootpath))
+        extractZip(filename, rootpath);
+
+    version (Windows)
+        immutable string ext = ".bat";
+    else
+        immutable string ext = "";
+
+    writeln("rootpath: ", rootpath);
+    return rootpath;
+}
+
 void extractTarXZ(string tarFile, string destination) @safe
 {
     if (exists(destination))
@@ -208,7 +272,7 @@ void extractTarXZ(string tarFile, string destination) @safe
 void extractZip(string zipFile, string destination) @trusted
 {
     ZipArchive archive = new ZipArchive(read(zipFile)); // unsafe/@system
-    writeln("unpacking:");
+    writeln("unpacking: ", zipFile);
     string prefix;
 
     if (exists(zipFile))
@@ -230,7 +294,6 @@ void extractZip(string zipFile, string destination) @trusted
             continue;
 
         string path = buildPath(destination, chompPrefix(name, prefix));
-        writeln(path);
         auto dir = dirName(path);
         if (!dir.empty && !dir.exists)
             mkdirRecurse(dir);
@@ -566,5 +629,99 @@ void emSdkSetupStep(string emsdk) @safe
         {
             throw new Exception("Error: emsdk activate failed");
         }
+    }
+}
+
+// a separate step to compile shaders, expects the shader compiler in ../sokol-tools-bin/
+void buildShaders() @safe
+{
+    immutable string sokolToolsBinDir = buildPath(getSHDC, "bin");
+    immutable string shadersDir = buildPath("src", "examples", "shaders");
+    immutable string[] shaders = [
+        "triangle.glsl",
+        "bufferoffsets.glsl",
+        "cube.glsl",
+        "instancing.glsl",
+        "mrt.glsl",
+        "noninterleaved.glsl",
+        "offscreen.glsl",
+        "quad.glsl",
+        "shapes.glsl",
+        "texcube.glsl",
+        "blend.glsl"
+    ];
+
+    string optionalShdc;
+    version (Windows)
+    {
+        optionalShdc = buildPath("win32", "sokol-shdc.exe");
+    }
+    else version (linux)
+    {
+        optionalShdc = buildPath("linux", "sokol-shdc");
+    }
+    else version (OSX)
+    {
+        version (X86)
+        {
+            optionalShdc = buildPath("osx", "sokol-shdc");
+        }
+        else version (X86_64)
+        {
+            optionalShdc = buildPath("osx_arm64", "sokol-shdc");
+        }
+        else
+        {
+            optionalShdc = null;
+        }
+    }
+
+    if (optionalShdc is null)
+    {
+        writeln("Warning: unsupported host platform, skipping shader compiler step");
+        return;
+    }
+
+    immutable string shdcPath = buildPath(sokolToolsBinDir, optionalShdc);
+
+    version (OSX)
+        immutable string glsl = "glsl410";
+    else
+        immutable string glsl = "glsl430";
+    string slang = glsl ~ ":metal_macos:hlsl5:glsl300es:wgsl";
+
+    // need chmod permissions on Posix (Linux/MacOS)
+    version (Posix)
+    {
+        int status = wait(spawnProcess([
+            "chmod",
+            "+x",
+            shdcPath,
+        ]));
+        if (status != 0)
+        {
+            throw new Exception("Error: failed to set permissions on shader compiler");
+        }
+    }
+
+    foreach (shader; shaders)
+    {
+        status = wait(spawnProcess([
+            shdcPath,
+            "-i",
+            buildPath(shadersDir, shader),
+            "-o",
+            buildPath(shadersDir, shader[0 .. $ - 5]) ~ ".d",
+            "-l",
+            slang,
+            "-f",
+            "sokol_d",
+            "--reflection",
+        ]));
+        if (status != 0)
+        {
+            throw new Exception("Error: shader compiler failed");
+        }
+
     }
 }
