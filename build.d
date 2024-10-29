@@ -703,6 +703,11 @@ void buildShaders() @safe
             throw new Exception("Error: failed to set permissions on shader compiler");
         }
     }
+    else
+    {
+        // fix shadowing for Windows
+        int status = 0;
+    }
 
     foreach (shader; shaders)
     {
