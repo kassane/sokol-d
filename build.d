@@ -662,17 +662,13 @@ void buildShaders() @safe
     }
     else version (OSX)
     {
-        version (X86)
-        {
-            optionalShdc = buildPath("osx", "sokol-shdc");
-        }
-        else version (X86_64)
+        version (AArch64)
         {
             optionalShdc = buildPath("osx_arm64", "sokol-shdc");
         }
         else
         {
-            optionalShdc = null;
+            optionalShdc = buildPath("osx", "sokol-shdc");
         }
     }
 
