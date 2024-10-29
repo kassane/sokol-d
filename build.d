@@ -10,7 +10,10 @@ use of this software.
 
 import std;
 
-void main(string[] args)
+enum emsdk_version = "3.1.70";
+enum zig_version = "0.13.0";
+
+void main(string[] args) @safe
 {
     // Parse command line arguments
     bool help = false;
@@ -109,113 +112,88 @@ void main(string[] args)
     }
 }
 
-void getZigToolchain()
+void getZigToolchain() @safe
 {
     writeln("Downloading and setting up Zig toolchain...");
-    string rootpath = absolutePath("vendor/zig");
+    string rootpath = absolutePath(buildPath("vendor", "zig"));
 
     version (Windows)
-        string ext = ".zip", exe = ".exe";
+        immutable string ext = ".zip", exe = ".exe";
     else
-        string ext = ".tar.xz", exe = "";
+        immutable string ext = ".tar.xz", exe = "";
 
     version (Windows)
-        string os = "windows";
+        immutable string os = "windows";
     else version (Linux)
-        string os = "linux";
+        immutable string os = "linux";
     else version (OSX)
-        string os = "macos";
+        immutable string os = "macos";
     else version (FreeBSD)
-        string os = "freebsd";
+        immutable string os = "freebsd";
 
     version (X86_64)
-        string arch = "x86_64";
+        immutable string arch = "x86_64";
     else version (X86)
-        string arch = "x86";
+        immutable string arch = "x86";
     else version (AArch64)
-        string arch = "aarch64";
+        immutable string arch = "aarch64";
 
-    string zig_version = "0.13.0";
-
-    string filename = fmt("zig-%s-%s-%s", os, arch, zig_version);
+    immutable string filename = fmt("zig-%s-%s-%s", os, arch, zig_version);
     writeln("file: ", filename ~ ext);
     writeln("rootpath: ", rootpath);
 
+    scope (exit)
+    {
+        if (exists(filename ~ ext))
+            remove(filename ~ ext);
+    }
+
     // Check if the file already exists
-    if (!exists(filename ~ ext))
+    if (!exists(rootpath))
+    {
         download(fmt("https://ziglang.org/download/%s/%s", zig_version, filename ~ ext), filename ~ ext);
 
-    // Extract Zig toolchain
-    if (ext.endsWith("zip"))
-        extractZip(filename ~ ext, rootpath);
-    else
-        extractTarXZ(filename ~ ext, rootpath);
+        // Extract Zig toolchain
+        if (ext.endsWith("zip"))
+            extractZip(filename ~ ext, rootpath);
+        else
+            extractTarXZ(filename ~ ext, rootpath);
+    }
 
     version (Windows)
         auto res = execute([rootpath ~ "/zig" ~ exe, "version"]);
     else
         auto res = execute([
-        absolutePath(fmt("vendor/zig/%s/zig", filename)) ~ exe, "version"
+        absolutePath(buildPath(rootpath, fmt("%s", filename), "zig")) ~ exe,
+        "version"
     ]);
     enforce(res.status == 0, "Failed to run Zig toolchain");
     writefln("zig version: %s", res.output);
 }
 
-void getEmSDK()
+void getEmSDK() @safe
 {
     writeln("Downloading and setting up Emscripten SDK");
-    string rootpath = absolutePath("vendor/emsdk");
+    string rootpath = absolutePath(buildPath("vendor", "emsdk"));
 
     // Download EMSDK
     if (!exists("emsdk.zip"))
-        download("https://github.com/emscripten-core/emsdk/archive/refs/tags/3.1.68.zip", "emsdk.zip");
+        download(fmt("https://github.com/emscripten-core/emsdk/archive/refs/tags/%s.zip", emsdk_version), "emsdk.zip");
 
     // Extract EMSDK
     if (!exists(rootpath))
         extractZip("emsdk.zip", rootpath);
 
     version (Windows)
-        string ext = ".bat";
+        immutable string ext = ".bat";
     else
-        string ext = "";
+        immutable string ext = "";
 
-    // Setup EMSDK
-    // version (Posix)
-    // {
-    //     auto result = execute([
-    //         "chmod", "+x", rootPath() ~ "/vendor/emsdk/emsdk" ~ ext
-    //     ]);
-    //     enforce(result.status == 0, "Failed to run chmod in emsdk");
-    // }
     writeln("rootpath: ", rootpath);
     emSdkSetupStep(rootpath);
-
-    // EmLinkOptions link_options = {
-    //     target: "wasm32-emscripten",
-    //     optimize: "Release",
-    //     lib_main: "your_main_lib",
-    //     emsdk: emsdk,
-    // };
-    // emLinkStep(link_options);
-
-    // EmRunOptions run_options = {
-    //     name: "your_app_name",
-    //     emsdk: emsdk,
-    // };
-    // emRunStep(run_options);
-
-    // auto pid = spawnProcess([
-    //     rootPath() ~ "/vendor/emsdk/emsdk" ~ ext, "install", "latest"
-    // ]);
-    // wait(pid);
-
-    // pid = spawnProcess([
-    //     rootPath() ~ "/vendor/emsdk/emsdk" ~ ext, "activate", "latest"
-    // ]);
-    // wait(pid);
 }
 
-void extractTarXZ(string tarFile, string destination)
+void extractTarXZ(string tarFile, string destination) @safe
 {
     if (exists(destination))
         rmdirRecurse(destination);
@@ -227,10 +205,10 @@ void extractTarXZ(string tarFile, string destination)
     enforce(pid.wait() == 0, "Extraction failed");
 }
 
-void extractZip(string zipFile, string destination)
+void extractZip(string zipFile, string destination) @trusted
 {
-    scope archive = new ZipArchive(read(zipFile));
-    std.stdio.writeln("unpacking:");
+    ZipArchive archive = new ZipArchive(read(zipFile)); // unsafe/@system
+    writeln("unpacking:");
     string prefix;
 
     if (exists(zipFile))
@@ -252,7 +230,7 @@ void extractZip(string zipFile, string destination)
             continue;
 
         string path = buildPath(destination, chompPrefix(name, prefix));
-        std.stdio.writeln(path);
+        writeln(path);
         auto dir = dirName(path);
         if (!dir.empty && !dir.exists)
             mkdirRecurse(dir);
@@ -261,13 +239,13 @@ void extractZip(string zipFile, string destination)
     }
 }
 
-void download(string url, string fileName)
+void download(string url, string fileName) @trusted
 {
 
     auto buf = appender!(ubyte[])();
     size_t contentLength;
 
-    auto http = HTTP(url);
+    auto http = HTTP(url); // unsafe/@system (need libcurl)
     http.method = HTTP.Method.get;
     http.onReceiveHeader((in k, in v) {
         if (k == "content-length")
@@ -275,9 +253,9 @@ void download(string url, string fileName)
     });
     http.onReceive((data) {
         buf.put(data);
-        std.stdio.writef("%sk/%sk\r", buf.data.length / 1024,
+        writef("%sk/%sk\r", buf.data.length / 1024,
             contentLength ? to!string(contentLength / 1024) : "?");
-        std.stdio.stdout.flush();
+        stdout.flush();
         return data.length;
     });
     http.dataTimeout = dur!"msecs"(0);
@@ -285,7 +263,7 @@ void download(string url, string fileName)
     immutable sc = http.statusLine().code;
     enforce(sc / 100 == 2 || sc == 302,
         fmt("HTTP request returned status code %s", sc));
-    std.stdio.writeln("done                    ");
+    writeln("done                    ");
 
     auto file = File(fileName, "wb");
     scope (success)
@@ -317,7 +295,7 @@ struct LibSokolOptions
 }
 
 // Helper function to resolve .auto backend based on target platform
-SokolBackend resolveSokolBackend(SokolBackend backend, string target)
+SokolBackend resolveSokolBackend(SokolBackend backend, string target) @safe
 {
     if (backend != SokolBackend.auto_)
     {
@@ -346,7 +324,7 @@ SokolBackend resolveSokolBackend(SokolBackend backend, string target)
 }
 
 // Build sokol into a static library
-void buildLibSokol(LibSokolOptions options)
+void buildLibSokol(LibSokolOptions options) @safe
 {
     bool sharedlib = false;
 
@@ -430,13 +408,10 @@ string findProgram(string programName) @safe
         }
     }
     throw new Exception("Could not find program: " ~ programName);
-    // return null;
 }
 
-string fmt(Args...)(string fmt, auto ref Args args)
+string fmt(Args...)(string fmt, auto ref Args args) @safe
 {
-    import std.array, std.format;
-
     auto app = appender!string();
     formattedWrite(app, fmt, args);
     return app.data;
@@ -460,7 +435,7 @@ struct EmLinkOptions
 }
 
 // Function to create an Emscripten link step
-void emLinkStep(EmLinkOptions options)
+void emLinkStep(EmLinkOptions options) @safe
 {
     string emcc_path = buildPath(options.emsdk, "upstream", "emscripten", "emcc");
     string[] emcc_cmd = [emcc_path];
@@ -544,7 +519,7 @@ struct EmRunOptions
 }
 
 // Function to create an Emscripten run step
-void emRunStep(EmRunOptions options)
+void emRunStep(EmRunOptions options) @safe
 {
     string emrun_path = buildPath(options.emsdk, "upstream", "emscripten", "emrun");
     string[] emrun_cmd = [emrun_path, buildPath("web", options.name ~ ".html")];
@@ -559,13 +534,13 @@ void emRunStep(EmRunOptions options)
 }
 
 // Helper function to build a path from the emsdk root and provided path components
-string emSdkPath(string emsdk, string[] subPaths)
+string emSdkPath(string emsdk, string[] subPaths) @safe
 {
     return absolutePath(buildPath(emsdk ~ subPaths));
 }
 
 // Function to create an Emscripten SDK setup step
-void emSdkSetupStep(string emsdk)
+void emSdkSetupStep(string emsdk) @safe
 {
     string dot_emsc_path = buildPath(emsdk, ".emscripten");
     if (!exists(dot_emsc_path))
@@ -580,28 +555,16 @@ void emSdkSetupStep(string emsdk)
             emsdk_cmd = ["bash", buildPath(emsdk, "emsdk")];
         }
 
-        auto install_result = execute(emsdk_cmd ~ ["install", "latest"]);
-        if (install_result.status != 0)
+        auto status = wait(spawnProcess(emsdk_cmd ~ ["install", "latest"]));
+        if (status != 0)
         {
-            writeln("Error: emsdk install failed");
-            writeln(install_result.output);
-            return;
-        }
-        else
-        {
-            writeln(install_result.output);
+            throw new Exception("Error: emsdk install failed");
         }
 
-        auto activate_result = execute(emsdk_cmd ~ ["activate", "latest"]);
-        if (activate_result.status != 0)
+        status = wait(spawnProcess(emsdk_cmd ~ ["activate", "latest"]));
+        if (status != 0)
         {
-            writeln("Error: emsdk activate failed");
-            writeln(activate_result.output);
-            return;
-        }
-        else
-        {
-            writeln(activate_result.output);
+            throw new Exception("Error: emsdk activate failed");
         }
     }
 }
