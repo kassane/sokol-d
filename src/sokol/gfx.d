@@ -543,6 +543,13 @@ enum ShaderStage {
     Fragment,
 }
 extern(C)
+struct ShaderFunction {
+    const(char)* source = null;
+    Range bytecode;
+    const(char)* entry = null;
+    const(char)* d3d11_target = null;
+}
+extern(C)
 struct ShaderVertexAttr {
     const(char)* glsl_name = null;
     const(char)* hlsl_sem_name = null;
@@ -551,18 +558,17 @@ struct ShaderVertexAttr {
 extern(C)
 struct GlslShaderUniform {
     UniformType type;
-    uint offset = 0;
     ushort array_count = 0;
     const(char)* glsl_name = null;
 }
 extern(C)
 struct ShaderUniformBlock {
     ShaderStage stage;
-    UniformLayout layout;
     uint size = 0;
     ubyte hlsl_register_b_n = 0;
     ubyte msl_buffer_n = 0;
     ubyte wgsl_group0_binding_n = 0;
+    UniformLayout layout;
     GlslShaderUniform[16] glsl_uniforms;
 }
 extern(C)
@@ -598,13 +604,6 @@ struct ShaderImageSamplerPair {
     ubyte image_slot = 0;
     ubyte sampler_slot = 0;
     const(char)* glsl_name = null;
-}
-extern(C)
-struct ShaderFunction {
-    const(char)* source = null;
-    Range bytecode;
-    const(char)* entry = null;
-    const(char)* d3d11_target = null;
 }
 extern(C)
 struct ShaderDesc {
@@ -1024,6 +1023,7 @@ enum LogItem {
     Wgpu_create_pipeline_layout_failed,
     Wgpu_create_render_pipeline_failed,
     Wgpu_attachments_create_texture_view_failed,
+    Draw_required_bindings_or_uniforms_missing,
     Identical_commit_listener,
     Commit_listener_array_full,
     Trace_hooks_not_enabled,
@@ -1218,7 +1218,7 @@ enum LogItem {
     Validate_abnd_pipeline,
     Validate_abnd_pipeline_exists,
     Validate_abnd_pipeline_valid,
-    Validate_abnd_vbs,
+    Validate_abnd_expected_vb,
     Validate_abnd_vb_exists,
     Validate_abnd_vb_type,
     Validate_abnd_vb_overflow,
@@ -1233,17 +1233,14 @@ enum LogItem {
     Validate_abnd_image_msaa,
     Validate_abnd_expected_filterable_image,
     Validate_abnd_expected_depth_image,
-    Validate_abnd_unexpected_image_binding,
     Validate_abnd_expected_sampler_binding,
     Validate_abnd_unexpected_sampler_compare_never,
     Validate_abnd_expected_sampler_compare_never,
     Validate_abnd_expected_nonfiltering_sampler,
-    Validate_abnd_unexpected_sampler_binding,
     Validate_abnd_smp_exists,
     Validate_abnd_expected_storagebuffer_binding,
     Validate_abnd_storagebuffer_exists,
     Validate_abnd_storagebuffer_binding_buffertype,
-    Validate_abnd_unexpected_storagebuffer_binding,
     Validate_aub_no_pipeline,
     Validate_aub_no_ub_at_slot,
     Validate_aub_size,
