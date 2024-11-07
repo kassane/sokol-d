@@ -61,7 +61,7 @@ void init()
         layout: {
             buffers: [{stride: 28}],
             attrs: [
-                shd.ATTR_VS_BG_POSITION: {format: sg.VertexFormat.Float2},
+                shd.ATTR_BG_POSITION: {format: sg.VertexFormat.Float2},
             ],
         },
         primitive_type: sg.PrimitiveType.Triangle_strip
@@ -72,8 +72,8 @@ void init()
         shader: sg.makeShader(shd.quadShaderDesc(sg.queryBackend())),
         layout: {
             attrs: [
-                shd.ATTR_VS_QUAD_POSITION: {format: sg.VertexFormat.Float3},
-                shd.ATTR_VS_QUAD_COLOR0: {format: sg.VertexFormat.Float4},
+                shd.ATTR_QUAD_POSITION: {format: sg.VertexFormat.Float3},
+                shd.ATTR_QUAD_COLOR0: {format: sg.VertexFormat.Float4},
             ],
         },
         primitive_type: sg.PrimitiveType.Triangle_strip,
@@ -117,7 +117,7 @@ void frame()
     size: state.bg_fs_params.sizeof,};
     sg.applyPipeline(state.bg_pip);
     sg.applyBindings(state.bind);
-    sg.applyUniforms(sg.ShaderStage.Fs, shd.SLOT_BG_FS_PARAMS, r);
+    sg.applyUniforms(shd.UB_BG_FS_PARAMS, r);
     sg.draw(0, 4, 1);
 
     // draw the blended quads
@@ -138,7 +138,7 @@ void frame()
             };
             sg.applyPipeline(state.pips[src][dst]);
             sg.applyBindings(state.bind);
-            sg.applyUniforms(sg.ShaderStage.Vs, shd.SLOT_QUAD_VS_PARAMS, rg);
+            sg.applyUniforms(shd.UB_QUAD_VS_PARAMS, rg);
             sg.draw(0, 4, 1);
             r0 += 0.6;
         }

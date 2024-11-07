@@ -32,19 +32,18 @@ struct Range {
     size_t size = 0;
 }
 enum invalid_id = 0;
-enum num_shader_stages = 2;
 enum num_inflight_frames = 2;
 enum max_color_attachments = 4;
-enum max_vertex_buffers = 8;
-enum max_shaderstage_images = 12;
-enum max_shaderstage_samplers = 8;
-enum max_shaderstage_imagesamplerpairs = 12;
-enum max_shaderstage_storagebuffers = 8;
-enum max_shaderstage_ubs = 4;
-enum max_ub_members = 16;
+enum max_uniformblock_members = 16;
 enum max_vertex_attributes = 16;
 enum max_mipmaps = 16;
 enum max_texturearray_layers = 128;
+enum max_uniformblock_bindslots = 8;
+enum max_vertexbuffer_bindslots = 8;
+enum max_image_bindslots = 16;
+enum max_sampler_bindslots = 16;
+enum max_storagebuffer_bindslots = 8;
+enum max_image_sampler_pairs = 16;
 extern(C)
 struct Color {
     float r = 0.0f;
@@ -227,10 +226,6 @@ enum CubeFace {
     Pos_z,
     Neg_z,
     Num,
-}
-enum ShaderStage {
-    Vs,
-    Fs,
 }
 enum PrimitiveType {
     Default,
@@ -469,20 +464,15 @@ struct Pass {
     uint _end_canary = 0;
 }
 extern(C)
-struct StageBindings {
-    Image[12] images;
-    Sampler[8] samplers;
-    Buffer[8] storage_buffers;
-}
-extern(C)
 struct Bindings {
     uint _start_canary = 0;
     Buffer[8] vertex_buffers;
     int[8] vertex_buffer_offsets = 0;
     Buffer index_buffer;
     int index_buffer_offset = 0;
-    StageBindings vs;
-    StageBindings fs;
+    Image[16] images;
+    Sampler[16] samplers;
+    Buffer[8] storage_buffers;
     uint _end_canary = 0;
 }
 extern(C)
@@ -547,66 +537,85 @@ struct SamplerDesc {
     const(void)* wgpu_sampler = null;
     uint _end_canary = 0;
 }
-extern(C)
-struct ShaderAttrDesc {
-    const(char)* name = null;
-    const(char)* sem_name = null;
-    int sem_index = 0;
+enum ShaderStage {
+    None,
+    Vertex,
+    Fragment,
 }
 extern(C)
-struct ShaderUniformDesc {
-    const(char)* name = null;
-    UniformType type;
-    int array_count = 0;
-}
-extern(C)
-struct ShaderUniformBlockDesc {
-    size_t size = 0;
-    UniformLayout layout;
-    ShaderUniformDesc[16] uniforms;
-}
-extern(C)
-struct ShaderStorageBufferDesc {
-    bool used = false;
-    bool readonly = false;
-}
-extern(C)
-struct ShaderImageDesc {
-    bool used = false;
-    bool multisampled = false;
-    ImageType image_type;
-    ImageSampleType sample_type;
-}
-extern(C)
-struct ShaderSamplerDesc {
-    bool used = false;
-    SamplerType sampler_type;
-}
-extern(C)
-struct ShaderImageSamplerPairDesc {
-    bool used = false;
-    int image_slot = 0;
-    int sampler_slot = 0;
-    const(char)* glsl_name = null;
-}
-extern(C)
-struct ShaderStageDesc {
+struct ShaderFunction {
     const(char)* source = null;
     Range bytecode;
     const(char)* entry = null;
     const(char)* d3d11_target = null;
-    ShaderUniformBlockDesc[4] uniform_blocks;
-    ShaderStorageBufferDesc[8] storage_buffers;
-    ShaderImageDesc[12] images;
-    ShaderSamplerDesc[8] samplers;
-    ShaderImageSamplerPairDesc[12] image_sampler_pairs;
+}
+extern(C)
+struct ShaderVertexAttr {
+    const(char)* glsl_name = null;
+    const(char)* hlsl_sem_name = null;
+    ubyte hlsl_sem_index = 0;
+}
+extern(C)
+struct GlslShaderUniform {
+    UniformType type;
+    ushort array_count = 0;
+    const(char)* glsl_name = null;
+}
+extern(C)
+struct ShaderUniformBlock {
+    ShaderStage stage;
+    uint size = 0;
+    ubyte hlsl_register_b_n = 0;
+    ubyte msl_buffer_n = 0;
+    ubyte wgsl_group0_binding_n = 0;
+    UniformLayout layout;
+    GlslShaderUniform[16] glsl_uniforms;
+}
+extern(C)
+struct ShaderImage {
+    ShaderStage stage;
+    ImageType image_type;
+    ImageSampleType sample_type;
+    bool multisampled = false;
+    ubyte hlsl_register_t_n = 0;
+    ubyte msl_texture_n = 0;
+    ubyte wgsl_group1_binding_n = 0;
+}
+extern(C)
+struct ShaderSampler {
+    ShaderStage stage;
+    SamplerType sampler_type;
+    ubyte hlsl_register_s_n = 0;
+    ubyte msl_sampler_n = 0;
+    ubyte wgsl_group1_binding_n = 0;
+}
+extern(C)
+struct ShaderStorageBuffer {
+    ShaderStage stage;
+    bool readonly = false;
+    ubyte hlsl_register_t_n = 0;
+    ubyte msl_buffer_n = 0;
+    ubyte wgsl_group1_binding_n = 0;
+    ubyte glsl_binding_n = 0;
+}
+extern(C)
+struct ShaderImageSamplerPair {
+    ShaderStage stage;
+    ubyte image_slot = 0;
+    ubyte sampler_slot = 0;
+    const(char)* glsl_name = null;
 }
 extern(C)
 struct ShaderDesc {
     uint _start_canary = 0;
-    ShaderAttrDesc[16] attrs;
-    ShaderStageDesc vs;
-    ShaderStageDesc fs;
+    ShaderFunction vertex_func;
+    ShaderFunction fragment_func;
+    ShaderVertexAttr[16] attrs;
+    ShaderUniformBlock[8] uniform_blocks;
+    ShaderStorageBuffer[8] storage_buffers;
+    ShaderImage[16] images;
+    ShaderSampler[16] samplers;
+    ShaderImageSamplerPair[16] image_sampler_pairs;
     const(char)* label = null;
     uint _end_canary = 0;
 }
@@ -726,7 +735,7 @@ struct TraceHooks {
     extern(C) void function(int, int, int, int, bool, void*) apply_scissor_rect = null;
     extern(C) void function(Pipeline, void*) apply_pipeline = null;
     extern(C) void function(const Bindings *, void*) apply_bindings = null;
-    extern(C) void function(ShaderStage, int, const Range *, void*) apply_uniforms = null;
+    extern(C) void function(int, const Range *, void*) apply_uniforms = null;
     extern(C) void function(int, int, int, void*) draw = null;
     extern(C) void function(void*) end_pass = null;
     extern(C) void function(void*) commit = null;
@@ -958,7 +967,7 @@ enum LogItem {
     Gl_shader_compilation_failed,
     Gl_shader_linking_failed,
     Gl_vertex_attribute_not_found_in_shader,
-    Gl_texture_name_not_found_in_shader,
+    Gl_image_sampler_name_not_found_in_shader,
     Gl_framebuffer_status_undefined,
     Gl_framebuffer_status_incomplete_attachment,
     Gl_framebuffer_status_incomplete_missing_attachment,
@@ -997,8 +1006,7 @@ enum LogItem {
     Metal_shader_compilation_failed,
     Metal_shader_creation_failed,
     Metal_shader_compilation_output,
-    Metal_vertex_shader_entry_not_found,
-    Metal_fragment_shader_entry_not_found,
+    Metal_shader_entry_not_found,
     Metal_create_rps_failed,
     Metal_create_rps_output,
     Metal_create_dss_failed,
@@ -1011,13 +1019,11 @@ enum LogItem {
     Wgpu_create_texture_view_failed,
     Wgpu_create_sampler_failed,
     Wgpu_create_shader_module_failed,
-    Wgpu_shader_too_many_images,
-    Wgpu_shader_too_many_samplers,
-    Wgpu_shader_too_many_storagebuffers,
     Wgpu_shader_create_bindgroup_layout_failed,
     Wgpu_create_pipeline_layout_failed,
     Wgpu_create_render_pipeline_failed,
     Wgpu_attachments_create_texture_view_failed,
+    Draw_required_bindings_or_uniforms_missing,
     Identical_commit_listener,
     Commit_listener_array_full,
     Trace_hooks_not_enabled,
@@ -1084,28 +1090,49 @@ enum LogItem {
     Validate_shaderdesc_bytecode,
     Validate_shaderdesc_source_or_bytecode,
     Validate_shaderdesc_no_bytecode_size,
-    Validate_shaderdesc_no_cont_ubs,
     Validate_shaderdesc_no_cont_ub_members,
+    Validate_shaderdesc_ub_size_is_zero,
+    Validate_shaderdesc_ub_metal_buffer_slot_out_of_range,
+    Validate_shaderdesc_ub_metal_buffer_slot_collision,
+    Validate_shaderdesc_ub_hlsl_register_b_out_of_range,
+    Validate_shaderdesc_ub_hlsl_register_b_collision,
+    Validate_shaderdesc_ub_wgsl_group0_binding_out_of_range,
+    Validate_shaderdesc_ub_wgsl_group0_binding_collision,
     Validate_shaderdesc_no_ub_members,
-    Validate_shaderdesc_ub_member_name,
+    Validate_shaderdesc_ub_uniform_glsl_name,
     Validate_shaderdesc_ub_size_mismatch,
     Validate_shaderdesc_ub_array_count,
     Validate_shaderdesc_ub_std140_array_type,
-    Validate_shaderdesc_no_cont_storagebuffers,
+    Validate_shaderdesc_storagebuffer_metal_buffer_slot_out_of_range,
+    Validate_shaderdesc_storagebuffer_metal_buffer_slot_collision,
+    Validate_shaderdesc_storagebuffer_hlsl_register_t_out_of_range,
+    Validate_shaderdesc_storagebuffer_hlsl_register_t_collision,
+    Validate_shaderdesc_storagebuffer_glsl_binding_out_of_range,
+    Validate_shaderdesc_storagebuffer_glsl_binding_collision,
+    Validate_shaderdesc_storagebuffer_wgsl_group1_binding_out_of_range,
+    Validate_shaderdesc_storagebuffer_wgsl_group1_binding_collision,
     Validate_shaderdesc_storagebuffer_readonly,
-    Validate_shaderdesc_no_cont_images,
-    Validate_shaderdesc_no_cont_samplers,
+    Validate_shaderdesc_image_metal_texture_slot_out_of_range,
+    Validate_shaderdesc_image_metal_texture_slot_collision,
+    Validate_shaderdesc_image_hlsl_register_t_out_of_range,
+    Validate_shaderdesc_image_hlsl_register_t_collision,
+    Validate_shaderdesc_image_wgsl_group1_binding_out_of_range,
+    Validate_shaderdesc_image_wgsl_group1_binding_collision,
+    Validate_shaderdesc_sampler_metal_sampler_slot_out_of_range,
+    Validate_shaderdesc_sampler_metal_sampler_slot_collision,
+    Validate_shaderdesc_sampler_hlsl_register_s_out_of_range,
+    Validate_shaderdesc_sampler_hlsl_register_s_collision,
+    Validate_shaderdesc_sampler_wgsl_group1_binding_out_of_range,
+    Validate_shaderdesc_sampler_wgsl_group1_binding_collision,
     Validate_shaderdesc_image_sampler_pair_image_slot_out_of_range,
     Validate_shaderdesc_image_sampler_pair_sampler_slot_out_of_range,
-    Validate_shaderdesc_image_sampler_pair_name_required_for_gl,
-    Validate_shaderdesc_image_sampler_pair_has_name_but_not_used,
-    Validate_shaderdesc_image_sampler_pair_has_image_but_not_used,
-    Validate_shaderdesc_image_sampler_pair_has_sampler_but_not_used,
+    Validate_shaderdesc_image_sampler_pair_image_stage_mismatch,
+    Validate_shaderdesc_image_sampler_pair_sampler_stage_mismatch,
+    Validate_shaderdesc_image_sampler_pair_glsl_name,
     Validate_shaderdesc_nonfiltering_sampler_required,
     Validate_shaderdesc_comparison_sampler_required,
     Validate_shaderdesc_image_not_referenced_by_image_sampler_pairs,
     Validate_shaderdesc_sampler_not_referenced_by_image_sampler_pairs,
-    Validate_shaderdesc_no_cont_image_sampler_pairs,
     Validate_shaderdesc_attr_string_too_long,
     Validate_pipelinedesc_canary,
     Validate_pipelinedesc_shader,
@@ -1191,7 +1218,7 @@ enum LogItem {
     Validate_abnd_pipeline,
     Validate_abnd_pipeline_exists,
     Validate_abnd_pipeline_valid,
-    Validate_abnd_vbs,
+    Validate_abnd_expected_vb,
     Validate_abnd_vb_exists,
     Validate_abnd_vb_type,
     Validate_abnd_vb_overflow,
@@ -1200,40 +1227,20 @@ enum LogItem {
     Validate_abnd_ib_exists,
     Validate_abnd_ib_type,
     Validate_abnd_ib_overflow,
-    Validate_abnd_vs_expected_image_binding,
-    Validate_abnd_vs_img_exists,
-    Validate_abnd_vs_image_type_mismatch,
-    Validate_abnd_vs_image_msaa,
-    Validate_abnd_vs_expected_filterable_image,
-    Validate_abnd_vs_expected_depth_image,
-    Validate_abnd_vs_unexpected_image_binding,
-    Validate_abnd_vs_expected_sampler_binding,
-    Validate_abnd_vs_unexpected_sampler_compare_never,
-    Validate_abnd_vs_expected_sampler_compare_never,
-    Validate_abnd_vs_expected_nonfiltering_sampler,
-    Validate_abnd_vs_unexpected_sampler_binding,
-    Validate_abnd_vs_smp_exists,
-    Validate_abnd_vs_expected_storagebuffer_binding,
-    Validate_abnd_vs_storagebuffer_exists,
-    Validate_abnd_vs_storagebuffer_binding_buffertype,
-    Validate_abnd_vs_unexpected_storagebuffer_binding,
-    Validate_abnd_fs_expected_image_binding,
-    Validate_abnd_fs_img_exists,
-    Validate_abnd_fs_image_type_mismatch,
-    Validate_abnd_fs_image_msaa,
-    Validate_abnd_fs_expected_filterable_image,
-    Validate_abnd_fs_expected_depth_image,
-    Validate_abnd_fs_unexpected_image_binding,
-    Validate_abnd_fs_expected_sampler_binding,
-    Validate_abnd_fs_unexpected_sampler_compare_never,
-    Validate_abnd_fs_expected_sampler_compare_never,
-    Validate_abnd_fs_expected_nonfiltering_sampler,
-    Validate_abnd_fs_unexpected_sampler_binding,
-    Validate_abnd_fs_smp_exists,
-    Validate_abnd_fs_expected_storagebuffer_binding,
-    Validate_abnd_fs_storagebuffer_exists,
-    Validate_abnd_fs_storagebuffer_binding_buffertype,
-    Validate_abnd_fs_unexpected_storagebuffer_binding,
+    Validate_abnd_expected_image_binding,
+    Validate_abnd_img_exists,
+    Validate_abnd_image_type_mismatch,
+    Validate_abnd_image_msaa,
+    Validate_abnd_expected_filterable_image,
+    Validate_abnd_expected_depth_image,
+    Validate_abnd_expected_sampler_binding,
+    Validate_abnd_unexpected_sampler_compare_never,
+    Validate_abnd_expected_sampler_compare_never,
+    Validate_abnd_expected_nonfiltering_sampler,
+    Validate_abnd_smp_exists,
+    Validate_abnd_expected_storagebuffer_binding,
+    Validate_abnd_storagebuffer_exists,
+    Validate_abnd_storagebuffer_binding_buffertype,
     Validate_aub_no_pipeline,
     Validate_aub_no_ub_at_slot,
     Validate_aub_size,
@@ -1444,9 +1451,9 @@ extern(C) void sg_apply_bindings(const Bindings *) @system @nogc nothrow;
 void applyBindings(scope ref Bindings bindings) @trusted @nogc nothrow {
     sg_apply_bindings(&bindings);
 }
-extern(C) void sg_apply_uniforms(ShaderStage, uint, const Range *) @system @nogc nothrow;
-void applyUniforms(ShaderStage stage, uint ub_index, scope ref Range data) @trusted @nogc nothrow {
-    sg_apply_uniforms(stage, ub_index, &data);
+extern(C) void sg_apply_uniforms(uint, const Range *) @system @nogc nothrow;
+void applyUniforms(uint ub_slot, scope ref Range data) @trusted @nogc nothrow {
+    sg_apply_uniforms(ub_slot, &data);
 }
 extern(C) void sg_draw(uint, uint, uint) @system @nogc nothrow;
 void draw(uint base_element, uint num_elements, uint num_instances) @trusted @nogc nothrow {
@@ -1737,8 +1744,7 @@ struct D3d11SamplerInfo {
 }
 extern(C)
 struct D3d11ShaderInfo {
-    const(void)*[4] vs_cbufs = null;
-    const(void)*[4] fs_cbufs = null;
+    const(void)*[8] cbufs = null;
     const(void)* vs = null;
     const(void)* fs = null;
 }
@@ -1771,10 +1777,10 @@ struct MtlSamplerInfo {
 }
 extern(C)
 struct MtlShaderInfo {
-    const(void)* vs_lib = null;
-    const(void)* fs_lib = null;
-    const(void)* vs_func = null;
-    const(void)* fs_func = null;
+    const(void)* vertex_lib = null;
+    const(void)* fragment_lib = null;
+    const(void)* vertex_func = null;
+    const(void)* fragment_func = null;
 }
 extern(C)
 struct MtlPipelineInfo {

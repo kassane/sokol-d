@@ -96,8 +96,8 @@ void init()
     sg.PipelineDesc pld = {
         layout: {
             attrs: [
-                shd.ATTR_VS_POSITION: {format: sg.VertexFormat.Float3},
-                shd.ATTR_VS_COLOR0: {format: sg.VertexFormat.Float4},
+                shd.ATTR_CUBE_POSITION: {format: sg.VertexFormat.Float3},
+                shd.ATTR_CUBE_COLOR0: {format: sg.VertexFormat.Float4},
             ],
         },
         shader: sg.makeShader(shd.cubeShaderDesc(sg.queryBackend())),
@@ -123,7 +123,7 @@ void frame()
     sg.applyPipeline(state.pip);
     sg.applyBindings(state.bind);
     sg.Range r = {ptr: &vsParams, size: vsParams.sizeof};
-    sg.applyUniforms(sg.ShaderStage.Vs, shd.SLOT_VS_PARAMS, r);
+    sg.applyUniforms(shd.UB_VS_PARAMS, r);
     sg.draw(0, 36, 1);
     sg.endPass();
     sg.commit();
