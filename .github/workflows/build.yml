@@ -39,6 +39,8 @@ jobs:
             dub build :imgui
             dub build :droptest
 
+      - name: (Zig) Build Shaders
+        run: zig build shaders
       - name: (Zig) Running Test
         if: runner.os != 'Windows'
         run: zig build test -DzigCC
