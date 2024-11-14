@@ -719,6 +719,15 @@ fn buildShaders(b: *Build, target: Build.ResolvedTarget) void {
     const shdc_step = b.step("shaders", "Compile shaders (needs ../sokol-tools-bin)");
     const glsl = if (target.result.isDarwin()) "glsl410" else "glsl430";
     const slang = glsl ++ ":metal_macos:hlsl5:glsl300es:wgsl";
+    if (builtin.os.tag == .linux or builtin.os.tag == .macos) {
+        const file = std.fs.openFileAbsolute(shdc_path, .{}) catch |err| {
+            std.debug.panic("failed to open {s}: {s}", .{ shdc_path, @errorName(err) });
+        };
+        defer file.close();
+        file.chmod(0o755) catch |err| {
+            std.debug.panic("failed to chmod {s}: {s}", .{ shdc_path, @errorName(err) });
+        };
+    }
     inline for (shaders) |shader| {
         const cmd = b.addSystemCommand(&.{
             shdc_path,
