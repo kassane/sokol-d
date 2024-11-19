@@ -154,6 +154,7 @@ struct Features {
     bool mrt_independent_blend_state = false;
     bool mrt_independent_write_mask = false;
     bool storage_buffer = false;
+    bool msaa_image_bindings = false;
 }
 extern(C)
 struct Limits {
@@ -1077,6 +1078,7 @@ enum LogItem {
     Validate_imagedesc_no_msaa_rt_support,
     Validate_imagedesc_msaa_num_mipmaps,
     Validate_imagedesc_msaa_3d_image,
+    Validate_imagedesc_msaa_cube_image,
     Validate_imagedesc_depth_3d_image,
     Validate_imagedesc_rt_immutable,
     Validate_imagedesc_rt_no_data,
@@ -1230,6 +1232,7 @@ enum LogItem {
     Validate_abnd_expected_image_binding,
     Validate_abnd_img_exists,
     Validate_abnd_image_type_mismatch,
+    Validate_abnd_expected_multisampled_image,
     Validate_abnd_image_msaa,
     Validate_abnd_expected_filterable_image,
     Validate_abnd_expected_depth_image,
