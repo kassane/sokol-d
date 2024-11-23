@@ -365,7 +365,7 @@ struct Desc {
     bool win32_console_utf8 = false;
     bool win32_console_create = false;
     bool win32_console_attach = false;
-    const(char)* html5_canvas_name = null;
+    const(char)* html5_canvas_selector = null;
     bool html5_canvas_resize = false;
     bool html5_preserve_drawing_buffer = false;
     bool html5_premultiplied_alpha = false;
