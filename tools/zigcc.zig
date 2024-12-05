@@ -41,6 +41,8 @@ pub fn main() !void {
         } else if (std.mem.eql(u8, arg, "-target")) {
             isNative = false;
             try cmds.append(arg); // get "-target" flag
+        } else if (std.mem.startsWith(u8, arg, "/")) {
+            // SKIP
         } else {
             try cmds.append(arg);
         }
