@@ -54,7 +54,7 @@ extern (C) void init() @safe @nogc nothrow
     }
 }
 
-extern (C) void frame() @trusted @nogc nothrow
+extern (C) void frame() @trusted
 {
     // ifndef emscripten
     static if((){version(Emscripten) return false;else return true;}())
@@ -71,9 +71,8 @@ extern (C) void frame() @trusted @nogc nothrow
 
     // /*=== UI CODE STARTS HERE ===*/
     const ImVec2 window_pos = {10, 10};
-    const ImVec2 window_pos_pivot = {0, 0};
     const ImVec2 window_size = {600, 500};
-    igSetNextWindowPos(window_pos, ImGuiCond_.ImGuiCond_Once, window_pos_pivot);
+    igSetNextWindowPos(window_pos, ImGuiCond_.ImGuiCond_Once);
     igSetNextWindowSize(window_size, ImGuiCond_.ImGuiCond_Once);
     igBegin("Drop a file!".ptr, null, ImGuiWindowFlags_.ImGuiWindowFlags_None);
     if(state.load_state != LoadState.Unknown)
@@ -161,14 +160,15 @@ extern (C) void main() @safe @nogc nothrow
     sapp.run(runner);
 }
 
-void renderFileContent() @nogc nothrow
+void renderFileContent()
 {
     immutable int bytes_per_line = 16; // keep this 2^N
     immutable int num_lines = (state.size + (bytes_per_line - 1)) / bytes_per_line;
     ImVec2 sz = {0, 0};
-    igBeginChild_Str("##scrolling", sz, false, ImGuiWindowFlags_.ImGuiWindowFlags_NoMove | ImGuiWindowFlags_
+    igBeginChild("##scrolling", sz, false, ImGuiWindowFlags_
+            .ImGuiWindowFlags_NoMove | ImGuiWindowFlags_
             .ImGuiWindowFlags_NoNav);
-    ImGuiListClipper* clipper = ImGuiListClipper_ImGuiListClipper();
+    ImGuiListClipper* clipper = null;
     ImGuiListClipper_Begin(clipper, num_lines, igGetTextLineHeight());
     ImGuiListClipper_Step(clipper);
     for (int line_i = clipper.DisplayStart; line_i < clipper.DisplayEnd; line_i++)
@@ -182,15 +182,15 @@ void renderFileContent() @nogc nothrow
         igText("%04X: ", start_offset);
         for (int i = start_offset; i < end_offset; i++)
         {
-            igSameLine(0.0f, 0.0f);
+            igSameLineEx(0.0f, 0.0f);
             igText("%02X ", state.buffer[i]);
         }
-        igSameLine((6 * 7.0f) + (bytes_per_line * 3 * 7.0f) + (2 * 7.0f), 0.0f);
+        igSameLineEx((6 * 7.0f) + (bytes_per_line * 3 * 7.0f) + (2 * 7.0f), 0.0f);
         for (int i = start_offset; i < end_offset; i++)
         {
             if (i != start_offset)
             {
-                igSameLine(0.0f, 0.0f);
+                igSameLineEx(0.0f, 0.0f);
             }
             ubyte c = state.buffer[i];
             if ((c < 32) || (c > 127))
@@ -202,7 +202,6 @@ void renderFileContent() @nogc nothrow
     }
     igText("EOF\n");
     ImGuiListClipper_End(clipper);
-    ImGuiListClipper_destroy(clipper);
     igEndChild();
 }
 

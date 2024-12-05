@@ -197,9 +197,6 @@ pub fn buildLibSokol(b: *Build, options: LibSokolOptions) !*CompileStep {
             try lib.root_module.include_dirs.append(b.allocator, dir);
         }
         lib.linkLibrary(cimgui);
-        // TODO: this is a hack to get the cimgui.h header into the include path
-        const cimgui_include = b.dependency("cimgui", .{}).path("");
-        lib.addIncludePath(cimgui_include);
     }
     return lib;
 }
@@ -431,7 +428,6 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*std.Build.Step.InstallDi
     }
 
     if (options.target.result.isWasm()) {
-        ldc_exec.addArg("--d-version=CarelessAlocation");
         ldc_exec.addArg("-L-allow-undefined");
     }
 
@@ -897,13 +893,7 @@ const libImGuiOptions = struct {
     emsdk: ?*Build.Dependency,
 };
 fn buildImgui(b: *Build, options: libImGuiOptions) !*CompileStep {
-    const imgui_cpp = b.dependency("imgui", .{});
-    const cimgui = b.dependency("cimgui", .{});
-
-    // create file tree for cimgui and imgui
-    const wf = b.addNamedWriteFiles("cimgui");
-    const cimgui_dir = wf.addCopyDirectory(cimgui.path(""), "", .{});
-    const imgui_cpp_dir = wf.addCopyDirectory(imgui_cpp.path(""), "imgui", .{});
+    const cimgui = b.dependency("cimgui", .{}).path("src");
 
     const libimgui = b.addStaticLibrary(.{
         .name = "cimgui",
@@ -915,10 +905,7 @@ fn buildImgui(b: *Build, options: libImGuiOptions) !*CompileStep {
         libimgui.pie = true
     else if (libimgui.linkage == .static)
         libimgui.root_module.pic = true;
-
-    // FIXME: this is a hack to make cimgui work on build.zig | NOT USE C/IMGUI INCLUDES (get BUILD [Step] ERRORS)
-    // libimgui.addIncludePath(cimgui_dir);
-    // libimgui.addAfterIncludePath(imgui_cpp_dir);
+    libimgui.addIncludePath(cimgui);
 
     if (libimgui.rootModuleTarget().isWasm()) {
         if (try emSdkSetupStep(b, options.emsdk.?)) |emsdk_setup| {
@@ -934,7 +921,7 @@ fn buildImgui(b: *Build, options: libImGuiOptions) !*CompileStep {
         }));
     }
     libimgui.addCSourceFiles(.{
-        .root = cimgui_dir,
+        .root = cimgui,
         .files = &.{
             "cimgui.cpp",
         },
@@ -949,7 +936,7 @@ fn buildImgui(b: *Build, options: libImGuiOptions) !*CompileStep {
         },
     });
     libimgui.addCSourceFiles(.{
-        .root = imgui_cpp_dir,
+        .root = cimgui,
         .files = &.{
             "imgui.cpp",
             "imgui_draw.cpp",

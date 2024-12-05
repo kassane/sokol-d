@@ -12,12 +12,8 @@
     },
     .dependencies = .{
         .cimgui = .{
-            .url = "git+https://github.com/cimgui/cimgui.git#1.91.4",
-            .hash = "1220be5b165d8fb8fdb46e8c2fc21ba719a498d76484605d2b715e7976ea718343a9",
-        },
-        .imgui = .{
-            .url = "git+https://github.com/ocornut/imgui.git#v1.91.4",
-            .hash = "12207f4440f54bfe95e03ec5e54019e5663a5e38b5245cc993cfc814b03eb2f3e894",
+            .url = "git+https://github.com/floooh/dcimgui.git#v1.91.5",
+            .hash = "1220b961ab1b5e39bacb94f17ffa1ebdc34980ef9297331d06521537701e9390e983",
         },
         .emsdk = .{
             .url = "git+https://github.com/emscripten-core/emsdk#3.1.71",
