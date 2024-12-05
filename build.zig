@@ -893,10 +893,10 @@ const libImGuiOptions = struct {
     emsdk: ?*Build.Dependency,
 };
 fn buildImgui(b: *Build, options: libImGuiOptions) !*CompileStep {
-    const cimgui = b.dependency("cimgui", .{}).path("src");
+    const cimgui = b.dependency("imgui", .{}).path("src");
 
     const libimgui = b.addStaticLibrary(.{
-        .name = "cimgui",
+        .name = "imgui",
         .target = options.target,
         .optimize = options.optimize,
     });

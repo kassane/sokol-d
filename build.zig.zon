@@ -11,7 +11,7 @@
         "README.md",
     },
     .dependencies = .{
-        .cimgui = .{
+        .imgui = .{
             .url = "git+https://github.com/floooh/dcimgui.git#v1.91.5",
             .hash = "1220190c1c465474d437a8f7955c8b759e6e4ef32e9a61e9f0b5dbe74ebcd84622b3",
         },

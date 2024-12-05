@@ -24,20 +24,20 @@ jobs:
             sudo apt-get update
             sudo apt-get install libglu1-mesa-dev mesa-common-dev xorg-dev libasound-dev
 
-      # - name: (Dub) Build Native
-      #   if: runner.os != 'Windows'
-      #   run: |
-      #       dub build :clear
-      #       dub build :sgl_context
-      #       dub build :sgl_points
-      #       dub build :debugtext
-      #       dub build :cube
-      #       dub build :blend
-      #       dub build :triangle
-      #       dub build :mrt
-      #       dub build :user_data
-      #       dub build :imgui
-      #       dub build :droptest
+      - name: (Dub) Build Native
+        if: runner.os != 'Windows'
+        run: |
+            dub build :clear
+            dub build :sgl_context
+            dub build :sgl_points
+            dub build :debugtext
+            dub build :cube
+            dub build :blend
+            dub build :triangle
+            dub build :mrt
+            dub build :user_data
+            dub build :imgui
+            dub build :droptest
 
       - name: (Zig) Build Shaders
         run: zig build shaders
@@ -45,6 +45,6 @@ jobs:
         if: runner.os != 'Windows'
         run: zig build test -DzigCC
       - name: (Zig) Build Native
-        run: zig build -DzigCC --summary all
+        run: zig build -Dimgui --summary all
       - name: (Zig + emsdk) Build Wasm
-        run: zig build -DzigCC --summary all -Dtarget=wasm32-emscripten-none -Doptimize=ReleaseSmall
+        run: zig build -Dimgui -DzigCC --summary all -Dtarget=wasm32-emscripten-none -Doptimize=ReleaseSmall
