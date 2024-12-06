@@ -41,7 +41,7 @@ pub fn main() !void {
         } else if (std.mem.eql(u8, arg, "-target")) {
             isNative = false;
             try cmds.append(arg); // get "-target" flag
-        } else if (std.mem.startsWith(u8, arg, "/")) {
+        } else if (std.mem.eql(u8, arg, "/NOLOGO")) {
             // SKIP
         } else {
             try cmds.append(arg);
