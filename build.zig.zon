@@ -13,11 +13,11 @@
     .dependencies = .{
         .imgui = .{
             .url = "git+https://github.com/floooh/dcimgui#v1.91.5",
-            .hash = "1220094fe4aac5ae443f91e6a7f1afc5eb9f315b5714a95aca979a9d321e03d01d84",
+            .hash = "1220bb58d62d795d3a9839fe16449a8a84e66c9f77ab84889a589136b2e0be5e2924",
         },
         .emsdk = .{
-            .url = "git+https://github.com/emscripten-core/emsdk#3.1.71",
-            .hash = "12201d024e47d97dea4d1d6024a9cf1b35ca8be8e4fa1a0ecf6ee9080e479467183a",
+            .url = "git+https://github.com/emscripten-core/emsdk#3.1.73",
+            .hash = "1220d2b37748757d43de92f0ef723b6a00c3cae4b6a9c582b607421704498a5cfd2b",
         },
         .shdc = .{
             .url = "git+https://github.com/floooh/sokol-tools-bin#3388e3b2c04b532a55b072d79e77c9fc44c3ca50",

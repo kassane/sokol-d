@@ -204,8 +204,8 @@ subPackage {
 	libs "sokol"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
-	dflags "-P-I$HOME/.cache/zig/p/1220190c1c465474d437a8f7955c8b759e6e4ef32e9a61e9f0b5dbe74ebcd84622b3/src" platform="posix"
-	dflags "-P-I$APPDATA\\Local\\zig\\p\\1220190c1c465474d437a8f7955c8b759e6e4ef32e9a61e9f0b5dbe74ebcd84622b3\\src" platform="windows"
+	dflags "-P-I$HOME/.cache/zig/p/1220bb58d62d795d3a9839fe16449a8a84e66c9f77ab84889a589136b2e0be5e2924/src" platform="posix"
+	dflags "-P-I$APPDATA\\Local\\zig\\p\\1220bb58d62d795d3a9839fe16449a8a84e66c9f77ab84889a589136b2e0be5e2924\\src" platform="windows"
 	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/debugtext.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/cube.d" "src/examples/mrt.d" "src/examples/blend.d" "src/examples/user_data.d" "src/examples/droptest.d" "src/examples/shaders/*.d"
 	preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast -Dimgui -Dartifact"
 }
@@ -218,8 +218,8 @@ subPackage {
 	libs "sokol"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
-	dflags "-P-I$HOME/.cache/zig/p/1220190c1c465474d437a8f7955c8b759e6e4ef32e9a61e9f0b5dbe74ebcd84622b3/src" platform="posix"
-	dflags "-P-I$APPDATA\\Local\\zig\\p\\1220190c1c465474d437a8f7955c8b759e6e4ef32e9a61e9f0b5dbe74ebcd84622b3\\src" platform="windows"
+	dflags "-P-I$HOME/.cache/zig/p/1220bb58d62d795d3a9839fe16449a8a84e66c9f77ab84889a589136b2e0be5e2924/src" platform="posix"
+	dflags "-P-I$APPDATA\\Local\\zig\\p\\1220bb58d62d795d3a9839fe16449a8a84e66c9f77ab84889a589136b2e0be5e2924\\src" platform="windows"
 	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/debugtext.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/cube.d" "src/examples/mrt.d" "src/examples/blend.d" "src/examples/user_data.d" "src/examples/imgui.d" "src/examples/shaders/*.d"
 	preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast -Dimgui -Dartifact"
 }
