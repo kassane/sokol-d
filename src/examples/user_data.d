@@ -29,9 +29,9 @@ void frame_userdata(scope void* userdata) @trusted
     auto state = cast(ExampleUserData*) userdata;
 
     state.data++;
-    version (WebAssembly)
+    version (D_BetterC)
     {
-        // TODO support
+
     }
     else
     {
@@ -43,18 +43,9 @@ void frame_userdata(scope void* userdata) @trusted
         {
             state.map.clear();
         }
-    }
-    debug
-    {
         import std.stdio : writeln;
 
-        try
-        {
-            writeln(*state);
-        }
-        catch (Exception)
-        {
-        }
+        writeln(*state);
     }
 
     sg.Pass pass = {swapchain: sglue.swapchain};
