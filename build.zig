@@ -61,7 +61,9 @@ pub fn buildLibSokol(b: *Build, options: LibSokolOptions) !*CompileStep {
         .optimize = options.optimize,
         .link_libc = true,
     });
-    lib.root_module.sanitize_c = false;
+
+    lib.root_module.sanitize_c = b.option(bool, "ubsan", "Enable undefined behavior sanitizer") orelse false;
+    lib.root_module.sanitize_thread = b.option(bool, "tsan", "Enable thread sanitizer") orelse false;
 
     switch (options.optimize) {
         .Debug, .ReleaseSafe => lib.bundle_compiler_rt = true,
@@ -192,6 +194,8 @@ pub fn buildLibSokol(b: *Build, options: LibSokolOptions) !*CompileStep {
             .target = options.target,
             .optimize = options.optimize,
             .emsdk = options.emsdk,
+            .use_tsan = lib.root_module.sanitize_thread orelse false,
+            .use_ubsan = lib.root_module.sanitize_c orelse false,
         });
         for (cimgui.root_module.include_dirs.items) |dir| {
             try lib.root_module.include_dirs.append(b.allocator, dir);
@@ -498,11 +502,9 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*std.Build.Step.InstallDi
             if (tsan)
                 ldc_exec.addArg("--fsanitize=thread");
         }
-
-        // zig enable sanitize=undefined by default
-        if (lib_sokol.root_module.sanitize_c) |ubsan| {
-            if (ubsan)
-                ldc_exec.addArg("--fsanitize=address");
+        if (lib_sokol.root_module.fuzz) |fuzz| {
+            if (fuzz)
+                ldc_exec.addArg("--fsanitize=fuzzer");
         }
 
         if (lib_sokol.root_module.omit_frame_pointer) |enabled| {
@@ -586,6 +588,7 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*std.Build.Step.InstallDi
             .use_webgl2 = backend != .wgpu,
             .use_emmalloc = true,
             .use_filesystem = false,
+            .use_ubsan = options.artifact.?.root_module.sanitize_c orelse false,
             .release_use_lto = options.artifact.?.want_lto orelse false,
             .shell_file_path = b.path("src/sokol/web/shell.html"),
             .extra_args = &.{"-sSTACK_SIZE=512KB"},
@@ -747,9 +750,7 @@ fn buildShaders(b: *Build, target: Build.ResolvedTarget) void {
 pub const EmLinkOptions = struct {
     target: Build.ResolvedTarget,
     optimize: std.builtin.OptimizeMode,
-    // name: []const u8,
     lib_main: *Build.Step.Compile,
-    // lib_sokol: *Build.Step.Compile,
     emsdk: *Build.Dependency,
     release_use_closure: bool = true,
     release_use_lto: bool = false,
@@ -757,6 +758,7 @@ pub const EmLinkOptions = struct {
     use_webgl2: bool = false,
     use_emmalloc: bool = false,
     use_filesystem: bool = true,
+    use_ubsan: bool = false,
     shell_file_path: ?Build.LazyPath,
     extra_args: []const []const u8 = &.{},
 };
@@ -796,6 +798,9 @@ pub fn emLinkStep(b: *Build, options: EmLinkOptions) !*Build.Step.InstallDir {
     }
     if (options.use_emmalloc) {
         emcc.addArg("-sMALLOC='emmalloc'");
+    }
+    if (options.use_ubsan) {
+        emcc.addArg("-fsanitize=undefined");
     }
     if (options.shell_file_path) |shell_file_path| {
         emcc.addPrefixedFileArg("--shell-file=", shell_file_path);
@@ -891,7 +896,10 @@ const libImGuiOptions = struct {
     target: Build.ResolvedTarget,
     optimize: std.builtin.OptimizeMode,
     emsdk: ?*Build.Dependency,
+    use_ubsan: bool = false,
+    use_tsan: bool = false,
 };
+
 fn buildImgui(b: *Build, options: libImGuiOptions) !*CompileStep {
     const cimgui = b.dependency("imgui", .{}).path("src");
 
@@ -900,11 +908,9 @@ fn buildImgui(b: *Build, options: libImGuiOptions) !*CompileStep {
         .target = options.target,
         .optimize = options.optimize,
     });
+    libimgui.root_module.sanitize_c = options.use_ubsan;
+    libimgui.root_module.sanitize_thread = options.use_tsan;
 
-    if (libimgui.linkage == .static)
-        libimgui.pie = true
-    else if (libimgui.linkage == .static)
-        libimgui.root_module.pic = true;
     libimgui.addIncludePath(cimgui);
 
     if (libimgui.rootModuleTarget().isWasm()) {
@@ -925,15 +931,6 @@ fn buildImgui(b: *Build, options: libImGuiOptions) !*CompileStep {
         .files = &.{
             "cimgui.cpp",
         },
-        .flags = &.{
-            "-Wall",
-            "-Wextra",
-            "-fno-rtti",
-            "-fno-exceptions",
-            "-Wno-unused-parameter",
-            "-Wno-missing-field-initializers",
-            "-fno-threadsafe-statics",
-        },
     });
     libimgui.addCSourceFiles(.{
         .root = cimgui,
@@ -947,7 +944,6 @@ fn buildImgui(b: *Build, options: libImGuiOptions) !*CompileStep {
         .flags = &.{
             "-Wall",
             "-Wextra",
-            "-fno-rtti",
             "-fno-exceptions",
             "-Wno-unused-parameter",
             "-Wno-missing-field-initializers",
