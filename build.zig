@@ -434,7 +434,6 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*std.Build.Step.InstallDi
         ldc_exec.addArg("-vdmd");
         ldc_exec.addArg("-Xcc=-v");
     }
-    ldc_exec.addArg("-allinst");
 
     if (options.artifact) |lib_sokol| {
         if (lib_sokol.linkage == .dynamic or options.linkage == .dynamic) {
