@@ -349,7 +349,8 @@ pub fn build(b: *Build) !void {
                 .betterC = if (std.mem.eql(u8, example, "user-data")) false else opt_betterC,
                 .dflags = &.{
                     "-w",
-                    "-preview=all",
+                    "-preview=rvaluerefparam",
+                    "-preview=dip1000",
                 },
                 // fixme: https://github.com/kassane/sokol-d/issues/1 - betterC works on darwin
                 .zig_cc = if (isPlatform(target.result, .darwin) and !opt_betterC) false else opt_zigcc,
@@ -571,6 +572,7 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*Build.Step.InstallDir {
                 \\
                 \\ extern (C):
                 \\
+                \\ version(D_BetterC):
                 \\ version (Emscripten)
                 \\ {
                 \\     union fpos_t
@@ -786,8 +788,9 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*Build.Step.InstallDir {
             .emsdk = options.emsdk orelse null,
             .use_webgpu = backend == .wgpu,
             .use_webgl2 = backend != .wgpu,
-            .use_emmalloc = true,
+            .use_emmalloc = options.betterC,
             .use_filesystem = false,
+            .use_drt = !options.betterC and options.target.result.isWasm(),
             .use_ubsan = options.artifact.?.root_module.sanitize_c orelse false,
             .release_use_lto = options.artifact.?.want_lto orelse false,
             .shell_file_path = b.path("src/sokol/web/shell.html"),
@@ -1109,6 +1112,7 @@ pub const EmLinkOptions = struct {
     use_offset_converter: bool = false,
     use_filesystem: bool = true,
     use_ubsan: bool = false,
+    use_drt: bool = false,
     shell_file_path: ?Build.LazyPath,
     extra_args: []const []const u8 = &.{},
 };
