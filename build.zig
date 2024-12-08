@@ -588,7 +588,6 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*std.Build.Step.InstallDi
             .use_webgl2 = backend != .wgpu,
             .use_emmalloc = true,
             .use_filesystem = false,
-            .use_tsan = options.artifact.?.root_module.sanitize_thread orelse false,
             .use_ubsan = options.artifact.?.root_module.sanitize_c orelse false,
             .release_use_lto = options.artifact.?.want_lto orelse false,
             .shell_file_path = b.path("src/sokol/web/shell.html"),
@@ -751,9 +750,7 @@ fn buildShaders(b: *Build, target: Build.ResolvedTarget) void {
 pub const EmLinkOptions = struct {
     target: Build.ResolvedTarget,
     optimize: std.builtin.OptimizeMode,
-    // name: []const u8,
     lib_main: *Build.Step.Compile,
-    // lib_sokol: *Build.Step.Compile,
     emsdk: *Build.Dependency,
     release_use_closure: bool = true,
     release_use_lto: bool = false,
@@ -762,7 +759,6 @@ pub const EmLinkOptions = struct {
     use_emmalloc: bool = false,
     use_filesystem: bool = true,
     use_ubsan: bool = false,
-    use_tsan: bool = false,
     shell_file_path: ?Build.LazyPath,
     extra_args: []const []const u8 = &.{},
 };
@@ -802,9 +798,6 @@ pub fn emLinkStep(b: *Build, options: EmLinkOptions) !*Build.Step.InstallDir {
     }
     if (options.use_emmalloc) {
         emcc.addArg("-sMALLOC='emmalloc'");
-    }
-    if (options.use_tsan) {
-        emcc.addArg("-fsanitize=thread");
     }
     if (options.use_ubsan) {
         emcc.addArg("-fsanitize=undefined");
