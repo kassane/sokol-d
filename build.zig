@@ -266,7 +266,7 @@ pub fn build(b: *Build) !void {
                 .betterC = if (std.mem.eql(u8, example, "user-data")) false else enable_betterC,
                 .dflags = &.{
                     "-w",
-                    "-preview=all",
+                    "-preview=rvaluerefparam",
                 },
                 // fixme: https://github.com/kassane/sokol-d/issues/1 - betterC works on darwin
                 .zig_cc = if (target.result.isDarwin() and !enable_betterC) false else enable_zigcc,
