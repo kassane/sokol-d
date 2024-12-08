@@ -75,8 +75,16 @@ jobs:
               echo "$PWD/opend-latest-osx-arm64/bin" >> $GITHUB_PATH
             fi
           fi
+          opend install xpack-emscripten
+      - name: prepare-linux
+        if: runner.os == 'Linux'
+        run: |
+            sudo apt-get update
+            sudo apt-get install libglu1-mesa-dev mesa-common-dev xorg-dev libasound-dev
+
       - name: (Zig) Build Shaders
         run: zig build shaders
+
       - name: (Zig) Running Test
         if: runner.os != 'Windows'
         run: zig build test -DzigCC
