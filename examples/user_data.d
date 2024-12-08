@@ -29,9 +29,9 @@ void frame_userdata(scope void* userdata) @trusted
     auto state = cast(ExampleUserData*) userdata;
 
     state.data++;
-    version (WebAssembly)
+    version (D_BetterC)
     {
-        // TODO support
+
     }
     else
     {

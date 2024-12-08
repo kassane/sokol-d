@@ -26,5 +26,9 @@
             .hash = "sokolshdc-0.1.0-r2KZDtzckwTGGk0k4xotl5r1-15ary_9-vvFzv5cUxKn",
             .lazy = true,
         },
+        .xpack = .{
+            .url = "https://github.com/opendlang/opend/releases/download/CI/opend-latest-xpack-emscripten.tar.xz",
+            .hash = "1220132c994d2f9754174c5fe934413f3fc79603d1a180429bb231aaed6110429cc6",
+        },
     },
 }

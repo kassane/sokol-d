@@ -229,7 +229,7 @@ void init()
     state.dbg.bind.samplers[shd.SMP_SMP] = smp;
 }
 
-void frame()
+void frame() @trusted
 {
     immutable(float) dt = (app.frameDuration() * 60.0);
     state.rx += 1.0 * dt;

@@ -58,5 +58,51 @@ jobs:
         run: zig build test -DzigCC
       - name: (Zig) Build Native
         run: zig build -Dimgui --summary all
+      # - name: (Zig + emsdk) Build Wasm
+      #   run: zig build -Dimgui -DzigCC --summary all -Dtarget=wasm32-emscripten-none -Doptimize=ReleaseSmall
+
+  opend:
+    strategy:
+      fail-fast: false
+      matrix:
+        runs-on: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.runs-on }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: mlugg/setup-zig@v1
+        with:
+          version: master
+      - name: Install opend
+        run: |
+          if [ "$RUNNER_OS" == "Linux" ]; then
+            if [ "$RUNNER_ARCH" == "X64" ]; then
+              curl -sLO https://github.com/opendlang/opend/releases/download/CI/opend-latest-linux-x86_64.tar.xz
+              tar -xf opend-latest-linux-x86_64.tar.xz
+              echo "$PWD/opend-latest-linux-x86_64/bin" >> $GITHUB_PATH
+              $PWD/opend-latest-linux-x86_64/bin/opend install xpack-emscripten
+            fi
+          elif [ "$RUNNER_OS" == "macOS" ]; then
+            if [ "$RUNNER_ARCH" == "ARM64" ]; then
+              curl -sLO https://github.com/opendlang/opend/releases/download/CI/opend-latest-osx-arm64.tar.xz
+              tar -xf opend-latest-osx-arm64.tar.xz
+              echo "$PWD/opend-latest-osx-arm64/bin" >> $GITHUB_PATH
+              $PWD/opend-latest-osx-arm64/bin/opend install xpack-emscripten
+            fi
+          fi
+
+      - name: prepare-linux
+        if: runner.os == 'Linux'
+        run: |
+            sudo apt-get update
+            sudo apt-get install libglu1-mesa-dev mesa-common-dev xorg-dev libasound-dev
+
+      - name: (Zig) Build Shaders
+        run: zig build shaders
+
+      - name: (Zig) Running Test
+        if: runner.os != 'Windows'
+        run: zig build test -DzigCC
+      - name: (Zig) Build Native
+        run: zig build -Dimgui --summary all
       - name: (Zig + emsdk) Build Wasm
         run: zig build -Dimgui -DzigCC --summary all -Dtarget=wasm32-emscripten-none -Dcpu=generic
