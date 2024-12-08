@@ -67,15 +67,17 @@ jobs:
               curl -sLO https://github.com/opendlang/opend/releases/download/CI/opend-latest-linux-x86_64.tar.xz
               tar -xf opend-latest-linux-x86_64.tar.xz
               echo "$PWD/opend-latest-linux-x86_64/bin" >> $GITHUB_PATH
+              $PWD/opend-latest-linux-x86_64/bin/opend install xpack-emscripten
             fi
           elif [ "$RUNNER_OS" == "macOS" ]; then
             if [ "$RUNNER_ARCH" == "ARM64" ]; then
               curl -sLO https://github.com/opendlang/opend/releases/download/CI/opend-latest-osx-arm64.tar.xz
               tar -xf opend-latest-osx-arm64.tar.xz
               echo "$PWD/opend-latest-osx-arm64/bin" >> $GITHUB_PATH
+              $PWD/opend-latest-osx-arm64/bin/opend install xpack-emscripten
             fi
           fi
-          opend install xpack-emscripten
+
       - name: prepare-linux
         if: runner.os == 'Linux'
         run: |
