@@ -48,25 +48,28 @@ zig build run-droptest -Doptimize=ReleaseSafe -Dimgui
 
 zig build --help
 # Project-Specific Options:
-#  -Dgl=[bool]                  Force OpenGL (default: false)
-#  -Dwgpu=[bool]                Force WebGPU (default: false, web only)
-#  -Dx11=[bool]                 Force X11 (default: true, Linux only)
-#  -Dwayland=[bool]             Force Wayland (default: false, Linux only, not supported in main-line headers)
-#  -Degl=[bool]                 Force EGL (default: false, Linux only)
-#  -Dimgui=[bool]               Add support for sokol_imgui.h bindings
-#  -Dartifact=[bool]            Build artifacts (default: false)
-#  -DbetterC=[bool]             Omit generating some runtime information and helper functions #(default: false)
-#  -DzigCC=[bool]               Use zig cc as compiler and linker (default: false)
-#  -Dtarget=[string]            The CPU architecture, OS, and ABI to build for
-#  -Dcpu=[string]               Target CPU features to add or subtract
-#  -Ddynamic-linker=[string]    Path to interpreter on the target system
-#  -Doptimize=[enum]            Prioritize performance, safety, or binary size
-#                                 Supported Values:
-#                                   Debug
-#                                   ReleaseSafe
-#                                   ReleaseFast
-#                                   ReleaseSmall
-#  -Dshared=[bool]              Build sokol dynamic library (default: static)
+#   -Dgl=[bool]                  Force OpenGL (default: false)
+#   -Dgles3=[bool]               Force OpenGL ES3 (default: false)
+#   -Dwgpu=[bool]                Force WebGPU (default: false, web only)
+#   -Dx11=[bool]                 Force X11 (default: true, Linux only)
+#   -Dwayland=[bool]             Force Wayland (default: false, Linux only, not supported in main-line headers)
+#   -Degl=[bool]                 Force EGL (default: false, Linux only)
+#   -Dimgui=[bool]               Add support for sokol_imgui.h bindings
+#   -Dartifact=[bool]            Build artifacts (default: false)
+#   -DbetterC=[bool]             Omit generating some runtime information and helper functions (default: false)
+#   -DzigCC=[bool]               Use zig cc as compiler and linker (default: false)
+#   -Dtarget=[string]            The CPU architecture, OS, and ABI to build for
+#   -Dcpu=[string]               Target CPU features to add or subtract
+#   -Ddynamic-linker=[string]    Path to interpreter on the target system
+#   -Doptimize=[enum]            Prioritize performance, safety, or binary size
+#                                  Supported Values:
+#                                    Debug
+#                                    ReleaseSafe
+#                                    ReleaseFast
+#                                    ReleaseSmall
+#   -Dshared=[bool]              Build sokol dynamic library (default: static)
+#   -Dubsan=[bool]               Enable undefined behavior sanitizer
+#   -Dtsan=[bool]                Enable thread sanitizer
 ```
 (also run `zig build -l` to get a list of build targets)
 

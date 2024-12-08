@@ -62,6 +62,9 @@ pub fn buildLibSokol(b: *Build, options: LibSokolOptions) !*CompileStep {
         .link_libc = true,
     });
 
+    lib.root_module.sanitize_c = b.option(bool, "ubsan", "Enable undefined behavior sanitizer") orelse false;
+    lib.root_module.sanitize_thread = b.option(bool, "tsan", "Enable thread sanitizer") orelse false;
+
     switch (options.optimize) {
         .Debug, .ReleaseSafe => lib.bundle_compiler_rt = true,
         else => lib.root_module.strip = true,
@@ -191,6 +194,8 @@ pub fn buildLibSokol(b: *Build, options: LibSokolOptions) !*CompileStep {
             .target = options.target,
             .optimize = options.optimize,
             .emsdk = options.emsdk,
+            .use_tsan = lib.root_module.sanitize_thread orelse false,
+            .use_ubsan = lib.root_module.sanitize_c orelse false,
         });
         for (cimgui.root_module.include_dirs.items) |dir| {
             try lib.root_module.include_dirs.append(b.allocator, dir);
@@ -500,10 +505,6 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*std.Build.Step.InstallDi
         if (lib_sokol.root_module.fuzz) |fuzz| {
             if (fuzz)
                 ldc_exec.addArg("--fsanitize=fuzzer");
-        }
-        if (lib_sokol.root_module.sanitize_c) |ubsan| {
-            if (ubsan)
-                ldc_exec.addArg("--fsanitize=address");
         }
 
         if (lib_sokol.root_module.omit_frame_pointer) |enabled| {
@@ -902,6 +903,8 @@ const libImGuiOptions = struct {
     target: Build.ResolvedTarget,
     optimize: std.builtin.OptimizeMode,
     emsdk: ?*Build.Dependency,
+    use_ubsan: bool = false,
+    use_tsan: bool = false,
 };
 
 fn buildImgui(b: *Build, options: libImGuiOptions) !*CompileStep {
@@ -912,6 +915,8 @@ fn buildImgui(b: *Build, options: libImGuiOptions) !*CompileStep {
         .target = options.target,
         .optimize = options.optimize,
     });
+    libimgui.root_module.sanitize_c = options.use_ubsan;
+    libimgui.root_module.sanitize_thread = options.use_tsan;
 
     libimgui.addIncludePath(cimgui);
 
