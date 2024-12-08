@@ -26,5 +26,9 @@
             .hash = "1220f2ae16952843dd25b6bc86b888a3fd8c3f25d34adddfd8d1d2b9f801429e80e4",
             .lazy = true,
         },
+        .xpack = .{
+            .url = "https://github.com/opendlang/opend/releases/download/CI/opend-latest-xpack-emscripten.tar.xz",
+            .hash = "1220132c994d2f9754174c5fe934413f3fc79603d1a180429bb231aaed6110429cc6",
+        },
     },
 }
