@@ -109,7 +109,7 @@ void init()
     state.pip = sg.makePipeline(pld);
 }
 
-void frame()
+void frame() @trusted
 {
     immutable float t = cast(float)(app.frameDuration() * 60.0);
 
