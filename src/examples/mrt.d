@@ -185,11 +185,9 @@ void init()
     // shader and pipeline object to render a fullscreen quad which composes
     // the 3 offscreen render targets into the default framebuffer
     sg.PipelineDesc fsq_pip_desc = {
-        layout: {
-            attrs: [
-                shd.ATTR_FSQ_POS: {format: sg.VertexFormat.Float2},
-            ]
-        },
+        layout: {attrs: [
+            shd.ATTR_FSQ_POS: {format: sg.VertexFormat.Float2},
+        ]},
         shader: sg.makeShader(shd.fsqShaderDesc(sg.queryBackend())),
         primitive_type: sg.PrimitiveType.Triangle_strip,
     };
@@ -215,11 +213,9 @@ void init()
 
     // shader, pipeline and resource bindings to render debug visualization quads
     sg.PipelineDesc dbg_pip_desc = {
-        layout: {
-            attrs: [
-                shd.ATTR_DBG_POS: {format: sg.VertexFormat.Float2},
-            ]
-        },
+        layout: {attrs: [
+            shd.ATTR_DBG_POS: {format: sg.VertexFormat.Float2},
+        ]},
         shader: sg.makeShader(shd.dbgShaderDesc(sg.queryBackend())),
         primitive_type: sg.PrimitiveType.Triangle_strip,
     };
@@ -231,7 +227,7 @@ void init()
     state.dbg.bind.samplers[shd.SMP_SMP] = smp;
 }
 
-void frame()
+void frame() @trusted
 {
     immutable(float) dt = (app.frameDuration() * 60.0);
     state.rx += 1.0 * dt;
