@@ -502,10 +502,6 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*std.Build.Step.InstallDi
             if (tsan)
                 ldc_exec.addArg("--fsanitize=thread");
         }
-        if (lib_sokol.root_module.fuzz) |fuzz| {
-            if (fuzz)
-                ldc_exec.addArg("--fsanitize=fuzzer");
-        }
 
         if (lib_sokol.root_module.omit_frame_pointer) |enabled| {
             if (enabled)
