@@ -895,9 +895,22 @@ const libImGuiOptions = struct {
     use_ubsan: bool = false,
     use_tsan: bool = false,
 };
-
+const imguiVersion = enum {
+    default,
+    docking,
+};
 fn buildImgui(b: *Build, options: libImGuiOptions) !*CompileStep {
-    const cimgui = b.dependency("imgui", .{}).path("src");
+
+    // get the imgui source code
+    const imguiver_path = switch (b.option(
+        imguiVersion,
+        "imgui-version",
+        "Select ImGui version to use",
+    ) orelse imguiVersion.default) {
+        .default => "src",
+        .docking => "src-docking",
+    };
+    const cimgui = b.dependency("imgui", .{}).path(imguiver_path);
 
     const libimgui = b.addStaticLibrary(.{
         .name = "imgui",

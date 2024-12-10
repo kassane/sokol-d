@@ -43,8 +43,8 @@ zig build run-sgl_context -Doptimize=ReleaseSafe
 zig build run-sgl_points -Doptimize=ReleaseSafe
 zig build run-user_data -Doptimize=ReleaseSafe
 zig build run-triangle -Doptimize=ReleaseSafe
-zig build run-imgui -Doptimize=ReleaseSafe -Dimgui
-zig build run-droptest -Doptimize=ReleaseSafe -Dimgui
+zig build run-imgui -Doptimize=ReleaseSafe -Dimgui # optional: -Dimgui-version=docking
+zig build run-droptest -Doptimize=ReleaseSafe -Dimgui # optional: -Dimgui-version=docking
 
 zig build --help
 # Project-Specific Options:
@@ -70,6 +70,11 @@ zig build --help
 #   -Dshared=[bool]              Build sokol dynamic library (default: static)
 #   -Dubsan=[bool]               Enable undefined behavior sanitizer
 #   -Dtsan=[bool]                Enable thread sanitizer
+#   -Dimgui-version=[enum]       Select ImGui version to use
+#                                  Supported Values:
+#                                    default
+#                                    docking
+
 ```
 (also run `zig build -l` to get a list of build targets)
 
