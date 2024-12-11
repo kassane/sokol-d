@@ -433,6 +433,64 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*std.Build.Step.InstallDi
 
     if (options.target.result.isWasm()) {
         ldc_exec.addArg("-L-allow-undefined");
+
+        // Create a temporary D file for wasm assert function
+        const tmp = b.addWriteFiles();
+        ldc_exec.addFileArg(
+            tmp.add(
+                "assert.d",
+                \\ module emscripten;
+                \\
+                \\ extern (C):
+                \\
+                \\ version (Emscripten)
+                \\ {
+                \\     union fpos_t
+                \\     {
+                \\         char[16] __opaque = 0;
+                \\         long __lldata;
+                \\         double __align;
+                \\     }
+                \\
+                \\     struct _IO_FILE;
+                \\     alias _IO_FILE _iobuf; // for phobos2 compat
+                \\     alias shared(_IO_FILE) FILE;
+                \\
+                \\     extern __gshared FILE* stdin;
+                \\     extern __gshared FILE* stdout;
+                \\     extern __gshared FILE* stderr;
+                \\     enum
+                \\     {
+                \\         _IOFBF = 0,
+                \\         _IOLBF = 1,
+                \\         _IONBF = 2,
+                \\     }
+                \\
+                \\     void __assert(scope const(char)* msg, scope const(char)* file, uint line) @nogc nothrow
+                \\     {
+                \\         fprintf(stderr, "Assertion failed in %s:%u: %s\n", file, line, msg);
+                \\         abort();
+                \\     }
+                \\
+                \\     void _d_assert(string file, uint line) @nogc nothrow
+                \\     {
+                \\         fprintf(stderr, "Assertion failed in %s:%u\n", file.ptr, line);
+                \\         abort();
+                \\     }
+                \\
+                \\     void _d_assert_msg(string msg, string file, uint line) @nogc nothrow
+                \\     {
+                \\         __assert(msg.ptr, file.ptr, line);
+                \\     }
+                \\
+                \\     void abort() @nogc nothrow;
+                \\
+                \\     pragma(printf)
+                \\     int fprintf(FILE* __restrict, scope const(char)* __restrict, scope...) @nogc nothrow;
+                \\ }
+                ,
+            ),
+        );
     }
 
     if (b.verbose) {
