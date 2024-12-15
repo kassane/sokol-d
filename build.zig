@@ -445,6 +445,7 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*std.Build.Step.InstallDi
                 \\
                 \\ extern (C):
                 \\
+                \\ version(D_BetterC):
                 \\ version (Emscripten)
                 \\ {
                 \\     union fpos_t
