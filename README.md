@@ -19,7 +19,7 @@ By default, the backend 3D API will be selected based on the target platform:
 **Required**
 
 - [zig](https://ziglang.org/download) v0.13.0 or master
-- [ldc](https://ldc-developers.github.io) v1.39.0 or latest-CI (nightly)
+- [ldc](https://ldc-developers.github.io) v1.40.0 or latest-CI (nightly)
 
 Supported platforms are: Windows, macOS, Linux (with X11)
 
