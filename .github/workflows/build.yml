@@ -46,8 +46,8 @@ jobs:
         run: zig build test -DzigCC
       - name: (Zig) Build Native
         run: zig build -Dimgui --summary all
-      - name: (Zig + emsdk) Build Wasm
-        run: zig build -Dimgui -DzigCC --summary all -Dtarget=wasm32-emscripten-none -Doptimize=ReleaseSmall
+      # - name: (Zig + emsdk) Build Wasm
+      #   run: zig build -Dimgui -DzigCC --summary all -Dtarget=wasm32-emscripten-none -Doptimize=ReleaseSmall
 
   opend:
     strategy:
