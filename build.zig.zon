@@ -23,5 +23,9 @@
             .url = "git+https://github.com/floooh/sokol-tools-bin#3388e3b2c04b532a55b072d79e77c9fc44c3ca50",
             .hash = "1220bd7b3c90b9b827145dfb25cf35fa2bfbb1d04ff597d5540eda06b97f3fb612a7",
         },
+        .xpack = .{
+            .url = "https://github.com/opendlang/opend/releases/download/CI/opend-latest-xpack-emscripten.tar.xz",
+            .hash = "12207ff27668e40a4054a60bda3fd33c3d49c603a8b06c568afad536a969ccf3c410",
+        },
     },
 }

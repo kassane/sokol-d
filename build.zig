@@ -266,7 +266,7 @@ pub fn build(b: *Build) !void {
                 .betterC = if (std.mem.eql(u8, example, "user-data")) false else enable_betterC,
                 .dflags = &.{
                     "-w",
-                    "-preview=all",
+                    "-preview=rvaluerefparam",
                 },
                 // fixme: https://github.com/kassane/sokol-d/issues/1 - betterC works on darwin
                 .zig_cc = if (target.result.isDarwin() and !enable_betterC) false else enable_zigcc,
@@ -402,8 +402,10 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*std.Build.Step.InstallDi
     // keep all function bodies in .di files
     ldc_exec.addArg("-Hkeep-all-bodies");
 
-    // automatically finds needed library files and builds
-    ldc_exec.addArg("-i");
+    // automatically finds needed modules
+    ldc_exec.addArg("-i=sokol");
+    ldc_exec.addArg("-i=shaders");
+    ldc_exec.addArg("-i=handmade");
 
     // sokol include path
     ldc_exec.addArg(b.fmt("-I{s}", .{b.pathJoin(&.{ rootPath(), "src" })}));
@@ -443,6 +445,7 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*std.Build.Step.InstallDi
                 \\
                 \\ extern (C):
                 \\
+                \\ version(D_BetterC):
                 \\ version (Emscripten)
                 \\ {
                 \\     union fpos_t
@@ -640,8 +643,9 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*std.Build.Step.InstallDi
             .emsdk = options.emsdk.?,
             .use_webgpu = backend == .wgpu,
             .use_webgl2 = backend != .wgpu,
-            .use_emmalloc = true,
+            .use_emmalloc = options.betterC,
             .use_filesystem = false,
+            .use_drt = !options.betterC and options.target.result.isWasm(),
             .use_ubsan = options.artifact.?.root_module.sanitize_c orelse false,
             .release_use_lto = options.artifact.?.want_lto orelse false,
             .shell_file_path = b.path("src/sokol/web/shell.html"),
@@ -813,6 +817,7 @@ pub const EmLinkOptions = struct {
     use_emmalloc: bool = false,
     use_filesystem: bool = true,
     use_ubsan: bool = false,
+    use_drt: bool = false,
     shell_file_path: ?Build.LazyPath,
     extra_args: []const []const u8 = &.{},
 };
@@ -863,6 +868,11 @@ pub fn emLinkStep(b: *Build, options: EmLinkOptions) !*Build.Step.InstallDir {
         emcc.addArg(arg);
     }
 
+    if (options.use_drt) {
+        const xpack = b.dependency("xpack", .{}).path("lib").getPath(b);
+        emcc.addFileArg(path(b, b.fmt("{s}/libdruntime-ldc.a", .{xpack})));
+        emcc.addFileArg(path(b, b.fmt("{s}/libphobos2-ldc.a", .{xpack})));
+    }
     // add the main lib, and then scan for library dependencies and add those too
     emcc.addArtifactArg(options.lib_main);
     var it = options.lib_main.root_module.iterateDependencies(options.lib_main, false);
