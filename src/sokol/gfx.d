@@ -1594,6 +1594,50 @@ extern(C) AttachmentsDesc sg_query_attachments_defaults(const AttachmentsDesc *)
 AttachmentsDesc queryAttachmentsDefaults(scope ref AttachmentsDesc desc) @trusted @nogc nothrow {
     return sg_query_attachments_defaults(&desc);
 }
+extern(C) size_t sg_query_buffer_size(Buffer) @system @nogc nothrow;
+size_t queryBufferSize(Buffer buf) @trusted @nogc nothrow {
+    return sg_query_buffer_size(buf);
+}
+extern(C) BufferType sg_query_buffer_type(Buffer) @system @nogc nothrow;
+BufferType queryBufferType(Buffer buf) @trusted @nogc nothrow {
+    return sg_query_buffer_type(buf);
+}
+extern(C) Usage sg_query_buffer_usage(Buffer) @system @nogc nothrow;
+Usage queryBufferUsage(Buffer buf) @trusted @nogc nothrow {
+    return sg_query_buffer_usage(buf);
+}
+extern(C) ImageType sg_query_image_type(Image) @system @nogc nothrow;
+ImageType queryImageType(Image img) @trusted @nogc nothrow {
+    return sg_query_image_type(img);
+}
+extern(C) int sg_query_image_width(Image) @system @nogc nothrow;
+int queryImageWidth(Image img) @trusted @nogc nothrow {
+    return sg_query_image_width(img);
+}
+extern(C) int sg_query_image_height(Image) @system @nogc nothrow;
+int queryImageHeight(Image img) @trusted @nogc nothrow {
+    return sg_query_image_height(img);
+}
+extern(C) int sg_query_image_num_slices(Image) @system @nogc nothrow;
+int queryImageNumSlices(Image img) @trusted @nogc nothrow {
+    return sg_query_image_num_slices(img);
+}
+extern(C) int sg_query_image_num_mipmaps(Image) @system @nogc nothrow;
+int queryImageNumMipmaps(Image img) @trusted @nogc nothrow {
+    return sg_query_image_num_mipmaps(img);
+}
+extern(C) PixelFormat sg_query_image_pixelformat(Image) @system @nogc nothrow;
+PixelFormat queryImagePixelformat(Image img) @trusted @nogc nothrow {
+    return sg_query_image_pixelformat(img);
+}
+extern(C) Usage sg_query_image_usage(Image) @system @nogc nothrow;
+Usage queryImageUsage(Image img) @trusted @nogc nothrow {
+    return sg_query_image_usage(img);
+}
+extern(C) int sg_query_image_sample_count(Image) @system @nogc nothrow;
+int queryImageSampleCount(Image img) @trusted @nogc nothrow {
+    return sg_query_image_sample_count(img);
+}
 extern(C) Buffer sg_alloc_buffer() @system @nogc nothrow;
 Buffer allocBuffer() @trusted @nogc nothrow {
     return sg_alloc_buffer();

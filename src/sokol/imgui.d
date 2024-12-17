@@ -4,20 +4,9 @@ module sokol.imgui;
 import sg = sokol.gfx;
 import sapp = sokol.app;
 
-enum invalid_id = 0;
-extern(C)
-struct Image {
-    uint id = 0;
-}
-extern(C)
-struct ImageDesc {
-    sg.Image image;
-    sg.Sampler sampler;
-}
 enum LogItem {
     Ok,
     Malloc_failed,
-    Image_pool_exhausted,
 }
 extern(C)
 struct Allocator {
@@ -33,7 +22,6 @@ struct Logger {
 extern(C)
 struct Desc {
     int max_vertices = 0;
-    int image_pool_size = 0;
     sg.PixelFormat color_format;
     sg.PixelFormat depth_format;
     int sample_count = 0;
@@ -70,25 +58,21 @@ extern(C) void simgui_render() @system @nogc nothrow;
 void render() @trusted @nogc nothrow {
     simgui_render();
 }
-extern(C) Image simgui_make_image(const ImageDesc *) @system @nogc nothrow;
-Image makeImage(scope ref ImageDesc desc) @trusted @nogc nothrow {
-    return simgui_make_image(&desc);
-}
-extern(C) void simgui_destroy_image(Image) @system @nogc nothrow;
-void destroyImage(Image img) @trusted @nogc nothrow {
-    simgui_destroy_image(img);
-}
-extern(C) ImageDesc simgui_query_image_desc(Image) @system @nogc nothrow;
-ImageDesc queryImageDesc(Image img) @trusted @nogc nothrow {
-    return simgui_query_image_desc(img);
-}
-extern(C) ulong simgui_imtextureid(Image) @system @nogc nothrow;
-ulong imtextureid(Image img) @trusted @nogc nothrow {
+extern(C) ulong simgui_imtextureid(sg.Image) @system @nogc nothrow;
+ulong imtextureid(sg.Image img) @trusted @nogc nothrow {
     return simgui_imtextureid(img);
 }
-extern(C) Image simgui_image_from_imtextureid(ulong) @system @nogc nothrow;
-Image imageFromImtextureid(ulong im_texture_id) @trusted @nogc nothrow {
-    return simgui_image_from_imtextureid(im_texture_id);
+extern(C) ulong simgui_imtextureid_with_sampler(sg.Image, sg.Sampler) @system @nogc nothrow;
+ulong imtextureidWithSampler(sg.Image img, sg.Sampler smp) @trusted @nogc nothrow {
+    return simgui_imtextureid_with_sampler(img, smp);
+}
+extern(C) sg.Image simgui_image_from_imtextureid(ulong) @system @nogc nothrow;
+sg.Image imageFromImtextureid(ulong imtex_id) @trusted @nogc nothrow {
+    return simgui_image_from_imtextureid(imtex_id);
+}
+extern(C) sg.Sampler simgui_sampler_from_imtextureid(ulong) @system @nogc nothrow;
+sg.Sampler samplerFromImtextureid(ulong imtex_id) @trusted @nogc nothrow {
+    return simgui_sampler_from_imtextureid(imtex_id);
 }
 extern(C) void simgui_add_focus_event(bool) @system @nogc nothrow;
 void addFocusEvent(bool focus) @trusted @nogc nothrow {
