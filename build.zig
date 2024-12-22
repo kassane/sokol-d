@@ -295,7 +295,7 @@ pub fn build(b: *Build) !void {
     _ = try ldcBuildStep(b, .{
         .name = "test-math",
         .kind = .@"test",
-        .target = b.host,
+        .target = b.graph.host,
         .sources = &.{b.fmt("{s}/src/handmade/math.d", .{rootPath()})},
         .dflags = &.{},
     });
@@ -674,20 +674,9 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*std.Build.Step.InstallDi
                 }));
             } else {
                 ldc_exec.addArtifactArg(lib_sokol);
-                var it = lib_sokol.root_module.iterateDependencies(lib_sokol, false);
-                while (it.next()) |item| {
-                    for (item.module.link_objects.items) |link_object| {
-                        switch (link_object) {
-                            .other_step => |compile_step| {
-                                switch (compile_step.kind) {
-                                    .lib => {
-                                        ldc_exec.addArtifactArg(compile_step);
-                                    },
-                                    else => {},
-                                }
-                            },
-                            else => {},
-                        }
+                for (lib_sokol.getCompileDependencies(false)) |item| {
+                    if (item.kind == .lib) {
+                        ldc_exec.addArtifactArg(item);
                     }
                 }
             }
@@ -717,10 +706,10 @@ pub const DCompileStep = struct {
 pub fn addArtifact(b: *Build, options: DCompileStep) *Build.Step.Compile {
     return Build.Step.Compile.create(b, .{
         .name = options.name,
-        .root_module = .{
+        .root_module = b.createModule(.{
             .target = options.target,
             .optimize = options.optimize,
-        },
+        }),
         .linkage = options.linkage,
         .kind = options.kind,
     });
@@ -745,7 +734,7 @@ pub fn path(b: *std.Build, sub_path: []const u8) std.Build.LazyPath {
 pub fn buildZigCC(b: *Build) *CompileStep {
     const exe = b.addExecutable(.{
         .name = "zcc",
-        .target = b.host,
+        .target = b.graph.host,
         .optimize = .ReleaseSafe,
         .root_source_file = b.path("tools/zigcc.zig"),
     });
@@ -879,20 +868,9 @@ pub fn emLinkStep(b: *Build, options: EmLinkOptions) !*Build.Step.InstallDir {
 
     // add the main lib, and then scan for library dependencies and add those too
     emcc.addArtifactArg(options.lib_main);
-    var it = options.lib_main.root_module.iterateDependencies(options.lib_main, false);
-    while (it.next()) |item| {
-        for (item.module.link_objects.items) |link_object| {
-            switch (link_object) {
-                .other_step => |compile_step| {
-                    switch (compile_step.kind) {
-                        .lib => {
-                            emcc.addArtifactArg(compile_step);
-                        },
-                        else => {},
-                    }
-                },
-                else => {},
-            }
+    for (options.lib_main.getCompileDependencies(false)) |item| {
+        if (item.kind == .lib) {
+            emcc.addArtifactArg(item);
         }
     }
     emcc.addArg("-o");
