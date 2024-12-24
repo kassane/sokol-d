@@ -32,6 +32,7 @@ jobs:
             dub build :sgl_points
             dub build :debugtext
             dub build :cube
+            dub build :texcube
             dub build :blend
             dub build :triangle
             dub build :mrt

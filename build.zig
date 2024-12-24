@@ -251,6 +251,7 @@ pub fn build(b: *Build) !void {
             "user_data", // Need GC for user data [associative array]
             "imgui",
             "droptest",
+            "texcube",
         };
 
         inline for (examples) |example| {
