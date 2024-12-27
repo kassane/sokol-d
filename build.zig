@@ -252,6 +252,7 @@ pub fn build(b: *Build) !void {
             "imgui",
             "droptest",
             "texcube",
+            "vertexpull",
         };
 
         inline for (examples) |example| {
@@ -758,6 +759,7 @@ fn buildShaders(b: *Build, target: Build.ResolvedTarget) void {
         "shapes.glsl",
         "texcube.glsl",
         "blend.glsl",
+        "vertexpull.glsl",
     };
     const optional_shdc: ?[:0]const u8 = comptime switch (builtin.os.tag) {
         .windows => "win32/sokol-shdc.exe",
