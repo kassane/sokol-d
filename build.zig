@@ -253,6 +253,8 @@ pub fn build(b: *Build) !void {
             "droptest",
             "texcube",
             "vertexpull",
+            "noninterleaved",
+            "quad",
         };
 
         inline for (examples) |example| {
