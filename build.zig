@@ -239,22 +239,24 @@ pub fn build(b: *Build) !void {
     } else {
         // build examples
         const examples = .{
-            "clear",
-            "triangle",
-            "cube",
             "blend",
+            "bufferoffsets",
+            "clear",
+            "cube",
+            "debugtext",
+            "droptest",
+            "imgui",
             "mrt",
+            "noninterleaved",
+            "quad",
             "saudio",
             "sgl_context",
             "sgl_points",
-            "debugtext",
-            "user_data", // Need GC for user data [associative array]
-            "imgui",
-            "droptest",
+            "shapes",
             "texcube",
+            "triangle",
+            "user_data", // Need GC for user data [associative array]
             "vertexpull",
-            "noninterleaved",
-            "quad",
         };
 
         inline for (examples) |example| {
