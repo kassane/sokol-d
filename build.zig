@@ -246,6 +246,7 @@ pub fn build(b: *Build) !void {
             "debugtext",
             "droptest",
             "imgui",
+            "instancing",
             "mrt",
             "noninterleaved",
             "quad",

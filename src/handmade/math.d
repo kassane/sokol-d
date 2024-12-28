@@ -41,11 +41,11 @@ version (WebAssembly) {
 struct Vec2 {
     float x = 0.0, y = 0.0;
 
-    static Vec2 zero() {
+    static Vec2 zero() @nogc nothrow {
         return Vec2(0, 0);
     }
 
-    this(float x, float y) {
+    this(float x, float y) @nogc nothrow {
         this.x = x;
         this.y = y;
     }
@@ -54,37 +54,37 @@ struct Vec2 {
 struct Vec3 {
     float x = 0.0, y = 0.0, z = 0.0;
 
-    static Vec3 zero() {
+    static Vec3 zero() @nogc nothrow {
         return Vec3(0, 0, 0);
     }
 
-    this(float x, float y, float z) {
+    this(float x, float y, float z) @nogc nothrow {
         this.x = x;
         this.y = y;
         this.z = z;
     }
 
-    static Vec3 up() {
+    static Vec3 up() @nogc nothrow {
         return Vec3(0, 1, 0);
     }
 
-    float len() const {
+    float len() const @nogc nothrow {
         return sqrt(dot(this, this));
     }
 
-    static Vec3 add(Vec3 left, Vec3 right) {
+    static Vec3 add(Vec3 left, Vec3 right) @nogc nothrow {
         return Vec3(left.x + right.x, left.y + right.y, left.z + right.z);
     }
 
-    static Vec3 sub(Vec3 left, Vec3 right) {
+    static Vec3 sub(Vec3 left, Vec3 right) @nogc nothrow {
         return Vec3(left.x - right.x, left.y - right.y, left.z - right.z);
     }
 
-    static Vec3 mul(Vec3 v, float s) {
+    static Vec3 mul(Vec3 v, float s) @nogc nothrow {
         return Vec3(v.x * s, v.y * s, v.z * s);
     }
 
-    static Vec3 norm(Vec3 v) {
+    static Vec3 norm(Vec3 v) @nogc nothrow {
         auto l = v.len();
         if (l != 0) {
             return Vec3(v.x / l, v.y / l, v.z / l);
@@ -93,7 +93,7 @@ struct Vec3 {
         }
     }
 
-    static Vec3 cross(Vec3 v0, Vec3 v1) {
+    static Vec3 cross(Vec3 v0, Vec3 v1) @nogc nothrow {
         return Vec3(
             (v0.y * v1.z) - (v0.z * v1.y),
             (v0.z * v1.x) - (v0.x * v1.z),
@@ -101,7 +101,7 @@ struct Vec3 {
         );
     }
 
-    static float dot(Vec3 v0, Vec3 v1) {
+    static float dot(Vec3 v0, Vec3 v1) @nogc nothrow {
         return v0.x * v1.x + v0.y * v1.y + v0.z * v1.z;
     }
 }
@@ -109,15 +109,15 @@ struct Vec3 {
 struct Mat4 {
     float[4][4] m;
 
-    static Mat4 identity() {
+    static Mat4 identity() @nogc nothrow {
         return Mat4([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]);
     }
 
-    static Mat4 zero() {
+    static Mat4 zero() @nogc nothrow {
         return Mat4([[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]);
     }
 
-    static Mat4 mul(Mat4 left, Mat4 right) {
+    static Mat4 mul(Mat4 left, Mat4 right) @nogc nothrow {
         Mat4 result = Mat4.zero;
         foreach (col; 0 .. 4) {
             foreach (row; 0 .. 4) {
@@ -131,7 +131,7 @@ struct Mat4 {
         return result;
     }
 
-    static Mat4 perspective(float fov, float aspect, float near, float far) {
+    static Mat4 perspective(float fov, float aspect, float near, float far) @nogc nothrow {
         Mat4 result = Mat4.identity;
 
         float t = tan(fov * (PI / 360.0));
@@ -145,7 +145,7 @@ struct Mat4 {
         return result;
     }
 
-    static Mat4 lookAt(Vec3 eye, Vec3 center, Vec3 up) {
+    static Mat4 lookAt(Vec3 eye, Vec3 center, Vec3 up) @nogc nothrow {
         Mat4 result = Mat4.zero();
 
         Vec3 f = Vec3.norm(Vec3.sub(center, eye));
@@ -172,7 +172,7 @@ struct Mat4 {
         return result;
     }
 
-    static Mat4 rotate(float angle, Vec3 axis) {
+    static Mat4 rotate(float angle, Vec3 axis) @nogc nothrow {
         Mat4 result = Mat4.identity;
 
         axis = Vec3.norm(axis);
@@ -195,7 +195,7 @@ struct Mat4 {
         return result;
     }
 
-    static Mat4 translate(Vec3 translation) {
+    static Mat4 translate(Vec3 translation) @nogc nothrow {
         Mat4 result = Mat4.identity;
 
         result.m[3][0] = translation.x;
@@ -206,7 +206,7 @@ struct Mat4 {
     }
 }
 
-float radians(float deg) {
+float radians(float deg) @nogc nothrow {
     return deg * (PI / 180.0);
 }
 
