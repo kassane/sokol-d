@@ -1,6 +1,6 @@
 .{
     .name = "sokol-d",
-    .version = "0.1.6",
+    .version = "0.1.7",
     .min_zig_version = "0.13.0",
     .paths = .{
         "src",
