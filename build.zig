@@ -249,6 +249,7 @@ pub fn build(b: *Build) !void {
             "instancing",
             "mrt",
             "noninterleaved",
+            "offscreen",
             "quad",
             "saudio",
             "sgl_context",

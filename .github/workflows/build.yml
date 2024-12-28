@@ -39,6 +39,7 @@ jobs:
             dub build :mrt
             dub build :noninterleaved
             dub build :quad
+            dub build :offscreen
             dub build :bufferoffsets
             dub build :user_data
             dub build :vertexpull
