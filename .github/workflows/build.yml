@@ -35,6 +35,7 @@ jobs:
             dub build :texcube
             dub build :blend
             dub build :triangle
+            dub build :instancing
             dub build :mrt
             dub build :noninterleaved
             dub build :quad

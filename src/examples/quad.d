@@ -90,7 +90,7 @@ void frame()
     sg.beginPass(pass);
     sg.applyPipeline(state.pip);
     sg.applyBindings(state.bind);
-    sg.draw(0, 36, 1);
+    sg.draw(0, 6, 1);
     sg.endPass();
     sg.commit();
 }

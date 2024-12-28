@@ -26,8 +26,8 @@ struct State
 
 struct Vertex
 {
-    float x = 0.0, y = 0.0, z = 0.0;
-    float r = 0.0, g = 0.0, b = 0.0;
+    float x = 0.0f, y = 0.0f;
+    float r = 0.0f, g = 0.0f, b = 0.0f;
 }
 
 static State state;
@@ -45,14 +45,14 @@ void init()
     state.passAction.colors[0].clear_value.a = 1.0;
 
     Vertex[7] vertices = [
-        Vertex(0.0, 0.55, 0.0, 1.0, 0.0, 0.0),
-        Vertex(0.25, 0.05, 0.0, 0.0, 1.0, 0.0),
-        Vertex(-0.25, 0.05, 0.0, 0.0, 0.0, 1.0),
+        Vertex(0.0, 0.55, 1.0, 0.0, 0.0),
+        Vertex(0.25, 0.05, 0.0, 1.0, 0.0),
+        Vertex(-0.25, 0.05, 0.0, 0.0, 1.0),
 
-        Vertex(-0.25, -0.05, 0.0, 0.0, 0.0, 1.0),
-        Vertex(0.25, -0.05, 0.0, 0.0, 1.0, 0.0),
-        Vertex(0.25, -0.55, 0.0, 1.0, 0.0, 0.0),
-        Vertex(-0.25, -0.55, 0.0, 1.0, 1.0, 0.0),
+        Vertex(-0.25, -0.05, 0.0, 0.0, 1.0),
+        Vertex(0.25, -0.05, 0.0, 1.0, 0.0),
+        Vertex(0.25, -0.55, 1.0, 0.0, 0.0),
+        Vertex(-0.25, -0.55, 1.0, 1.0, 0.0),
     ];
 
     sg.BufferDesc vbufd = {data: {ptr: vertices.ptr, size: vertices.sizeof},};
@@ -99,7 +99,7 @@ void frame()
 
     // render the quad
     state.bind.vertex_buffer_offsets[0] = 3 * Vertex.sizeof;
-    state.bind.index_buffer_offset = 3 * short.sizeof;
+    state.bind.index_buffer_offset = 3 * ushort.sizeof;
     sg.applyBindings(state.bind);
     sg.draw(0, 6, 1);
 
