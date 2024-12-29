@@ -6,7 +6,7 @@ Auto-generated [D](https://dlang.org) bindings for the [sokol headers](https://g
 #### Targets
 
 - Native
-- Wasm (`-Dtarget=wasm32-emscripten-none`) - LTO enabled on relese mode.
+- Wasm (`-Dtarget=wasm32-emscripten-none`) - LTO enabled on release-mode.
 
 By default, the backend 3D API will be selected based on the target platform:
 
