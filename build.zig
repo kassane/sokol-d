@@ -244,8 +244,6 @@ pub fn build(b: *Build) !void {
             "clear",
             "cube",
             "debugtext",
-            "droptest",
-            "imgui",
             "instancing",
             "mrt",
             "noninterleaved",
@@ -259,6 +257,8 @@ pub fn build(b: *Build) !void {
             "triangle",
             "user_data", // Need GC for user data [associative array]
             "vertexpull",
+            "droptest",
+            "imgui",
         };
 
         inline for (examples) |example| {
@@ -410,8 +410,13 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*std.Build.Step.InstallDi
     // keep all function bodies in .di files
     ldc_exec.addArg("-Hkeep-all-bodies");
 
-    // automatically finds needed library files and builds
-    ldc_exec.addArg("-i");
+    // automatically finds needed modules
+    ldc_exec.addArgs(&.{
+        "-i=sokol",
+        "-i=shaders",
+        "-i=handmade",
+        "-i=cimgui",
+    });
 
     // sokol include path
     ldc_exec.addArg(b.fmt("-I{s}", .{b.pathJoin(&.{ rootPath(), "src" })}));

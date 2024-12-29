@@ -6,6 +6,8 @@
 //------------------------------------------------------------------------------
 module examples.sgl_context;
 
+private:
+
 import sg = sokol.gfx;
 import sglue = sokol.glue;
 import sapp = sokol.app;
@@ -16,31 +18,43 @@ import handmade.math : sin, cos;
 extern (C):
 @safe:
 
-struct Offscreen {
+struct Offscreen
+{
     sg.Attachments attachments;
     sg.Image img;
     sgl.Context sgl_ctx;
     sg.PassAction pass_action = {
         colors: [
-            { load_action: sg.LoadAction.Clear, clear_value: { r: 0, g: 0, b: 0, a: 1} },
+            {
+                load_action: sg.LoadAction.Clear, clear_value: {
+                    r: 0, g: 0, b: 0, a: 1
+                }
+            },
         ]
     };
 }
 
-struct Display {
+struct Display
+{
     sg.Sampler smp;
     sgl.Pipeline sgl_pip;
     sg.PassAction pass_action = {
         colors: [
-            { load_action: sg.LoadAction.Clear, clear_value: { r: 0.5, g: 0.7, b: 1.0, a: 1.0 } },
+            {
+                load_action: sg.LoadAction.Clear, clear_value: {
+                    r: 0.5, g: 0.7, b: 1.0, a: 1.0
+                }
+            },
         ],
     };
 }
 
-struct State {
+struct State
+{
     Display display;
     Offscreen offscreen;
 }
+
 static State state;
 
 enum offscreen_pixel_format = sg.PixelFormat.Rgba8;
@@ -48,10 +62,11 @@ enum offscreen_sample_count = 1;
 enum offscreen_width = 32;
 enum offscreen_height = 32;
 
-void init() {
+void init()
+{
     sg.Desc gfxd = {
         environment: sglue.environment(),
-        logger: { func: &slog.func }
+        logger: {func: &slog.func}
     };
     sg.setup(gfxd);
 
@@ -62,17 +77,15 @@ void init() {
     sgl.Desc gld = {
         max_vertices: 64,
         max_commands: 16,
-        logger: { func: &slog.func },
+        logger: {func: &slog.func},
     };
     sgl.setup(gld);
 
     // create a sokol-gl pipeline object for 3D rendering into the default pass
     sg.PipelineDesc pld = {
         cull_mode: sg.CullMode.Back,
-        depth: {
-            write_enabled: true,
-            compare: sg.CompareFunc.Less_equal
-        },
+        depth: {write_enabled: true,
+        compare: sg.CompareFunc.Less_equal},
     };
     state.display.sgl_pip = sgl.contextMakePipeline(sgl.defaultContext, pld);
 
@@ -97,11 +110,9 @@ void init() {
     };
     state.offscreen.img = sg.makeImage(imgd);
 
-    sg.AttachmentsDesc attd = {
-        colors: [
-            { image: state.offscreen.img }
-        ]
-    };
+    sg.AttachmentsDesc attd = {colors: [
+        {image: state.offscreen.img}
+    ]};
     state.offscreen.attachments = sg.makeAttachments(attd);
 
     // sampler for sampling the offscreen render target
@@ -114,7 +125,8 @@ void init() {
     state.display.smp = sg.makeSampler(smd);
 }
 
-void frame() {
+void frame()
+{
     immutable float a = sgl.asRadians(sapp.frameCount());
 
     // draw a rotating quad into the offscreen render target texture
@@ -155,12 +167,14 @@ void frame() {
     sg.commit();
 }
 
-void cleanup() {
+void cleanup()
+{
     sgl.shutdown();
     sg.shutdown();
 }
 
-void main() {
+void main()
+{
     sapp.Desc runner = {
         window_title: "sgl-context.d",
         init_cb: &init,
@@ -169,13 +183,14 @@ void main() {
         width: 800,
         height: 600,
         sample_count: 4,
-        logger: { func: &slog.func },
-        icon: { sokol_default: true }
+        logger: {func: &slog.func},
+        icon: {sokol_default: true}
     };
     sapp.run(runner);
 }
 
-void draw_quad() {
+void draw_quad()
+{
     sgl.beginQuads();
     sgl.v2fC3b(0.0, -1.0, 255, 0, 0);
     sgl.v2fC3b(1.0, 0.0, 0, 0, 255);
@@ -184,7 +199,8 @@ void draw_quad() {
     sgl.end();
 }
 
-void draw_cube() {
+void draw_cube()
+{
     sgl.beginQuads();
     sgl.v3fT2f(-1.0, 1.0, -1.0, 0.0, 1.0);
     sgl.v3fT2f(1.0, 1.0, -1.0, 1.0, 1.0);

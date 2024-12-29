@@ -8,6 +8,8 @@
 
 module examples.sgl_points;
 
+private:
+
 import sg = sokol.gfx;
 import sglue = sokol.glue;
 import sapp = sokol.app;
@@ -18,11 +20,13 @@ import handmade.math : sin, cos, floor;
 extern (C):
 @safe:
 
-struct RGB {
+struct RGB
+{
     float r = 0.0, g = 0.0, b = 0.0;
 }
 
-struct State {
+struct State
+{
     sg.PassAction pass_action = {
         colors: [
             {
@@ -32,6 +36,7 @@ struct State {
         ]
     };
 }
+
 static State state;
 
 immutable float[3][16] palette = [
@@ -53,24 +58,23 @@ immutable float[3][16] palette = [
     [1.000, 0.341, 0.133],
 ];
 
-void init() {
-    sg.Desc gfx = {
-        environment: sglue.environment(),
-        logger: { func: &slog.func }
-    };
+void init()
+{
+    sg.Desc gfx = {environment: sglue.environment(),
+    logger: {func: &slog.func}};
     sg.setup(gfx);
-    sgl.Desc gl = {
-        logger: { func: &slog.func }
-    };
+    sgl.Desc gl = {logger: {func: &slog.func}};
     sgl.setup(gl);
 }
 
-void frame() {
+void frame()
+{
     immutable float angle = sapp.frameCount() % 360.0;
     sgl.defaults();
     sgl.beginPoints();
     float psize = 5.0;
-    foreach (i; 0 .. 360) {
+    foreach (i; 0 .. 360)
+    {
         auto a = sgl.asRadians(angle + i);
         auto color = computeColor(((sapp.frameCount() + i) % 300) / 300.0);
         auto r = sin(a * 4.0);
@@ -85,19 +89,21 @@ void frame() {
     }
     sgl.end();
 
-    sg.Pass pass = { action: state.pass_action, swapchain: sglue.swapchain() };
+    sg.Pass pass = {action: state.pass_action, swapchain: sglue.swapchain()};
     sg.beginPass(pass);
     sgl.draw();
     sg.endPass();
     sg.commit();
 }
 
-void cleanup() {
+void cleanup()
+{
     sgl.shutdown();
     sg.shutdown();
 }
 
-void main() {
+void main()
+{
     sapp.Desc runner = {
         window_title: "sgl-points.d",
         init_cb: &init,
@@ -111,7 +117,8 @@ void main() {
     sapp.run(runner);
 }
 
-RGB computeColor(float t) {
+RGB computeColor(float t)
+{
     const(size_t) idx0 = cast(size_t)(t * 16) % 16;
     const(size_t) idx1 = cast(size_t)(idx0 + 1) % 16;
     const l = (t * 16) - floor(t * 16);

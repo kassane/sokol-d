@@ -5,6 +5,8 @@
 //------------------------------------------------------------------------------
 module examples.texcube;
 
+private:
+
 import sg = sokol.gfx;
 import app = sokol.app;
 import log = sokol.log;
