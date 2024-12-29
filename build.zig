@@ -239,18 +239,26 @@ pub fn build(b: *Build) !void {
     } else {
         // build examples
         const examples = .{
-            "clear",
-            "triangle",
-            "cube",
             "blend",
+            "bufferoffsets",
+            "clear",
+            "cube",
+            "debugtext",
+            "instancing",
             "mrt",
+            "noninterleaved",
+            "offscreen",
+            "quad",
             "saudio",
             "sgl_context",
             "sgl_points",
-            "debugtext",
+            "shapes",
+            "texcube",
+            "triangle",
             "user_data", // Need GC for user data [associative array]
-            "imgui",
+            "vertexpull",
             "droptest",
+            "imgui",
         };
 
         inline for (examples) |example| {
@@ -402,8 +410,13 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*std.Build.Step.InstallDi
     // keep all function bodies in .di files
     ldc_exec.addArg("-Hkeep-all-bodies");
 
-    // automatically finds needed library files and builds
-    ldc_exec.addArg("-i");
+    // automatically finds needed modules
+    ldc_exec.addArgs(&.{
+        "-i=sokol",
+        "-i=shaders",
+        "-i=handmade",
+        "-i=cimgui",
+    });
 
     // sokol include path
     ldc_exec.addArg(b.fmt("-I{s}", .{b.pathJoin(&.{ rootPath(), "src" })}));
@@ -757,6 +770,7 @@ fn buildShaders(b: *Build, target: Build.ResolvedTarget) void {
         "shapes.glsl",
         "texcube.glsl",
         "blend.glsl",
+        "vertexpull.glsl",
     };
     const optional_shdc: ?[:0]const u8 = comptime switch (builtin.os.tag) {
         .windows => "win32/sokol-shdc.exe",

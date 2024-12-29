@@ -5,6 +5,8 @@
 //------------------------------------------------------------------------------
 module examples.triangle;
 
+private:
+
 import sg = sokol.gfx;
 import sapp = sokol.app;
 import log = sokol.log;

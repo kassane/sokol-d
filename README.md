@@ -6,7 +6,7 @@ Auto-generated [D](https://dlang.org) bindings for the [sokol headers](https://g
 #### Targets
 
 - Native
-- Wasm (`-Dtarget=wasm32-emscripten-none`)
+- Wasm (`-Dtarget=wasm32-emscripten-none`) - LTO enabled on release-mode.
 
 By default, the backend 3D API will be selected based on the target platform:
 
@@ -27,24 +27,35 @@ On Linux install the following packages: libglu1-mesa-dev, mesa-common-dev, xorg
 
 ```bash
 # build sokol library + all examples [default: static library]
-zig build -Doptimize=ReleaseSafe
+zig build
 
 # build sokol shared library + all examples
-zig build -Doptimize=ReleaseSafe -Dshared
+zig build -Dshared
+
+# build sokol library only
+zig build -Dartifact
 
 # Run Examples
-zig build run-blend -Doptimize=ReleaseSafe
-zig build run-clear -Doptimize=ReleaseSafe
-zig build run-cube -Doptimize=ReleaseSafe
-zig build run-debugtext -Doptimize=ReleaseSafe
-zig build run-mrt -Doptimize=ReleaseSafe
-zig build run-saudio -Doptimize=ReleaseSafe
-zig build run-sgl_context -Doptimize=ReleaseSafe
-zig build run-sgl_points -Doptimize=ReleaseSafe
-zig build run-user_data -Doptimize=ReleaseSafe
-zig build run-triangle -Doptimize=ReleaseSafe
-zig build run-imgui -Doptimize=ReleaseSafe -Dimgui # optional: -Dimgui-version=docking
-zig build run-droptest -Doptimize=ReleaseSafe -Dimgui # optional: -Dimgui-version=docking
+zig build run-blend
+zig build run-bufferoffsets
+zig build run-clear
+zig build run-cube
+zig build run-debugtext
+zig build run-mrt
+zig build run-saudio
+zig build run-instancing
+zig build run-offscreen
+zig build run-sgl_context
+zig build run-sgl_points
+zig build run-user_data
+zig build run-noninterleaved
+zig build run-texcube
+zig build run-quad
+zig build run-triangle
+zig build run-shapes
+zig build run-vertexpull
+zig build run-imgui -Dimgui # optional: -Dimgui-version=docking
+zig build run-droptest -Dimgui # optional: -Dimgui-version=docking
 
 zig build --help
 # Project-Specific Options:

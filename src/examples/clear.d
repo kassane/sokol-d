@@ -5,6 +5,8 @@
 //------------------------------------------------------------------------------
 module examples.clear;
 
+private:
+
 import sg = sokol.gfx;
 import sglue = sokol.glue;
 import sapp = sokol.app;
@@ -15,36 +17,32 @@ extern (C):
 
 sg.PassAction pass_action = {
     colors: [
-        { load_action: sg.LoadAction.Clear, clear_value: { r: 1, g: 1, b: 0, a: 1 } }
+        {load_action: sg.LoadAction.Clear, clear_value: {r: 1, g: 1, b: 0, a: 1}}
     ]
 };
 
-static void init() {
+static void init()
+{
     sg.Desc gfx = {
         environment: sglue.environment(),
-        logger: { func: &log.slog_func },
+        logger: {func: &log.slog_func},
     };
     sg.setup(gfx);
-    debug
-    {
-        version (WebAssembly)
-        {/* none */}
-        else
-        {
-            import std.stdio : writeln;
 
-            try
-            {
-                writeln("Backend: ", sg.queryBackend());
-            }
-            catch (Exception)
-            {
-            }
-        }
+    version (WebAssembly)
+    { /* none */ }
+    else version (D_BetterC)
+    { /* none */ }
+    else
+    {
+        import std.stdio : writeln;
+
+        debug writeln("Backend: ", sg.queryBackend());
     }
 }
 
-static void frame() {
+static void frame()
+{
     const g = pass_action.colors[0].clear_value.g + 0.01;
     pass_action.colors[0].clear_value.g = g > 1.0 ? 0.0 : g;
     sg.Pass pass = {action: pass_action, swapchain: sglue.swapchain};
@@ -53,11 +51,13 @@ static void frame() {
     sg.commit();
 }
 
-static void cleanup() {
+static void cleanup()
+{
     sg.shutdown();
 }
 
-void main() {
+void main()
+{
     sapp.Desc runner = {
         window_title: "clear.d",
         init_cb: &init,
@@ -66,7 +66,7 @@ void main() {
         width: 640,
         height: 480,
         win32_console_attach: true,
-        icon: { sokol_default: true },
+        icon: {sokol_default: true},
         logger: {func: &log.func}
     };
     sapp.run(runner);

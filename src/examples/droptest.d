@@ -5,6 +5,8 @@
 
 module examples.droptest;
 
+private:
+
 import sg = sokol.gfx;
 import sgapp = sokol.glue;
 import sapp = sokol.app;
@@ -43,6 +45,7 @@ extern (C) void init() @safe @nogc nothrow
     imgui.setup(imgui_desc);
 
     // ifndef emscripten
+    // dfmt off
     static if((){version(Emscripten) return false; else return true;}())
     {
         sfetch.Desc fetch_desc = {
@@ -52,11 +55,13 @@ extern (C) void init() @safe @nogc nothrow
         };
         sfetch.setup(fetch_desc);
     }
+    // dfmt on
 }
 
 extern (C) void frame() @trusted
 {
     // ifndef emscripten
+    // dfmt off
     static if((){version(Emscripten) return false;else return true;}())
     {
         sfetch.dowork;
@@ -67,6 +72,7 @@ extern (C) void frame() @trusted
         delta_time: sapp.frameDuration(),
         dpi_scale: sapp.dpiScale(),
     };
+    // dfmt on
     imgui.newFrame(imgui_desc);
 
     // /*=== UI CODE STARTS HERE ===*/
@@ -75,23 +81,24 @@ extern (C) void frame() @trusted
     igSetNextWindowPos(window_pos, ImGuiCond_.ImGuiCond_Once);
     igSetNextWindowSize(window_size, ImGuiCond_.ImGuiCond_Once);
     igBegin("Drop a file!".ptr, null, ImGuiWindowFlags_.ImGuiWindowFlags_None);
-    if(state.load_state != LoadState.Unknown)
+    if (state.load_state != LoadState.Unknown)
     {
         igText("%s:", sapp.getDroppedFilePath(0));
     }
-    switch (state.load_state) {
-        case LoadState.Failed:
-            igText("LOAD FAILED!");
-            break;
-        case LoadState.FileTooBig:
-            igText("FILE TOO BIG!");
-            break;
-        case LoadState.Success:
-            igSeparator;
-            renderFileContent;
-            break;
-        default:
-            break;
+    switch (state.load_state)
+    {
+    case LoadState.Failed:
+        igText("LOAD FAILED!");
+        break;
+    case LoadState.FileTooBig:
+        igText("FILE TOO BIG!");
+        break;
+    case LoadState.Success:
+        igSeparator;
+        renderFileContent;
+        break;
+    default:
+        break;
     }
     igEnd();
     /*=== UI CODE ENDS HERE ===*/
@@ -114,17 +121,16 @@ extern (C) void event(const(sapp.Event)* ev) @trusted @nogc nothrow
             sapp.Html5FetchRequest req = {
                 dropped_file_index: 0,
                 callback: &emsc_load_callback,
-                buffer: {ptr: &state.buffer[0], size: state.buffer.sizeof}
-            };
-            sapp.html5FetchDroppedFile(req);
-        }
+                buffer: {ptr: &state.buffer[0], size: state.buffer.sizeof}};
+                sapp.html5FetchDroppedFile(req);
+            }
         else
-        {
-            // native platform: use sokol-fetch to load file content
-            sfetch.Request req = {
-                path: sapp.getDroppedFilePath(0),
-                callback: &native_load_callback,
-                buffer: {ptr: &state.buffer[0], size: state.buffer.sizeof}
+            {
+                // native platform: use sokol-fetch to load file content
+                sfetch.Request req = {
+                    path: sapp.getDroppedFilePath(0),
+                    callback: &native_load_callback,
+                    buffer: {ptr: &state.buffer[0], size: state.buffer.sizeof}
             };
             sfetch.send(req);
         }
@@ -134,16 +140,19 @@ extern (C) void event(const(sapp.Event)* ev) @trusted @nogc nothrow
 extern (C) void cleanup() @safe @nogc nothrow
 {
     // ifndef emscripten
+    // dfmt off
     static if((){version(Emscripten) return false;else return true;}())
     {
         sfetch.shutdown;
     }
+    // dfmt on
     imgui.shutdown;
     sg.shutdown;
 }
 
 extern (C) void main() @safe @nogc nothrow
 {
+    // dfmt off
     sapp.Desc runner = {
         window_title: "droptest.d",
         init_cb: &init,
@@ -157,6 +166,7 @@ extern (C) void main() @safe @nogc nothrow
         icon: {sokol_default: true},
         logger: {func: &log.func}
     };
+    // dfmt on
     sapp.run(runner);
 }
 
@@ -208,7 +218,7 @@ void renderFileContent()
 version (Emscripten)
 {
     // the async-loading callback for sapp_html5_fetch_dropped_file
-    extern (C) void emsc_load_callback(const (sapp.Html5FetchResponse*) response) @nogc nothrow
+    extern (C) void emsc_load_callback(const(sapp.Html5FetchResponse*) response) @nogc nothrow
     {
         if (response.succeeded)
         {
@@ -228,7 +238,7 @@ version (Emscripten)
 else
 {
     // the async-loading callback for native platforms
-    extern (C) void native_load_callback(const (sfetch.Response*) response) @nogc nothrow
+    extern (C) void native_load_callback(const(sfetch.Response*) response) @nogc nothrow
     {
         if (response.fetched)
         {

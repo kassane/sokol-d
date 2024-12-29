@@ -5,6 +5,8 @@
 //------------------------------------------------------------------------------
 module examples.blend;
 
+private:
+
 import sg = sokol.gfx;
 import app = sokol.app;
 import log = sokol.log;

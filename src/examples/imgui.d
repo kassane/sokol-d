@@ -6,6 +6,8 @@
 
 module examples.imgui;
 
+private:
+
 import sg = sokol.gfx;
 import sgapp = sokol.glue;
 import sapp = sokol.app;

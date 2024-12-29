@@ -4,6 +4,8 @@
 //------------------------------------------------------------------------------
 module examples.saudio;
 
+private:
+
 import sg = sokol.gfx;
 import app = sokol.app;
 import log = sokol.log;
@@ -15,53 +17,63 @@ extern (C):
 
 enum NUM_SAMPLES = 32;
 
-struct State {
+struct State
+{
     sg.PassAction pass_action = {
         colors: [
-            { load_action: sg.LoadAction.Clear, clear_value: {r: 1.0, g: 0.5, b: 0.0, a: 1.0} },
+            {
+                load_action: sg.LoadAction.Clear, clear_value: {
+                    r: 1.0, g: 0.5, b: 0.0, a: 1.0
+                }
+            },
         ]
     };
     int even_odd;
     size_t sample_pos;
     float[NUM_SAMPLES] samples;
 }
+
 static State state;
 
-void init() {
+void init()
+{
     sg.Desc gfx = {
         environment: sglue.environment,
-        logger: { func: &log.slog_func }
+        logger: {func: &log.slog_func}
     };
     sg.setup(gfx);
-    saudio.Desc audio = {
-        logger: { func: &log.slog_func }
-    };
+    saudio.Desc audio = {logger: {func: &log.slog_func}};
     saudio.setup(audio);
 }
 
-void frame() {
+void frame()
+{
     immutable num_frames = saudio.expect();
-    foreach (_; 0 .. num_frames) {
+    foreach (_; 0 .. num_frames)
+    {
         state.even_odd += 1;
         state.sample_pos += 1;
-        if (state.sample_pos == NUM_SAMPLES) {
+        if (state.sample_pos == NUM_SAMPLES)
+        {
             state.sample_pos = 0;
             saudio.push(&state.samples[0], NUM_SAMPLES);
         }
         state.samples[state.sample_pos] = (0 != (state.even_odd & 0x20)) ? 0.1 : -0.1;
     }
-    sg.Pass pass = { action: state.pass_action, swapchain: sglue.swapchain() };
+    sg.Pass pass = {action: state.pass_action, swapchain: sglue.swapchain()};
     sg.beginPass(pass);
     sg.endPass();
     sg.commit();
 }
 
-void cleanup() {
+void cleanup()
+{
     saudio.shutdown();
     sg.shutdown();
 }
 
-void main() {
+void main()
+{
     app.Desc runner = {
         window_title: "saudio.d",
         init_cb: &init,
