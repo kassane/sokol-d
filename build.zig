@@ -377,10 +377,10 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*std.Build.Step.InstallDi
             ldc_exec.addArgs(&.{ "-O2", "-boundscheck=safeonly" });
         },
         .ReleaseFast => {
-            ldc_exec.addArgs(&.{ "-O3", "-boundscheck=off" });
+            ldc_exec.addArgs(&.{ "-O3", "-boundscheck=off", "--enable-asserts=false" });
         },
         .ReleaseSmall => {
-            ldc_exec.addArgs(&.{ "-Oz", "-boundscheck=off" });
+            ldc_exec.addArgs(&.{ "-Oz", "-boundscheck=off", "--enable-asserts=false" });
         },
     }
 
