@@ -97,7 +97,7 @@ jobs:
             sudo apt-get install libglu1-mesa-dev mesa-common-dev xorg-dev libasound-dev
 
       - name: (Zig) Build Shaders
-        run: zig build shaders
+        run: zig build -Dshaders
 
       - name: (Zig) Running Test
         if: runner.os != 'Windows'
