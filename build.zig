@@ -223,11 +223,7 @@ pub fn build(b: *Build) !void {
     const target = b.standardTargetOptions(.{ .default_target = if (builtin.os.tag == .windows) try std.Target.Query.parse(.{ .arch_os_abi = "native-windows-msvc" }) else .{} });
     const optimize = b.standardOptimizeOption(.{});
 
-    // Get emsdk dependency if targeting WebAssembly, otherwise null
-    const emsdk = if (target.result.isWasm())
-        b.dependency("emsdk", .{})
-    else
-        null;
+    const emsdk = b.lazyDependency("emsdk", .{}) orelse null;
     const lib_sokol = try buildLibSokol(b, .{
         .target = target,
         .optimize = optimize,
