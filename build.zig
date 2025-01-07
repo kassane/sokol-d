@@ -207,12 +207,6 @@ pub fn buildLibSokol(b: *Build, options: LibSokolOptions) !*CompileStep {
     return lib;
 }
 
-fn enableWasm(b: *Build, target: Build.ResolvedTarget) ?*Build.Dependency {
-    if (target.result.isWasm())
-        return b.lazyDependency("emsdk", .{}) orelse null;
-    return null;
-}
-
 pub fn build(b: *Build) !void {
     const opt_use_gl = b.option(bool, "gl", "Force OpenGL (default: false)") orelse false;
     const opt_use_gles3 = b.option(bool, "gles3", "Force OpenGL ES3 (default: false)") orelse false;
@@ -812,6 +806,13 @@ fn buildShaders(b: *Build, target: Build.ResolvedTarget) void {
 
 // ------------------------ Wasm Configuration ------------------------
 
+// Enable fetch and install the Emscripten SDK
+fn enableWasm(b: *Build, target: Build.ResolvedTarget) ?*Build.Dependency {
+    if (target.result.isWasm())
+        return b.lazyDependency("emsdk", .{}) orelse null;
+    return null;
+}
+
 // for wasm32-emscripten, need to run the Emscripten linker from the Emscripten SDK
 // NOTE: ideally this would go into a separate emsdk-zig package
 pub const EmLinkOptions = struct {
@@ -916,14 +917,13 @@ pub fn emRunStep(b: *Build, options: EmRunOptions) *Build.Step.Run {
         const emrun = b.addSystemCommand(&.{ emrun_path, b.fmt("{s}/web/{s}.html", .{ b.install_path, options.name }) });
         return emrun;
     }
-    // const
+    // workaround for emsdk not being available (non-artifact build)
     return b.addRunArtifact(Build.Step.Compile.create(b, .{
         .name = options.name,
         .root_module = b.createModule(.{
             .target = b.graph.host,
             .optimize = .Debug,
         }),
-        // .linkage = options.linkage,
         .kind = .obj,
     }));
 }
