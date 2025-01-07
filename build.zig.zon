@@ -14,14 +14,17 @@
         .imgui = .{
             .url = "git+https://github.com/floooh/dcimgui#4fcf465cf40a297affa887d2fb4a9342e0461b01",
             .hash = "12200aded8c04f0f18420f41bd97392d67da33b74833e8474932ad58e2fedd2f905c",
+            .lazy = true,
         },
         .emsdk = .{
             .url = "git+https://github.com/emscripten-core/emsdk#3.1.73",
             .hash = "1220d2b37748757d43de92f0ef723b6a00c3cae4b6a9c582b607421704498a5cfd2b",
+            .lazy = true,
         },
         .shdc = .{
             .url = "git+https://github.com/floooh/sokol-tools-bin#d80b1d8f20fef813092ba37f26723d3880839651",
             .hash = "1220f2ae16952843dd25b6bc86b888a3fd8c3f25d34adddfd8d1d2b9f801429e80e4",
+            .lazy = true,
         },
     },
 }

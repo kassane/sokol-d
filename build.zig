@@ -223,7 +223,7 @@ pub fn build(b: *Build) !void {
     const target = b.standardTargetOptions(.{ .default_target = if (builtin.os.tag == .windows) try std.Target.Query.parse(.{ .arch_os_abi = "native-windows-msvc" }) else .{} });
     const optimize = b.standardOptimizeOption(.{});
 
-    const emsdk = b.dependency("emsdk", .{});
+    const emsdk = b.lazyDependency("emsdk", .{}) orelse null;
     const lib_sokol = try buildLibSokol(b, .{
         .target = target,
         .optimize = optimize,
@@ -743,60 +743,61 @@ pub fn buildZigCC(b: *Build) *CompileStep {
 
 // a separate step to compile shaders, expects the shader compiler in ../sokol-tools-bin/
 fn buildShaders(b: *Build, target: Build.ResolvedTarget) void {
-    const shdc_dep = b.dependency("shdc", .{}).path("").getPath(b);
-
-    const sokol_tools_bin_dir = b.pathJoin(&.{ shdc_dep, "bin" });
-    const shaders_dir = "src/examples/shaders/";
-    const shaders = .{
-        "triangle.glsl",
-        "bufferoffsets.glsl",
-        "cube.glsl",
-        "instancing.glsl",
-        "mrt.glsl",
-        "noninterleaved.glsl",
-        "offscreen.glsl",
-        "quad.glsl",
-        "shapes.glsl",
-        "texcube.glsl",
-        "blend.glsl",
-        "vertexpull.glsl",
-    };
-    const optional_shdc: ?[:0]const u8 = comptime switch (builtin.os.tag) {
-        .windows => "win32/sokol-shdc.exe",
-        .linux => "linux/sokol-shdc",
-        .macos => if (builtin.cpu.arch.isX86()) "osx/sokol-shdc" else "osx_arm64/sokol-shdc",
-        else => null,
-    };
-    if (optional_shdc == null) {
-        std.log.warn("unsupported host platform, skipping shader compiler step", .{});
-        return;
-    }
-    const shdc_path = b.findProgram(&.{"sokol-shdc"}, &.{}) catch b.pathJoin(&.{ sokol_tools_bin_dir, optional_shdc.? });
-    const shdc_step = b.step("shaders", "Compile shaders (needs ../sokol-tools-bin)");
-    const glsl = if (target.result.isDarwin()) "glsl410" else "glsl430";
-    const slang = glsl ++ ":metal_macos:hlsl5:glsl300es:wgsl";
-    if (builtin.os.tag == .linux or builtin.os.tag == .macos) {
-        const file = std.fs.openFileAbsolute(shdc_path, .{}) catch |err| {
-            std.debug.panic("failed to open {s}: {s}", .{ shdc_path, @errorName(err) });
+    if (b.lazyDependency("shdc", .{})) |dep| {
+        const shdc_dep = dep.path("").getPath(b);
+        const sokol_tools_bin_dir = b.pathJoin(&.{ shdc_dep, "bin" });
+        const shaders_dir = "src/examples/shaders/";
+        const shaders = .{
+            "triangle.glsl",
+            "bufferoffsets.glsl",
+            "cube.glsl",
+            "instancing.glsl",
+            "mrt.glsl",
+            "noninterleaved.glsl",
+            "offscreen.glsl",
+            "quad.glsl",
+            "shapes.glsl",
+            "texcube.glsl",
+            "blend.glsl",
+            "vertexpull.glsl",
         };
-        defer file.close();
-        file.chmod(0o755) catch |err| {
-            std.debug.panic("failed to chmod {s}: {s}", .{ shdc_path, @errorName(err) });
+        const optional_shdc: ?[:0]const u8 = comptime switch (builtin.os.tag) {
+            .windows => "win32/sokol-shdc.exe",
+            .linux => "linux/sokol-shdc",
+            .macos => if (builtin.cpu.arch.isX86()) "osx/sokol-shdc" else "osx_arm64/sokol-shdc",
+            else => null,
         };
-    }
-    inline for (shaders) |shader| {
-        const cmd = b.addSystemCommand(&.{
-            shdc_path,
-            "-i",
-            shaders_dir ++ shader,
-            "-o",
-            shaders_dir ++ shader[0 .. shader.len - 5] ++ ".d",
-            "-l",
-            slang,
-            "-f",
-            "sokol_d",
-        });
-        shdc_step.dependOn(&cmd.step);
+        if (optional_shdc == null) {
+            std.log.warn("unsupported host platform, skipping shader compiler step", .{});
+            return;
+        }
+        const shdc_path = b.findProgram(&.{"sokol-shdc"}, &.{}) catch b.pathJoin(&.{ sokol_tools_bin_dir, optional_shdc.? });
+        const shdc_step = b.step("shaders", "Compile shaders (needs ../sokol-tools-bin)");
+        const glsl = if (target.result.isDarwin()) "glsl410" else "glsl430";
+        const slang = glsl ++ ":metal_macos:hlsl5:glsl300es:wgsl";
+        if (builtin.os.tag == .linux or builtin.os.tag == .macos) {
+            const file = std.fs.openFileAbsolute(shdc_path, .{}) catch |err| {
+                std.debug.panic("failed to open {s}: {s}", .{ shdc_path, @errorName(err) });
+            };
+            defer file.close();
+            file.chmod(0o755) catch |err| {
+                std.debug.panic("failed to chmod {s}: {s}", .{ shdc_path, @errorName(err) });
+            };
+        }
+        inline for (shaders) |shader| {
+            const cmd = b.addSystemCommand(&.{
+                shdc_path,
+                "-i",
+                shaders_dir ++ shader,
+                "-o",
+                shaders_dir ++ shader[0 .. shader.len - 5] ++ ".d",
+                "-l",
+                slang,
+                "-f",
+                "sokol_d",
+            });
+            shdc_step.dependOn(&cmd.step);
+        }
     }
 }
 
@@ -960,7 +961,6 @@ fn buildImgui(b: *Build, options: libImGuiOptions) !*CompileStep {
         .default => "src",
         .docking => "src-docking",
     };
-    const cimgui = b.dependency("imgui", .{}).path(imguiver_path);
 
     const libimgui = b.addStaticLibrary(.{
         .name = "imgui",
@@ -970,56 +970,58 @@ fn buildImgui(b: *Build, options: libImGuiOptions) !*CompileStep {
     libimgui.root_module.sanitize_c = options.use_ubsan;
     libimgui.root_module.sanitize_thread = options.use_tsan;
 
-    libimgui.addIncludePath(cimgui);
+    if (b.lazyDependency("imgui", .{})) |dep| {
+        const cimgui = dep.path(imguiver_path);
+        libimgui.addIncludePath(cimgui);
 
-    if (libimgui.rootModuleTarget().isWasm()) {
-        if (try emSdkSetupStep(b, options.emsdk.?)) |emsdk_setup| {
-            libimgui.step.dependOn(&emsdk_setup.step);
+        if (libimgui.rootModuleTarget().isWasm()) {
+            if (try emSdkSetupStep(b, options.emsdk.?)) |emsdk_setup| {
+                libimgui.step.dependOn(&emsdk_setup.step);
+            }
+            // add the Emscripten system include seach path
+            libimgui.addIncludePath(emSdkLazyPath(b, options.emsdk.?, &.{
+                "upstream",
+                "emscripten",
+                "cache",
+                "sysroot",
+                "include",
+            }));
         }
-        // add the Emscripten system include seach path
-        libimgui.addIncludePath(emSdkLazyPath(b, options.emsdk.?, &.{
-            "upstream",
-            "emscripten",
-            "cache",
-            "sysroot",
-            "include",
-        }));
-    }
-    libimgui.addCSourceFiles(.{
-        .root = cimgui,
-        .files = &.{
-            "cimgui.cpp",
-        },
-    });
-    libimgui.addCSourceFiles(.{
-        .root = cimgui,
-        .files = &.{
-            "imgui.cpp",
-            "imgui_draw.cpp",
-            "imgui_demo.cpp",
-            "imgui_widgets.cpp",
-            "imgui_tables.cpp",
-        },
-        .flags = &.{
-            "-Wall",
-            "-Wextra",
-            "-fno-exceptions",
-            "-Wno-unused-parameter",
-            "-Wno-missing-field-initializers",
-            "-fno-threadsafe-statics",
-        },
-    });
-    libimgui.root_module.sanitize_c = false;
-    if (libimgui.rootModuleTarget().os.tag == .windows)
-        libimgui.linkSystemLibrary("imm32");
+        libimgui.addCSourceFiles(.{
+            .root = cimgui,
+            .files = &.{
+                "cimgui.cpp",
+            },
+        });
+        libimgui.addCSourceFiles(.{
+            .root = cimgui,
+            .files = &.{
+                "imgui.cpp",
+                "imgui_draw.cpp",
+                "imgui_demo.cpp",
+                "imgui_widgets.cpp",
+                "imgui_tables.cpp",
+            },
+            .flags = &.{
+                "-Wall",
+                "-Wextra",
+                "-fno-exceptions",
+                "-Wno-unused-parameter",
+                "-Wno-missing-field-initializers",
+                "-fno-threadsafe-statics",
+            },
+        });
+        libimgui.root_module.sanitize_c = false;
+        if (libimgui.rootModuleTarget().os.tag == .windows)
+            libimgui.linkSystemLibrary("imm32");
 
-    // https://github.com/ziglang/zig/issues/5312
-    if (libimgui.rootModuleTarget().abi != .msvc) {
-        // llvm-libcxx + llvm-libunwind + os-libc
-        libimgui.linkLibCpp();
-    } else {
-        libimgui.linkLibC();
+        // https://github.com/ziglang/zig/issues/5312
+        if (libimgui.rootModuleTarget().abi != .msvc) {
+            // llvm-libcxx + llvm-libunwind + os-libc
+            libimgui.linkLibCpp();
+        } else {
+            libimgui.linkLibC();
+        }
     }
-
     return libimgui;
 }
