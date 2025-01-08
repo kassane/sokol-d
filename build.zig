@@ -1003,18 +1003,20 @@ fn buildImgui(b: *Build, options: libImGuiOptions) !*CompileStep {
         const cimgui = dep.path(imguiver_path);
         libimgui.addIncludePath(cimgui);
 
-        if (libimgui.rootModuleTarget().isWasm()) {
-            if (try emSdkSetupStep(b, options.emsdk.?)) |emsdk_setup| {
-                libimgui.step.dependOn(&emsdk_setup.step);
+        if (options.emsdk) |emsdk| {
+            if (libimgui.rootModuleTarget().isWasm()) {
+                if (try emSdkSetupStep(b, emsdk)) |emsdk_setup| {
+                    libimgui.step.dependOn(&emsdk_setup.step);
+                }
+                // add the Emscripten system include seach path
+                libimgui.addIncludePath(emSdkLazyPath(b, emsdk, &.{
+                    "upstream",
+                    "emscripten",
+                    "cache",
+                    "sysroot",
+                    "include",
+                }));
             }
-            // add the Emscripten system include seach path
-            libimgui.addIncludePath(emSdkLazyPath(b, options.emsdk.?, &.{
-                "upstream",
-                "emscripten",
-                "cache",
-                "sysroot",
-                "include",
-            }));
         }
         libimgui.addCSourceFiles(.{
             .root = cimgui,
