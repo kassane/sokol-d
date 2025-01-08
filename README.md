@@ -102,7 +102,7 @@ zig build -Dshaders # (re)generate D bindings from shaders.
 
 ## License and attributions
 
-This code is released under the zlib license (see `LICENSE` for info). Parts of `gen_d.py` have been copied and modified from
+This code is released under the zlib license (see [LICENSE](LICENSE) for info). Parts of `gen_d.py` have been copied and modified from
 the zig-bindings[^1] and rust-bindings[^2] for sokol.
 
 The sokol headers are created by Andre Weissflog (floooh) and sokol is released under its own license[^3].
