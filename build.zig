@@ -219,8 +219,10 @@ pub fn build(b: *Build) !void {
 
     // LDC-options options
     const dub_artifact = b.option(bool, "artifact", "Build artifacts (default: false)") orelse false;
-    const enable_betterC = b.option(bool, "betterC", "Omit generating some runtime information and helper functions (default: false)") orelse false;
-    const enable_zigcc = b.option(bool, "zigCC", "Use zig cc as compiler and linker (default: false)") orelse false;
+    const opt_betterC = b.option(bool, "betterC", "Omit generating some runtime information and helper functions (default: false)") orelse false;
+    const opt_zigcc = b.option(bool, "zigCC", "Use zig cc as compiler and linker (default: false)") orelse false;
+    // Build Shaders
+    const opt_shaders = b.option(bool, "shaders", "Build shaders (default: false)") orelse false;
     // ldc2 w/ druntime + phobos2 works on MSVC
     const target = b.standardTargetOptions(.{ .default_target = if (builtin.os.tag == .windows) try std.Target.Query.parse(.{ .arch_os_abi = "native-windows-msvc" }) else .{} });
     const optimize = b.standardOptimizeOption(.{});
@@ -239,6 +241,9 @@ pub fn build(b: *Build) !void {
     });
     if (dub_artifact) {
         b.installArtifact(lib_sokol);
+    }
+    if (opt_shaders) {
+        buildShaders(b, target);
     } else {
         // build examples
         const examples = .{
@@ -274,13 +279,13 @@ pub fn build(b: *Build) !void {
                 .sources = &[_][]const u8{
                     b.fmt("{s}/src/examples/{s}.d", .{ rootPath(), example }),
                 },
-                .betterC = if (std.mem.eql(u8, example, "user-data")) false else enable_betterC,
+                .betterC = if (std.mem.eql(u8, example, "user-data")) false else opt_betterC,
                 .dflags = &.{
                     "-w",
                     "-preview=all",
                 },
                 // fixme: https://github.com/kassane/sokol-d/issues/1 - betterC works on darwin
-                .zig_cc = if (target.result.isDarwin() and !enable_betterC) false else enable_zigcc,
+                .zig_cc = if (target.result.isDarwin() and !opt_betterC) false else opt_zigcc,
                 .target = target,
                 .optimize = optimize,
                 // send ldc2-obj (wasm artifact) to emcc
@@ -291,7 +296,6 @@ pub fn build(b: *Build) !void {
             b.getInstallStep().dependOn(&ldc.step);
         }
     }
-    buildShaders(b, target);
 
     // build tests
     // fixme: not building on Windows libsokol w/ kind test (missing cc [??])
@@ -775,7 +779,6 @@ fn buildShaders(b: *Build, target: Build.ResolvedTarget) void {
             return;
         }
         const shdc_path = b.findProgram(&.{"sokol-shdc"}, &.{}) catch b.pathJoin(&.{ sokol_tools_bin_dir, optional_shdc.? });
-        const shdc_step = b.step("shaders", "Compile shaders (needs ../sokol-tools-bin)");
         const glsl = if (target.result.isDarwin()) "glsl410" else "glsl430";
         const slang = glsl ++ ":metal_macos:hlsl5:glsl300es:wgsl";
         if (builtin.os.tag == .linux or builtin.os.tag == .macos) {
@@ -799,7 +802,7 @@ fn buildShaders(b: *Build, target: Build.ResolvedTarget) void {
                 "-f",
                 "sokol_d",
             });
-            shdc_step.dependOn(&cmd.step);
+            b.default_step.dependOn(&cmd.step);
         }
     }
 }
