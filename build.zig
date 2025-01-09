@@ -239,11 +239,10 @@ pub fn build(b: *Build) !void {
         .with_sokol_imgui = opt_with_sokol_imgui,
         .emsdk = emsdk,
     });
+    if (opt_shaders)
+        buildShaders(b, target);
     if (dub_artifact) {
         b.installArtifact(lib_sokol);
-    }
-    if (opt_shaders) {
-        buildShaders(b, target);
     } else {
         // build examples
         const examples = .{
