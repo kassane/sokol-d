@@ -80,11 +80,13 @@ pub fn buildLibSokol(b: *Build, options: LibSokolOptions) !*CompileStep {
         }
         // one-time setup of Emscripten SDK
         if (!options.with_sokol_imgui) {
-            if (try emSdkSetupStep(b, options.emsdk.?)) |emsdk_setup| {
-                lib.step.dependOn(&emsdk_setup.step);
+            if (options.emsdk) |emsdk| {
+                if (try emSdkSetupStep(b, emsdk)) |emsdk_setup| {
+                    lib.step.dependOn(&emsdk_setup.step);
+                }
+                // add the Emscripten system include seach path
+                lib.addIncludePath(emSdkLazyPath(b, emsdk, &.{ "upstream", "emscripten", "cache", "sysroot", "include" }));
             }
-            // add the Emscripten system include seach path
-            lib.addIncludePath(emSdkLazyPath(b, options.emsdk.?, &.{ "upstream", "emscripten", "cache", "sysroot", "include" }));
         }
     }
 
@@ -217,13 +219,16 @@ pub fn build(b: *Build) !void {
 
     // LDC-options options
     const dub_artifact = b.option(bool, "artifact", "Build artifacts (default: false)") orelse false;
-    const enable_betterC = b.option(bool, "betterC", "Omit generating some runtime information and helper functions (default: false)") orelse false;
-    const enable_zigcc = b.option(bool, "zigCC", "Use zig cc as compiler and linker (default: false)") orelse false;
+    const opt_betterC = b.option(bool, "betterC", "Omit generating some runtime information and helper functions (default: false)") orelse false;
+    const opt_zigcc = b.option(bool, "zigCC", "Use zig cc as compiler and linker (default: false)") orelse false;
+    // Build Shaders
+    const opt_shaders = b.option(bool, "shaders", "Build shaders (default: false)") orelse false;
     // ldc2 w/ druntime + phobos2 works on MSVC
     const target = b.standardTargetOptions(.{ .default_target = if (builtin.os.tag == .windows) try std.Target.Query.parse(.{ .arch_os_abi = "native-windows-msvc" }) else .{} });
     const optimize = b.standardOptimizeOption(.{});
 
-    const emsdk = b.lazyDependency("emsdk", .{}) orelse null;
+    // Get emsdk dependency if targeting WebAssembly, otherwise null
+    const emsdk = enableWasm(b, target);
     const lib_sokol = try buildLibSokol(b, .{
         .target = target,
         .optimize = optimize,
@@ -236,6 +241,9 @@ pub fn build(b: *Build) !void {
     });
     if (dub_artifact) {
         b.installArtifact(lib_sokol);
+    }
+    if (opt_shaders) {
+        buildShaders(b, target);
     } else {
         // build examples
         const examples = .{
@@ -271,13 +279,13 @@ pub fn build(b: *Build) !void {
                 .sources = &[_][]const u8{
                     b.fmt("{s}/src/examples/{s}.d", .{ rootPath(), example }),
                 },
-                .betterC = if (std.mem.eql(u8, example, "user-data")) false else enable_betterC,
+                .betterC = if (std.mem.eql(u8, example, "user-data")) false else opt_betterC,
                 .dflags = &.{
                     "-w",
                     "-preview=all",
                 },
                 // fixme: https://github.com/kassane/sokol-d/issues/1 - betterC works on darwin
-                .zig_cc = if (target.result.isDarwin() and !enable_betterC) false else enable_zigcc,
+                .zig_cc = if (target.result.isDarwin() and !opt_betterC) false else opt_zigcc,
                 .target = target,
                 .optimize = optimize,
                 // send ldc2-obj (wasm artifact) to emcc
@@ -288,7 +296,6 @@ pub fn build(b: *Build) !void {
             b.getInstallStep().dependOn(&ldc.step);
         }
     }
-    buildShaders(b, target);
 
     // build tests
     // fixme: not building on Windows libsokol w/ kind test (missing cc [??])
@@ -650,7 +657,7 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*std.Build.Step.InstallDi
             .lib_main = artifact,
             .target = options.target,
             .optimize = options.optimize,
-            .emsdk = options.emsdk.?,
+            .emsdk = options.emsdk orelse null,
             .use_webgpu = backend == .wgpu,
             .use_webgl2 = backend != .wgpu,
             .use_emmalloc = true,
@@ -661,7 +668,7 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*std.Build.Step.InstallDi
             .extra_args = &.{"-sSTACK_SIZE=512KB"},
         });
         link_step.step.dependOn(&ldc_exec.step);
-        const emrun = emRunStep(b, .{ .name = options.name, .emsdk = options.emsdk.? });
+        const emrun = emRunStep(b, .{ .name = options.name, .emsdk = options.emsdk orelse null });
         emrun.step.dependOn(&link_step.step);
         run.dependOn(&emrun.step);
     } else {
@@ -772,7 +779,6 @@ fn buildShaders(b: *Build, target: Build.ResolvedTarget) void {
             return;
         }
         const shdc_path = b.findProgram(&.{"sokol-shdc"}, &.{}) catch b.pathJoin(&.{ sokol_tools_bin_dir, optional_shdc.? });
-        const shdc_step = b.step("shaders", "Compile shaders (needs ../sokol-tools-bin)");
         const glsl = if (target.result.isDarwin()) "glsl410" else "glsl430";
         const slang = glsl ++ ":metal_macos:hlsl5:glsl300es:wgsl";
         if (builtin.os.tag == .linux or builtin.os.tag == .macos) {
@@ -796,12 +802,19 @@ fn buildShaders(b: *Build, target: Build.ResolvedTarget) void {
                 "-f",
                 "sokol_d",
             });
-            shdc_step.dependOn(&cmd.step);
+            b.default_step.dependOn(&cmd.step);
         }
     }
 }
 
 // ------------------------ Wasm Configuration ------------------------
+
+// Enable fetch and install the Emscripten SDK
+fn enableWasm(b: *Build, target: Build.ResolvedTarget) ?*Build.Dependency {
+    if (target.result.isWasm())
+        return b.lazyDependency("emsdk", .{}) orelse null;
+    return null;
+}
 
 // for wasm32-emscripten, need to run the Emscripten linker from the Emscripten SDK
 // NOTE: ideally this would go into a separate emsdk-zig package
@@ -809,7 +822,7 @@ pub const EmLinkOptions = struct {
     target: Build.ResolvedTarget,
     optimize: std.builtin.OptimizeMode,
     lib_main: *Build.Step.Compile,
-    emsdk: *Build.Dependency,
+    emsdk: ?*Build.Dependency,
     release_use_closure: bool = true,
     release_use_lto: bool = false,
     use_webgpu: bool = false,
@@ -822,84 +835,100 @@ pub const EmLinkOptions = struct {
 };
 
 pub fn emLinkStep(b: *Build, options: EmLinkOptions) !*Build.Step.InstallDir {
-    const emcc_path = emSdkLazyPath(b, options.emsdk, &.{ "upstream", "emscripten", "emcc" }).getPath(b);
-    const emcc = b.addSystemCommand(&.{emcc_path});
-    emcc.setName("emcc"); // hide emcc path
-    if (options.optimize == .Debug) {
-        emcc.addArgs(&.{
-            "-Og",
-            "-sSAFE_HEAP=1",
-            "-sSTACK_OVERFLOW_CHECK=1",
-        });
-    } else {
-        emcc.addArg("-sASSERTIONS=0");
-        if (options.optimize == .ReleaseSmall) {
-            emcc.addArg("-Oz");
+    if (options.emsdk) |emsdk| {
+        const emcc_path = emSdkLazyPath(b, emsdk, &.{ "upstream", "emscripten", "emcc" }).getPath(b);
+        const emcc = b.addSystemCommand(&.{emcc_path});
+        emcc.setName("emcc"); // hide emcc path
+        if (options.optimize == .Debug) {
+            emcc.addArgs(&.{
+                "-Og",
+                "-sSAFE_HEAP=1",
+                "-sSTACK_OVERFLOW_CHECK=1",
+            });
         } else {
-            emcc.addArg("-O3");
+            emcc.addArg("-sASSERTIONS=0");
+            if (options.optimize == .ReleaseSmall) {
+                emcc.addArg("-Oz");
+            } else {
+                emcc.addArg("-O3");
+            }
+            if (options.release_use_lto) {
+                emcc.addArg("-flto");
+            }
+            if (options.release_use_closure) {
+                emcc.addArgs(&.{ "--closure", "1" });
+            }
         }
-        if (options.release_use_lto) {
-            emcc.addArg("-flto");
+        if (options.use_webgpu) {
+            emcc.addArg("-sUSE_WEBGPU=1");
         }
-        if (options.release_use_closure) {
-            emcc.addArgs(&.{ "--closure", "1" });
+        if (options.use_webgl2) {
+            emcc.addArg("-sUSE_WEBGL2=1");
         }
-    }
-    if (options.use_webgpu) {
-        emcc.addArg("-sUSE_WEBGPU=1");
-    }
-    if (options.use_webgl2) {
-        emcc.addArg("-sUSE_WEBGL2=1");
-    }
-    if (!options.use_filesystem) {
-        emcc.addArg("-sNO_FILESYSTEM=1");
-    }
-    if (options.use_emmalloc) {
-        emcc.addArg("-sMALLOC='emmalloc'");
-    }
-    if (options.use_ubsan) {
-        emcc.addArg("-fsanitize=undefined");
-    }
-    if (options.shell_file_path) |shell_file_path| {
-        emcc.addPrefixedFileArg("--shell-file=", shell_file_path);
-    }
-    for (options.extra_args) |arg| {
-        emcc.addArg(arg);
-    }
+        if (!options.use_filesystem) {
+            emcc.addArg("-sNO_FILESYSTEM=1");
+        }
+        if (options.use_emmalloc) {
+            emcc.addArg("-sMALLOC='emmalloc'");
+        }
+        if (options.use_ubsan) {
+            emcc.addArg("-fsanitize=undefined");
+        }
+        if (options.shell_file_path) |shell_file_path| {
+            emcc.addPrefixedFileArg("--shell-file=", shell_file_path);
+        }
+        for (options.extra_args) |arg| {
+            emcc.addArg(arg);
+        }
 
-    // add the main lib, and then scan for library dependencies and add those too
-    emcc.addArtifactArg(options.lib_main);
-    for (options.lib_main.getCompileDependencies(false)) |item| {
-        if (item.kind == .lib) {
-            emcc.addArtifactArg(item);
+        // add the main lib, and then scan for library dependencies and add those too
+        emcc.addArtifactArg(options.lib_main);
+        for (options.lib_main.getCompileDependencies(false)) |item| {
+            if (item.kind == .lib) {
+                emcc.addArtifactArg(item);
+            }
         }
-    }
-    emcc.addArg("-o");
-    const out_file = emcc.addOutputFileArg(b.fmt("{s}.html", .{options.lib_main.name}));
+        emcc.addArg("-o");
+        const out_file = emcc.addOutputFileArg(b.fmt("{s}.html", .{options.lib_main.name}));
+        // the emcc linker creates 3 output files (.html, .wasm and .js)
+        const install = b.addInstallDirectory(.{
+            .source_dir = out_file.dirname(),
+            .install_dir = .prefix,
+            .install_subdir = "web",
+        });
+        install.step.dependOn(&emcc.step);
 
-    // the emcc linker creates 3 output files (.html, .wasm and .js)
-    const install = b.addInstallDirectory(.{
-        .source_dir = out_file.dirname(),
+        // get the emcc step to run on 'zig build'
+        b.getInstallStep().dependOn(&install.step);
+        return install;
+    } else return b.addInstallDirectory(.{
+        .source_dir = b.path(""),
         .install_dir = .prefix,
         .install_subdir = "web",
     });
-    install.step.dependOn(&emcc.step);
-
-    // get the emcc step to run on 'zig build'
-    b.getInstallStep().dependOn(&install.step);
-    return install;
 }
 
 // build a run step which uses the emsdk emrun command to run a build target in the browser
 // NOTE: ideally this would go into a separate emsdk-zig package
 pub const EmRunOptions = struct {
     name: []const u8,
-    emsdk: *Build.Dependency,
+    emsdk: ?*Build.Dependency,
 };
 pub fn emRunStep(b: *Build, options: EmRunOptions) *Build.Step.Run {
-    const emrun_path = b.findProgram(&.{"emrun"}, &.{}) catch emSdkLazyPath(b, options.emsdk, &.{ "upstream", "emscripten", "emrun" }).getPath(b);
-    const emrun = b.addSystemCommand(&.{ emrun_path, b.fmt("{s}/web/{s}.html", .{ b.install_path, options.name }) });
-    return emrun;
+    if (options.emsdk) |emsdk| {
+        const emrun_path = b.findProgram(&.{"emrun"}, &.{}) catch emSdkLazyPath(b, emsdk, &.{ "upstream", "emscripten", "emrun" }).getPath(b);
+        const emrun = b.addSystemCommand(&.{ emrun_path, b.fmt("{s}/web/{s}.html", .{ b.install_path, options.name }) });
+        return emrun;
+    }
+    // workaround for emsdk not being available (non-artifact build)
+    return b.addRunArtifact(Build.Step.Compile.create(b, .{
+        .name = options.name,
+        .root_module = b.createModule(.{
+            .target = b.graph.host,
+            .optimize = .Debug,
+        }),
+        .kind = .obj,
+    }));
 }
 
 // helper function to build a LazyPath from the emsdk root and provided path components
@@ -974,18 +1003,20 @@ fn buildImgui(b: *Build, options: libImGuiOptions) !*CompileStep {
         const cimgui = dep.path(imguiver_path);
         libimgui.addIncludePath(cimgui);
 
-        if (libimgui.rootModuleTarget().isWasm()) {
-            if (try emSdkSetupStep(b, options.emsdk.?)) |emsdk_setup| {
-                libimgui.step.dependOn(&emsdk_setup.step);
+        if (options.emsdk) |emsdk| {
+            if (libimgui.rootModuleTarget().isWasm()) {
+                if (try emSdkSetupStep(b, emsdk)) |emsdk_setup| {
+                    libimgui.step.dependOn(&emsdk_setup.step);
+                }
+                // add the Emscripten system include seach path
+                libimgui.addIncludePath(emSdkLazyPath(b, emsdk, &.{
+                    "upstream",
+                    "emscripten",
+                    "cache",
+                    "sysroot",
+                    "include",
+                }));
             }
-            // add the Emscripten system include seach path
-            libimgui.addIncludePath(emSdkLazyPath(b, options.emsdk.?, &.{
-                "upstream",
-                "emscripten",
-                "cache",
-                "sysroot",
-                "include",
-            }));
         }
         libimgui.addCSourceFiles(.{
             .root = cimgui,

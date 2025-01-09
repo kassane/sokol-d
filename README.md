@@ -95,20 +95,18 @@ Checkout [sokol-tools](https://github.com/floooh/sokol-tools) for a sokol shader
 here have been compiled using it with `-f sokol_d`!
 
 ```bash
-zig build shaders # (re)generate D bindings from shaders.
+zig build -Dshaders # (re)generate D bindings from shaders.
 ```
 
 <br>
 
 ## License and attributions
 
-<sub>
-This code is released under the zlib license (see `LICENSE` for info). Parts of `gen_d.py` have been copied and modified from
-the zig-bindings (https://github.com/floooh/sokol-zig/) and rust-bindings (https://github.com/floooh/sokol-rust/) for sokol.
-</sub>
+This code is released under the zlib license (see [LICENSE](LICENSE) for info). Parts of `gen_d.py` have been copied and modified from
+the zig-bindings[^1] and rust-bindings[^2] for sokol.
 
+The sokol headers are created by Andre Weissflog (floooh) and sokol is released under its own license[^3].
 
-<sub>
-The sokol headers are created by Andre Weissflog (floooh) and sokol is released under its own license here: https://github.com/floooh/sokol/blob/master/LICENSE
-</sub>
-</br>
+[^1]: https://github.com/floooh/sokol-zig/
+[^2]: https://github.com/floooh/sokol-rust/
+[^3]: https://github.com/floooh/sokol/blob/master/LICENSE
