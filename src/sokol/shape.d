@@ -3,15 +3,21 @@
 module sokol.shape;
 import sg = sokol.gfx;
 
+/// sshape_range is a pointer-size-pair struct used to pass memory
+/// blobs into sokol-shape. When initialized from a value type
+/// (array or struct), use the SSHAPE_RANGE() macro to build
+/// an sshape_range struct
 extern(C)
 struct Range {
     const(void)* ptr = null;
     size_t size = 0;
 }
+/// a 4x4 matrix wrapper struct
 extern(C)
 struct Mat4 {
     float[4][4] m = 0.0f;
 }
+/// vertex layout of the generated geometry
 extern(C)
 struct Vertex {
     float x = 0.0f;
@@ -22,11 +28,13 @@ struct Vertex {
     ushort v = 0;
     uint color = 0;
 }
+/// a range of draw-elements (sg_draw(int base_element, int num_element, ...))
 extern(C)
 struct ElementRange {
     uint base_element = 0;
     uint num_elements = 0;
 }
+/// number of elements and byte size of build actions
 extern(C)
 struct SizesItem {
     uint num = 0;
@@ -37,6 +45,7 @@ struct Sizes {
     SizesItem vertices;
     SizesItem indices;
 }
+/// in/out struct to keep track of mesh-build state
 extern(C)
 struct BufferItem {
     Range buffer;
@@ -49,6 +58,7 @@ struct Buffer {
     BufferItem vertices;
     BufferItem indices;
 }
+/// creation parameters for the different shape types
 extern(C)
 struct Plane {
     float width = 0.0f;
@@ -102,7 +112,9 @@ struct Torus {
     bool merge = false;
     Mat4 transform;
 }
+/// shape builder functions
 extern(C) Buffer sshape_build_plane(const Buffer *, const Plane *) @system @nogc nothrow;
+/// shape builder functions
 Buffer buildPlane(scope ref Buffer buf, scope ref Plane params) @trusted @nogc nothrow {
     return sshape_build_plane(&buf, &params);
 }
@@ -122,7 +134,9 @@ extern(C) Buffer sshape_build_torus(const Buffer *, const Torus *) @system @nogc
 Buffer buildTorus(scope ref Buffer buf, scope ref Torus params) @trusted @nogc nothrow {
     return sshape_build_torus(&buf, &params);
 }
+/// query required vertex- and index-buffer sizes in bytes
 extern(C) Sizes sshape_plane_sizes(uint) @system @nogc nothrow;
+/// query required vertex- and index-buffer sizes in bytes
 Sizes planeSizes(uint tiles) @trusted @nogc nothrow {
     return sshape_plane_sizes(tiles);
 }
@@ -142,7 +156,9 @@ extern(C) Sizes sshape_torus_sizes(uint, uint) @system @nogc nothrow;
 Sizes torusSizes(uint sides, uint rings) @trusted @nogc nothrow {
     return sshape_torus_sizes(sides, rings);
 }
+/// extract sokol-gfx desc structs and primitive ranges from build state
 extern(C) ElementRange sshape_element_range(const Buffer *) @system @nogc nothrow;
+/// extract sokol-gfx desc structs and primitive ranges from build state
 ElementRange elementRange(scope ref Buffer buf) @trusted @nogc nothrow {
     return sshape_element_range(&buf);
 }
@@ -174,7 +190,9 @@ extern(C) sg.VertexAttrState sshape_color_vertex_attr_state() @system @nogc noth
 sg.VertexAttrState colorVertexAttrState() @trusted @nogc nothrow {
     return sshape_color_vertex_attr_state();
 }
+/// helper functions to build packed color value from floats or bytes
 extern(C) uint sshape_color_4f(float, float, float, float) @system @nogc nothrow;
+/// helper functions to build packed color value from floats or bytes
 uint color4f(float r, float g, float b, float a) @trusted @nogc nothrow {
     return sshape_color_4f(r, g, b, a);
 }
@@ -190,7 +208,9 @@ extern(C) uint sshape_color_3b(ubyte, ubyte, ubyte) @system @nogc nothrow;
 uint color3b(ubyte r, ubyte g, ubyte b) @trusted @nogc nothrow {
     return sshape_color_3b(r, g, b);
 }
+/// adapter function for filling matrix struct from generic float[16] array
 extern(C) Mat4 sshape_mat4(const float *) @system @nogc nothrow;
+/// adapter function for filling matrix struct from generic float[16] array
 Mat4 mat4(scope const float * m) @trusted @nogc nothrow {
     return sshape_mat4(m);
 }

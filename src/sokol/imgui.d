@@ -8,12 +8,26 @@ enum LogItem {
     Ok,
     Malloc_failed,
 }
+/// simgui_allocator_t
+/// 
+/// Used in simgui_desc_t to provide custom memory-alloc and -free functions
+/// to sokol_imgui.h. If memory management should be overridden, both the
+/// alloc_fn and free_fn function must be provided (e.g. it's not valid to
+/// override one function but not the other)
 extern(C)
 struct Allocator {
     extern(C) void* function(size_t, void*) alloc_fn = null;
     extern(C) void function(void*, void*) free_fn = null;
     void* user_data = null;
 }
+/// simgui_logger
+/// 
+/// Used in simgui_desc_t to provide a logging function. Please be aware
+/// that without logging function, sokol-imgui will be completely
+/// silent, e.g. it will not report errors, warnings and
+/// validation layer messages. For maximum error verbosity,
+/// compile in debug mode (e.g. NDEBUG *not* defined) and install
+/// a logger (for instance the standard logging function from sokol_log.h)
 extern(C)
 struct Logger {
     extern(C) void function(const(char)*, uint, uint, const(char)*, uint, const(char)*, void*) func = null;

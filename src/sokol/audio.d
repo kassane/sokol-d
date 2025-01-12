@@ -40,11 +40,21 @@ enum LogItem {
     Coreaudio_start_failed,
     Backend_buffer_size_isnt_multiple_of_packet_size,
 }
+/// saudio_logger
+/// 
+/// Used in saudio_desc to provide a custom logging and error reporting
+/// callback to sokol-audio
 extern(C)
 struct Logger {
     extern(C) void function(const(char)*, uint, uint, const(char)*, uint, const(char)*, void*) func = null;
     void* user_data = null;
 }
+/// saudio_allocator
+/// 
+/// Used in saudio_desc to provide custom memory-alloc and -free functions
+/// to sokol_audio.h. If memory management should be overridden, both the
+/// alloc_fn and free_fn function must be provided (e.g. it's not valid to
+/// override one function but not the other)
 extern(C)
 struct Allocator {
     extern(C) void* function(size_t, void*) alloc_fn = null;
@@ -64,47 +74,69 @@ struct Desc {
     Allocator allocator;
     Logger logger;
 }
+/// setup sokol-audio
 extern(C) void saudio_setup(const Desc *) @system @nogc nothrow;
+/// setup sokol-audio
 void setup(scope ref Desc desc) @trusted @nogc nothrow {
     saudio_setup(&desc);
 }
+/// shutdown sokol-audio
 extern(C) void saudio_shutdown() @system @nogc nothrow;
+/// shutdown sokol-audio
 void shutdown() @trusted @nogc nothrow {
     saudio_shutdown();
 }
+/// true after setup if audio backend was successfully initialized
 extern(C) bool saudio_isvalid() @system @nogc nothrow;
+/// true after setup if audio backend was successfully initialized
 bool isvalid() @trusted @nogc nothrow {
     return saudio_isvalid();
 }
+/// return the saudio_desc.user_data pointer
 extern(C) void* saudio_userdata() @system @nogc nothrow;
+/// return the saudio_desc.user_data pointer
 scope void* userdata() @trusted @nogc nothrow {
     return saudio_userdata();
 }
+/// return a copy of the original saudio_desc struct
 extern(C) Desc saudio_query_desc() @system @nogc nothrow;
+/// return a copy of the original saudio_desc struct
 Desc queryDesc() @trusted @nogc nothrow {
     return saudio_query_desc();
 }
+/// actual sample rate
 extern(C) int saudio_sample_rate() @system @nogc nothrow;
+/// actual sample rate
 int sampleRate() @trusted @nogc nothrow {
     return saudio_sample_rate();
 }
+/// return actual backend buffer size in number of frames
 extern(C) int saudio_buffer_frames() @system @nogc nothrow;
+/// return actual backend buffer size in number of frames
 int bufferFrames() @trusted @nogc nothrow {
     return saudio_buffer_frames();
 }
+/// actual number of channels
 extern(C) int saudio_channels() @system @nogc nothrow;
+/// actual number of channels
 int channels() @trusted @nogc nothrow {
     return saudio_channels();
 }
+/// return true if audio context is currently suspended (only in WebAudio backend, all other backends return false)
 extern(C) bool saudio_suspended() @system @nogc nothrow;
+/// return true if audio context is currently suspended (only in WebAudio backend, all other backends return false)
 bool suspended() @trusted @nogc nothrow {
     return saudio_suspended();
 }
+/// get current number of frames to fill packet queue
 extern(C) int saudio_expect() @system @nogc nothrow;
+/// get current number of frames to fill packet queue
 int expect() @trusted @nogc nothrow {
     return saudio_expect();
 }
+/// push sample frames from main thread, returns number of frames actually pushed
 extern(C) int saudio_push(const float *, int) @system @nogc nothrow;
+/// push sample frames from main thread, returns number of frames actually pushed
 int push(scope const float * frames, int num_frames) @trusted @nogc nothrow {
     return saudio_push(frames, num_frames);
 }

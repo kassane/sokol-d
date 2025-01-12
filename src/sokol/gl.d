@@ -12,19 +12,29 @@ enum LogItem {
     Context_pool_exhausted,
     Cannot_destroy_default_context,
 }
+/// sgl_logger_t
+/// 
+/// Used in sgl_desc_t to provide a custom logging and error reporting
+/// callback to sokol-gl
 extern(C)
 struct Logger {
     extern(C) void function(const(char)*, uint, uint, const(char)*, uint, const(char)*, void*) func = null;
     void* user_data = null;
 }
+/// sokol_gl pipeline handle (created with sgl_make_pipeline())
 extern(C)
 struct Pipeline {
     uint id = 0;
 }
+/// a context handle (created with sgl_make_context())
 extern(C)
 struct Context {
     uint id = 0;
 }
+/// sgl_error_t
+/// 
+/// Errors are reset each frame after calling sgl_draw(),
+/// get the last error code with sgl_error(
 extern(C)
 struct Error {
     bool any = false;
@@ -35,6 +45,11 @@ struct Error {
     bool stack_underflow = false;
     bool no_context = false;
 }
+/// sgl_context_desc_t
+/// 
+/// Describes the initialization parameters of a rendering context.
+/// Creating additional contexts is useful if you want to render
+/// in separate sokol-gfx passes
 extern(C)
 struct ContextDesc {
     int max_vertices = 0;
@@ -43,6 +58,12 @@ struct ContextDesc {
     sg.PixelFormat depth_format;
     int sample_count = 0;
 }
+/// sgl_allocator_t
+/// 
+/// Used in sgl_desc_t to provide custom memory-alloc and -free functions
+/// to sokol_gl.h. If memory management should be overridden, both the
+/// alloc and free function must be provided (e.g. it's not valid to
+/// override one function but not the other)
 extern(C)
 struct Allocator {
     extern(C) void* function(size_t, void*) alloc_fn = null;
@@ -62,7 +83,9 @@ struct Desc {
     Allocator allocator;
     Logger logger;
 }
+/// setup/shutdown/misc
 extern(C) void sgl_setup(const Desc *) @system @nogc nothrow;
+/// setup/shutdown/misc
 void setup(scope ref Desc desc) @trusted @nogc nothrow {
     sgl_setup(&desc);
 }
@@ -86,7 +109,9 @@ extern(C) Error sgl_context_error(Context) @system @nogc nothrow;
 Error contextError(Context ctx) @trusted @nogc nothrow {
     return sgl_context_error(ctx);
 }
+/// context functions
 extern(C) Context sgl_make_context(const ContextDesc *) @system @nogc nothrow;
+/// context functions
 Context makeContext(scope ref ContextDesc desc) @trusted @nogc nothrow {
     return sgl_make_context(&desc);
 }
@@ -106,7 +131,9 @@ extern(C) Context sgl_default_context() @system @nogc nothrow;
 Context defaultContext() @trusted @nogc nothrow {
     return sgl_default_context();
 }
+/// get information about recorded vertices and commands in current context
 extern(C) int sgl_num_vertices() @system @nogc nothrow;
+/// get information about recorded vertices and commands in current context
 int numVertices() @trusted @nogc nothrow {
     return sgl_num_vertices();
 }
@@ -114,7 +141,9 @@ extern(C) int sgl_num_commands() @system @nogc nothrow;
 int numCommands() @trusted @nogc nothrow {
     return sgl_num_commands();
 }
+/// draw recorded commands (call inside a sokol-gfx render pass)
 extern(C) void sgl_draw() @system @nogc nothrow;
+/// draw recorded commands (call inside a sokol-gfx render pass)
 void draw() @trusted @nogc nothrow {
     sgl_draw();
 }
@@ -130,7 +159,9 @@ extern(C) void sgl_context_draw_layer(Context, int) @system @nogc nothrow;
 void contextDrawLayer(Context ctx, int layer_id) @trusted @nogc nothrow {
     sgl_context_draw_layer(ctx, layer_id);
 }
+/// create and destroy pipeline objects
 extern(C) Pipeline sgl_make_pipeline(const sg.PipelineDesc *) @system @nogc nothrow;
+/// create and destroy pipeline objects
 Pipeline makePipeline(scope ref sg.PipelineDesc desc) @trusted @nogc nothrow {
     return sgl_make_pipeline(&desc);
 }
@@ -142,7 +173,9 @@ extern(C) void sgl_destroy_pipeline(Pipeline) @system @nogc nothrow;
 void destroyPipeline(Pipeline pip) @trusted @nogc nothrow {
     sgl_destroy_pipeline(pip);
 }
+/// render state functions
 extern(C) void sgl_defaults() @system @nogc nothrow;
+/// render state functions
 void defaults() @trusted @nogc nothrow {
     sgl_defaults();
 }
@@ -178,7 +211,9 @@ extern(C) void sgl_layer(int) @system @nogc nothrow;
 void layer(int layer_id) @trusted @nogc nothrow {
     sgl_layer(layer_id);
 }
+/// pipeline stack functions
 extern(C) void sgl_load_default_pipeline() @system @nogc nothrow;
+/// pipeline stack functions
 void loadDefaultPipeline() @trusted @nogc nothrow {
     sgl_load_default_pipeline();
 }
@@ -194,7 +229,9 @@ extern(C) void sgl_pop_pipeline() @system @nogc nothrow;
 void popPipeline() @trusted @nogc nothrow {
     sgl_pop_pipeline();
 }
+/// matrix stack functions
 extern(C) void sgl_matrix_mode_modelview() @system @nogc nothrow;
+/// matrix stack functions
 void matrixModeModelview() @trusted @nogc nothrow {
     sgl_matrix_mode_modelview();
 }
@@ -262,7 +299,9 @@ extern(C) void sgl_pop_matrix() @system @nogc nothrow;
 void popMatrix() @trusted @nogc nothrow {
     sgl_pop_matrix();
 }
+/// these functions only set the internal 'current texcoord / color / point size' (valid inside or outside begin/end)
 extern(C) void sgl_t2f(float, float) @system @nogc nothrow;
+/// these functions only set the internal 'current texcoord / color / point size' (valid inside or outside begin/end)
 void t2f(float u, float v) @trusted @nogc nothrow {
     sgl_t2f(u, v);
 }
@@ -290,7 +329,9 @@ extern(C) void sgl_point_size(float) @system @nogc nothrow;
 void pointSize(float s) @trusted @nogc nothrow {
     sgl_point_size(s);
 }
+/// define primitives, each begin/end is one draw command
 extern(C) void sgl_begin_points() @system @nogc nothrow;
+/// define primitives, each begin/end is one draw command
 void beginPoints() @trusted @nogc nothrow {
     sgl_begin_points();
 }
