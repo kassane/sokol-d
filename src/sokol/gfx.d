@@ -1910,6 +1910,7 @@ enum LogItem {
     Gl_shader_compilation_failed,
     Gl_shader_linking_failed,
     Gl_vertex_attribute_not_found_in_shader,
+    Gl_uniformblock_name_not_found_in_shader,
     Gl_image_sampler_name_not_found_in_shader,
     Gl_framebuffer_status_undefined,
     Gl_framebuffer_status_incomplete_attachment,
