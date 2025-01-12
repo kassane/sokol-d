@@ -179,6 +179,7 @@ pub fn buildLibSokol(b: *Build, options: LibSokolOptions) !*CompileStep {
         csrc_root ++ "sokol_shape.c",
         csrc_root ++ "sokol_fetch.c",
         csrc_root ++ "sokol_glue.c",
+        csrc_root ++ "sokol_memtrack.c",
     };
     for (csources) |csrc| {
         lib.addCSourceFile(.{
