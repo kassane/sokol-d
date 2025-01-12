@@ -433,6 +433,8 @@ struct Logger {
     extern(C) void function(const(char)*, uint, uint, const(char)*, uint, const(char)*, void*) func = null;
     void* user_data = null;
 }
+/// sokol-app initialization options, used as return value of sokol_main()
+/// or sapp_run() argument
 extern(C)
 struct Desc {
     extern(C) void function() init_cb = null;
@@ -470,6 +472,7 @@ struct Desc {
     bool html5_preserve_drawing_buffer = false;
     bool html5_premultiplied_alpha = false;
     bool html5_ask_leave_site = false;
+    bool html5_update_document_title = false;
     bool html5_bubble_mouse_events = false;
     bool html5_bubble_touch_events = false;
     bool html5_bubble_wheel_events = false;
