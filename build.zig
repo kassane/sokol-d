@@ -193,17 +193,17 @@ pub fn buildLibSokol(b: *Build, options: LibSokolOptions) !*CompileStep {
             .file = b.path(csrc_root ++ "sokol_imgui.c"),
             .flags = cflags,
         });
-        const cimgui = try buildImgui(b, .{
+        const imgui = try buildImgui(b, .{
             .target = options.target,
             .optimize = options.optimize,
             .emsdk = options.emsdk,
             .use_tsan = lib.root_module.sanitize_thread orelse false,
             .use_ubsan = lib.root_module.sanitize_c orelse false,
         });
-        for (cimgui.root_module.include_dirs.items) |dir| {
+        for (imgui.root_module.include_dirs.items) |dir| {
             try lib.root_module.include_dirs.append(b.allocator, dir);
         }
-        lib.linkLibrary(cimgui);
+        lib.linkLibrary(imgui);
     }
     return lib;
 }
@@ -422,7 +422,7 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*std.Build.Step.InstallDi
         "-i=sokol",
         "-i=shaders",
         "-i=handmade",
-        "-i=cimgui",
+        "-i=imgui",
     });
 
     // sokol include path
@@ -1149,8 +1149,8 @@ fn buildImgui(b: *Build, options: libImGuiOptions) !*CompileStep {
     libimgui.root_module.sanitize_thread = options.use_tsan;
 
     if (b.lazyDependency("imgui", .{})) |dep| {
-        const cimgui = dep.path(imguiver_path);
-        libimgui.addIncludePath(cimgui);
+        const imgui = dep.path(imguiver_path);
+        libimgui.addIncludePath(imgui);
 
         if (options.emsdk) |emsdk| {
             if (libimgui.rootModuleTarget().isWasm()) {
@@ -1168,13 +1168,13 @@ fn buildImgui(b: *Build, options: libImGuiOptions) !*CompileStep {
             }
         }
         libimgui.addCSourceFiles(.{
-            .root = cimgui,
+            .root = imgui,
             .files = &.{
                 "cimgui.cpp",
             },
         });
         libimgui.addCSourceFiles(.{
-            .root = cimgui,
+            .root = imgui,
             .files = &.{
                 "imgui.cpp",
                 "imgui_draw.cpp",
