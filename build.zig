@@ -828,6 +828,9 @@ pub const EmLinkOptions = struct {
     use_webgpu: bool = false,
     use_webgl2: bool = false,
     use_emmalloc: bool = false,
+    use_mimalloc: bool = false,
+    use_assert: bool = false,
+    use_offset_converter: bool = false,
     use_filesystem: bool = true,
     use_ubsan: bool = false,
     shell_file_path: ?Build.LazyPath,
@@ -846,7 +849,6 @@ pub fn emLinkStep(b: *Build, options: EmLinkOptions) !*Build.Step.InstallDir {
                 "-sSTACK_OVERFLOW_CHECK=1",
             });
         } else {
-            emcc.addArg("-sASSERTIONS=0");
             if (options.optimize == .ReleaseSmall) {
                 emcc.addArg("-Oz");
             } else {
@@ -859,6 +861,11 @@ pub fn emLinkStep(b: *Build, options: EmLinkOptions) !*Build.Step.InstallDir {
                 emcc.addArgs(&.{ "--closure", "1" });
             }
         }
+        if (options.use_assert) {
+            emcc.addArg("-sASSERTIONS=1");
+        } else {
+            emcc.addArg("-sASSERTIONS=0");
+        }
         if (options.use_webgpu) {
             emcc.addArg("-sUSE_WEBGPU=1");
         }
@@ -870,6 +877,12 @@ pub fn emLinkStep(b: *Build, options: EmLinkOptions) !*Build.Step.InstallDir {
         }
         if (options.use_emmalloc) {
             emcc.addArg("-sMALLOC='emmalloc'");
+        }
+        if (options.use_mimalloc) {
+            emcc.addArg("-sMALLOC='mimalloc'");
+        }
+        if (options.use_offset_converter) {
+            emcc.addArg("-sUSE_OFFSET_CONVERTER");
         }
         if (options.use_ubsan) {
             emcc.addArg("-fsanitize=undefined");
