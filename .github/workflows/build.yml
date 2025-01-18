@@ -7,7 +7,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runs-on: [ubuntu-latest, macos-latest, windows-latest]
+        runs-on: [ubuntu-24.04-arm, ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.runs-on }}
     steps:
       - uses: actions/checkout@v4
@@ -23,6 +23,12 @@ jobs:
         run: |
             sudo apt-get update
             sudo apt-get install libglu1-mesa-dev mesa-common-dev xorg-dev libasound-dev
+
+      - name: Install QEMU
+        if: endsWith(matrix.runs-on, 'arm')
+        run: |
+              sudo apt update && sudo apt install -y \
+              qemu-user-binfmt
 
       - name: (Dub) Build Native
         if: runner.os != 'Windows'
