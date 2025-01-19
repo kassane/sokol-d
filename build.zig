@@ -73,20 +73,19 @@ pub fn buildLibSokol(b: *Build, options: LibSokolOptions) !*CompileStep {
         lib.root_module.root_source_file = b.path("src/handmade/math.zig");
         if (options.optimize != .Debug)
             lib.want_lto = true;
+
         // make sure we're building for the wasm32-emscripten target, not wasm32-freestanding
         if (lib.rootModuleTarget().os.tag != .emscripten) {
             std.log.err("Please build with 'zig build -Dtarget=wasm32-emscripten", .{});
             return error.Wasm32EmscriptenExpected;
         }
         // one-time setup of Emscripten SDK
-        if (!options.with_sokol_imgui) {
-            if (options.emsdk) |emsdk| {
-                if (try emSdkSetupStep(b, emsdk)) |emsdk_setup| {
-                    lib.step.dependOn(&emsdk_setup.step);
-                }
-                // add the Emscripten system include seach path
-                lib.addIncludePath(emSdkLazyPath(b, emsdk, &.{ "upstream", "emscripten", "cache", "sysroot", "include" }));
+        if (options.emsdk) |emsdk| {
+            if (try emSdkSetupStep(b, emsdk)) |emsdk_setup| {
+                lib.step.dependOn(&emsdk_setup.step);
             }
+            // add the Emscripten system include seach path
+            lib.addSystemIncludePath(emSdkLazyPath(b, emsdk, &.{ "upstream", "emscripten", "cache", "sysroot", "include" }));
         }
     }
 
@@ -204,6 +203,9 @@ pub fn buildLibSokol(b: *Build, options: LibSokolOptions) !*CompileStep {
             .use_tsan = lib.root_module.sanitize_thread orelse false,
             .use_ubsan = lib.root_module.sanitize_c orelse false,
         });
+        if (options.emsdk) |emsdk| {
+            imgui.addSystemIncludePath(emSdkLazyPath(b, emsdk, &.{ "upstream", "emscripten", "cache", "sysroot", "include" }));
+        }
         for (imgui.root_module.include_dirs.items) |dir| {
             try lib.root_module.include_dirs.append(b.allocator, dir);
         }
@@ -1197,21 +1199,6 @@ fn buildImgui(b: *Build, options: libImGuiOptions) !*CompileStep {
         const imgui = dep.path(imguiver_path);
         libimgui.addIncludePath(imgui);
 
-        if (options.emsdk) |emsdk| {
-            if (libimgui.rootModuleTarget().isWasm()) {
-                if (try emSdkSetupStep(b, emsdk)) |emsdk_setup| {
-                    libimgui.step.dependOn(&emsdk_setup.step);
-                }
-                // add the Emscripten system include seach path
-                libimgui.addIncludePath(emSdkLazyPath(b, emsdk, &.{
-                    "upstream",
-                    "emscripten",
-                    "cache",
-                    "sysroot",
-                    "include",
-                }));
-            }
-        }
         libimgui.addCSourceFiles(.{
             .root = imgui,
             .files = &.{
