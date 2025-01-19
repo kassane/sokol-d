@@ -11,9 +11,9 @@ private:
 import sg = sokol.gfx;
 import sgapp = sokol.glue;
 import sapp = sokol.app;
-import imgui = sokol.imgui;
+import simgui = sokol.imgui;
 import log = sokol.log;
-import cimgui.cimgui;
+import imgui;
 
 extern (C):
 @safe:
@@ -39,51 +39,51 @@ void init() nothrow
         logger: {func: &log.slog_func}
     };
     sg.setup(gfx);
-    imgui.Desc imgui_desc = {0};
-    imgui.setup(imgui_desc);
+    simgui.Desc imgui_desc = {0};
+    simgui.setup(imgui_desc);
 }
 
 void frame() @trusted
 {
-    imgui.FrameDesc imgui_desc = {
+    simgui.FrameDesc imgui_desc = {
         width: sapp.width(),
         height: sapp.height(),
         delta_time: sapp.frameDuration(),
         dpi_scale: sapp.dpiScale(),
     };
-    imgui.newFrame(imgui_desc);
+    simgui.newFrame(imgui_desc);
 
     /*=== UI CODE STARTS HERE ===*/
     const ImVec2 window_pos = {10, 10};
     const ImVec2 window_size = {400, 100};
-    igSetNextWindowPos(window_pos, ImGuiCond_.ImGuiCond_Once);
-    igSetNextWindowSize(window_size, ImGuiCond_.ImGuiCond_Once);
-    igBegin("Hello Dear ImGui!".ptr, null, ImGuiWindowFlags_.ImGuiWindowFlags_None);
+    SetNextWindowPos(window_pos, ImGuiCond_.ImGuiCond_Once);
+    SetNextWindowSize(window_size, ImGuiCond_.ImGuiCond_Once);
+    Begin("Hello Dear ImGui!".ptr, null, ImGuiWindowFlags_.ImGuiWindowFlags_None);
     const(char)* label = "Background";
     float[3] rgb = [
         state.pass_action.colors[0].clear_value.r,
         state.pass_action.colors[0].clear_value.g,
         state.pass_action.colors[0].clear_value.b
     ];
-    igColorEdit3(label, &rgb[0], ImGuiColorEditFlags_.ImGuiColorEditFlags_None);
-    igEnd();
+    ColorEdit3(label, rgb, ImGuiColorEditFlags_.ImGuiColorEditFlags_None);
+    End();
     /*=== UI CODE ENDS HERE ===*/
 
     sg.Pass pass = {action: state.pass_action, swapchain: sgapp.swapchain};
     sg.beginPass(pass);
-    imgui.render;
+    simgui.render;
     sg.endPass;
     sg.commit;
 }
 
 void event(const(sapp.Event)* ev) @trusted nothrow
 {
-    imgui.simgui_handle_event(ev);
+    simgui.simgui_handle_event(ev);
 }
 
 void cleanup() @safe nothrow
 {
-    imgui.shutdown;
+    simgui.shutdown;
     sg.shutdown;
 }
 

@@ -11,9 +11,9 @@ import sg = sokol.gfx;
 import sgapp = sokol.glue;
 import sapp = sokol.app;
 import sfetch = sokol.fetch;
-import imgui = sokol.imgui;
+import simgui = sokol.imgui;
 import log = sokol.log;
-import cimgui.cimgui;
+import imgui;
 
 enum MAX_FILE_SIZE = 1024 * 1024;
 
@@ -41,8 +41,8 @@ extern (C) void init() @safe @nogc nothrow
         logger: {func: &log.slog_func}
     };
     sg.setup(gfx);
-    imgui.Desc imgui_desc = {0};
-    imgui.setup(imgui_desc);
+    simgui.Desc imgui_desc = {0};
+    simgui.setup(imgui_desc);
 
     // ifndef emscripten
     // dfmt off
@@ -66,53 +66,53 @@ extern (C) void frame() @trusted
     {
         sfetch.dowork;
     }
-    imgui.FrameDesc imgui_desc = {
+    simgui.FrameDesc imgui_desc = {
         width: sapp.width(),
         height: sapp.height(),
         delta_time: sapp.frameDuration(),
         dpi_scale: sapp.dpiScale(),
     };
     // dfmt on
-    imgui.newFrame(imgui_desc);
+    simgui.newFrame(imgui_desc);
 
     // /*=== UI CODE STARTS HERE ===*/
     const ImVec2 window_pos = {10, 10};
     const ImVec2 window_size = {600, 500};
-    igSetNextWindowPos(window_pos, ImGuiCond_.ImGuiCond_Once);
-    igSetNextWindowSize(window_size, ImGuiCond_.ImGuiCond_Once);
-    igBegin("Drop a file!".ptr, null, ImGuiWindowFlags_.ImGuiWindowFlags_None);
+    SetNextWindowPos(window_pos, ImGuiCond_.ImGuiCond_Once);
+    SetNextWindowSize(window_size, ImGuiCond_.ImGuiCond_Once);
+    Begin("Drop a file!".ptr, null, ImGuiWindowFlags_.ImGuiWindowFlags_None);
     if (state.load_state != LoadState.Unknown)
     {
-        igText("%s:", sapp.getDroppedFilePath(0));
+        Text("%s:", sapp.getDroppedFilePath(0));
     }
     switch (state.load_state)
     {
     case LoadState.Failed:
-        igText("LOAD FAILED!");
+        Text("LOAD FAILED!");
         break;
     case LoadState.FileTooBig:
-        igText("FILE TOO BIG!");
+        Text("FILE TOO BIG!");
         break;
     case LoadState.Success:
-        igSeparator;
+        Separator;
         renderFileContent;
         break;
     default:
         break;
     }
-    igEnd();
+    End();
     /*=== UI CODE ENDS HERE ===*/
 
     sg.Pass pass = {swapchain: sgapp.swapchain};
     sg.beginPass(pass);
-    imgui.render;
+    simgui.render;
     sg.endPass;
     sg.commit;
 }
 
 extern (C) void event(const(sapp.Event)* ev) @trusted @nogc nothrow
 {
-    imgui.simgui_handle_event(ev);
+    simgui.simgui_handle_event(ev);
     if (ev.type == sapp.EventType.Files_dropped)
     {
         version (Emscripten)
@@ -146,7 +146,7 @@ extern (C) void cleanup() @safe @nogc nothrow
         sfetch.shutdown;
     }
     // dfmt on
-    imgui.shutdown;
+    simgui.shutdown;
     sg.shutdown;
 }
 
@@ -175,11 +175,11 @@ void renderFileContent()
     immutable int bytes_per_line = 16; // keep this 2^N
     immutable int num_lines = (state.size + (bytes_per_line - 1)) / bytes_per_line;
     ImVec2 sz = {0, 0};
-    igBeginChild("##scrolling", sz, false, ImGuiWindowFlags_
+    BeginChild("##scrolling", sz, false, ImGuiWindowFlags_
             .ImGuiWindowFlags_NoMove | ImGuiWindowFlags_
             .ImGuiWindowFlags_NoNav);
     ImGuiListClipper* clipper = null;
-    ImGuiListClipper_Begin(clipper, num_lines, igGetTextLineHeight());
+    ImGuiListClipper_Begin(clipper, num_lines, GetTextLineHeight());
     ImGuiListClipper_Step(clipper);
     for (int line_i = clipper.DisplayStart; line_i < clipper.DisplayEnd; line_i++)
     {
@@ -189,30 +189,30 @@ void renderFileContent()
         {
             end_offset = state.size;
         }
-        igText("%04X: ", start_offset);
+        Text("%04X: ", start_offset);
         for (int i = start_offset; i < end_offset; i++)
         {
-            igSameLineEx(0.0f, 0.0f);
-            igText("%02X ", state.buffer[i]);
+            SameLineEx(0.0f, 0.0f);
+            Text("%02X ", state.buffer[i]);
         }
-        igSameLineEx((6 * 7.0f) + (bytes_per_line * 3 * 7.0f) + (2 * 7.0f), 0.0f);
+        SameLineEx((6 * 7.0f) + (bytes_per_line * 3 * 7.0f) + (2 * 7.0f), 0.0f);
         for (int i = start_offset; i < end_offset; i++)
         {
             if (i != start_offset)
             {
-                igSameLineEx(0.0f, 0.0f);
+                SameLineEx(0.0f, 0.0f);
             }
             ubyte c = state.buffer[i];
             if ((c < 32) || (c > 127))
             {
                 c = '.';
             }
-            igText("%c", c);
+            Text("%c", c);
         }
     }
-    igText("EOF\n");
+    Text("EOF\n");
     ImGuiListClipper_End(clipper);
-    igEndChild();
+    EndChild();
 }
 
 version (Emscripten)
