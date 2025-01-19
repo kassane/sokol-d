@@ -324,7 +324,10 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*std.Build.Step.InstallDi
     // set kind of build
     switch (options.kind) {
         .@"test" => {
-            ldc_exec.addArgs(&.{ "-unittest", "-main" });
+            ldc_exec.addArgs(&.{
+                "-unittest",
+                "-main",
+            });
         },
         .obj => ldc_exec.addArg("-c"),
         else => {},
@@ -371,27 +374,45 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*std.Build.Step.InstallDi
     if (options.betterC)
         ldc_exec.addArg("-betterC");
 
+    // verbose error messages
+    ldc_exec.addArg("-verrors=context");
+
     switch (options.optimize) {
         .Debug => {
-            ldc_exec.addArg("-debug");
-            ldc_exec.addArg("-d-debug");
-            ldc_exec.addArg("-gc"); // debuginfo for non D dbg
-            ldc_exec.addArg("-g"); // debuginfo for D dbg
-            ldc_exec.addArg("-gf");
-            ldc_exec.addArg("-gs");
-            ldc_exec.addArg("-vgc");
-            ldc_exec.addArg("-vtls");
-            ldc_exec.addArg("-verrors=context");
-            ldc_exec.addArg("-boundscheck=on");
+            ldc_exec.addArgs(&.{
+                "-debug",
+                "-d-debug",
+                "--gc",
+                "-g",
+                "-gf",
+                "-gs",
+                "-vgc",
+                "-vtls",
+                "-boundscheck=on",
+                "--link-debuglib",
+            });
         },
         .ReleaseSafe => {
-            ldc_exec.addArgs(&.{ "-O2", "-boundscheck=safeonly" });
+            ldc_exec.addArgs(&.{
+                "-O",
+                "-boundscheck=safeonly",
+            });
         },
         .ReleaseFast => {
-            ldc_exec.addArgs(&.{ "-O3", "-boundscheck=off", "--enable-asserts=false" });
+            ldc_exec.addArgs(&.{
+                "-O",
+                "-boundscheck=off",
+                "--enable-asserts=false",
+                "--strip-debug",
+            });
         },
         .ReleaseSmall => {
-            ldc_exec.addArgs(&.{ "-Oz", "-boundscheck=off", "--enable-asserts=false" });
+            ldc_exec.addArgs(&.{
+                "-Oz",
+                "-boundscheck=off",
+                "--enable-asserts=false",
+                "--strip-debug",
+            });
         },
     }
 
@@ -511,6 +532,13 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*std.Build.Step.InstallDi
                 \\
                 \\     pragma(printf)
                 \\     int fprintf(FILE* __restrict, scope const(char)* __restrict, scope...) @nogc nothrow;
+                \\
+                \\     // boundchecking
+                \\     void _d_arraybounds_index(string file, uint line, size_t index, size_t length) @nogc nothrow
+                \\     {
+                \\         if (index >= length)
+                \\             __assert("Array index out of bounds".ptr, file.ptr, line);
+                \\     }
                 \\ }
                 ,
             ),
