@@ -91,20 +91,24 @@ pub fn buildLibSokol(b: *Build, options: LibSokolOptions) !*CompileStep {
     }
 
     // resolve .auto backend into specific backend by platform
+    var cflags = try std.BoundedArray([]const u8, 64).init(0);
+    try cflags.append("-DIMPL");
+    if (options.optimize != .Debug) {
+        try cflags.append("-DNDEBUG");
+    }
     const backend = resolveSokolBackend(options.backend, lib.rootModuleTarget());
-    const backend_cflags = switch (backend) {
-        .d3d11 => "-DSOKOL_D3D11",
-        .metal => "-DSOKOL_METAL",
-        .gl => "-DSOKOL_GLCORE",
-        .gles3 => "-DSOKOL_GLES3",
-        .wgpu => "-DSOKOL_WGPU",
+    switch (backend) {
+        .d3d11 => try cflags.append("-DSOKOL_D3D11"),
+        .metal => try cflags.append("-DSOKOL_METAL"),
+        .gl => try cflags.append("-DSOKOL_GLCORE"),
+        .gles3 => try cflags.append("-DSOKOL_GLES3"),
+        .wgpu => try cflags.append("-DSOKOL_WGPU"),
         else => @panic("unknown sokol backend"),
-    };
+    }
 
     // platform specific compile and link options
-    var cflags: []const []const u8 = &.{ "-DIMPL", backend_cflags };
     if (lib.rootModuleTarget().isDarwin()) {
-        cflags = &.{ "-ObjC", "-DIMPL", backend_cflags };
+        try cflags.append("-ObjC");
         lib.linkFramework("Foundation");
         lib.linkFramework("AudioToolbox");
         if (.metal == backend) {
@@ -134,11 +138,10 @@ pub fn buildLibSokol(b: *Build, options: LibSokolOptions) !*CompileStep {
         lib.linkSystemLibrary("android");
         lib.linkSystemLibrary("log");
     } else if (lib.rootModuleTarget().os.tag == .linux) {
-        const egl_cflags = if (options.use_egl) "-DSOKOL_FORCE_EGL " else "";
-        const x11_cflags = if (!options.use_x11) "-DSOKOL_DISABLE_X11 " else "";
-        const wayland_cflags = if (!options.use_wayland) "-DSOKOL_DISABLE_WAYLAND" else "";
+        if (options.use_egl) try cflags.append("-DSOKOL_FORCE_EGL");
+        if (!options.use_x11) try cflags.append("-DSOKOL_DISABLE_X11");
+        if (!options.use_wayland) try cflags.append("-DSOKOL_DISABLE_WAYLAND");
         const link_egl = options.use_egl or options.use_wayland;
-        cflags = &.{ "-DIMPL", backend_cflags, egl_cflags, x11_cflags, wayland_cflags };
         lib.linkSystemLibrary("asound");
         lib.linkSystemLibrary("GL");
         if (options.use_x11) {
@@ -153,7 +156,7 @@ pub fn buildLibSokol(b: *Build, options: LibSokolOptions) !*CompileStep {
             lib.linkSystemLibrary("xkbcommon");
         }
         if (link_egl) {
-            lib.linkSystemLibrary("egl");
+            lib.linkSystemLibrary("EGL");
         }
     } else if (lib.rootModuleTarget().os.tag == .windows) {
         lib.linkSystemLibrary("kernel32");
@@ -166,32 +169,33 @@ pub fn buildLibSokol(b: *Build, options: LibSokolOptions) !*CompileStep {
         }
     }
 
-    // finally add the C source files
     const csrc_root = "src/sokol/c/";
     const csources = [_][]const u8{
-        csrc_root ++ "sokol_log.c",
-        csrc_root ++ "sokol_app.c",
-        csrc_root ++ "sokol_gfx.c",
-        csrc_root ++ "sokol_time.c",
-        csrc_root ++ "sokol_audio.c",
-        csrc_root ++ "sokol_gl.c",
-        csrc_root ++ "sokol_debugtext.c",
-        csrc_root ++ "sokol_shape.c",
-        csrc_root ++ "sokol_fetch.c",
-        csrc_root ++ "sokol_glue.c",
-        csrc_root ++ "sokol_memtrack.c",
+        "sokol_log.c",
+        "sokol_app.c",
+        "sokol_gfx.c",
+        "sokol_time.c",
+        "sokol_audio.c",
+        "sokol_gl.c",
+        "sokol_debugtext.c",
+        "sokol_shape.c",
+        "sokol_glue.c",
+        "sokol_fetch.c",
+        "sokol_memtrack.c",
     };
-    for (csources) |csrc| {
+
+    // finally add the C source files
+    inline for (csources) |csrc| {
         lib.addCSourceFile(.{
-            .file = b.path(csrc),
-            .flags = cflags,
+            .file = b.path(csrc_root ++ csrc),
+            .flags = cflags.slice(),
         });
     }
 
     if (options.with_sokol_imgui) {
         lib.addCSourceFile(.{
             .file = b.path(csrc_root ++ "sokol_imgui.c"),
-            .flags = cflags,
+            .flags = cflags.slice(),
         });
         const imgui = try buildImgui(b, .{
             .target = options.target,
@@ -1148,6 +1152,19 @@ fn buildImgui(b: *Build, options: libImGuiOptions) !*CompileStep {
     libimgui.root_module.sanitize_c = options.use_ubsan;
     libimgui.root_module.sanitize_thread = options.use_tsan;
 
+    var cflags = try std.BoundedArray([]const u8, 64).init(0);
+    if (options.optimize != .Debug) {
+        try cflags.append("-DNDEBUG");
+    }
+    try cflags.appendSlice(&.{
+        "-Wall",
+        "-Wextra",
+        "-fno-exceptions",
+        "-Wno-unused-parameter",
+        "-Wno-missing-field-initializers",
+        "-fno-threadsafe-statics",
+    });
+
     if (b.lazyDependency("imgui", .{})) |dep| {
         const imgui = dep.path(imguiver_path);
         libimgui.addIncludePath(imgui);
@@ -1182,14 +1199,7 @@ fn buildImgui(b: *Build, options: libImGuiOptions) !*CompileStep {
                 "imgui_widgets.cpp",
                 "imgui_tables.cpp",
             },
-            .flags = &.{
-                "-Wall",
-                "-Wextra",
-                "-fno-exceptions",
-                "-Wno-unused-parameter",
-                "-Wno-missing-field-initializers",
-                "-fno-threadsafe-statics",
-            },
+            .flags = cflags.slice(),
         });
         libimgui.root_module.sanitize_c = false;
         if (libimgui.rootModuleTarget().os.tag == .windows)
