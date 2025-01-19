@@ -1,6 +1,6 @@
 .{
     .name = "sokol-d",
-    .version = "0.1.8",
+    .version = "0.1.9",
     .min_zig_version = "0.14.0",
     .paths = .{
         "src",
@@ -17,8 +17,8 @@
             .lazy = true,
         },
         .emsdk = .{
-            .url = "git+https://github.com/emscripten-core/emsdk#3.1.73",
-            .hash = "1220d2b37748757d43de92f0ef723b6a00c3cae4b6a9c582b607421704498a5cfd2b",
+            .url = "git+https://github.com/emscripten-core/emsdk#4.0.1",
+            .hash = "12201185a3deb48d17035e6c619f2b28cef8cd6080afe88e061e326a6a3826a7a370",
             .lazy = true,
         },
         .shdc = .{
