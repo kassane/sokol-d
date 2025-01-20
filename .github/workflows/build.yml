@@ -24,12 +24,6 @@ jobs:
             sudo apt-get update
             sudo apt-get install libglu1-mesa-dev mesa-common-dev xorg-dev libasound-dev
 
-      - name: Install QEMU
-        if: endsWith(matrix.runs-on, 'arm')
-        run: |
-              sudo apt update && sudo apt install -y \
-              qemu-user-binfmt
-
       - name: (Dub) Build Native
         if: runner.os != 'Windows'
         run: |

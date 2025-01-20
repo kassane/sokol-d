@@ -199,7 +199,6 @@ pub fn buildLibSokol(b: *Build, options: LibSokolOptions) !*CompileStep {
         const imgui = try buildImgui(b, .{
             .target = options.target,
             .optimize = options.optimize,
-            .emsdk = options.emsdk,
             .use_tsan = lib.root_module.sanitize_thread orelse false,
             .use_ubsan = lib.root_module.sanitize_c orelse false,
         });
@@ -940,7 +939,7 @@ fn buildShaders(b: *Build, target: Build.ResolvedTarget) void {
         };
         const optional_shdc: ?[:0]const u8 = comptime switch (builtin.os.tag) {
             .windows => "win32/sokol-shdc.exe",
-            .linux => "linux/sokol-shdc",
+            .linux => if (builtin.cpu.arch.isX86()) "linux/sokol-shdc" else "linux_arm64/sokol-shdc",
             .macos => if (builtin.cpu.arch.isX86()) "osx/sokol-shdc" else "osx_arm64/sokol-shdc",
             else => null,
         };
@@ -1154,7 +1153,6 @@ fn emSdkSetupStep(b: *Build, emsdk: *Build.Dependency) !?*Build.Step.Run {
 const libImGuiOptions = struct {
     target: Build.ResolvedTarget,
     optimize: std.builtin.OptimizeMode,
-    emsdk: ?*Build.Dependency,
     use_ubsan: bool = false,
     use_tsan: bool = false,
 };
