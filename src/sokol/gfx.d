@@ -21,7 +21,7 @@ module sokol.gfx;
 /// its pool slot has been reused for a new object)
 /// 
 /// The resource ids are wrapped into a strongly-typed struct so that
-/// trying to pass an incompatible resource id is a compile error
+/// trying to pass an incompatible resource id is a compile error.
 extern(C)
 struct Buffer {
     uint id = 0;
@@ -50,42 +50,42 @@ struct Attachments {
 /// sokol-gfx. When initialized from a value type (array or struct), you can
 /// use the SG_RANGE() macro to build an sg_range struct. For functions which
 /// take either a sg_range pointer, or a (C++) sg_range reference, use the
-/// SG_RANGE_REF macro as a solution which compiles both in C and C++
+/// SG_RANGE_REF macro as a solution which compiles both in C and C++.
 extern(C)
 struct Range {
     const(void)* ptr = null;
     size_t size = 0;
 }
-/// various compile-time constants in the public AP
-/// various compile-time constants in the public AP
+/// various compile-time constants in the public API
+/// various compile-time constants in the public API
 enum invalid_id = 0;
-/// various compile-time constants in the public AP
+/// various compile-time constants in the public API
 enum num_inflight_frames = 2;
-/// various compile-time constants in the public AP
+/// various compile-time constants in the public API
 enum max_color_attachments = 4;
-/// various compile-time constants in the public AP
+/// various compile-time constants in the public API
 enum max_uniformblock_members = 16;
-/// various compile-time constants in the public AP
+/// various compile-time constants in the public API
 enum max_vertex_attributes = 16;
-/// various compile-time constants in the public AP
+/// various compile-time constants in the public API
 enum max_mipmaps = 16;
-/// various compile-time constants in the public AP
+/// various compile-time constants in the public API
 enum max_texturearray_layers = 128;
-/// various compile-time constants in the public AP
+/// various compile-time constants in the public API
 enum max_uniformblock_bindslots = 8;
-/// various compile-time constants in the public AP
+/// various compile-time constants in the public API
 enum max_vertexbuffer_bindslots = 8;
-/// various compile-time constants in the public AP
+/// various compile-time constants in the public API
 enum max_image_bindslots = 16;
-/// various compile-time constants in the public AP
+/// various compile-time constants in the public API
 enum max_sampler_bindslots = 16;
-/// various compile-time constants in the public AP
+/// various compile-time constants in the public API
 enum max_storagebuffer_bindslots = 8;
-/// various compile-time constants in the public AP
+/// various compile-time constants in the public API
 enum max_image_sampler_pairs = 16;
 /// sg_color
 /// 
-/// An RGBA color value
+/// An RGBA color value.
 extern(C)
 struct Color {
     float r = 0.0f;
@@ -96,7 +96,7 @@ struct Color {
 /// sg_backend
 /// 
 /// The active 3D-API backend, use the function sg_query_backend()
-/// to get the currently active backend
+/// to get the currently active backend.
 enum Backend {
     Glcore,
     Gles3,
@@ -146,7 +146,7 @@ enum Backend {
 /// the default formats are:
 /// 
 ///     - for the Metal, D3D11 and WebGPU backends: SG_PIXELFORMAT_BGRA8
-///     - for GL backends: SG_PIXELFORMAT_RGBA
+///     - for GL backends: SG_PIXELFORMAT_RGBA8
 enum PixelFormat {
     Default,
     None,
@@ -222,7 +222,7 @@ enum PixelFormat {
     Astc_4x4_srgba,
     Num,
 }
-/// Runtime information about a pixel format, returned by sg_query_pixelformat()
+/// Runtime information about a pixel format, returned by sg_query_pixelformat().
 extern(C)
 struct PixelformatInfo {
     bool sample = false;
@@ -234,7 +234,7 @@ struct PixelformatInfo {
     bool compressed = false;
     int bytes_per_pixel = 0;
 }
-/// Runtime information about available optional features, returned by sg_query_features(
+/// Runtime information about available optional features, returned by sg_query_features()
 extern(C)
 struct Features {
     bool origin_top_left = false;
@@ -244,7 +244,7 @@ struct Features {
     bool storage_buffer = false;
     bool msaa_image_bindings = false;
 }
-/// Runtime information about resource limits, returned by sg_query_limit(
+/// Runtime information about resource limits, returned by sg_query_limit()
 extern(C)
 struct Limits {
     int max_image_size_2d = 0;
@@ -271,7 +271,7 @@ struct Limits {
 /// operations will silently be dropped.
 /// 
 /// The special INVALID state is returned in sg_query_xxx_state() if no
-/// resource object exists for the provided resource id
+/// resource object exists for the provided resource id.
 enum ResourceState {
     Initial,
     Alloc,
@@ -310,7 +310,7 @@ enum ResourceState {
 /// size is used for rendering, you only need to make sure that the data that
 /// *is* used is valid).
 /// 
-/// The default usage is SG_USAGE_IMMUTABLE
+/// The default usage is SG_USAGE_IMMUTABLE.
 enum Usage {
     Default,
     Immutable,
@@ -325,7 +325,7 @@ enum Usage {
 /// 
 /// Used in the sg_buffer_desc.type member when creating a buffer.
 /// 
-/// The default value is SG_BUFFERTYPE_VERTEXBUFFER
+/// The default value is SG_BUFFERTYPE_VERTEXBUFFER.
 enum BufferType {
     Default,
     Vertexbuffer,
@@ -341,7 +341,7 @@ enum BufferType {
 /// This is used in the sg_pipeline_desc.index_type member when creating a
 /// pipeline object.
 /// 
-/// The default index type is SG_INDEXTYPE_NONE
+/// The default index type is SG_INDEXTYPE_NONE.
 enum IndexType {
     Default,
     None,
@@ -357,7 +357,7 @@ enum IndexType {
 /// in the shader (both must match and will be checked in the validation layer
 /// when calling sg_apply_bindings).
 /// 
-/// The default image type when creating an image is SG_IMAGETYPE_2D
+/// The default image type when creating an image is SG_IMAGETYPE_2D.
 enum ImageType {
     Default,
     _2d,
@@ -385,7 +385,7 @@ enum ImageType {
 /// - SG_PIXELFORMAT_RGBA32F
 /// 
 /// (when using sokol-shdc, also check out the meta tags `@image_sample_type`
-/// and `@sampler_type`
+/// and `@sampler_type`)
 enum ImageSampleType {
     Default,
     Float,
@@ -408,7 +408,7 @@ enum ImageSampleType {
 /// - SG_IMAGESAMPLETYPE_UNFILTERABLE_FLOAT => SG_SAMPLERTYPE_NONFILTERING
 /// - SG_IMAGESAMPLETYPE_SINT => SG_SAMPLERTYPE_NONFILTERING
 /// - SG_IMAGESAMPLETYPE_UINT => SG_SAMPLERTYPE_NONFILTERING
-/// - SG_IMAGESAMPLETYPE_DEPTH => SG_SAMPLERTYPE_COMPARISO
+/// - SG_IMAGESAMPLETYPE_DEPTH => SG_SAMPLERTYPE_COMPARISON
 enum SamplerType {
     Default,
     Filtering,
@@ -419,7 +419,7 @@ enum SamplerType {
 /// sg_cube_face
 /// 
 /// The cubemap faces. Use these as indices in the sg_image_desc.content
-/// array
+/// array.
 enum CubeFace {
     Pos_x,
     Neg_x,
@@ -435,7 +435,7 @@ enum CubeFace {
 /// APIs. This is used in the sg_pipeline_desc.primitive_type member when
 /// creating a pipeline object.
 /// 
-/// The default primitive type is SG_PRIMITIVETYPE_TRIANGLES
+/// The default primitive type is SG_PRIMITIVETYPE_TRIANGLES.
 enum PrimitiveType {
     Default,
     Points,
@@ -451,7 +451,7 @@ enum PrimitiveType {
 /// used in the sg_sampler_desc.min_filter, sg_sampler_desc.mag_filter
 /// and sg_sampler_desc.mipmap_filter members when creating a sampler object.
 /// 
-/// For the default is SG_FILTER_NEAREST
+/// For the default is SG_FILTER_NEAREST.
 enum Filter {
     Default,
     Nearest,
@@ -472,7 +472,7 @@ enum Filter {
 /// sg_features struct.
 /// 
 /// Platforms which don't support SG_WRAP_CLAMP_TO_BORDER will silently fall back
-/// to SG_WRAP_CLAMP_TO_EDGE without a validation error
+/// to SG_WRAP_CLAMP_TO_EDGE without a validation error.
 enum Wrap {
     Default,
     Repeat,
@@ -486,7 +486,7 @@ enum Wrap {
 /// The border color to use when sampling a texture, and the UV wrap
 /// mode is SG_WRAP_CLAMP_TO_BORDER.
 /// 
-/// The default border color is SG_BORDERCOLOR_OPAQUE_BLAC
+/// The default border color is SG_BORDERCOLOR_OPAQUE_BLACK
 enum BorderColor {
     Default,
     Transparent_black,
@@ -497,7 +497,7 @@ enum BorderColor {
 /// sg_vertex_format
 /// 
 /// The data type of a vertex component. This is used to describe
-/// the layout of vertex data when creating a pipeline object
+/// the layout of vertex data when creating a pipeline object.
 enum VertexFormat {
     Invalid,
     Float,
@@ -527,7 +527,7 @@ enum VertexFormat {
 /// instanced-rendering.
 /// 
 /// The vertex-step is part of the vertex-layout definition
-/// when creating pipeline objects
+/// when creating pipeline objects.
 enum VertexStep {
     Default,
     Per_vertex,
@@ -539,7 +539,7 @@ enum VertexStep {
 /// The data type of a uniform block member. This is used to
 /// describe the internal layout of uniform blocks when creating
 /// a shader object. This is only required for the GL backend, all
-/// other backends will ignore the interior layout of uniform blocks
+/// other backends will ignore the interior layout of uniform blocks.
 enum UniformType {
     Invalid,
     Float,
@@ -584,7 +584,7 @@ enum UniformType {
 ///     of 16.
 /// 
 /// For more information search for 'UNIFORM DATA LAYOUT' in the documentation block
-/// at the start of the header
+/// at the start of the header.
 enum UniformLayout {
     Default,
     Native,
@@ -597,7 +597,7 @@ enum UniformLayout {
 /// sg_pipeline_desc.cull_mode member when creating a
 /// pipeline object.
 /// 
-/// The default cull mode is SG_CULLMODE_NON
+/// The default cull mode is SG_CULLMODE_NONE
 enum CullMode {
     Default,
     None,
@@ -611,7 +611,7 @@ enum CullMode {
 /// is used in the member sg_pipeline_desc.face_winding
 /// when creating a pipeline object.
 /// 
-/// The default winding is SG_FACEWINDING_CW (clockwise
+/// The default winding is SG_FACEWINDING_CW (clockwise)
 enum FaceWinding {
     Default,
     Ccw,
@@ -639,7 +639,7 @@ enum FaceWinding {
 /// The default compare func for depth- and stencil-tests is
 /// SG_COMPAREFUNC_ALWAYS.
 /// 
-/// The default compare func for samplers is SG_COMPAREFUNC_NEVER
+/// The default compare func for samplers is SG_COMPAREFUNC_NEVER.
 enum CompareFunc {
     Default,
     Never,
@@ -669,7 +669,7 @@ enum CompareFunc {
 ///             .depth_fail_op
 ///             .pass_op
 /// 
-/// The default value is SG_STENCILOP_KEEP
+/// The default value is SG_STENCILOP_KEEP.
 enum StencilOp {
     Default,
     Keep,
@@ -696,7 +696,7 @@ enum StencilOp {
 ///             .dst_factor_alpha
 /// 
 /// The default value is SG_BLENDFACTOR_ONE for source
-/// factors, and SG_BLENDFACTOR_ZERO for destination factors
+/// factors, and SG_BLENDFACTOR_ZERO for destination factors.
 enum BlendFactor {
     Default,
     Zero,
@@ -728,7 +728,7 @@ enum BlendFactor {
 ///             .op_rgb
 ///             .op_alpha
 /// 
-/// The default value is SG_BLENDOP_ADD
+/// The default value is SG_BLENDOP_ADD.
 enum BlendOp {
     Default,
     Add,
@@ -746,7 +746,7 @@ enum BlendOp {
 /// 
 /// NOTE: since the color mask value 0 is reserved for the default value
 /// (SG_COLORMASK_RGBA), use SG_COLORMASK_NONE if all color channels
-/// should be disabled
+/// should be disabled.
 enum ColorMask {
     Default = 0,
     None = 16,
@@ -781,7 +781,7 @@ enum ColorMask {
 /// 
 /// If you want to override the default behaviour, it is important to not
 /// only set the clear color, but the 'action' field as well (as long as this
-/// is _SG_LOADACTION_DEFAULT, the value fields will be ignored)
+/// is _SG_LOADACTION_DEFAULT, the value fields will be ignored).
 enum LoadAction {
     Default,
     Clear,
@@ -793,7 +793,7 @@ enum LoadAction {
 /// Defines the store action that should be performed at the end of a render pass:
 /// 
 /// SG_STOREACTION_STORE:       store the rendered content to the color attachment image
-/// SG_STOREACTION_DONTCARE:    allows the GPU to discard the rendered conten
+/// SG_STOREACTION_DONTCARE:    allows the GPU to discard the rendered content
 enum StoreAction {
     Default,
     Store,
@@ -808,7 +808,7 @@ enum StoreAction {
 ///   loaded with their previous content, or start in an undefined state
 /// - for clear operations: the clear value (color, depth, or stencil values)
 /// - at the end of the pass: whether the rendering result should be
-///   stored back into the render attachment or discarde
+///   stored back into the render attachment or discarded
 extern(C)
 struct ColorAttachmentAction {
     LoadAction load_action;
@@ -895,7 +895,7 @@ struct PassAction {
 /// It's a good practice to write a helper function which returns an initialized
 /// sg_swapchain structs, which can then be plugged directly into
 /// sg_pass.swapchain. Look at the function sglue_swapchain() in the sokol_glue.h
-/// as an example
+/// as an example.
 extern(C)
 struct MetalSwapchain {
     const(void)* current_drawable = null;
@@ -958,7 +958,7 @@ struct Swapchain {
 ///     });
 /// 
 /// You can also omit the .action object to get default pass action behaviour
-/// (clear to color=grey, depth=1 and stencil=0)
+/// (clear to color=grey, depth=1 and stencil=0).
 extern(C)
 struct Pass {
     uint _start_canary = 0;
@@ -1049,7 +1049,7 @@ struct Pass {
 /// sg_shader_desc struct documentation).
 /// 
 /// The optional buffer offsets can be used to put different unrelated
-/// chunks of vertex- and/or index-data into the same buffer objects
+/// chunks of vertex- and/or index-data into the same buffer objects.
 extern(C)
 struct Bindings {
     uint _start_canary = 0;
@@ -1108,7 +1108,7 @@ struct Bindings {
 /// initialized with content, and the .content member must be 0!
 /// 
 /// Also you need to call sg_reset_state_cache() after calling native 3D-API
-/// functions, and before calling any sokol_gfx function
+/// functions, and before calling any sokol_gfx function.
 extern(C)
 struct BufferDesc {
     uint _start_canary = 0;
@@ -1127,7 +1127,7 @@ struct BufferDesc {
 /// 
 /// Defines the content of an image through a 2D array of sg_range structs.
 /// The first array dimension is the cubemap face, and the second array
-/// dimension the mipmap level
+/// dimension the mipmap level.
 extern(C)
 struct ImageData {
     Range[6][16] subimage;
@@ -1185,7 +1185,7 @@ struct ImageData {
 /// injected texture in a shader you *must* provide a shader-resource-view.
 /// 
 /// The same rules apply as for injecting native buffers (see sg_buffer_desc
-/// documentation for more details)
+/// documentation for more details).
 extern(C)
 struct ImageDesc {
     uint _start_canary = 0;
@@ -1223,7 +1223,7 @@ struct ImageDesc {
 /// .max_lod            FLT_MAX
 /// .border_color       SG_BORDERCOLOR_OPAQUE_BLACK
 /// .compare            SG_COMPAREFUNC_NEVER
-/// .max_anisotropy     1 (must be 1..16
+/// .max_anisotropy     1 (must be 1..16)
 extern(C)
 struct SamplerDesc {
     uint _start_canary = 0;
@@ -1347,7 +1347,7 @@ struct SamplerDesc {
 /// on demand. If this fails, shader creation will fail. When compiling HLSL
 /// source code, you can provide an optional target string via
 /// sg_shader_stage_desc.d3d11_target, the default target is "vs_4_0" for the
-/// vertex shader stage and "ps_4_0" for the pixel shader stage
+/// vertex shader stage and "ps_4_0" for the pixel shader stage.
 enum ShaderStage {
     None,
     Vertex,
@@ -1496,7 +1496,7 @@ struct ShaderDesc {
 /// .sample_count:              sg_desc.context.sample_count
 /// .blend_color:               (sg_color) { 0.0f, 0.0f, 0.0f, 0.0f }
 /// .alpha_to_coverage_enabled: false
-/// .label  0       (optional string label for trace hooks
+/// .label  0       (optional string label for trace hooks)
 extern(C)
 struct VertexBufferLayoutState {
     int stride = 0;
@@ -1602,7 +1602,7 @@ struct PipelineDesc {
 /// (sample_count==1). The resolve attachment also must have the same pixel
 /// format as the color attachment.
 /// 
-/// NOTE that MSAA depth-stencil attachments cannot be msaa-resolved
+/// NOTE that MSAA depth-stencil attachments cannot be msaa-resolved!
 extern(C)
 struct AttachmentDesc {
     Image image;
@@ -1627,7 +1627,7 @@ struct AttachmentsDesc {
 /// Trace hooks are installed with sg_install_trace_hooks(), this returns
 /// another sg_trace_hooks struct with the previous set of
 /// trace hook function pointers. These should be invoked by the
-/// new trace hooks to form a proper call chain
+/// new trace hooks to form a proper call chain.
 extern(C)
 struct TraceHooks {
     void* user_data = null;
@@ -1709,7 +1709,7 @@ struct TraceHooks {
 /// sg_query_sampler_info()
 /// sg_query_shader_info()
 /// sg_query_pipeline_info()
-/// sg_query_pass_info(
+/// sg_query_pass_info()
 extern(C)
 struct SlotInfo {
     ResourceState state;
@@ -1752,7 +1752,7 @@ struct AttachmentsInfo {
 /// 
 /// Allows to track generic and backend-specific stats about a
 /// render frame. Obtained by calling sg_query_frame_stats(). The returned
-/// struct contains information about the *previous* frame
+/// struct contains information about the *previous* frame.
 extern(C)
 struct FrameStatsGl {
     uint num_bind_buffer = 0;
@@ -2287,7 +2287,7 @@ enum LogItem {
 /// helper function sglue_environment() in the sokol_glue.h header to
 /// initialize the sg_desc.environment nested struct. sglue_environment() returns
 /// a completely initialized sg_environment struct with information
-/// provided by sokol_app.h
+/// provided by sokol_app.h.
 extern(C)
 struct EnvironmentDefaults {
     PixelFormat color_format;
@@ -2320,7 +2320,7 @@ struct Environment {
 /// which will be called in sg_commit(). This is useful for libraries
 /// building on top of sokol-gfx to be notified about when a frame
 /// ends (instead of having to guess, or add a manual 'new-frame'
-/// function
+/// function.
 extern(C)
 struct CommitListener {
     extern(C) void function(void*) func = null;
@@ -2331,7 +2331,7 @@ struct CommitListener {
 /// Used in sg_desc to provide custom memory-alloc and -free functions
 /// to sokol_gfx.h. If memory management should be overridden, both the
 /// alloc_fn and free_fn function must be provided (e.g. it's not valid to
-/// override one function but not the other)
+/// override one function but not the other).
 extern(C)
 struct Allocator {
     extern(C) void* function(size_t, void*) alloc_fn = null;
@@ -2346,7 +2346,7 @@ struct Allocator {
 /// validation layer messages. For maximum error verbosity,
 /// compile in debug mode (e.g. NDEBUG *not* defined) and provide a
 /// compatible logger function in the sg_setup() call
-/// (for instance the standard logging function from sokol_log.h)
+/// (for instance the standard logging function from sokol_log.h).
 extern(C)
 struct Logger {
     extern(C) void function(const(char)*, uint, uint, const(char)*, uint, const(char)*, void*) func = null;
@@ -2374,9 +2374,9 @@ struct Desc {
     Environment environment;
     uint _end_canary = 0;
 }
-/// setup and misc function
+/// setup and misc functions
 extern(C) void sg_setup(const Desc *) @system @nogc nothrow;
-/// setup and misc function
+/// setup and misc functions
 void setup(scope ref Desc desc) @trusted @nogc nothrow {
     sg_setup(&desc);
 }
@@ -2412,9 +2412,9 @@ extern(C) bool sg_remove_commit_listener(CommitListener) @system @nogc nothrow;
 bool removeCommitListener(CommitListener listener) @trusted @nogc nothrow {
     return sg_remove_commit_listener(listener);
 }
-/// resource creation, destruction and updatin
+/// resource creation, destruction and updating
 extern(C) Buffer sg_make_buffer(const BufferDesc *) @system @nogc nothrow;
-/// resource creation, destruction and updatin
+/// resource creation, destruction and updating
 Buffer makeBuffer(scope ref BufferDesc desc) @trusted @nogc nothrow {
     return sg_make_buffer(&desc);
 }
@@ -2482,9 +2482,9 @@ extern(C) bool sg_query_buffer_will_overflow(Buffer, size_t) @system @nogc nothr
 bool queryBufferWillOverflow(Buffer buf, size_t size) @trusted @nogc nothrow {
     return sg_query_buffer_will_overflow(buf, size);
 }
-/// rendering function
+/// rendering functions
 extern(C) void sg_begin_pass(const Pass *) @system @nogc nothrow;
-/// rendering function
+/// rendering functions
 void beginPass(scope ref Pass pass) @trusted @nogc nothrow {
     sg_begin_pass(&pass);
 }
@@ -2528,9 +2528,9 @@ extern(C) void sg_commit() @system @nogc nothrow;
 void commit() @trusted @nogc nothrow {
     sg_commit();
 }
-/// getting informatio
+/// getting information
 extern(C) Desc sg_query_desc() @system @nogc nothrow;
-/// getting informatio
+/// getting information
 Desc queryDesc() @trusted @nogc nothrow {
     return sg_query_desc();
 }
@@ -2558,9 +2558,9 @@ extern(C) int sg_query_surface_pitch(PixelFormat, int, int, int) @system @nogc n
 int querySurfacePitch(PixelFormat fmt, int width, int height, int row_align_bytes) @trusted @nogc nothrow {
     return sg_query_surface_pitch(fmt, width, height, row_align_bytes);
 }
-/// get current state of a resource (INITIAL, ALLOC, VALID, FAILED, INVALID
+/// get current state of a resource (INITIAL, ALLOC, VALID, FAILED, INVALID)
 extern(C) ResourceState sg_query_buffer_state(Buffer) @system @nogc nothrow;
-/// get current state of a resource (INITIAL, ALLOC, VALID, FAILED, INVALID
+/// get current state of a resource (INITIAL, ALLOC, VALID, FAILED, INVALID)
 ResourceState queryBufferState(Buffer buf) @trusted @nogc nothrow {
     return sg_query_buffer_state(buf);
 }
@@ -2584,9 +2584,9 @@ extern(C) ResourceState sg_query_attachments_state(Attachments) @system @nogc no
 ResourceState queryAttachmentsState(Attachments atts) @trusted @nogc nothrow {
     return sg_query_attachments_state(atts);
 }
-/// get runtime information about a resourc
+/// get runtime information about a resource
 extern(C) BufferInfo sg_query_buffer_info(Buffer) @system @nogc nothrow;
-/// get runtime information about a resourc
+/// get runtime information about a resource
 BufferInfo queryBufferInfo(Buffer buf) @trusted @nogc nothrow {
     return sg_query_buffer_info(buf);
 }
@@ -2610,9 +2610,9 @@ extern(C) AttachmentsInfo sg_query_attachments_info(Attachments) @system @nogc n
 AttachmentsInfo queryAttachmentsInfo(Attachments atts) @trusted @nogc nothrow {
     return sg_query_attachments_info(atts);
 }
-/// get desc structs matching a specific resource (NOTE that not all creation attributes may be provided
+/// get desc structs matching a specific resource (NOTE that not all creation attributes may be provided)
 extern(C) BufferDesc sg_query_buffer_desc(Buffer) @system @nogc nothrow;
-/// get desc structs matching a specific resource (NOTE that not all creation attributes may be provided
+/// get desc structs matching a specific resource (NOTE that not all creation attributes may be provided)
 BufferDesc queryBufferDesc(Buffer buf) @trusted @nogc nothrow {
     return sg_query_buffer_desc(buf);
 }
@@ -2636,9 +2636,9 @@ extern(C) AttachmentsDesc sg_query_attachments_desc(Attachments) @system @nogc n
 AttachmentsDesc queryAttachmentsDesc(Attachments atts) @trusted @nogc nothrow {
     return sg_query_attachments_desc(atts);
 }
-/// get resource creation desc struct with their default values replace
+/// get resource creation desc struct with their default values replaced
 extern(C) BufferDesc sg_query_buffer_defaults(const BufferDesc *) @system @nogc nothrow;
-/// get resource creation desc struct with their default values replace
+/// get resource creation desc struct with their default values replaced
 BufferDesc queryBufferDefaults(scope ref BufferDesc desc) @trusted @nogc nothrow {
     return sg_query_buffer_defaults(&desc);
 }
@@ -2662,9 +2662,9 @@ extern(C) AttachmentsDesc sg_query_attachments_defaults(const AttachmentsDesc *)
 AttachmentsDesc queryAttachmentsDefaults(scope ref AttachmentsDesc desc) @trusted @nogc nothrow {
     return sg_query_attachments_defaults(&desc);
 }
-/// assorted query function
+/// assorted query functions
 extern(C) size_t sg_query_buffer_size(Buffer) @system @nogc nothrow;
-/// assorted query function
+/// assorted query functions
 size_t queryBufferSize(Buffer buf) @trusted @nogc nothrow {
     return sg_query_buffer_size(buf);
 }
@@ -2708,9 +2708,9 @@ extern(C) int sg_query_image_sample_count(Image) @system @nogc nothrow;
 int queryImageSampleCount(Image img) @trusted @nogc nothrow {
     return sg_query_image_sample_count(img);
 }
-/// separate resource allocation and initialization (for async setup
+/// separate resource allocation and initialization (for async setup)
 extern(C) Buffer sg_alloc_buffer() @system @nogc nothrow;
-/// separate resource allocation and initialization (for async setup
+/// separate resource allocation and initialization (for async setup)
 Buffer allocBuffer() @trusted @nogc nothrow {
     return sg_alloc_buffer();
 }
@@ -2830,9 +2830,9 @@ extern(C) void sg_fail_attachments(Attachments) @system @nogc nothrow;
 void failAttachments(Attachments atts) @trusted @nogc nothrow {
     sg_fail_attachments(atts);
 }
-/// frame stat
+/// frame stats
 extern(C) void sg_enable_frame_stats() @system @nogc nothrow;
-/// frame stat
+/// frame stats
 void enableFrameStats() @trusted @nogc nothrow {
     sg_enable_frame_stats();
 }
@@ -2851,7 +2851,7 @@ FrameStats queryFrameStats() @trusted @nogc nothrow {
 /// Backend-specific structs and functions, these may come in handy for mixing
 ///   sokol-gfx rendering with 'native backend' rendering functions.
 /// 
-///   This group of functions will be expanded as needed
+///   This group of functions will be expanded as needed.
 extern(C)
 struct D3d11BufferInfo {
     const(void)* buf = null;
@@ -2966,183 +2966,183 @@ struct GlAttachmentsInfo {
     uint framebuffer = 0;
     uint[4] msaa_resolve_framebuffer = 0;
 }
-/// D3D11: return ID3D11Devic
+/// D3D11: return ID3D11Device
 extern(C) const(void)* sg_d3d11_device() @system @nogc nothrow;
-/// D3D11: return ID3D11Devic
+/// D3D11: return ID3D11Device
 scope const(void)* d3d11Device() @trusted @nogc nothrow {
     return sg_d3d11_device();
 }
-/// D3D11: return ID3D11DeviceContex
+/// D3D11: return ID3D11DeviceContext
 extern(C) const(void)* sg_d3d11_device_context() @system @nogc nothrow;
-/// D3D11: return ID3D11DeviceContex
+/// D3D11: return ID3D11DeviceContext
 scope const(void)* d3d11DeviceContext() @trusted @nogc nothrow {
     return sg_d3d11_device_context();
 }
-/// D3D11: get internal buffer resource object
+/// D3D11: get internal buffer resource objects
 extern(C) D3d11BufferInfo sg_d3d11_query_buffer_info(Buffer) @system @nogc nothrow;
-/// D3D11: get internal buffer resource object
+/// D3D11: get internal buffer resource objects
 D3d11BufferInfo d3d11QueryBufferInfo(Buffer buf) @trusted @nogc nothrow {
     return sg_d3d11_query_buffer_info(buf);
 }
-/// D3D11: get internal image resource object
+/// D3D11: get internal image resource objects
 extern(C) D3d11ImageInfo sg_d3d11_query_image_info(Image) @system @nogc nothrow;
-/// D3D11: get internal image resource object
+/// D3D11: get internal image resource objects
 D3d11ImageInfo d3d11QueryImageInfo(Image img) @trusted @nogc nothrow {
     return sg_d3d11_query_image_info(img);
 }
-/// D3D11: get internal sampler resource object
+/// D3D11: get internal sampler resource objects
 extern(C) D3d11SamplerInfo sg_d3d11_query_sampler_info(Sampler) @system @nogc nothrow;
-/// D3D11: get internal sampler resource object
+/// D3D11: get internal sampler resource objects
 D3d11SamplerInfo d3d11QuerySamplerInfo(Sampler smp) @trusted @nogc nothrow {
     return sg_d3d11_query_sampler_info(smp);
 }
-/// D3D11: get internal shader resource object
+/// D3D11: get internal shader resource objects
 extern(C) D3d11ShaderInfo sg_d3d11_query_shader_info(Shader) @system @nogc nothrow;
-/// D3D11: get internal shader resource object
+/// D3D11: get internal shader resource objects
 D3d11ShaderInfo d3d11QueryShaderInfo(Shader shd) @trusted @nogc nothrow {
     return sg_d3d11_query_shader_info(shd);
 }
-/// D3D11: get internal pipeline resource object
+/// D3D11: get internal pipeline resource objects
 extern(C) D3d11PipelineInfo sg_d3d11_query_pipeline_info(Pipeline) @system @nogc nothrow;
-/// D3D11: get internal pipeline resource object
+/// D3D11: get internal pipeline resource objects
 D3d11PipelineInfo d3d11QueryPipelineInfo(Pipeline pip) @trusted @nogc nothrow {
     return sg_d3d11_query_pipeline_info(pip);
 }
-/// D3D11: get internal pass resource object
+/// D3D11: get internal pass resource objects
 extern(C) D3d11AttachmentsInfo sg_d3d11_query_attachments_info(Attachments) @system @nogc nothrow;
-/// D3D11: get internal pass resource object
+/// D3D11: get internal pass resource objects
 D3d11AttachmentsInfo d3d11QueryAttachmentsInfo(Attachments atts) @trusted @nogc nothrow {
     return sg_d3d11_query_attachments_info(atts);
 }
-/// Metal: return __bridge-casted MTLDevic
+/// Metal: return __bridge-casted MTLDevice
 extern(C) const(void)* sg_mtl_device() @system @nogc nothrow;
-/// Metal: return __bridge-casted MTLDevic
+/// Metal: return __bridge-casted MTLDevice
 scope const(void)* mtlDevice() @trusted @nogc nothrow {
     return sg_mtl_device();
 }
-/// Metal: return __bridge-casted MTLRenderCommandEncoder in current pass (or zero if outside pass
+/// Metal: return __bridge-casted MTLRenderCommandEncoder in current pass (or zero if outside pass)
 extern(C) const(void)* sg_mtl_render_command_encoder() @system @nogc nothrow;
-/// Metal: return __bridge-casted MTLRenderCommandEncoder in current pass (or zero if outside pass
+/// Metal: return __bridge-casted MTLRenderCommandEncoder in current pass (or zero if outside pass)
 scope const(void)* mtlRenderCommandEncoder() @trusted @nogc nothrow {
     return sg_mtl_render_command_encoder();
 }
-/// Metal: get internal __bridge-casted buffer resource object
+/// Metal: get internal __bridge-casted buffer resource objects
 extern(C) MtlBufferInfo sg_mtl_query_buffer_info(Buffer) @system @nogc nothrow;
-/// Metal: get internal __bridge-casted buffer resource object
+/// Metal: get internal __bridge-casted buffer resource objects
 MtlBufferInfo mtlQueryBufferInfo(Buffer buf) @trusted @nogc nothrow {
     return sg_mtl_query_buffer_info(buf);
 }
-/// Metal: get internal __bridge-casted image resource object
+/// Metal: get internal __bridge-casted image resource objects
 extern(C) MtlImageInfo sg_mtl_query_image_info(Image) @system @nogc nothrow;
-/// Metal: get internal __bridge-casted image resource object
+/// Metal: get internal __bridge-casted image resource objects
 MtlImageInfo mtlQueryImageInfo(Image img) @trusted @nogc nothrow {
     return sg_mtl_query_image_info(img);
 }
-/// Metal: get internal __bridge-casted sampler resource object
+/// Metal: get internal __bridge-casted sampler resource objects
 extern(C) MtlSamplerInfo sg_mtl_query_sampler_info(Sampler) @system @nogc nothrow;
-/// Metal: get internal __bridge-casted sampler resource object
+/// Metal: get internal __bridge-casted sampler resource objects
 MtlSamplerInfo mtlQuerySamplerInfo(Sampler smp) @trusted @nogc nothrow {
     return sg_mtl_query_sampler_info(smp);
 }
-/// Metal: get internal __bridge-casted shader resource object
+/// Metal: get internal __bridge-casted shader resource objects
 extern(C) MtlShaderInfo sg_mtl_query_shader_info(Shader) @system @nogc nothrow;
-/// Metal: get internal __bridge-casted shader resource object
+/// Metal: get internal __bridge-casted shader resource objects
 MtlShaderInfo mtlQueryShaderInfo(Shader shd) @trusted @nogc nothrow {
     return sg_mtl_query_shader_info(shd);
 }
-/// Metal: get internal __bridge-casted pipeline resource object
+/// Metal: get internal __bridge-casted pipeline resource objects
 extern(C) MtlPipelineInfo sg_mtl_query_pipeline_info(Pipeline) @system @nogc nothrow;
-/// Metal: get internal __bridge-casted pipeline resource object
+/// Metal: get internal __bridge-casted pipeline resource objects
 MtlPipelineInfo mtlQueryPipelineInfo(Pipeline pip) @trusted @nogc nothrow {
     return sg_mtl_query_pipeline_info(pip);
 }
-/// WebGPU: return WGPUDevice objec
+/// WebGPU: return WGPUDevice object
 extern(C) const(void)* sg_wgpu_device() @system @nogc nothrow;
-/// WebGPU: return WGPUDevice objec
+/// WebGPU: return WGPUDevice object
 scope const(void)* wgpuDevice() @trusted @nogc nothrow {
     return sg_wgpu_device();
 }
-/// WebGPU: return WGPUQueue objec
+/// WebGPU: return WGPUQueue object
 extern(C) const(void)* sg_wgpu_queue() @system @nogc nothrow;
-/// WebGPU: return WGPUQueue objec
+/// WebGPU: return WGPUQueue object
 scope const(void)* wgpuQueue() @trusted @nogc nothrow {
     return sg_wgpu_queue();
 }
-/// WebGPU: return this frame's WGPUCommandEncode
+/// WebGPU: return this frame's WGPUCommandEncoder
 extern(C) const(void)* sg_wgpu_command_encoder() @system @nogc nothrow;
-/// WebGPU: return this frame's WGPUCommandEncode
+/// WebGPU: return this frame's WGPUCommandEncoder
 scope const(void)* wgpuCommandEncoder() @trusted @nogc nothrow {
     return sg_wgpu_command_encoder();
 }
-/// WebGPU: return WGPURenderPassEncoder of current pas
+/// WebGPU: return WGPURenderPassEncoder of current pass
 extern(C) const(void)* sg_wgpu_render_pass_encoder() @system @nogc nothrow;
-/// WebGPU: return WGPURenderPassEncoder of current pas
+/// WebGPU: return WGPURenderPassEncoder of current pass
 scope const(void)* wgpuRenderPassEncoder() @trusted @nogc nothrow {
     return sg_wgpu_render_pass_encoder();
 }
-/// WebGPU: get internal buffer resource object
+/// WebGPU: get internal buffer resource objects
 extern(C) WgpuBufferInfo sg_wgpu_query_buffer_info(Buffer) @system @nogc nothrow;
-/// WebGPU: get internal buffer resource object
+/// WebGPU: get internal buffer resource objects
 WgpuBufferInfo wgpuQueryBufferInfo(Buffer buf) @trusted @nogc nothrow {
     return sg_wgpu_query_buffer_info(buf);
 }
-/// WebGPU: get internal image resource object
+/// WebGPU: get internal image resource objects
 extern(C) WgpuImageInfo sg_wgpu_query_image_info(Image) @system @nogc nothrow;
-/// WebGPU: get internal image resource object
+/// WebGPU: get internal image resource objects
 WgpuImageInfo wgpuQueryImageInfo(Image img) @trusted @nogc nothrow {
     return sg_wgpu_query_image_info(img);
 }
-/// WebGPU: get internal sampler resource object
+/// WebGPU: get internal sampler resource objects
 extern(C) WgpuSamplerInfo sg_wgpu_query_sampler_info(Sampler) @system @nogc nothrow;
-/// WebGPU: get internal sampler resource object
+/// WebGPU: get internal sampler resource objects
 WgpuSamplerInfo wgpuQuerySamplerInfo(Sampler smp) @trusted @nogc nothrow {
     return sg_wgpu_query_sampler_info(smp);
 }
-/// WebGPU: get internal shader resource object
+/// WebGPU: get internal shader resource objects
 extern(C) WgpuShaderInfo sg_wgpu_query_shader_info(Shader) @system @nogc nothrow;
-/// WebGPU: get internal shader resource object
+/// WebGPU: get internal shader resource objects
 WgpuShaderInfo wgpuQueryShaderInfo(Shader shd) @trusted @nogc nothrow {
     return sg_wgpu_query_shader_info(shd);
 }
-/// WebGPU: get internal pipeline resource object
+/// WebGPU: get internal pipeline resource objects
 extern(C) WgpuPipelineInfo sg_wgpu_query_pipeline_info(Pipeline) @system @nogc nothrow;
-/// WebGPU: get internal pipeline resource object
+/// WebGPU: get internal pipeline resource objects
 WgpuPipelineInfo wgpuQueryPipelineInfo(Pipeline pip) @trusted @nogc nothrow {
     return sg_wgpu_query_pipeline_info(pip);
 }
-/// WebGPU: get internal pass resource object
+/// WebGPU: get internal pass resource objects
 extern(C) WgpuAttachmentsInfo sg_wgpu_query_attachments_info(Attachments) @system @nogc nothrow;
-/// WebGPU: get internal pass resource object
+/// WebGPU: get internal pass resource objects
 WgpuAttachmentsInfo wgpuQueryAttachmentsInfo(Attachments atts) @trusted @nogc nothrow {
     return sg_wgpu_query_attachments_info(atts);
 }
-/// GL: get internal buffer resource object
+/// GL: get internal buffer resource objects
 extern(C) GlBufferInfo sg_gl_query_buffer_info(Buffer) @system @nogc nothrow;
-/// GL: get internal buffer resource object
+/// GL: get internal buffer resource objects
 GlBufferInfo glQueryBufferInfo(Buffer buf) @trusted @nogc nothrow {
     return sg_gl_query_buffer_info(buf);
 }
-/// GL: get internal image resource object
+/// GL: get internal image resource objects
 extern(C) GlImageInfo sg_gl_query_image_info(Image) @system @nogc nothrow;
-/// GL: get internal image resource object
+/// GL: get internal image resource objects
 GlImageInfo glQueryImageInfo(Image img) @trusted @nogc nothrow {
     return sg_gl_query_image_info(img);
 }
-/// GL: get internal sampler resource object
+/// GL: get internal sampler resource objects
 extern(C) GlSamplerInfo sg_gl_query_sampler_info(Sampler) @system @nogc nothrow;
-/// GL: get internal sampler resource object
+/// GL: get internal sampler resource objects
 GlSamplerInfo glQuerySamplerInfo(Sampler smp) @trusted @nogc nothrow {
     return sg_gl_query_sampler_info(smp);
 }
-/// GL: get internal shader resource object
+/// GL: get internal shader resource objects
 extern(C) GlShaderInfo sg_gl_query_shader_info(Shader) @system @nogc nothrow;
-/// GL: get internal shader resource object
+/// GL: get internal shader resource objects
 GlShaderInfo glQueryShaderInfo(Shader shd) @trusted @nogc nothrow {
     return sg_gl_query_shader_info(shd);
 }
-/// GL: get internal pass resource object
+/// GL: get internal pass resource objects
 extern(C) GlAttachmentsInfo sg_gl_query_attachments_info(Attachments) @system @nogc nothrow;
-/// GL: get internal pass resource object
+/// GL: get internal pass resource objects
 GlAttachmentsInfo glQueryAttachmentsInfo(Attachments atts) @trusted @nogc nothrow {
     return sg_gl_query_attachments_info(atts);
 }

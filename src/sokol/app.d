@@ -16,7 +16,7 @@ enum max_iconimages = 8;
 /// The type of event that's passed to the event handler callback
 /// in the sapp_event.type field. These are not just "traditional"
 /// input events, but also notify the application about state changes
-/// or other user-invoked actions
+/// or other user-invoked actions.
 enum EventType {
     Invalid,
     Key_down,
@@ -49,7 +49,7 @@ enum EventType {
 /// The 'virtual keycode' of a KEY_DOWN or KEY_UP event in the
 /// struct field sapp_event.key_code.
 /// 
-/// Note that the keycode values are identical with GLFW
+/// Note that the keycode values are identical with GLFW.
 enum Keycode {
     Invalid = 0,
     Space = 32,
@@ -180,7 +180,7 @@ enum Keycode {
 /// NOTE: the values must remain in sync with the corresponding
 /// Android SDK type, so don't change those.
 /// 
-/// See https://developer.android.com/reference/android/view/MotionEvent#TOOL_TYPE_UNKNOW
+/// See https://developer.android.com/reference/android/view/MotionEvent#TOOL_TYPE_UNKNOWN
 enum AndroidTooltype {
     Unknown = 0,
     Finger = 1,
@@ -193,7 +193,7 @@ enum AndroidTooltype {
 /// TOUCHES_MOVED, TOUCHES_ENDED).
 /// 
 /// Touch points are stored in the nested array sapp_event.touches[],
-/// and the number of touches is stored in sapp_event.num_touches
+/// and the number of touches is stored in sapp_event.num_touches.
 extern(C)
 struct Touchpoint {
     ulong identifier = 0;
@@ -205,7 +205,7 @@ struct Touchpoint {
 /// sapp_mousebutton
 /// 
 /// The currently pressed mouse button in the events MOUSE_DOWN
-/// and MOUSE_UP, stored in the struct field sapp_event.mouse_button
+/// and MOUSE_UP, stored in the struct field sapp_event.mouse_button.
 enum Mousebutton {
     Left = 0,
     Right = 1,
@@ -213,27 +213,27 @@ enum Mousebutton {
     Invalid = 256,
 }
 /// These are currently pressed modifier keys (and mouse buttons) which are
-/// passed in the event struct field sapp_event.modifiers
+/// passed in the event struct field sapp_event.modifiers.
 /// These are currently pressed modifier keys (and mouse buttons) which are
-/// passed in the event struct field sapp_event.modifiers
+/// passed in the event struct field sapp_event.modifiers.
 enum modifier_shift = 1;
 /// These are currently pressed modifier keys (and mouse buttons) which are
-/// passed in the event struct field sapp_event.modifiers
+/// passed in the event struct field sapp_event.modifiers.
 enum modifier_ctrl = 2;
 /// These are currently pressed modifier keys (and mouse buttons) which are
-/// passed in the event struct field sapp_event.modifiers
+/// passed in the event struct field sapp_event.modifiers.
 enum modifier_alt = 4;
 /// These are currently pressed modifier keys (and mouse buttons) which are
-/// passed in the event struct field sapp_event.modifiers
+/// passed in the event struct field sapp_event.modifiers.
 enum modifier_super = 8;
 /// These are currently pressed modifier keys (and mouse buttons) which are
-/// passed in the event struct field sapp_event.modifiers
+/// passed in the event struct field sapp_event.modifiers.
 enum modifier_lmb = 256;
 /// These are currently pressed modifier keys (and mouse buttons) which are
-/// passed in the event struct field sapp_event.modifiers
+/// passed in the event struct field sapp_event.modifiers.
 enum modifier_rmb = 512;
 /// These are currently pressed modifier keys (and mouse buttons) which are
-/// passed in the event struct field sapp_event.modifiers
+/// passed in the event struct field sapp_event.modifiers.
 enum modifier_mmb = 1024;
 /// sapp_event
 /// 
@@ -241,7 +241,7 @@ enum modifier_mmb = 1024;
 /// user callback function. Note that it depends on the event
 /// type what struct fields actually contain useful values, so you
 /// should first check the event type before reading other struct
-/// fields
+/// fields.
 extern(C)
 struct Event {
     ulong frame_count = 0;
@@ -267,7 +267,7 @@ struct Event {
 /// sg_range
 /// 
 /// A general pointer/size-pair struct and constructor macros for passing binary blobs
-/// into sokol_app.h
+/// into sokol_app.h.
 extern(C)
 struct Range {
     const(void)* ptr = null;
@@ -280,7 +280,7 @@ struct Range {
 /// 
 /// Note that the actual image pixel format depends on the use case:
 /// 
-/// - window icon pixels are RGBA
+/// - window icon pixels are RGBA8
 extern(C)
 struct ImageDesc {
     int width = 0;
@@ -302,7 +302,7 @@ struct ImageDesc {
 /// images[] array.
 /// 
 /// If both the sokol_default flag is set to true, any image candidates
-/// will be ignored and the sokol_app.h default icon will be set
+/// will be ignored and the sokol_app.h default icon will be set.
 extern(C)
 struct IconDesc {
     bool sokol_default = false;
@@ -313,7 +313,7 @@ struct IconDesc {
 /// Used in sapp_desc to provide custom memory-alloc and -free functions
 /// to sokol_app.h. If memory management should be overridden, both the
 /// alloc_fn and free_fn function must be provided (e.g. it's not valid to
-/// override one function but not the other)
+/// override one function but not the other).
 extern(C)
 struct Allocator {
     extern(C) void* function(size_t, void*) alloc_fn = null;
@@ -427,14 +427,14 @@ enum LogItem {
 /// without logging function, sokol-app will be completely silent, e.g. it will
 /// not report errors or warnings. For maximum error verbosity, compile in
 /// debug mode (e.g. NDEBUG *not* defined) and install a logger (for instance
-/// the standard logging function from sokol_log.h)
+/// the standard logging function from sokol_log.h).
 extern(C)
 struct Logger {
     extern(C) void function(const(char)*, uint, uint, const(char)*, uint, const(char)*, void*) func = null;
     void* user_data = null;
 }
 /// sokol-app initialization options, used as return value of sokol_main()
-/// or sapp_run() argument
+/// or sapp_run() argument.
 extern(C)
 struct Desc {
     extern(C) void function() init_cb = null;
@@ -483,7 +483,7 @@ struct Desc {
     bool ios_keyboard_resizes_canvas = false;
 }
 /// HTML5 specific: request and response structs for
-///   asynchronously loading dropped-file content
+///   asynchronously loading dropped-file content.
 enum Html5FetchError {
     Fetch_error_no_error,
     Fetch_error_buffer_too_small,
@@ -507,7 +507,7 @@ struct Html5FetchRequest {
 }
 /// sapp_mouse_cursor
 /// 
-/// Predefined cursor image definitions, set with sapp_set_mouse_cursor(sapp_mouse_cursor cursor
+/// Predefined cursor image definitions, set with sapp_set_mouse_cursor(sapp_mouse_cursor cursor)
 enum MouseCursor {
     Default = 0,
     Arrow,

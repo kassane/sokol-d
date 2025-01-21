@@ -21,7 +21,7 @@ enum LogItem {
 /// sfetch_logger_t
 /// 
 /// Used in sfetch_desc_t to provide a custom logging and error reporting
-/// callback to sokol-fetch
+/// callback to sokol-fetch.
 extern(C)
 struct Logger {
     extern(C) void function(const(char)*, uint, uint, const(char)*, uint, const(char)*, void*) func = null;
@@ -31,7 +31,7 @@ struct Logger {
 /// 
 /// A pointer-size pair struct to pass memory ranges into and out of sokol-fetch.
 /// When initialized from a value type (array or struct) you can use the
-/// SFETCH_RANGE() helper macro to build an sfetch_range_t struct
+/// SFETCH_RANGE() helper macro to build an sfetch_range_t struct.
 extern(C)
 struct Range {
     const(void)* ptr = null;
@@ -42,7 +42,7 @@ struct Range {
 /// Used in sfetch_desc_t to provide custom memory-alloc and -free functions
 /// to sokol_fetch.h. If memory management should be overridden, both the
 /// alloc and free function must be provided (e.g. it's not valid to
-/// override one function but not the other)
+/// override one function but not the other).
 extern(C)
 struct Allocator {
     extern(C) void* function(size_t, void*) alloc_fn = null;

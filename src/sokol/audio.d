@@ -43,7 +43,7 @@ enum LogItem {
 /// saudio_logger
 /// 
 /// Used in saudio_desc to provide a custom logging and error reporting
-/// callback to sokol-audio
+/// callback to sokol-audio.
 extern(C)
 struct Logger {
     extern(C) void function(const(char)*, uint, uint, const(char)*, uint, const(char)*, void*) func = null;
@@ -54,7 +54,7 @@ struct Logger {
 /// Used in saudio_desc to provide custom memory-alloc and -free functions
 /// to sokol_audio.h. If memory management should be overridden, both the
 /// alloc_fn and free_fn function must be provided (e.g. it's not valid to
-/// override one function but not the other)
+/// override one function but not the other).
 extern(C)
 struct Allocator {
     extern(C) void* function(size_t, void*) alloc_fn = null;

@@ -15,7 +15,7 @@ enum LogItem {
 /// sgl_logger_t
 /// 
 /// Used in sgl_desc_t to provide a custom logging and error reporting
-/// callback to sokol-gl
+/// callback to sokol-gl.
 extern(C)
 struct Logger {
     extern(C) void function(const(char)*, uint, uint, const(char)*, uint, const(char)*, void*) func = null;
@@ -34,7 +34,7 @@ struct Context {
 /// sgl_error_t
 /// 
 /// Errors are reset each frame after calling sgl_draw(),
-/// get the last error code with sgl_error(
+/// get the last error code with sgl_error()
 extern(C)
 struct Error {
     bool any = false;
@@ -49,7 +49,7 @@ struct Error {
 /// 
 /// Describes the initialization parameters of a rendering context.
 /// Creating additional contexts is useful if you want to render
-/// in separate sokol-gfx passes
+/// in separate sokol-gfx passes.
 extern(C)
 struct ContextDesc {
     int max_vertices = 0;
@@ -63,7 +63,7 @@ struct ContextDesc {
 /// Used in sgl_desc_t to provide custom memory-alloc and -free functions
 /// to sokol_gl.h. If memory management should be overridden, both the
 /// alloc and free function must be provided (e.g. it's not valid to
-/// override one function but not the other)
+/// override one function but not the other).
 extern(C)
 struct Allocator {
     extern(C) void* function(size_t, void*) alloc_fn = null;
