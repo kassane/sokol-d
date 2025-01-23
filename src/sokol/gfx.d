@@ -1308,7 +1308,7 @@ struct SamplerDesc {
 ///         - HLSL: the texture(sic) register `register(t0..23)`
 ///         - MSL: the buffer attribute `[[buffer(8..15)]]`
 ///         - WGSL: the binding in `@group(1) @binding(0..127)`
-///         - GL: the binding in `layout(binding=0..16)`
+///         - GL: the binding in `layout(binding=0..7)`
 /// 
 /// - reflection information for each combined image-sampler object
 ///   used by the shader:
@@ -1907,6 +1907,7 @@ enum LogItem {
     Gl_texture_format_not_supported,
     Gl_3d_textures_not_supported,
     Gl_array_textures_not_supported,
+    Gl_storagebuffer_glsl_binding_out_of_range,
     Gl_shader_compilation_failed,
     Gl_shader_linking_failed,
     Gl_vertex_attribute_not_found_in_shader,
