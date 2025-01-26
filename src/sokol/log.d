@@ -3,7 +3,7 @@
 module sokol.log;
 
 /// Plug this function into the 'logger.func' struct item when initializing any of the sokol
-/// headers. For instance for sokol_audio.h it would loom like this:
+/// headers. For instance for sokol_audio.h it would look like this:
 /// 
 /// saudio_setup(&(saudio_desc){
 ///     .logger = {
@@ -12,7 +12,7 @@ module sokol.log;
 /// });
 extern(C) void slog_func(const(char)*, uint, uint, const(char)*, uint, const(char)*, void*) @system @nogc nothrow;
 /// Plug this function into the 'logger.func' struct item when initializing any of the sokol
-/// headers. For instance for sokol_audio.h it would loom like this:
+/// headers. For instance for sokol_audio.h it would look like this:
 /// 
 /// saudio_setup(&(saudio_desc){
 ///     .logger = {
