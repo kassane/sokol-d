@@ -696,7 +696,9 @@ enum StencilOp {
 ///             .dst_factor_alpha
 /// 
 /// The default value is SG_BLENDFACTOR_ONE for source
-/// factors, and SG_BLENDFACTOR_ZERO for destination factors.
+/// factors, and for the destination SG_BLENDFACTOR_ZERO if the associated
+/// blend-op is ADD, SUBTRACT or REVERSE_SUBTRACT or SG_BLENDFACTOR_ONE
+/// if the associated blend-op is MIN or MAX.
 enum BlendFactor {
     Default,
     Zero,
@@ -734,6 +736,8 @@ enum BlendOp {
     Add,
     Subtract,
     Reverse_subtract,
+    Min,
+    Max,
     Num,
 }
 /// sg_color_mask
@@ -2097,6 +2101,7 @@ enum LogItem {
     Validate_pipelinedesc_no_cont_attrs,
     Validate_pipelinedesc_layout_stride4,
     Validate_pipelinedesc_attr_semantics,
+    Validate_pipelinedesc_blendop_minmax_requires_blendfactor_one,
     Validate_attachmentsdesc_canary,
     Validate_attachmentsdesc_no_attachments,
     Validate_attachmentsdesc_no_cont_color_atts,
