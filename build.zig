@@ -23,7 +23,12 @@ pub const LibSokolOptions = struct {
     use_x11: bool = true,
     use_wayland: bool = false,
     emsdk: ?*Build.Dependency = null,
+    use_ubsan: bool = false,
+    use_tsan: bool = false,
     with_sokol_imgui: bool = false,
+    imgui_version: ?[]const u8 = null,
+    sokol_imgui_cprefix: ?[]const u8 = null,
+    cimgui_header_path: ?[]const u8 = null,
 };
 
 // helper function to resolve .auto backend based on target platform
@@ -62,8 +67,8 @@ pub fn buildLibSokol(b: *Build, options: LibSokolOptions) !*CompileStep {
         .link_libc = true,
     });
 
-    lib.root_module.sanitize_c = b.option(bool, "ubsan", "Enable undefined behavior sanitizer") orelse false;
-    lib.root_module.sanitize_thread = b.option(bool, "tsan", "Enable thread sanitizer") orelse false;
+    lib.root_module.sanitize_c = options.use_ubsan;
+    lib.root_module.sanitize_thread = options.use_tsan;
 
     switch (options.optimize) {
         .Debug, .ReleaseSafe => lib.bundle_compiler_rt = true,
@@ -192,23 +197,22 @@ pub fn buildLibSokol(b: *Build, options: LibSokolOptions) !*CompileStep {
     }
 
     if (options.with_sokol_imgui) {
+        if (b.lazyDependency("imgui", .{})) |dep| {
+            if (options.imgui_version) |imgui_version| {
+                const imgui = dep.path(imgui_version);
+                lib.addIncludePath(imgui);
+            }
+        }
+        if (options.sokol_imgui_cprefix) |cprefix| {
+            try cflags.append(b.fmt("-DSOKOL_IMGUI_CPREFIX={s}", .{cprefix}));
+        }
+        if (options.cimgui_header_path) |cimgui_header_path| {
+            try cflags.append(b.fmt("-DCIMGUI_HEADER_PATH=\"{s}\"", .{cimgui_header_path}));
+        }
         lib.addCSourceFile(.{
             .file = b.path(csrc_root ++ "sokol_imgui.c"),
             .flags = cflags.slice(),
         });
-        const imgui = try buildImgui(b, .{
-            .target = options.target,
-            .optimize = options.optimize,
-            .use_tsan = lib.root_module.sanitize_thread orelse false,
-            .use_ubsan = lib.root_module.sanitize_c orelse false,
-        });
-        if (options.emsdk) |emsdk| {
-            imgui.addSystemIncludePath(emSdkLazyPath(b, emsdk, &.{ "upstream", "emscripten", "cache", "sysroot", "include" }));
-        }
-        for (imgui.root_module.include_dirs.items) |dir| {
-            try lib.root_module.include_dirs.append(b.allocator, dir);
-        }
-        lib.linkLibrary(imgui);
     }
     return lib;
 }
@@ -221,8 +225,21 @@ pub fn build(b: *Build) !void {
     const opt_use_wayland = b.option(bool, "wayland", "Force Wayland (default: false, Linux only, not supported in main-line headers)") orelse false;
     const opt_use_egl = b.option(bool, "egl", "Force EGL (default: false, Linux only)") orelse false;
     const opt_with_sokol_imgui = b.option(bool, "imgui", "Add support for sokol_imgui.h bindings") orelse false;
+    const opt_sokol_imgui_cprefix = b.option([]const u8, "sokol_imgui_cprefix", "Override Dear ImGui C bindings prefix for sokol_imgui.h (see SOKOL_IMGUI_CPREFIX)");
+    const opt_cimgui_header_path = b.option([]const u8, "cimgui_header_path", "Override the Dear ImGui C bindings header name (default: cimgui.h)");
     const sokol_backend: SokolBackend = if (opt_use_gl) .gl else if (opt_use_gles3) .gles3 else if (opt_use_wgpu) .wgpu else .auto;
+    const imguiver_path = switch (b.option(
+        imguiVersion,
+        "imgui-version",
+        "Select ImGui version to use",
+    ) orelse imguiVersion.default) {
+        .default => "src",
+        .docking => "src-docking",
+    };
 
+    // For debug
+    const sanitize_c = b.option(bool, "ubsan", "Enable undefined behavior sanitizer") orelse false;
+    const sanitize_thread = b.option(bool, "tsan", "Enable thread sanitizer") orelse false;
     // LDC-options options
     const dub_artifact = b.option(bool, "artifact", "Build artifacts (default: false)") orelse false;
     const opt_betterC = b.option(bool, "betterC", "Omit generating some runtime information and helper functions (default: false)") orelse false;
@@ -243,12 +260,35 @@ pub fn build(b: *Build) !void {
         .use_x11 = opt_use_x11,
         .use_egl = opt_use_egl,
         .with_sokol_imgui = opt_with_sokol_imgui,
+        .sokol_imgui_cprefix = opt_sokol_imgui_cprefix,
+        .cimgui_header_path = opt_cimgui_header_path,
+        .imgui_version = imguiver_path,
         .emsdk = emsdk,
+        .use_ubsan = sanitize_c,
+        .use_tsan = sanitize_thread,
     });
+
+    var artifact: ?*std.Build.Step.Compile = null;
+
+    if (opt_with_sokol_imgui) {
+        const lib_imgui = try buildImgui(b, .{
+            .target = target,
+            .optimize = optimize,
+            .version = imguiver_path,
+            .lib_sokol = lib_sokol,
+            .emsdk = emsdk,
+            .use_ubsan = sanitize_c,
+            .use_tsan = sanitize_thread,
+        });
+        artifact = lib_imgui;
+    } else {
+        artifact = lib_sokol;
+    }
+
     if (opt_shaders)
         buildShaders(b, target);
     if (dub_artifact) {
-        b.installArtifact(lib_sokol);
+        b.installArtifact(artifact.?);
     } else {
         // build examples
         const examples = .{
@@ -280,7 +320,7 @@ pub fn build(b: *Build) !void {
                     break;
             const ldc = try ldcBuildStep(b, .{
                 .name = example,
-                .artifact = lib_sokol,
+                .artifact = artifact,
                 .sources = &[_][]const u8{
                     b.fmt("{s}/src/examples/{s}.d", .{ rootPath(), example }),
                 },
@@ -1155,30 +1195,41 @@ const libImGuiOptions = struct {
     optimize: std.builtin.OptimizeMode,
     use_ubsan: bool = false,
     use_tsan: bool = false,
+    lib_sokol: *CompileStep,
+    emsdk: ?*Build.Dependency = null,
+    version: []const u8,
 };
 const imguiVersion = enum {
     default,
     docking,
 };
 fn buildImgui(b: *Build, options: libImGuiOptions) !*CompileStep {
-
-    // get the imgui source code
-    const imguiver_path = switch (b.option(
-        imguiVersion,
-        "imgui-version",
-        "Select ImGui version to use",
-    ) orelse imguiVersion.default) {
-        .default => "src",
-        .docking => "src-docking",
-    };
-
     const libimgui = b.addStaticLibrary(.{
         .name = "imgui",
         .target = options.target,
         .optimize = options.optimize,
     });
+
     libimgui.root_module.sanitize_c = options.use_ubsan;
     libimgui.root_module.sanitize_thread = options.use_tsan;
+
+    if (options.target.result.isWasm()) {
+        // make sure we're building for the wasm32-emscripten target, not wasm32-freestanding
+        if (libimgui.rootModuleTarget().os.tag != .emscripten) {
+            std.log.err("Please build with 'zig build -Dtarget=wasm32-emscripten", .{});
+            return error.Wasm32EmscriptenExpected;
+        }
+        // one-time setup of Emscripten SDK
+        if (options.emsdk) |emsdk| {
+            if (try emSdkSetupStep(b, emsdk)) |emsdk_setup| {
+                libimgui.step.dependOn(&emsdk_setup.step);
+            }
+            // add the Emscripten system include seach path
+            libimgui.addSystemIncludePath(emSdkLazyPath(b, emsdk, &.{ "upstream", "emscripten", "cache", "sysroot", "include" }));
+        }
+    }
+    libimgui.step.dependOn(&options.lib_sokol.step);
+    libimgui.linkLibrary(options.lib_sokol);
 
     var cflags = try std.BoundedArray([]const u8, 64).init(0);
     if (options.optimize != .Debug) {
@@ -1194,7 +1245,7 @@ fn buildImgui(b: *Build, options: libImGuiOptions) !*CompileStep {
     });
 
     if (b.lazyDependency("imgui", .{})) |dep| {
-        const imgui = dep.path(imguiver_path);
+        const imgui = dep.path(options.version);
         libimgui.addIncludePath(imgui);
 
         libimgui.addCSourceFiles(.{
