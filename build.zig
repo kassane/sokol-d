@@ -268,27 +268,21 @@ pub fn build(b: *Build) !void {
         .use_tsan = sanitize_thread,
     });
 
-    var artifact: ?*std.Build.Step.Compile = null;
-
     if (opt_with_sokol_imgui) {
-        const lib_imgui = try buildImgui(b, .{
+        const obj_imgui = try buildImgui(b, .{
             .target = target,
             .optimize = optimize,
             .version = imguiver_path,
-            .lib_sokol = lib_sokol,
-            .emsdk = emsdk,
             .use_ubsan = sanitize_c,
             .use_tsan = sanitize_thread,
         });
-        artifact = lib_imgui;
-    } else {
-        artifact = lib_sokol;
+        lib_sokol.addObject(obj_imgui);
     }
 
     if (opt_shaders)
         buildShaders(b, target);
     if (dub_artifact) {
-        b.installArtifact(artifact.?);
+        b.installArtifact(lib_sokol);
     } else {
         // build examples
         const examples = .{
@@ -320,7 +314,7 @@ pub fn build(b: *Build) !void {
                     break;
             const ldc = try ldcBuildStep(b, .{
                 .name = example,
-                .artifact = artifact,
+                .artifact = lib_sokol,
                 .sources = &[_][]const u8{
                     b.fmt("{s}/src/examples/{s}.d", .{ rootPath(), example }),
                 },
@@ -1195,8 +1189,6 @@ const libImGuiOptions = struct {
     optimize: std.builtin.OptimizeMode,
     use_ubsan: bool = false,
     use_tsan: bool = false,
-    lib_sokol: *CompileStep,
-    emsdk: ?*Build.Dependency = null,
     version: []const u8,
 };
 const imguiVersion = enum {
@@ -1204,7 +1196,7 @@ const imguiVersion = enum {
     docking,
 };
 fn buildImgui(b: *Build, options: libImGuiOptions) !*CompileStep {
-    const libimgui = b.addStaticLibrary(.{
+    const libimgui = b.addObject(.{
         .name = "imgui",
         .target = options.target,
         .optimize = options.optimize,
@@ -1212,24 +1204,6 @@ fn buildImgui(b: *Build, options: libImGuiOptions) !*CompileStep {
 
     libimgui.root_module.sanitize_c = options.use_ubsan;
     libimgui.root_module.sanitize_thread = options.use_tsan;
-
-    if (options.target.result.isWasm()) {
-        // make sure we're building for the wasm32-emscripten target, not wasm32-freestanding
-        if (libimgui.rootModuleTarget().os.tag != .emscripten) {
-            std.log.err("Please build with 'zig build -Dtarget=wasm32-emscripten", .{});
-            return error.Wasm32EmscriptenExpected;
-        }
-        // one-time setup of Emscripten SDK
-        if (options.emsdk) |emsdk| {
-            if (try emSdkSetupStep(b, emsdk)) |emsdk_setup| {
-                libimgui.step.dependOn(&emsdk_setup.step);
-            }
-            // add the Emscripten system include seach path
-            libimgui.addSystemIncludePath(emSdkLazyPath(b, emsdk, &.{ "upstream", "emscripten", "cache", "sysroot", "include" }));
-        }
-    }
-    libimgui.step.dependOn(&options.lib_sokol.step);
-    libimgui.linkLibrary(options.lib_sokol);
 
     var cflags = try std.BoundedArray([]const u8, 64).init(0);
     if (options.optimize != .Debug) {
