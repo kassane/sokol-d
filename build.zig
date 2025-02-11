@@ -285,7 +285,7 @@ pub fn build(b: *Build) !void {
         buildShaders(b, target);
     if (dub_artifact) {
         if (opt_with_sokol_imgui)
-            b.installArtifact(lib_imgui.?);
+            lib_sokol.linkLibrary(lib_imgui.?);
         b.installArtifact(lib_sokol);
     } else {
         // build examples
