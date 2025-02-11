@@ -268,20 +268,24 @@ pub fn build(b: *Build) !void {
         .use_tsan = sanitize_thread,
     });
 
+    var lib_imgui: ?*CompileStep = null;
     if (opt_with_sokol_imgui) {
-        const obj_imgui = try buildImgui(b, .{
+        const imgui = try buildImgui(b, .{
             .target = target,
             .optimize = optimize,
             .version = imguiver_path,
             .use_ubsan = sanitize_c,
             .use_tsan = sanitize_thread,
         });
-        lib_sokol.addObject(obj_imgui);
+        imgui.step.dependOn(&lib_sokol.step);
+        lib_imgui = imgui;
     }
 
     if (opt_shaders)
         buildShaders(b, target);
     if (dub_artifact) {
+        if (opt_with_sokol_imgui)
+            b.installArtifact(lib_imgui.?);
         b.installArtifact(lib_sokol);
     } else {
         // build examples
@@ -315,6 +319,7 @@ pub fn build(b: *Build) !void {
             const ldc = try ldcBuildStep(b, .{
                 .name = example,
                 .artifact = lib_sokol,
+                .imgui = lib_imgui,
                 .sources = &[_][]const u8{
                     b.fmt("{s}/src/examples/{s}.d", .{ rootPath(), example }),
                 },
@@ -331,6 +336,7 @@ pub fn build(b: *Build) !void {
                 .kind = if (target.result.isWasm()) .obj else .exe,
                 .emsdk = emsdk,
                 .backend = sokol_backend,
+                .with_sokol_imgui = opt_with_sokol_imgui,
             });
             b.getInstallStep().dependOn(&ldc.step);
         }
@@ -348,7 +354,7 @@ pub fn build(b: *Build) !void {
 }
 
 // Use LDC2 (https://github.com/ldc-developers/ldc) to compile the D examples
-pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*std.Build.Step.InstallDir {
+pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*Build.Step.InstallDir {
     // ldmd2: ldc2 wrapped w/ dmd flags
     const ldc = try b.findProgram(&.{"ldmd2"}, &.{});
 
@@ -710,10 +716,21 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*std.Build.Step.InstallDi
         b.step("test", "Run all tests");
 
     if (options.target.result.isWasm()) {
+        ldc_exec.step.dependOn(&options.artifact.?.step);
         // get D object file and put it in the wasm artifact
         const artifact = addArtifact(b, options);
         artifact.addObjectFile(objpath);
-        artifact.linkLibrary(options.artifact.?);
+        if (options.artifact) |lib_sokol| {
+            if (options.with_sokol_imgui) {
+                if (options.imgui) |lib_imgui| {
+                    for (lib_sokol.root_module.include_dirs.items) |include_dir| {
+                        try lib_imgui.root_module.include_dirs.append(b.allocator, include_dir);
+                    }
+                    artifact.linkLibrary(lib_imgui);
+                }
+            }
+            artifact.linkLibrary(lib_sokol);
+        }
         artifact.step.dependOn(&ldc_exec.step);
         const backend = resolveSokolBackend(options.backend, options.target.result);
         const link_step = try emLinkStep(b, .{
@@ -743,6 +760,11 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*std.Build.Step.InstallDi
                     b.fmt("{s}.lib", .{lib_sokol.name}),
                 }));
             } else {
+                if (options.with_sokol_imgui) {
+                    if (options.imgui) |lib_imgui| {
+                        ldc_exec.addArtifactArg(lib_imgui);
+                    }
+                }
                 ldc_exec.addArtifactArg(lib_sokol);
                 for (lib_sokol.getCompileDependencies(false)) |item| {
                     if (item.kind == .lib) {
@@ -770,6 +792,8 @@ pub const DCompileStep = struct {
     zig_cc: bool = false,
     d_packages: ?[]const []const u8 = null,
     artifact: ?*Build.Step.Compile = null,
+    imgui: ?*Build.Step.Compile = null,
+    with_sokol_imgui: bool = false,
     emsdk: ?*Build.Dependency = null,
     backend: SokolBackend = .auto,
 };
@@ -785,7 +809,7 @@ pub fn addArtifact(b: *Build, options: DCompileStep) *Build.Step.Compile {
     });
 }
 
-pub fn path(b: *std.Build, sub_path: []const u8) std.Build.LazyPath {
+pub fn path(b: *Build, sub_path: []const u8) Build.LazyPath {
     if (std.fs.path.isAbsolute(sub_path)) {
         return .{
             .cwd_relative = sub_path,
@@ -801,7 +825,7 @@ pub fn path(b: *std.Build, sub_path: []const u8) std.Build.LazyPath {
 // -------------------------- Others Configuration --------------------------
 
 // zig-cc wrapper for ldc2
-pub fn buildZigCC(b: *std.Build, options: *std.Build.Step.Options) *std.Build.Step.Compile {
+pub fn buildZigCC(b: *Build, options: *Build.Step.Options) *CompileStep {
     const zigcc = b.addWriteFiles();
 
     const exe = b.addExecutable(.{
@@ -814,7 +838,7 @@ pub fn buildZigCC(b: *std.Build, options: *std.Build.Step.Options) *std.Build.St
     return exe;
 }
 
-pub fn buildOptions(b: *std.Build, target: std.Build.ResolvedTarget) !*std.Build.Step.Options {
+pub fn buildOptions(b: *Build, target: Build.ResolvedTarget) !*Build.Step.Options {
     const zigcc_options = b.addOptions();
 
     // Native target, zig can read 'zig libc' contents and also link system libraries.
@@ -1196,7 +1220,7 @@ const imguiVersion = enum {
     docking,
 };
 fn buildImgui(b: *Build, options: libImGuiOptions) !*CompileStep {
-    const libimgui = b.addObject(.{
+    const libimgui = b.addStaticLibrary(.{
         .name = "imgui",
         .target = options.target,
         .optimize = options.optimize,
