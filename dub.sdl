@@ -331,12 +331,15 @@ subPackage {
 	sourceFiles "src/examples/imgui.d"
 	libs "sokol" "imgui"
 	dflags "-preview=all" "-i=sokol" "-i=shaders" "-i=handmade" "-i=imgui"
+	libs "X11" "Xcursor" "Xi" "GL" "asound" platform="linux"
+	lflags "-w" "-lObjC" "-all_load" "-framework" "Cocoa" "-framework" "QuartzCore" "-framework" "Foundation" "-framework" "MetalKit" "-framework" "Metal" "-framework" "AudioToolbox" platform="osx"
+	libs "user32" "gdi32" "kernel32" "dxgi" "d3d11" "ole32" platform="windows"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
 	dflags "-P-I$HOME/.cache/zig/p/1220c640ad23d8800437166865e54f172c612fcfe6e000149a2b2af631c37b605f50/src" platform="posix"
 	dflags "-P-I$APPDATA\\Local\\zig\\p\\1220c640ad23d8800437166865e54f172c612fcfe6e000149a2b2af631c37b605f50\\src" platform="windows"
 	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/bufferoffsets.d" "src/examples/instancing.d" "src/examples/offscreen.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/vertexpull.d" "src/examples/quad.d" "src/examples/noninterleaved.d" "src/examples/debugtext.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/cube.d" "src/examples/mrt.d" "src/examples/blend.d" "src/examples/user_data.d" "src/examples/texcube.d" "src/examples/droptest.d" "src/examples/shapes.d" "src/examples/shaders/*.d"
-	preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast -Dimgui -Dartifact"
+	preBuildCommands "zig build -Doptimize=ReleaseFast -Dimgui -Dartifact"
 }
 
 subPackage {
@@ -346,10 +349,13 @@ subPackage {
 	sourceFiles "src/examples/droptest.d"
 	libs "sokol" "imgui"
 	dflags "-preview=all" "-i=sokol" "-i=shaders" "-i=handmade" "-i=imgui"
+	libs "X11" "Xcursor" "Xi" "GL" "asound" platform="linux"
+	lflags "-w" "-lObjC" "-all_load" "-framework" "Cocoa" "-framework" "QuartzCore" "-framework" "Foundation" "-framework" "MetalKit" "-framework" "Metal" "-framework" "AudioToolbox" platform="osx"
+	libs "user32" "gdi32" "kernel32" "dxgi" "d3d11" "ole32" platform="windows"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
 	dflags "-P-I$HOME/.cache/zig/p/1220c640ad23d8800437166865e54f172c612fcfe6e000149a2b2af631c37b605f50/src" platform="posix"
 	dflags "-P-I$APPDATA\\Local\\zig\\p\\1220c640ad23d8800437166865e54f172c612fcfe6e000149a2b2af631c37b605f50\\src" platform="windows"
 	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/bufferoffsets.d" "src/examples/instancing.d" "src/examples/offscreen.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/vertexpull.d" "src/examples/quad.d" "src/examples/noninterleaved.d" "src/examples/debugtext.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/cube.d" "src/examples/mrt.d" "src/examples/blend.d" "src/examples/user_data.d" "src/examples/texcube.d" "src/examples/imgui.d" "src/examples/shapes.d" "src/examples/shaders/*.d"
-	preBuildCommands "zig build -Dshared -Doptimize=ReleaseFast -Dimgui -Dartifact"
+	preBuildCommands "zig build -Doptimize=ReleaseFast -Dimgui -Dartifact"
 }
