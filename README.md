@@ -66,11 +66,21 @@ zig build --help
 #   -Dwayland=[bool]             Force Wayland (default: false, Linux only, not supported in main-line headers)
 #   -Degl=[bool]                 Force EGL (default: false, Linux only)
 #   -Dimgui=[bool]               Add support for sokol_imgui.h bindings
+#   -Dsokol_imgui_cprefix=[string] Override Dear ImGui C bindings prefix for sokol_imgui.h (see SOKOL_IMGUI_CPREFIX)
+#   -Dcimgui_header_path=[string] Override the Dear ImGui C bindings header name (default: cimgui.h)
+#   -Dimgui-version=[enum]       Select ImGui version to use
+#                                  Supported Values:
+#                                    default
+#                                    docking
+#   -Dubsan=[bool]               Enable undefined behavior sanitizer
+#   -Dtsan=[bool]                Enable thread sanitizer
 #   -Dartifact=[bool]            Build artifacts (default: false)
 #   -DbetterC=[bool]             Omit generating some runtime information and helper functions (default: false)
 #   -DzigCC=[bool]               Use zig cc as compiler and linker (default: false)
+#   -Dshaders=[bool]             Build shaders (default: false)
 #   -Dtarget=[string]            The CPU architecture, OS, and ABI to build for
 #   -Dcpu=[string]               Target CPU features to add or subtract
+#   -Dofmt=[string]              Target object format
 #   -Ddynamic-linker=[string]    Path to interpreter on the target system
 #   -Doptimize=[enum]            Prioritize performance, safety, or binary size
 #                                  Supported Values:
@@ -79,13 +89,6 @@ zig build --help
 #                                    ReleaseFast
 #                                    ReleaseSmall
 #   -Dshared=[bool]              Build sokol dynamic library (default: static)
-#   -Dubsan=[bool]               Enable undefined behavior sanitizer
-#   -Dtsan=[bool]                Enable thread sanitizer
-#   -Dimgui-version=[enum]       Select ImGui version to use
-#                                  Supported Values:
-#                                    default
-#                                    docking
-
 ```
 (also run `zig build -l` to get a list of build targets)
 
