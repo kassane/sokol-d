@@ -35,13 +35,13 @@ pub const LibSokolOptions = struct {
 fn resolveSokolBackend(backend: SokolBackend, target: std.Target) SokolBackend {
     if (backend != .auto) {
         return backend;
-    } else if (target.isDarwin()) {
+    } else if (target.os.tag.isDarwin()) {
         return .metal;
     } else if (target.os.tag == .windows) {
         return .d3d11;
-    } else if (target.isWasm()) {
+    } else if (target.cpu.arch.isWasm()) {
         return .gles3;
-    } else if (target.isAndroid()) {
+    } else if (target.abi.isAndroid()) {
         return .gles3;
     } else {
         return .gl;
@@ -74,7 +74,7 @@ pub fn buildLibSokol(b: *Build, options: LibSokolOptions) !*CompileStep {
         .Debug, .ReleaseSafe => lib.bundle_compiler_rt = true,
         else => lib.root_module.strip = true,
     }
-    if (options.target.result.isWasm()) {
+    if (options.target.result.cpu.arch.isWasm()) {
         lib.root_module.root_source_file = b.path("src/handmade/math.zig");
         if (options.optimize != .Debug)
             lib.want_lto = true;
@@ -111,7 +111,7 @@ pub fn buildLibSokol(b: *Build, options: LibSokolOptions) !*CompileStep {
     }
 
     // platform specific compile and link options
-    if (lib.rootModuleTarget().isDarwin()) {
+    if (lib.rootModuleTarget().os.tag.isDarwin()) {
         try cflags.append("-ObjC");
         lib.linkFramework("Foundation");
         lib.linkFramework("AudioToolbox");
@@ -133,7 +133,7 @@ pub fn buildLibSokol(b: *Build, options: LibSokolOptions) !*CompileStep {
                 lib.linkFramework("OpenGL");
             }
         }
-    } else if (lib.rootModuleTarget().isAndroid()) {
+    } else if (lib.rootModuleTarget().abi.isAndroid()) {
         if (.gles3 != backend) {
             @panic("For android targets, you must have backend set to GLES3");
         }
@@ -329,11 +329,11 @@ pub fn build(b: *Build) !void {
                     "-preview=all",
                 },
                 // fixme: https://github.com/kassane/sokol-d/issues/1 - betterC works on darwin
-                .zig_cc = if (target.result.isDarwin() and !opt_betterC) false else opt_zigcc,
+                .zig_cc = if (target.result.os.tag.isDarwin() and !opt_betterC) false else opt_zigcc,
                 .target = target,
                 .optimize = optimize,
                 // send ldc2-obj (wasm artifact) to emcc
-                .kind = if (target.result.isWasm()) .obj else .exe,
+                .kind = if (target.result.cpu.arch.isWasm()) .obj else .exe,
                 .emsdk = emsdk,
                 .backend = sokol_backend,
                 .with_sokol_imgui = opt_with_sokol_imgui,
@@ -512,12 +512,12 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*Build.Step.InstallDir {
         ldc_exec.addArg("-L--no-as-needed");
     }
     // LLD (not working in zld)
-    if (options.target.result.isDarwin() and !options.zig_cc) {
+    if (options.target.result.os.tag.isDarwin() and !options.zig_cc) {
         // https://github.com/ldc-developers/ldc/issues/4501
         ldc_exec.addArg("-L-w"); // hide linker warnings
     }
 
-    if (options.target.result.isWasm()) {
+    if (options.target.result.cpu.arch.isWasm()) {
         ldc_exec.addArg("-L-allow-undefined");
 
         // Create a temporary D file for wasm assert function
@@ -641,7 +641,7 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*Build.Step.InstallDir {
             ldc_exec.addArg("-L=-dead_strip");
         }
         // Darwin frameworks
-        if (options.target.result.isDarwin()) {
+        if (options.target.result.os.tag.isDarwin()) {
             var it = lib_sokol.root_module.frameworks.iterator();
             while (it.next()) |framework| {
                 ldc_exec.addArg(b.fmt("-L-framework", .{}));
@@ -667,11 +667,11 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*Build.Step.InstallDir {
     }
 
     // ldc2 doesn't support zig native (a.k.a: native-native or native)
-    const mtriple = if (options.target.result.isDarwin())
+    const mtriple = if (options.target.result.os.tag.isDarwin())
         b.fmt("{s}-apple-{s}", .{ if (options.target.result.cpu.arch.isAARCH64()) "arm64" else @tagName(options.target.result.cpu.arch), @tagName(options.target.result.os.tag) })
-    else if (options.target.result.isWasm() and options.target.result.os.tag == .freestanding)
+    else if (options.target.result.cpu.arch.isWasm() and options.target.result.os.tag == .freestanding)
         b.fmt("{s}-unknown-unknown-wasm", .{@tagName(options.target.result.cpu.arch)})
-    else if (options.target.result.isWasm())
+    else if (options.target.result.cpu.arch.isWasm())
         b.fmt("{s}-unknown-{s}", .{ @tagName(options.target.result.cpu.arch), @tagName(options.target.result.os.tag) })
     else
         b.fmt("{s}-{s}-{s}", .{ @tagName(options.target.result.cpu.arch), @tagName(options.target.result.os.tag), @tagName(options.target.result.abi) });
@@ -715,7 +715,7 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*Build.Step.InstallDir {
     else
         b.step("test", "Run all tests");
 
-    if (options.target.result.isWasm()) {
+    if (options.target.result.cpu.arch.isWasm()) {
         ldc_exec.step.dependOn(&options.artifact.?.step);
         // get D object file and put it in the wasm artifact
         const artifact = addArtifact(b, options);
@@ -1006,7 +1006,7 @@ fn buildShaders(b: *Build, target: Build.ResolvedTarget) void {
             return;
         }
         const shdc_path = b.findProgram(&.{"sokol-shdc"}, &.{}) catch b.pathJoin(&.{ sokol_tools_bin_dir, optional_shdc.? });
-        const glsl = if (target.result.isDarwin()) "glsl410" else "glsl430";
+        const glsl = if (target.result.os.tag.isDarwin()) "glsl410" else "glsl430";
         const slang = glsl ++ ":metal_macos:hlsl5:glsl300es:wgsl";
         if (builtin.os.tag == .linux or builtin.os.tag == .macos) {
             const file = std.fs.openFileAbsolute(shdc_path, .{}) catch |err| {
@@ -1038,7 +1038,7 @@ fn buildShaders(b: *Build, target: Build.ResolvedTarget) void {
 
 // Enable fetch and install the Emscripten SDK
 fn enableWasm(b: *Build, target: Build.ResolvedTarget) ?*Build.Dependency {
-    if (target.result.isWasm())
+    if (target.result.cpu.arch.isWasm())
         return b.lazyDependency("emsdk", .{}) orelse null;
     return null;
 }
