@@ -42,7 +42,7 @@ void init()
     sg.setup(gfxd);
 
     // if storage buffers are not supported on the current backend, just render a red screen
-    if (!sg.queryFeatures.storage_buffer)
+    if (!sg.queryFeatures.compute)
     {
         state.passAction.colors[0].load_action = sg.LoadAction.Clear;
         state.passAction.colors[0].clear_value.r = 1.0;
