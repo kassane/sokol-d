@@ -318,6 +318,7 @@ pub fn build(b: *Build) !void {
             "cube",
             "debugtext",
             "instancing",
+            "instancingcompute",
             "mrt",
             "noninterleaved",
             "offscreen",
@@ -1017,7 +1018,7 @@ fn buildShaders(b: *Build) void {
             .{ .src = "blend.glsl", .needs_compute = false },
             .{ .src = "triangle.glsl", .needs_compute = false },
             .{ .src = "vertexpull.glsl", .needs_compute = true },
-            .{ .src = "instancing-compute.glsl", .needs_compute = true },
+            .{ .src = "instancingcompute.glsl", .needs_compute = true },
         };
         const optional_shdc: ?[:0]const u8 = comptime switch (builtin.os.tag) {
             .windows => "win32/sokol-shdc.exe",
