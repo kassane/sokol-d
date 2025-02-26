@@ -237,7 +237,7 @@ struct Features {
     bool image_clamp_to_border = false;
     bool mrt_independent_blend_state = false;
     bool mrt_independent_write_mask = false;
-    bool storage_buffer = false;
+    bool compute = false;
     bool msaa_image_bindings = false;
 }
 /// Runtime information about resource limits, returned by sg_query_limit()
@@ -962,6 +962,7 @@ struct Swapchain {
 extern(C)
 struct Pass {
     uint _start_canary = 0;
+    bool compute = false;
     PassAction action;
     Attachments attachments;
     Swapchain swapchain;
@@ -1352,6 +1353,7 @@ enum ShaderStage {
     None,
     Vertex,
     Fragment,
+    Compute,
 }
 extern(C)
 struct ShaderFunction {
@@ -1405,6 +1407,7 @@ struct ShaderStorageBuffer {
     ShaderStage stage;
     bool readonly = false;
     ubyte hlsl_register_t_n = 0;
+    ubyte hlsl_register_u_n = 0;
     ubyte msl_buffer_n = 0;
     ubyte wgsl_group1_binding_n = 0;
     ubyte glsl_binding_n = 0;
@@ -1417,16 +1420,24 @@ struct ShaderImageSamplerPair {
     const(char)* glsl_name = null;
 }
 extern(C)
+struct MtlShaderThreadsPerThreadgroup {
+    int x = 0;
+    int y = 0;
+    int z = 0;
+}
+extern(C)
 struct ShaderDesc {
     uint _start_canary = 0;
     ShaderFunction vertex_func;
     ShaderFunction fragment_func;
+    ShaderFunction compute_func;
     ShaderVertexAttr[16] attrs;
     ShaderUniformBlock[8] uniform_blocks;
     ShaderStorageBuffer[8] storage_buffers;
     ShaderImage[16] images;
     ShaderSampler[16] samplers;
     ShaderImageSamplerPair[16] image_sampler_pairs;
+    MtlShaderThreadsPerThreadgroup mtl_threads_per_threadgroup;
     const(char)* label = null;
     uint _end_canary = 0;
 }
@@ -1558,6 +1569,7 @@ struct ColorTargetState {
 extern(C)
 struct PipelineDesc {
     uint _start_canary = 0;
+    bool compute = false;
     Shader shader;
     VertexLayoutState layout;
     DepthState depth;
@@ -1654,6 +1666,7 @@ struct TraceHooks {
     extern(C) void function(const Bindings *, void*) apply_bindings = null;
     extern(C) void function(int, const Range *, void*) apply_uniforms = null;
     extern(C) void function(int, int, int, void*) draw = null;
+    extern(C) void function(int, int, int, void*) dispatch = null;
     extern(C) void function(void*) end_pass = null;
     extern(C) void function(void*) commit = null;
     extern(C) void function(Buffer, void*) alloc_buffer = null;
@@ -1709,7 +1722,7 @@ struct TraceHooks {
 /// sg_query_sampler_info()
 /// sg_query_shader_info()
 /// sg_query_pipeline_info()
-/// sg_query_pass_info()
+/// sg_query_attachments_info()
 extern(C)
 struct SlotInfo {
     ResourceState state;
@@ -1766,6 +1779,7 @@ struct FrameStatsGl {
     uint num_enable_vertex_attrib_array = 0;
     uint num_disable_vertex_attrib_array = 0;
     uint num_uniform = 0;
+    uint num_memory_barriers = 0;
 }
 extern(C)
 struct FrameStatsD3d11Pass {
@@ -1785,15 +1799,20 @@ struct FrameStatsD3d11Pipeline {
     uint num_vs_set_constant_buffers = 0;
     uint num_ps_set_shader = 0;
     uint num_ps_set_constant_buffers = 0;
+    uint num_cs_set_shader = 0;
+    uint num_cs_set_constant_buffers = 0;
 }
 extern(C)
 struct FrameStatsD3d11Bindings {
     uint num_ia_set_vertex_buffers = 0;
     uint num_ia_set_index_buffer = 0;
     uint num_vs_set_shader_resources = 0;
-    uint num_ps_set_shader_resources = 0;
     uint num_vs_set_samplers = 0;
+    uint num_ps_set_shader_resources = 0;
     uint num_ps_set_samplers = 0;
+    uint num_cs_set_shader_resources = 0;
+    uint num_cs_set_samplers = 0;
+    uint num_cs_set_unordered_access_views = 0;
 }
 extern(C)
 struct FrameStatsD3d11Uniforms {
@@ -1840,11 +1859,15 @@ struct FrameStatsMetalBindings {
     uint num_set_fragment_buffer = 0;
     uint num_set_fragment_texture = 0;
     uint num_set_fragment_sampler_state = 0;
+    uint num_set_compute_buffer = 0;
+    uint num_set_compute_texture = 0;
+    uint num_set_compute_sampler_state = 0;
 }
 extern(C)
 struct FrameStatsMetalUniforms {
     uint num_set_vertex_buffer_offset = 0;
     uint num_set_fragment_buffer_offset = 0;
+    uint num_set_compute_buffer_offset = 0;
 }
 extern(C)
 struct FrameStatsMetal {
@@ -1889,6 +1912,7 @@ struct FrameStats {
     uint num_apply_bindings = 0;
     uint num_apply_uniforms = 0;
     uint num_draw = 0;
+    uint num_dispatch = 0;
     uint num_update_buffer = 0;
     uint num_append_buffer = 0;
     uint num_update_image = 0;
@@ -1921,6 +1945,7 @@ enum LogItem {
     Gl_framebuffer_status_unknown,
     D3d11_create_buffer_failed,
     D3d11_create_buffer_srv_failed,
+    D3d11_create_buffer_uav_failed,
     D3d11_create_depth_texture_unsupported_pixel_format,
     D3d11_create_depth_texture_failed,
     D3d11_create_2d_texture_unsupported_pixel_format,
@@ -1933,6 +1958,7 @@ enum LogItem {
     D3d11_create_sampler_state_failed,
     D3d11_uniformblock_hlsl_register_b_out_of_range,
     D3d11_storagebuffer_hlsl_register_t_out_of_range,
+    D3d11_storagebuffer_hlsl_register_u_out_of_range,
     D3d11_image_hlsl_register_t_out_of_range,
     D3d11_sampler_hlsl_register_s_out_of_range,
     D3d11_load_d3dcompiler_47_dll_failed,
@@ -1960,6 +1986,8 @@ enum LogItem {
     Metal_storagebuffer_msl_buffer_slot_out_of_range,
     Metal_image_msl_texture_slot_out_of_range,
     Metal_sampler_msl_sampler_slot_out_of_range,
+    Metal_create_cps_failed,
+    Metal_create_cps_output,
     Metal_create_rps_failed,
     Metal_create_rps_output,
     Metal_create_dss_failed,
@@ -1979,8 +2007,8 @@ enum LogItem {
     Wgpu_sampler_wgsl_group1_binding_out_of_range,
     Wgpu_create_pipeline_layout_failed,
     Wgpu_create_render_pipeline_failed,
+    Wgpu_create_compute_pipeline_failed,
     Wgpu_attachments_create_texture_view_failed,
-    Draw_required_bindings_or_uniforms_missing,
     Identical_commit_listener,
     Commit_listener_array_full,
     Trace_hooks_not_enabled,
@@ -2015,12 +2043,13 @@ enum LogItem {
     Pipeline_pool_exhausted,
     Pass_pool_exhausted,
     Beginpass_attachment_invalid,
+    Apply_bindings_storage_buffer_tracker_exhausted,
     Draw_without_bindings,
     Validate_bufferdesc_canary,
-    Validate_bufferdesc_size,
-    Validate_bufferdesc_data,
-    Validate_bufferdesc_data_size,
-    Validate_bufferdesc_no_data,
+    Validate_bufferdesc_expect_nonzero_size,
+    Validate_bufferdesc_expect_matching_data_size,
+    Validate_bufferdesc_expect_zero_data_size,
+    Validate_bufferdesc_expect_no_data,
     Validate_bufferdesc_storagebuffer_supported,
     Validate_bufferdesc_storagebuffer_size_multiple_4,
     Validate_imagedata_nodata,
@@ -2044,10 +2073,15 @@ enum LogItem {
     Validate_samplerdesc_canary,
     Validate_samplerdesc_anistropic_requires_linear_filtering,
     Validate_shaderdesc_canary,
-    Validate_shaderdesc_source,
-    Validate_shaderdesc_bytecode,
-    Validate_shaderdesc_source_or_bytecode,
+    Validate_shaderdesc_vertex_source,
+    Validate_shaderdesc_fragment_source,
+    Validate_shaderdesc_compute_source,
+    Validate_shaderdesc_vertex_source_or_bytecode,
+    Validate_shaderdesc_fragment_source_or_bytecode,
+    Validate_shaderdesc_compute_source_or_bytecode,
+    Validate_shaderdesc_invalid_shader_combo,
     Validate_shaderdesc_no_bytecode_size,
+    Validate_shaderdesc_metal_threads_per_threadgroup,
     Validate_shaderdesc_uniformblock_no_cont_members,
     Validate_shaderdesc_uniformblock_size_is_zero,
     Validate_shaderdesc_uniformblock_metal_buffer_slot_out_of_range,
@@ -2065,11 +2099,12 @@ enum LogItem {
     Validate_shaderdesc_storagebuffer_metal_buffer_slot_collision,
     Validate_shaderdesc_storagebuffer_hlsl_register_t_out_of_range,
     Validate_shaderdesc_storagebuffer_hlsl_register_t_collision,
+    Validate_shaderdesc_storagebuffer_hlsl_register_u_out_of_range,
+    Validate_shaderdesc_storagebuffer_hlsl_register_u_collision,
     Validate_shaderdesc_storagebuffer_glsl_binding_out_of_range,
     Validate_shaderdesc_storagebuffer_glsl_binding_collision,
     Validate_shaderdesc_storagebuffer_wgsl_group1_binding_out_of_range,
     Validate_shaderdesc_storagebuffer_wgsl_group1_binding_collision,
-    Validate_shaderdesc_storagebuffer_readonly,
     Validate_shaderdesc_image_metal_texture_slot_out_of_range,
     Validate_shaderdesc_image_metal_texture_slot_collision,
     Validate_shaderdesc_image_hlsl_register_t_out_of_range,
@@ -2094,9 +2129,12 @@ enum LogItem {
     Validate_shaderdesc_attr_string_too_long,
     Validate_pipelinedesc_canary,
     Validate_pipelinedesc_shader,
+    Validate_pipelinedesc_compute_shader_expected,
+    Validate_pipelinedesc_no_compute_shader_expected,
     Validate_pipelinedesc_no_cont_attrs,
     Validate_pipelinedesc_layout_stride4,
     Validate_pipelinedesc_attr_semantics,
+    Validate_pipelinedesc_shader_readonly_storagebuffers,
     Validate_pipelinedesc_blendop_minmax_requires_blendfactor_one,
     Validate_attachmentsdesc_canary,
     Validate_attachmentsdesc_no_attachments,
@@ -2130,6 +2168,7 @@ enum LogItem {
     Validate_attachmentsdesc_depth_image_sizes,
     Validate_attachmentsdesc_depth_image_sample_count,
     Validate_beginpass_canary,
+    Validate_beginpass_expect_no_attachments,
     Validate_beginpass_attachments_exists,
     Validate_beginpass_attachments_valid,
     Validate_beginpass_color_attachment_image,
@@ -2163,20 +2202,28 @@ enum LogItem {
     Validate_beginpass_swapchain_wgpu_expect_depthstencilview,
     Validate_beginpass_swapchain_wgpu_expect_depthstencilview_notset,
     Validate_beginpass_swapchain_gl_expect_framebuffer_notset,
+    Validate_avp_renderpass_expected,
+    Validate_asr_renderpass_expected,
     Validate_apip_pipeline_valid_id,
     Validate_apip_pipeline_exists,
     Validate_apip_pipeline_valid,
+    Validate_apip_pass_expected,
     Validate_apip_shader_exists,
     Validate_apip_shader_valid,
+    Validate_apip_computepass_expected,
+    Validate_apip_renderpass_expected,
     Validate_apip_curpass_attachments_exists,
     Validate_apip_curpass_attachments_valid,
     Validate_apip_att_count,
     Validate_apip_color_format,
     Validate_apip_depth_format,
     Validate_apip_sample_count,
+    Validate_abnd_pass_expected,
     Validate_abnd_pipeline,
     Validate_abnd_pipeline_exists,
     Validate_abnd_pipeline_valid,
+    Validate_abnd_compute_expected_no_vbs,
+    Validate_abnd_compute_expected_no_ib,
     Validate_abnd_expected_vb,
     Validate_abnd_vb_exists,
     Validate_abnd_vb_type,
@@ -2201,9 +2248,20 @@ enum LogItem {
     Validate_abnd_expected_storagebuffer_binding,
     Validate_abnd_storagebuffer_exists,
     Validate_abnd_storagebuffer_binding_buffertype,
-    Validate_aub_no_pipeline,
-    Validate_aub_no_uniformblock_at_slot,
-    Validate_aub_size,
+    Validate_au_pass_expected,
+    Validate_au_no_pipeline,
+    Validate_au_no_uniformblock_at_slot,
+    Validate_au_size,
+    Validate_draw_renderpass_expected,
+    Validate_draw_baseelement,
+    Validate_draw_numelements,
+    Validate_draw_numinstances,
+    Validate_draw_required_bindings_or_uniforms_missing,
+    Validate_dispatch_computepass_expected,
+    Validate_dispatch_numgroupsx,
+    Validate_dispatch_numgroupsy,
+    Validate_dispatch_numgroupsz,
+    Validate_dispatch_required_bindings_or_uniforms_missing,
     Validate_updatebuf_usage,
     Validate_updatebuf_size,
     Validate_updatebuf_once,
@@ -2376,6 +2434,7 @@ struct Desc {
     int pipeline_pool_size = 0;
     int attachments_pool_size = 0;
     int uniform_buffer_size = 0;
+    int max_dispatch_calls_per_pass = 0;
     int max_commit_listeners = 0;
     bool disable_validation = false;
     bool d3d11_shader_debugging = false;
@@ -2533,6 +2592,10 @@ void applyUniforms(uint ub_slot, scope ref Range data) @trusted @nogc nothrow {
 extern(C) void sg_draw(uint, uint, uint) @system @nogc nothrow;
 void draw(uint base_element, uint num_elements, uint num_instances) @trusted @nogc nothrow {
     sg_draw(base_element, num_elements, num_instances);
+}
+extern(C) void sg_dispatch(uint, uint, uint) @system @nogc nothrow;
+void dispatch(uint num_groups_x, uint num_groups_y, uint num_groups_z) @trusted @nogc nothrow {
+    sg_dispatch(num_groups_x, num_groups_y, num_groups_z);
 }
 extern(C) void sg_end_pass() @system @nogc nothrow;
 void endPass() @trusted @nogc nothrow {
@@ -2947,7 +3010,8 @@ struct WgpuShaderInfo {
 }
 extern(C)
 struct WgpuPipelineInfo {
-    const(void)* pip = null;
+    const(void)* render_pipeline = null;
+    const(void)* compute_pipeline = null;
 }
 extern(C)
 struct WgpuAttachmentsInfo {
@@ -3034,11 +3098,17 @@ extern(C) const(void)* sg_mtl_device() @system @nogc nothrow;
 scope const(void)* mtlDevice() @trusted @nogc nothrow {
     return sg_mtl_device();
 }
-/// Metal: return __bridge-casted MTLRenderCommandEncoder in current pass (or zero if outside pass)
+/// Metal: return __bridge-casted MTLRenderCommandEncoder when inside render pass (otherwise zero)
 extern(C) const(void)* sg_mtl_render_command_encoder() @system @nogc nothrow;
-/// Metal: return __bridge-casted MTLRenderCommandEncoder in current pass (or zero if outside pass)
+/// Metal: return __bridge-casted MTLRenderCommandEncoder when inside render pass (otherwise zero)
 scope const(void)* mtlRenderCommandEncoder() @trusted @nogc nothrow {
     return sg_mtl_render_command_encoder();
+}
+/// Metal: return __bridge-casted MTLComputeCommandEncoder when inside compute pass (otherwise zero)
+extern(C) const(void)* sg_mtl_compute_command_encoder() @system @nogc nothrow;
+/// Metal: return __bridge-casted MTLComputeCommandEncoder when inside compute pass (otherwise zero)
+scope const(void)* mtlComputeCommandEncoder() @trusted @nogc nothrow {
+    return sg_mtl_compute_command_encoder();
 }
 /// Metal: get internal __bridge-casted buffer resource objects
 extern(C) MtlBufferInfo sg_mtl_query_buffer_info(Buffer) @system @nogc nothrow;
@@ -3088,11 +3158,17 @@ extern(C) const(void)* sg_wgpu_command_encoder() @system @nogc nothrow;
 scope const(void)* wgpuCommandEncoder() @trusted @nogc nothrow {
     return sg_wgpu_command_encoder();
 }
-/// WebGPU: return WGPURenderPassEncoder of current pass
+/// WebGPU: return WGPURenderPassEncoder of current pass (returns 0 when outside pass or in a compute pass)
 extern(C) const(void)* sg_wgpu_render_pass_encoder() @system @nogc nothrow;
-/// WebGPU: return WGPURenderPassEncoder of current pass
+/// WebGPU: return WGPURenderPassEncoder of current pass (returns 0 when outside pass or in a compute pass)
 scope const(void)* wgpuRenderPassEncoder() @trusted @nogc nothrow {
     return sg_wgpu_render_pass_encoder();
+}
+/// WebGPU: return WGPUComputePassEncoder of current pass (returns 0 when outside pass or in a render pass)
+extern(C) const(void)* sg_wgpu_compute_pass_encoder() @system @nogc nothrow;
+/// WebGPU: return WGPUComputePassEncoder of current pass (returns 0 when outside pass or in a render pass)
+scope const(void)* wgpuComputePassEncoder() @trusted @nogc nothrow {
+    return sg_wgpu_compute_pass_encoder();
 }
 /// WebGPU: get internal buffer resource objects
 extern(C) WgpuBufferInfo sg_wgpu_query_buffer_info(Buffer) @system @nogc nothrow;
