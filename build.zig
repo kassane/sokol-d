@@ -823,7 +823,7 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*Build.Step.InstallDir {
             .use_webgl2 = backend != .wgpu,
             .use_emmalloc = options.betterC,
             .use_filesystem = false,
-            .use_drt = !options.betterC and options.target.result.isWasm(),
+            .use_drt = !options.betterC and isPlatform(options.target.result, .web),
             .use_ubsan = options.artifact.?.root_module.sanitize_c orelse false,
             .release_use_lto = options.artifact.?.want_lto orelse false,
             .shell_file_path = b.path("src/sokol/web/shell.html"),
