@@ -1,7 +1,8 @@
 .{
-    .name = "sokol-d",
-    .version = "0.1.9",
+    .name = .sokol,
+    .version = "0.2.0",
     .min_zig_version = "0.14.0",
+    .fingerprint = 0xf9f6f48d67869e98,
     .paths = .{
         "src",
         "tools",
@@ -13,17 +14,17 @@
     .dependencies = .{
         .imgui = .{
             .url = "git+https://github.com/floooh/dcimgui#v1.91.7",
-            .hash = "1220c640ad23d8800437166865e54f172c612fcfe6e000149a2b2af631c37b605f50",
+            .hash = "cimgui-0.1.0-AAAAAFY9hQDGQK0j2IAENxZoZeVPFyxhL8_m4AAUmisq",
             .lazy = true,
         },
         .emsdk = .{
-            .url = "git+https://github.com/emscripten-core/emsdk#4.0.1",
-            .hash = "12201185a3deb48d17035e6c619f2b28cef8cd6080afe88e061e326a6a3826a7a370",
+            .url = "git+https://github.com/emscripten-core/emsdk#4.0.4",
+            .hash = "N-V-__8AAFi6BQDeMj7wH24J1F5Mj8s7kkJZEPJanR8j0W6u",
             .lazy = true,
         },
         .shdc = .{
-            .url = "git+https://github.com/floooh/sokol-tools-bin#c37e6630a1a55141d813eae2bf17b6ef93e9867c",
-            .hash = "122007ff9e979a63058e3af1de1d8b98957baa741a8b779d50f9b251dca4acf60b41",
+            .url = "git+https://github.com/floooh/sokol-tools-bin#339ff0314f19414c248cd540b7c72de1873f3a4b",
+            .hash = "N-V-__8AAPiO9QNzW747-YsdWwiiBaNLStW1ar0uVCgmxS4D",
             .lazy = true,
         },
     },
