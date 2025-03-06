@@ -16,7 +16,7 @@ jobs:
           version: master
       - uses: dlang-community/setup-dlang@v2
         with:
-          compiler: ldc-latest
+          compiler: ldc-master
 
       - name: prepare-linux
         if: runner.os == 'Linux'
