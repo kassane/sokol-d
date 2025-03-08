@@ -304,7 +304,7 @@ pub fn build(b: *Build) !void {
     }
 
     if (opt_shaders)
-        buildShaders(b, target);
+        buildShaders(b);
     if (dub_artifact) {
         if (opt_with_sokol_imgui)
             b.installArtifact(lib_imgui.?);
@@ -318,6 +318,7 @@ pub fn build(b: *Build) !void {
             "cube",
             "debugtext",
             "instancing",
+            "instancingcompute",
             "mrt",
             "noninterleaved",
             "offscreen",
@@ -999,24 +1000,25 @@ const generated_zcc =
 // -------------------------- Build Steps --------------------------
 
 // a separate step to compile shaders, expects the shader compiler in ../sokol-tools-bin/
-fn buildShaders(b: *Build, target: Build.ResolvedTarget) void {
+fn buildShaders(b: *Build) void {
     if (b.lazyDependency("shdc", .{})) |dep| {
         const shdc_dep = dep.path("").getPath(b);
         const sokol_tools_bin_dir = b.pathJoin(&.{ shdc_dep, "bin" });
         const shaders_dir = "src/examples/shaders/";
         const shaders = .{
-            "triangle.glsl",
-            "bufferoffsets.glsl",
-            "cube.glsl",
-            "instancing.glsl",
-            "mrt.glsl",
-            "noninterleaved.glsl",
-            "offscreen.glsl",
-            "quad.glsl",
-            "shapes.glsl",
-            "texcube.glsl",
-            "blend.glsl",
-            "vertexpull.glsl",
+            .{ .src = "bufferoffsets.glsl", .needs_compute = false },
+            .{ .src = "cube.glsl", .needs_compute = false },
+            .{ .src = "instancing.glsl", .needs_compute = false },
+            .{ .src = "mrt.glsl", .needs_compute = false },
+            .{ .src = "noninterleaved.glsl", .needs_compute = false },
+            .{ .src = "offscreen.glsl", .needs_compute = false },
+            .{ .src = "quad.glsl", .needs_compute = false },
+            .{ .src = "shapes.glsl", .needs_compute = false },
+            .{ .src = "texcube.glsl", .needs_compute = false },
+            .{ .src = "blend.glsl", .needs_compute = false },
+            .{ .src = "triangle.glsl", .needs_compute = false },
+            .{ .src = "vertexpull.glsl", .needs_compute = true },
+            .{ .src = "instancingcompute.glsl", .needs_compute = true },
         };
         const optional_shdc: ?[:0]const u8 = comptime switch (builtin.os.tag) {
             .windows => "win32/sokol-shdc.exe",
@@ -1029,8 +1031,6 @@ fn buildShaders(b: *Build, target: Build.ResolvedTarget) void {
             return;
         }
         const shdc_path = b.findProgram(&.{"sokol-shdc"}, &.{}) catch b.pathJoin(&.{ sokol_tools_bin_dir, optional_shdc.? });
-        const glsl = if (isPlatform(target.result, .darwin)) "glsl410" else "glsl430";
-        const slang = glsl ++ ":metal_macos:hlsl5:glsl300es:wgsl";
         if (builtin.os.tag == .linux or builtin.os.tag == .macos) {
             const file = std.fs.openFileAbsolute(shdc_path, .{}) catch |err| {
                 std.debug.panic("failed to open {s}: {s}", .{ shdc_path, @errorName(err) });
@@ -1041,12 +1041,16 @@ fn buildShaders(b: *Build, target: Build.ResolvedTarget) void {
             };
         }
         inline for (shaders) |shader| {
+            const slang = if (shader.needs_compute)
+                "glsl430:glsl310es:metal_macos:hlsl5:wgsl"
+            else
+                "glsl410:glsl300es:metal_macos:hlsl5:wgsl";
             const cmd = b.addSystemCommand(&.{
                 shdc_path,
                 "-i",
-                shaders_dir ++ shader,
+                shaders_dir ++ shader.src,
                 "-o",
-                shaders_dir ++ shader[0 .. shader.len - 5] ++ ".d",
+                shaders_dir ++ shader.src[0 .. shader.src.len - 5] ++ ".d",
                 "-l",
                 slang,
                 "-f",
