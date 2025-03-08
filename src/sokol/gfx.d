@@ -555,7 +555,7 @@ enum UniformType {
 /// only relevant for the GL backend where the internal layout
 /// of uniform blocks must be known to sokol-gfx. For all other backends the
 /// internal memory layout of uniform blocks doesn't matter, sokol-gfx
-/// will just pass uniform data as a single memory blob to the
+/// will just pass uniform data as an opaque memory blob to the
 /// 3D backend.
 /// 
 /// SG_UNIFORMLAYOUT_NATIVE (default)
@@ -627,7 +627,7 @@ enum FaceWinding {
 ///         .compare
 ///     .stencil
 ///         .front.compare
-///         .back.compar
+///         .back.compare
 /// 
 /// sg_sampler_desc
 ///     .compare
@@ -935,30 +935,29 @@ struct Swapchain {
 /// The sg_pass structure is passed as argument into the sg_begin_pass()
 /// function.
 /// 
-/// For an offscreen rendering pass, an sg_pass_action struct and sg_attachments
-/// object must be provided, and for swapchain passes, an sg_pass_action and
-/// an sg_swapchain struct. It is an error to provide both an sg_attachments
-/// handle and an initialized sg_swapchain struct in the same sg_begin_pass().
-/// 
-/// An sg_begin_pass() call for an offscreen pass would look like this (where
-/// `attachments` is an sg_attachments handle):
-/// 
-///     sg_begin_pass(&(sg_pass){
-///         .action = { ... },
-///         .attachments = attachments,
-///     });
-/// 
-/// ...and a swapchain render pass would look like this (using the sokol_glue.h
-/// helper function sglue_swapchain() which gets the swapchain properties from
-/// sokol_app.h):
+/// For a swapchain render pass, provide an sg_pass_action and sg_swapchain
+/// struct (for instance via the sglue_swapchain() helper function from
+/// sokol_glue.h):
 /// 
 ///     sg_begin_pass(&(sg_pass){
 ///         .action = { ... },
 ///         .swapchain = sglue_swapchain(),
 ///     });
 /// 
+/// For an offscreen render pass, provide an sg_pass_action struct and
+/// an sg_attachments handle:
+/// 
+///     sg_begin_pass(&(sg_pass){
+///         .action = { ... },
+///         .attachments = attachments,
+///     });
+/// 
 /// You can also omit the .action object to get default pass action behaviour
 /// (clear to color=grey, depth=1 and stencil=0).
+/// 
+/// For a compute pass, just set the sg_pass.compute boolean to true:
+/// 
+///     sg_begin_pass(&(sg_pass){ .compute = true });
 extern(C)
 struct Pass {
     uint _start_canary = 0;
@@ -996,6 +995,9 @@ struct Pass {
 /// - SG_MAX_IMAGE_BINDLOTS
 /// - SG_MAX_SAMPLER_BINDSLOTS
 /// - SG_MAX_STORAGEBUFFER_BINDGLOTS
+/// 
+/// Note that inside compute passes vertex- and index-buffer-bindings are
+/// disallowed.
 /// 
 /// When using sokol-shdc for shader authoring, the `layout(binding=N)`
 /// annotation in the shader code directly maps to the slot index for that
@@ -1081,8 +1083,12 @@ struct Bindings {
 /// keep the .size item zero-initialized, and set the size together with the
 /// pointer to the initial data in the .data item.
 /// 
-/// For mutable buffers without initial data, keep the .data item
+/// For immutable or mutable buffers without initial data, keep the .data item
 /// zero-initialized, and set the buffer size in the .size item instead.
+/// 
+/// NOTE: Immutable buffers without initial data are guaranteed to be
+/// zero-initialized. For mutable (dynamic or streaming) buffers, the
+/// initial content is undefined.
 /// 
 /// You can also set both size values, but currently both size values must
 /// be identical (this may change in the future when the dynamic resource
@@ -1264,10 +1270,25 @@ struct SamplerDesc {
 ///     - for D3D11: an optional compile target when source code is provided
 ///       (the defaults are "vs_4_0" and "ps_4_0")
 /// 
-/// - vertex attributes required by some backends:
+/// - ...or alternatively, a compute function:
+///     - the shader source or bytecode
+///     - an optional entry point name
+///     - for D3D11: an optional compile target when source code is provided
+///       (the default is "cs_5_0")
+/// 
+/// - vertex attributes required by some backends (not for compute shaders):
 ///     - for the GL backend: optional vertex attribute names
 ///       used for name lookup
 ///     - for the D3D11 backend: semantic names and indices
+/// 
+/// - only for compute shaders on the Metal backend:
+///     - the workgroup size aka 'threads per thread-group'
+/// 
+///       In other 3D APIs this is declared in the shader code:
+///         - GLSL: `layout(local_size_x=x, local_size_y=y, local_size_y=z) in;`
+///         - HLSL: `[numthreads(x, y, z)]`
+///         - WGSL: `@workgroup_size(x, y, z)`
+///       ...but in Metal the workgroup size is declared on the CPU side
 /// 
 /// - reflection information for each uniform block used by the shader:
 ///     - the shader stage the uniform block appears in (SG_SHADERSTAGE_*)
@@ -1306,7 +1327,9 @@ struct SamplerDesc {
 ///     - whether the storage buffer is readonly (currently this must
 ///       always be true)
 ///     - backend specific bindslots:
-///         - HLSL: the texture(sic) register `register(t0..23)`
+///         - HLSL:
+///             - for readonly storage buffer bindings: `register(t0..23)`
+///             - for read/write storage buffer bindings: `register(u0..7)`
 ///         - MSL: the buffer attribute `[[buffer(8..15)]]`
 ///         - WGSL: the binding in `@group(1) @binding(0..127)`
 ///         - GL: the binding in `layout(binding=0..7)`
@@ -1446,6 +1469,15 @@ struct ShaderDesc {
 /// The sg_pipeline_desc struct defines all creation parameters for an
 /// sg_pipeline object, used as argument to the sg_make_pipeline() function:
 /// 
+/// Pipeline objects come in two flavours:
+/// 
+/// - render pipelines for use in render passes
+/// - compute pipelines for use in compute passes
+/// 
+/// A compute pipeline only requires a compute shader object but no
+/// 'render state', while a render pipeline requires a vertex/fragment shader
+/// object and additional render state declarations:
+/// 
 /// - the vertex layout for all input vertex buffers
 /// - a shader object
 /// - the 3D primitive type (points, lines, triangles, ...)
@@ -1461,6 +1493,7 @@ struct ShaderDesc {
 /// 
 /// The default configuration is as follows:
 /// 
+/// .compute:               false (must be set to true for a compute pipeline)
 /// .shader:                0 (must be initialized with a valid sg_shader id!)
 /// .layout:
 ///     .buffers[]:         vertex buffer layouts
@@ -2280,15 +2313,16 @@ enum LogItem {
 /// 
 /// The default configuration is:
 /// 
-/// .buffer_pool_size       128
-/// .image_pool_size        128
-/// .sampler_pool_size      64
-/// .shader_pool_size       32
-/// .pipeline_pool_size     64
-/// .pass_pool_size         16
-/// .uniform_buffer_size    4 MB (4*1024*1024)
-/// .max_commit_listeners   1024
-/// .disable_validation     false
+/// .buffer_pool_size               128
+/// .image_pool_size                128
+/// .sampler_pool_size              64
+/// .shader_pool_size               32
+/// .pipeline_pool_size             64
+/// .attachments_pool_size          16
+/// .uniform_buffer_size            4 MB (4*1024*1024)
+/// .max_dispatch_calls_per_pass    1024
+/// .max_commit_listeners           1024
+/// .disable_validation             false
 /// .mtl_force_managed_storage_mode false
 /// .wgpu_disable_bindgroups_cache  false
 /// .wgpu_bindgroups_cache_size     1024
