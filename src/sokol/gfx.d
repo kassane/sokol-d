@@ -2281,6 +2281,7 @@ enum LogItem {
     Validate_abnd_expected_storagebuffer_binding,
     Validate_abnd_storagebuffer_exists,
     Validate_abnd_storagebuffer_binding_buffertype,
+    Validate_abnd_storagebuffer_readwrite_immutable,
     Validate_au_pass_expected,
     Validate_au_no_pipeline,
     Validate_au_no_uniformblock_at_slot,
