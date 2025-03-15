@@ -611,8 +611,11 @@ sg.ShaderDesc instancingShaderDesc(sg.Backend backend) @trusted @nogc nothrow {
             desc.vertex_func.entry = "main";
             desc.fragment_func.source = &FS_SOURCE_GLSL410[0];
             desc.fragment_func.entry = "main";
+            desc.attrs[0].base_type = sg.ShaderAttrBaseType.Float;
             desc.attrs[0].glsl_name = "pos";
+            desc.attrs[1].base_type = sg.ShaderAttrBaseType.Float;
             desc.attrs[1].glsl_name = "color0";
+            desc.attrs[2].base_type = sg.ShaderAttrBaseType.Float;
             desc.attrs[2].glsl_name = "inst_pos";
             desc.uniform_blocks[0].stage = sg.ShaderStage.Vertex;
             desc.uniform_blocks[0].layout = sg.UniformLayout.Std140;
@@ -626,8 +629,11 @@ sg.ShaderDesc instancingShaderDesc(sg.Backend backend) @trusted @nogc nothrow {
             desc.vertex_func.entry = "main";
             desc.fragment_func.source = &FS_SOURCE_GLSL300ES[0];
             desc.fragment_func.entry = "main";
+            desc.attrs[0].base_type = sg.ShaderAttrBaseType.Float;
             desc.attrs[0].glsl_name = "pos";
+            desc.attrs[1].base_type = sg.ShaderAttrBaseType.Float;
             desc.attrs[1].glsl_name = "color0";
+            desc.attrs[2].base_type = sg.ShaderAttrBaseType.Float;
             desc.attrs[2].glsl_name = "inst_pos";
             desc.uniform_blocks[0].stage = sg.ShaderStage.Vertex;
             desc.uniform_blocks[0].layout = sg.UniformLayout.Std140;
@@ -643,10 +649,13 @@ sg.ShaderDesc instancingShaderDesc(sg.Backend backend) @trusted @nogc nothrow {
             desc.fragment_func.source = &FS_SOURCE_HLSL5[0];
             desc.fragment_func.d3d11_target = "ps_5_0";
             desc.fragment_func.entry = "main";
+            desc.attrs[0].base_type = sg.ShaderAttrBaseType.Float;
             desc.attrs[0].hlsl_sem_name = "TEXCOORD";
             desc.attrs[0].hlsl_sem_index = 0;
+            desc.attrs[1].base_type = sg.ShaderAttrBaseType.Float;
             desc.attrs[1].hlsl_sem_name = "TEXCOORD";
             desc.attrs[1].hlsl_sem_index = 1;
+            desc.attrs[2].base_type = sg.ShaderAttrBaseType.Float;
             desc.attrs[2].hlsl_sem_name = "TEXCOORD";
             desc.attrs[2].hlsl_sem_index = 2;
             desc.uniform_blocks[0].stage = sg.ShaderStage.Vertex;
@@ -659,6 +668,9 @@ sg.ShaderDesc instancingShaderDesc(sg.Backend backend) @trusted @nogc nothrow {
             desc.vertex_func.entry = "main0";
             desc.fragment_func.source = &FS_SOURCE_METAL_MACOS[0];
             desc.fragment_func.entry = "main0";
+            desc.attrs[0].base_type = sg.ShaderAttrBaseType.Float;
+            desc.attrs[1].base_type = sg.ShaderAttrBaseType.Float;
+            desc.attrs[2].base_type = sg.ShaderAttrBaseType.Float;
             desc.uniform_blocks[0].stage = sg.ShaderStage.Vertex;
             desc.uniform_blocks[0].layout = sg.UniformLayout.Std140;
             desc.uniform_blocks[0].size = 64;
@@ -669,6 +681,9 @@ sg.ShaderDesc instancingShaderDesc(sg.Backend backend) @trusted @nogc nothrow {
             desc.vertex_func.entry = "main";
             desc.fragment_func.source = &FS_SOURCE_WGSL[0];
             desc.fragment_func.entry = "main";
+            desc.attrs[0].base_type = sg.ShaderAttrBaseType.Float;
+            desc.attrs[1].base_type = sg.ShaderAttrBaseType.Float;
+            desc.attrs[2].base_type = sg.ShaderAttrBaseType.Float;
             desc.uniform_blocks[0].stage = sg.ShaderStage.Vertex;
             desc.uniform_blocks[0].layout = sg.UniformLayout.Std140;
             desc.uniform_blocks[0].size = 64;
