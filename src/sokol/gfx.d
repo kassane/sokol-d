@@ -283,7 +283,7 @@ enum ResourceState {
 /// and images:
 /// 
 /// SG_USAGE_IMMUTABLE:     the resource will never be updated with
-///                         new data, instead the content of the
+///                         new (CPU-side) data, instead the content of the
 ///                         resource must be provided on creation
 /// SG_USAGE_DYNAMIC:       the resource will be updated infrequently
 ///                         with new data (this could range from "once
@@ -493,22 +493,36 @@ enum BorderColor {
 /// sg_vertex_format
 /// 
 /// The data type of a vertex component. This is used to describe
-/// the layout of vertex data when creating a pipeline object.
+/// the layout of input vertex data when creating a pipeline object.
+/// 
+/// NOTE that specific mapping rules exist from the CPU-side vertex
+/// formats to the vertex attribute base type in the vertex shader code
+/// (see doc header section 'ON VERTEX FORMATS').
 enum VertexFormat {
     Invalid,
     Float,
     Float2,
     Float3,
     Float4,
+    Int,
+    Int2,
+    Int3,
+    Int4,
+    Uint,
+    Uint2,
+    Uint3,
+    Uint4,
     Byte4,
     Byte4n,
     Ubyte4,
     Ubyte4n,
     Short2,
     Short2n,
+    Ushort2,
     Ushort2n,
     Short4,
     Short4n,
+    Ushort4,
     Ushort4n,
     Uint10_n2,
     Half2,
@@ -1277,8 +1291,12 @@ struct SamplerDesc {
 ///       (the default is "cs_5_0")
 /// 
 /// - vertex attributes required by some backends (not for compute shaders):
-///     - for the GL backend: optional vertex attribute names
-///       used for name lookup
+///     - the vertex attribute base type (undefined, float, signed int, unsigned int),
+///       this information is only used in the validation layer to check that the
+///       pipeline object vertex formats are compatible with the input vertex attribute
+///       type used in the vertex shader. NOTE that the default base type
+///       'undefined' skips the validation layer check.
+///     - for the GL backend: optional vertex attribute names used for name lookup
 ///     - for the D3D11 backend: semantic names and indices
 /// 
 /// - only for compute shaders on the Metal backend:
@@ -1385,8 +1403,15 @@ struct ShaderFunction {
     const(char)* entry = null;
     const(char)* d3d11_target = null;
 }
+enum ShaderAttrBaseType {
+    Undefined,
+    Float,
+    Sint,
+    Uint,
+}
 extern(C)
 struct ShaderVertexAttr {
+    ShaderAttrBaseType base_type;
     const(char)* glsl_name = null;
     const(char)* hlsl_sem_name = null;
     ubyte hlsl_sem_index = 0;
@@ -2165,6 +2190,7 @@ enum LogItem {
     Validate_pipelinedesc_compute_shader_expected,
     Validate_pipelinedesc_no_compute_shader_expected,
     Validate_pipelinedesc_no_cont_attrs,
+    Validate_pipelinedesc_attr_basetype_mismatch,
     Validate_pipelinedesc_layout_stride4,
     Validate_pipelinedesc_attr_semantics,
     Validate_pipelinedesc_shader_readonly_storagebuffers,
@@ -2590,9 +2616,9 @@ extern(C) bool sg_query_buffer_will_overflow(Buffer, size_t) @system @nogc nothr
 bool queryBufferWillOverflow(Buffer buf, size_t size) @trusted @nogc nothrow {
     return sg_query_buffer_will_overflow(buf, size);
 }
-/// rendering functions
+/// render and compute functions
 extern(C) void sg_begin_pass(const Pass *) @system @nogc nothrow;
-/// rendering functions
+/// render and compute functions
 void beginPass(scope ref Pass pass) @trusted @nogc nothrow {
     sg_begin_pass(&pass);
 }
