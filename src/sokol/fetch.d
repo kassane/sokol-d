@@ -72,6 +72,7 @@ enum Error {
     Unexpected_eof,
     Invalid_http_status,
     Cancelled,
+    Js_other,
 }
 /// the response struct passed to the response callback
 extern(C)
