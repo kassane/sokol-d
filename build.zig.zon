@@ -13,8 +13,8 @@
     },
     .dependencies = .{
         .imgui = .{
-            .url = "git+https://github.com/floooh/dcimgui#v1.91.7",
-            .hash = "cimgui-0.1.0-AAAAAFY9hQDGQK0j2IAENxZoZeVPFyxhL8_m4AAUmisq",
+            .url = "git+https://github.com/floooh/dcimgui#v1.91.9",
+            .hash = "cimgui-0.1.0-44ClkTt5hgBU8BelH8W_G8mso3ys_hrqNUWwJvaxXDs5",
             .lazy = true,
         },
         .emsdk = .{

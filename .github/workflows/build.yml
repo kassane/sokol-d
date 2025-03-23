@@ -24,28 +24,29 @@ jobs:
             sudo apt-get update
             sudo apt-get install libglu1-mesa-dev mesa-common-dev xorg-dev libasound-dev
 
-      # - name: (Dub) Build Native
-      #   if: runner.os != 'Windows'
-      #   run: |
-      #       dub build :clear
-      #       dub build :sgl_context
-      #       dub build :sgl_points
-      #       dub build :debugtext
-      #       dub build :cube
-      #       dub build :texcube
-      #       dub build :blend
-      #       dub build :triangle
-      #       dub build :instancing
-      #       dub build :mrt
-      #       dub build :noninterleaved
-      #       dub build :quad
-      #       dub build :offscreen
-      #       dub build :bufferoffsets
-      #       dub build :user_data
-      #       dub build :vertexpull
-      #       dub build :shapes
-      #       dub build :imgui
-      #       dub build :droptest
+      - name: (Dub) Build Native
+        if: runner.os != 'Windows'
+        run: |
+            dub build :clear
+            dub build :sgl_context
+            dub build :sgl_points
+            dub build :debugtext
+            dub build :cube
+            dub build :texcube
+            dub build :blend
+            dub build :triangle
+            dub build :instancing
+            dub build :instancingcompute
+            dub build :mrt
+            dub build :noninterleaved
+            dub build :quad
+            dub build :offscreen
+            dub build :bufferoffsets
+            dub build :user_data
+            dub build :vertexpull
+            dub build :shapes
+            dub build :imgui
+            dub build :droptest
 
       - name: (Zig) Build Shaders
         run: zig build -Dshaders

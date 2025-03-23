@@ -1,5 +1,5 @@
 name "sokol-d"
-version "0.1.9"
+version "0.2.0"
 description "D bindings for sokol"
 authors "Matheus Catarino França" "Andre Weissflog"
 copyright "Copyright 2023-2024 - Matheus Catarino França"
@@ -48,7 +48,7 @@ subPackage {
 	libs "user32" "gdi32" "kernel32" "dxgi" "d3d11" "ole32" platform="windows"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
-	excludedSourceFiles "src/examples/bufferoffsets.d" "src/examples/instancing.d" "src/examples/offscreen.d" "src/examples/sgl_context.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/saudio.d" "src/examples/vertexpull.d" "src/examples/quad.d" "src/examples/noninterleaved.d" "src/examples/debugtext.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/examples/texcube.d" "src/examples/imgui.d" "src/examples/droptest.d" "src/imgui/package.d" "src/examples/shapes.d" "src/examples/shaders/*.d"
+	excludedSourceFiles "src/examples/bufferoffsets.d" "src/examples/instancingcompute.d" "src/examples/instancing.d" "src/examples/offscreen.d" "src/examples/sgl_context.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/saudio.d" "src/examples/vertexpull.d" "src/examples/quad.d" "src/examples/noninterleaved.d" "src/examples/debugtext.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/examples/texcube.d" "src/examples/imgui.d" "src/examples/droptest.d" "src/imgui/package.d" "src/examples/shapes.d" "src/examples/shaders/*.d"
 	preBuildCommands "zig build -Doptimize=ReleaseFast -Dartifact"
 }
 
@@ -64,7 +64,7 @@ subPackage {
 	libs "user32" "gdi32" "kernel32" "dxgi" "d3d11" "ole32" platform="windows"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
-	excludedSourceFiles "src/examples/bufferoffsets.d" "src/examples/clear.d" "src/examples/instancing.d" "src/examples/sgl_context.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/saudio.d" "src/examples/vertexpull.d" "src/examples/quad.d" "src/examples/noninterleaved.d" "src/examples/debugtext.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/examples/texcube.d" "src/examples/imgui.d" "src/examples/droptest.d" "src/imgui/package.d" "src/examples/shapes.d" "src/examples/shaders/*.d"
+	excludedSourceFiles "src/examples/bufferoffsets.d" "src/examples/clear.d" "src/examples/instancingcompute.d" "src/examples/instancing.d" "src/examples/sgl_context.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/saudio.d" "src/examples/vertexpull.d" "src/examples/quad.d" "src/examples/noninterleaved.d" "src/examples/debugtext.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/examples/texcube.d" "src/examples/imgui.d" "src/examples/droptest.d" "src/imgui/package.d" "src/examples/shapes.d" "src/examples/shaders/*.d"
 	preBuildCommands "zig build -Doptimize=ReleaseFast -Dartifact"
 }
 
@@ -80,7 +80,7 @@ subPackage {
 	libs "user32" "gdi32" "kernel32" "dxgi" "d3d11" "ole32" platform="windows"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
-	excludedSourceFiles "src/examples/bufferoffsets.d" "src/examples/instancing.d" "src/examples/offscreen.d" "src/examples/clear.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/saudio.d" "src/examples/vertexpull.d" "src/examples/quad.d" "src/examples/noninterleaved.d" "src/examples/debugtext.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/examples/texcube.d" "src/examples/imgui.d" "src/examples/droptest.d" "src/imgui/package.d" "src/examples/shapes.d" "src/examples/shaders/*.d"
+	excludedSourceFiles "src/examples/bufferoffsets.d" "src/examples/instancingcompute.d" "src/examples/instancing.d" "src/examples/offscreen.d" "src/examples/clear.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/saudio.d" "src/examples/vertexpull.d" "src/examples/quad.d" "src/examples/noninterleaved.d" "src/examples/debugtext.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/examples/texcube.d" "src/examples/imgui.d" "src/examples/droptest.d" "src/imgui/package.d" "src/examples/shapes.d" "src/examples/shaders/*.d"
 	preBuildCommands "zig build -Doptimize=ReleaseFast -Dartifact"
 }
 
@@ -96,7 +96,7 @@ subPackage {
 	libs "user32" "gdi32" "kernel32" "dxgi" "d3d11" "ole32" platform="windows"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
-	excludedSourceFiles "src/examples/bufferoffsets.d" "src/examples/instancing.d" "src/examples/offscreen.d" "src/examples/clear.d" "src/examples/triangle.d" "src/examples/sgl_context.d" "src/examples/saudio.d" "src/examples/vertexpull.d" "src/examples/quad.d" "src/examples/noninterleaved.d" "src/examples/debugtext.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/examples/texcube.d" "src/examples/imgui.d" "src/examples/droptest.d" "src/imgui/package.d" "src/examples/shapes.d" "src/examples/shaders/*.d"
+	excludedSourceFiles "src/examples/bufferoffsets.d" "src/examples/instancingcompute.d" "src/examples/instancing.d" "src/examples/offscreen.d" "src/examples/clear.d" "src/examples/triangle.d" "src/examples/sgl_context.d" "src/examples/saudio.d" "src/examples/vertexpull.d" "src/examples/quad.d" "src/examples/noninterleaved.d" "src/examples/debugtext.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/examples/texcube.d" "src/examples/imgui.d" "src/examples/droptest.d" "src/imgui/package.d" "src/examples/shapes.d" "src/examples/shaders/*.d"
 	preBuildCommands "zig build -Doptimize=ReleaseFast -Dartifact"
 }
 
@@ -112,7 +112,7 @@ subPackage {
 	libs "user32" "gdi32" "kernel32" "dxgi" "d3d11" "ole32" platform="windows"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
-	excludedSourceFiles "src/examples/bufferoffsets.d" "src/examples/instancing.d" "src/examples/offscreen.d" "src/examples/sgl_context.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/saudio.d" "src/examples/vertexpull.d" "src/examples/quad.d" "src/examples/noninterleaved.d" "src/examples/clear.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/examples/texcube.d" "src/examples/imgui.d" "src/examples/droptest.d" "src/imgui/package.d" "src/examples/shapes.d" "src/examples/shaders/*.d"
+	excludedSourceFiles "src/examples/bufferoffsets.d" "src/examples/instancingcompute.d" "src/examples/instancing.d" "src/examples/offscreen.d" "src/examples/sgl_context.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/saudio.d" "src/examples/vertexpull.d" "src/examples/quad.d" "src/examples/noninterleaved.d" "src/examples/clear.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/examples/texcube.d" "src/examples/imgui.d" "src/examples/droptest.d" "src/imgui/package.d" "src/examples/shapes.d" "src/examples/shaders/*.d"
 	preBuildCommands "zig build -Doptimize=ReleaseFast -Dartifact"
 }
 
@@ -128,7 +128,7 @@ subPackage {
 	libs "user32" "gdi32" "kernel32" "dxgi" "d3d11" "ole32" platform="windows"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
-	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/bufferoffsets.d" "src/examples/instancing.d" "src/examples/offscreen.d" "src/examples/clear.d" "src/examples/sgl_points.d" "src/examples/saudio.d" "src/examples/vertexpull.d" "src/examples/quad.d" "src/examples/noninterleaved.d" "src/examples/debugtext.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/examples/texcube.d" "src/examples/imgui.d" "src/examples/droptest.d" "src/imgui/package.d" "src/examples/shapes.d" "src/examples/shaders/*.d"
+	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/bufferoffsets.d" "src/examples/instancingcompute.d" "src/examples/instancing.d" "src/examples/offscreen.d" "src/examples/clear.d" "src/examples/sgl_points.d" "src/examples/saudio.d" "src/examples/vertexpull.d" "src/examples/quad.d" "src/examples/noninterleaved.d" "src/examples/debugtext.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/examples/texcube.d" "src/examples/imgui.d" "src/examples/droptest.d" "src/imgui/package.d" "src/examples/shapes.d" "src/examples/shaders/*.d"
 	preBuildCommands "zig build -Doptimize=ReleaseFast -Dartifact"
 }
 
@@ -144,7 +144,7 @@ subPackage {
 	libs "user32" "gdi32" "kernel32" "dxgi" "d3d11" "ole32" platform="windows"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
-	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/bufferoffsets.d" "src/examples/instancing.d" "src/examples/offscreen.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/vertexpull.d" "src/examples/quad.d" "src/examples/noninterleaved.d" "src/examples/debugtext.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/texcube.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/imgui.d" "src/examples/droptest.d" "src/imgui/package.d" "src/examples/shapes.d" "src/examples/shaders/*.d"
+	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/bufferoffsets.d" "src/examples/instancingcompute.d" "src/examples/instancing.d" "src/examples/offscreen.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/vertexpull.d" "src/examples/quad.d" "src/examples/noninterleaved.d" "src/examples/debugtext.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/texcube.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/imgui.d" "src/examples/droptest.d" "src/imgui/package.d" "src/examples/shapes.d" "src/examples/shaders/*.d"
 	preBuildCommands "zig build -Doptimize=ReleaseFast -Dartifact"
 }
 
@@ -160,7 +160,7 @@ subPackage {
 	libs "user32" "gdi32" "kernel32" "dxgi" "d3d11" "ole32" platform="windows"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
-	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/bufferoffsets.d" "src/examples/instancing.d" "src/examples/offscreen.d" "src/examples/clear.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/debugtext.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/examples/texcube.d" "src/examples/imgui.d" "src/examples/droptest.d" "src/imgui/package.d" "src/examples/shapes.d" "src/examples/shaders/*.d"
+	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/bufferoffsets.d" "src/examples/instancingcompute.d" "src/examples/instancing.d" "src/examples/offscreen.d" "src/examples/clear.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/debugtext.d" "src/examples/mrt.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/examples/texcube.d" "src/examples/imgui.d" "src/examples/droptest.d" "src/imgui/package.d" "src/examples/shapes.d" "src/examples/shaders/*.d"
 	preBuildCommands "zig build -Doptimize=ReleaseFast -Dartifact"
 }
 
@@ -176,7 +176,7 @@ subPackage {
 	libs "user32" "gdi32" "kernel32" "dxgi" "d3d11" "ole32" platform="windows"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
-	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/bufferoffsets.d" "src/examples/instancing.d" "src/examples/offscreen.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/vertexpull.d" "src/examples/quad.d" "src/examples/noninterleaved.d" "src/examples/debugtext.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/examples/texcube.d" "src/examples/imgui.d" "src/examples/droptest.d" "src/imgui/package.d" "src/examples/shapes.d" "src/examples/shaders/*.d"
+	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/bufferoffsets.d" "src/examples/instancingcompute.d" "src/examples/instancing.d" "src/examples/offscreen.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/vertexpull.d" "src/examples/quad.d" "src/examples/noninterleaved.d" "src/examples/debugtext.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/user_data.d" "src/examples/cube.d" "src/examples/blend.d" "src/examples/texcube.d" "src/examples/imgui.d" "src/examples/droptest.d" "src/imgui/package.d" "src/examples/shapes.d" "src/examples/shaders/*.d"
 	preBuildCommands "zig build -Doptimize=ReleaseFast -Dartifact"
 }
 
@@ -192,7 +192,7 @@ subPackage {
 	libs "user32" "gdi32" "kernel32" "dxgi" "d3d11" "ole32" platform="windows"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
-	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/bufferoffsets.d" "src/examples/instancing.d" "src/examples/offscreen.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/vertexpull.d" "src/examples/quad.d" "src/examples/noninterleaved.d" "src/examples/debugtext.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/user_data.d" "src/examples/mrt.d" "src/examples/blend.d" "src/examples/texcube.d" "src/examples/imgui.d" "src/examples/droptest.d" "src/imgui/package.d" "src/examples/shapes.d" "src/examples/shaders/*.d"
+	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/bufferoffsets.d" "src/examples/instancingcompute.d" "src/examples/instancing.d" "src/examples/offscreen.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/vertexpull.d" "src/examples/quad.d" "src/examples/noninterleaved.d" "src/examples/debugtext.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/user_data.d" "src/examples/mrt.d" "src/examples/blend.d" "src/examples/texcube.d" "src/examples/imgui.d" "src/examples/droptest.d" "src/imgui/package.d" "src/examples/shapes.d" "src/examples/shaders/*.d"
 	preBuildCommands "zig build -Doptimize=ReleaseFast -Dartifact"
 }
 
@@ -208,7 +208,7 @@ subPackage {
 	libs "user32" "gdi32" "kernel32" "dxgi" "d3d11" "ole32" platform="windows"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
-	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/bufferoffsets.d" "src/examples/instancing.d" "src/examples/offscreen.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/vertexpull.d" "src/examples/quad.d" "src/examples/noninterleaved.d" "src/examples/debugtext.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/user_data.d" "src/examples/mrt.d" "src/examples/blend.d" "src/examples/cube.d" "src/examples/imgui.d" "src/examples/droptest.d" "src/imgui/package.d" "src/examples/shapes.d" "src/examples/shaders/*.d"
+	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/bufferoffsets.d" "src/examples/instancingcompute.d" "src/examples/instancing.d" "src/examples/offscreen.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/vertexpull.d" "src/examples/quad.d" "src/examples/noninterleaved.d" "src/examples/debugtext.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/user_data.d" "src/examples/mrt.d" "src/examples/blend.d" "src/examples/cube.d" "src/examples/imgui.d" "src/examples/droptest.d" "src/imgui/package.d" "src/examples/shapes.d" "src/examples/shaders/*.d"
 	preBuildCommands "zig build -Doptimize=ReleaseFast -Dartifact"
 }
 
@@ -224,7 +224,7 @@ subPackage {
 	libs "user32" "gdi32" "kernel32" "dxgi" "d3d11" "ole32" platform="windows"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
-	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/bufferoffsets.d" "src/examples/instancing.d" "src/examples/offscreen.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/vertexpull.d" "src/examples/quad.d" "src/examples/noninterleaved.d" "src/examples/debugtext.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/cube.d" "src/examples/mrt.d" "src/examples/blend.d" "src/examples/texcube.d" "src/examples/imgui.d" "src/examples/droptest.d" "src/imgui/package.d" "src/examples/shapes.d" "src/examples/shaders/*.d"
+	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/bufferoffsets.d" "src/examples/instancingcompute.d" "src/examples/instancing.d" "src/examples/offscreen.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/vertexpull.d" "src/examples/quad.d" "src/examples/noninterleaved.d" "src/examples/debugtext.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/cube.d" "src/examples/mrt.d" "src/examples/blend.d" "src/examples/texcube.d" "src/examples/imgui.d" "src/examples/droptest.d" "src/imgui/package.d" "src/examples/shapes.d" "src/examples/shaders/*.d"
 	preBuildCommands "zig build -Doptimize=ReleaseFast -Dartifact"
 }
 
@@ -240,7 +240,7 @@ subPackage {
 	libs "user32" "gdi32" "kernel32" "dxgi" "d3d11" "ole32" platform="windows"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
-	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/bufferoffsets.d" "src/examples/instancing.d" "src/examples/offscreen.d" "src/examples/clear.d" "src/examples/vertexpull.d" "src/examples/saudio.d" "src/examples/debugtext.d" "src/examples/noninterleaved.d" "src/examples/user_data.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/cube.d" "src/examples/mrt.d" "src/examples/blend.d" "src/examples/texcube.d" "src/examples/imgui.d" "src/examples/droptest.d" "src/imgui/package.d" "src/examples/shapes.d" "src/examples/shaders/*.d"
+	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/bufferoffsets.d" "src/examples/instancingcompute.d" "src/examples/instancing.d" "src/examples/offscreen.d" "src/examples/clear.d" "src/examples/vertexpull.d" "src/examples/saudio.d" "src/examples/debugtext.d" "src/examples/noninterleaved.d" "src/examples/user_data.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/cube.d" "src/examples/mrt.d" "src/examples/blend.d" "src/examples/texcube.d" "src/examples/imgui.d" "src/examples/droptest.d" "src/imgui/package.d" "src/examples/shapes.d" "src/examples/shaders/*.d"
 	preBuildCommands "zig build -Doptimize=ReleaseFast -Dartifact"
 }
 
@@ -256,7 +256,7 @@ subPackage {
 	libs "user32" "gdi32" "kernel32" "dxgi" "d3d11" "ole32" platform="windows"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
-	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/bufferoffsets.d" "src/examples/instancing.d" "src/examples/offscreen.d" "src/examples/clear.d" "src/examples/vertexpull.d" "src/examples/quad.d" "src/examples/saudio.d" "src/examples/debugtext.d" "src/examples/user_data.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/cube.d" "src/examples/mrt.d" "src/examples/blend.d" "src/examples/texcube.d" "src/examples/imgui.d" "src/examples/droptest.d" "src/imgui/package.d" "src/examples/shapes.d" "src/examples/shaders/*.d"
+	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/bufferoffsets.d" "src/examples/instancingcompute.d" "src/examples/instancing.d" "src/examples/offscreen.d" "src/examples/clear.d" "src/examples/vertexpull.d" "src/examples/quad.d" "src/examples/saudio.d" "src/examples/debugtext.d" "src/examples/user_data.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/cube.d" "src/examples/mrt.d" "src/examples/blend.d" "src/examples/texcube.d" "src/examples/imgui.d" "src/examples/droptest.d" "src/imgui/package.d" "src/examples/shapes.d" "src/examples/shaders/*.d"
 	preBuildCommands "zig build -Doptimize=ReleaseFast -Dartifact"
 }
 
@@ -272,7 +272,7 @@ subPackage {
 	libs "user32" "gdi32" "kernel32" "dxgi" "d3d11" "ole32" platform="windows"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
-	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/bufferoffsets.d" "src/examples/instancing.d" "src/examples/offscreen.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/quad.d" "src/examples/debugtext.d" "src/examples/noninterleaved.d" "src/examples/user_data.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/cube.d" "src/examples/mrt.d" "src/examples/blend.d" "src/examples/texcube.d" "src/examples/imgui.d" "src/examples/droptest.d" "src/imgui/package.d" "src/examples/shapes.d" "src/examples/shaders/*.d"
+	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/bufferoffsets.d" "src/examples/instancingcompute.d" "src/examples/instancing.d" "src/examples/offscreen.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/quad.d" "src/examples/debugtext.d" "src/examples/noninterleaved.d" "src/examples/user_data.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/cube.d" "src/examples/mrt.d" "src/examples/blend.d" "src/examples/texcube.d" "src/examples/imgui.d" "src/examples/droptest.d" "src/imgui/package.d" "src/examples/shapes.d" "src/examples/shaders/*.d"
 	preBuildCommands "zig build -Doptimize=ReleaseFast -Dartifact"
 }
 
@@ -288,7 +288,7 @@ subPackage {
 	libs "user32" "gdi32" "kernel32" "dxgi" "d3d11" "ole32" platform="windows"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
-	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/clear.d" "src/examples/instancing.d" "src/examples/offscreen.d" "src/examples/shapes.d" "src/examples/vertexpull.d" "src/examples/quad.d" "src/examples/saudio.d" "src/examples/debugtext.d" "src/examples/noninterleaved.d" "src/examples/user_data.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/cube.d" "src/examples/mrt.d" "src/examples/blend.d" "src/examples/texcube.d" "src/examples/imgui.d" "src/examples/droptest.d" "src/imgui/package.d" "src/examples/shapes.d" "src/examples/shaders/*.d"
+	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/clear.d" "src/examples/instancingcompute.d" "src/examples/instancing.d" "src/examples/offscreen.d" "src/examples/shapes.d" "src/examples/vertexpull.d" "src/examples/quad.d" "src/examples/saudio.d" "src/examples/debugtext.d" "src/examples/noninterleaved.d" "src/examples/user_data.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/cube.d" "src/examples/mrt.d" "src/examples/blend.d" "src/examples/texcube.d" "src/examples/imgui.d" "src/examples/droptest.d" "src/imgui/package.d" "src/examples/shapes.d" "src/examples/shaders/*.d"
 	preBuildCommands "zig build -Doptimize=ReleaseFast -Dartifact"
 }
 
@@ -304,7 +304,23 @@ subPackage {
 	libs "user32" "gdi32" "kernel32" "dxgi" "d3d11" "ole32" platform="windows"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
-	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/bufferoffsets.d" "src/examples/offscreen.d" "src/examples/clear.d" "src/examples/shapes.d" "src/examples/vertexpull.d" "src/examples/quad.d" "src/examples/saudio.d" "src/examples/debugtext.d" "src/examples/noninterleaved.d" "src/examples/user_data.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/cube.d" "src/examples/mrt.d" "src/examples/blend.d" "src/examples/texcube.d" "src/examples/imgui.d" "src/examples/droptest.d" "src/imgui/package.d" "src/examples/shaders/*.d"
+	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/instancingcompute.d" "src/examples/bufferoffsets.d" "src/examples/offscreen.d" "src/examples/clear.d" "src/examples/shapes.d" "src/examples/vertexpull.d" "src/examples/quad.d" "src/examples/saudio.d" "src/examples/debugtext.d" "src/examples/noninterleaved.d" "src/examples/user_data.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/cube.d" "src/examples/mrt.d" "src/examples/blend.d" "src/examples/texcube.d" "src/examples/imgui.d" "src/examples/droptest.d" "src/imgui/package.d" "src/examples/shaders/*.d"
+	preBuildCommands "zig build -Doptimize=ReleaseFast -Dartifact"
+}
+
+subPackage {
+	name "instancingcompute"
+	targetType "executable"
+	targetPath "build"
+	sourceFiles "src/examples/instancingcompute.d"
+	libs "sokol"
+	dflags "-preview=all" "-i=sokol" "-i=shaders" "-i=handmade"
+	libs "X11" "Xcursor" "Xi" "GL" "asound" platform="linux"
+	lflags "-w" "-lObjC" "-all_load" "-framework" "Cocoa" "-framework" "QuartzCore" "-framework" "Foundation" "-framework" "MetalKit" "-framework" "Metal" "-framework" "AudioToolbox" platform="osx"
+	libs "user32" "gdi32" "kernel32" "dxgi" "d3d11" "ole32" platform="windows"
+	lflags "-Lzig-out/lib" platform="posix"
+	lflags "/LIBPATH:zig-out/lib" platform="windows"
+	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/instancing.d" "src/examples/bufferoffsets.d" "src/examples/offscreen.d" "src/examples/clear.d" "src/examples/shapes.d" "src/examples/vertexpull.d" "src/examples/quad.d" "src/examples/saudio.d" "src/examples/debugtext.d" "src/examples/noninterleaved.d" "src/examples/user_data.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/cube.d" "src/examples/mrt.d" "src/examples/blend.d" "src/examples/texcube.d" "src/examples/imgui.d" "src/examples/droptest.d" "src/imgui/package.d" "src/examples/shaders/*.d"
 	preBuildCommands "zig build -Doptimize=ReleaseFast -Dartifact"
 }
 
@@ -320,7 +336,7 @@ subPackage {
 	libs "user32" "gdi32" "kernel32" "dxgi" "d3d11" "ole32" platform="windows"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
-	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/bufferoffsets.d" "src/examples/instancing.d" "src/examples/offscreen.d" "src/examples/clear.d" "src/examples/vertexpull.d" "src/examples/quad.d" "src/examples/saudio.d" "src/examples/debugtext.d" "src/examples/noninterleaved.d" "src/examples/user_data.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/cube.d" "src/examples/mrt.d" "src/examples/blend.d" "src/examples/texcube.d" "src/examples/imgui.d" "src/examples/droptest.d" "src/imgui/package.d" "src/examples/shaders/*.d"
+	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/bufferoffsets.d" "src/examples/instancingcompute.d" "src/examples/instancing.d" "src/examples/offscreen.d" "src/examples/clear.d" "src/examples/vertexpull.d" "src/examples/quad.d" "src/examples/saudio.d" "src/examples/debugtext.d" "src/examples/noninterleaved.d" "src/examples/user_data.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/cube.d" "src/examples/mrt.d" "src/examples/blend.d" "src/examples/texcube.d" "src/examples/imgui.d" "src/examples/droptest.d" "src/imgui/package.d" "src/examples/shaders/*.d"
 	preBuildCommands "zig build -Doptimize=ReleaseFast -Dartifact"
 }
 
@@ -336,9 +352,9 @@ subPackage {
 	libs "user32" "gdi32" "kernel32" "dxgi" "d3d11" "ole32" platform="windows"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
-	dflags "-P-I$HOME/.cache/zig/p/cimgui-0.1.0-AAAAAFY9hQDGQK0j2IAENxZoZeVPFyxhL8_m4AAUmisq/src" platform="posix"
-	dflags "-P-I$APPDATA\\Local\\zig\\p\\cimgui-0.1.0-AAAAAFY9hQDGQK0j2IAENxZoZeVPFyxhL8_m4AAUmisq\\src" platform="windows"
-	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/bufferoffsets.d" "src/examples/instancing.d" "src/examples/offscreen.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/vertexpull.d" "src/examples/quad.d" "src/examples/noninterleaved.d" "src/examples/debugtext.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/cube.d" "src/examples/mrt.d" "src/examples/blend.d" "src/examples/user_data.d" "src/examples/texcube.d" "src/examples/droptest.d" "src/examples/shapes.d" "src/examples/shaders/*.d"
+	dflags "-P-I$HOME/.cache/zig/p/cimgui-0.1.0-44ClkTt5hgBU8BelH8W_G8mso3ys_hrqNUWwJvaxXDs5/src" platform="posix"
+	dflags "-P-I$APPDATA\\Local\\zig\\p\\cimgui-0.1.0-44ClkTt5hgBU8BelH8W_G8mso3ys_hrqNUWwJvaxXDs5\\src" platform="windows"
+	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/bufferoffsets.d" "src/examples/instancingcompute.d" "src/examples/instancing.d" "src/examples/offscreen.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/vertexpull.d" "src/examples/quad.d" "src/examples/noninterleaved.d" "src/examples/debugtext.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/cube.d" "src/examples/mrt.d" "src/examples/blend.d" "src/examples/user_data.d" "src/examples/texcube.d" "src/examples/droptest.d" "src/examples/shapes.d" "src/examples/shaders/*.d"
 	preBuildCommands "zig build -Doptimize=ReleaseFast -Dimgui -Dartifact"
 }
 
@@ -354,8 +370,8 @@ subPackage {
 	libs "user32" "gdi32" "kernel32" "dxgi" "d3d11" "ole32" platform="windows"
 	lflags "-Lzig-out/lib" platform="posix"
 	lflags "/LIBPATH:zig-out/lib" platform="windows"
-	dflags "-P-I$HOME/.cache/zig/p/cimgui-0.1.0-AAAAAFY9hQDGQK0j2IAENxZoZeVPFyxhL8_m4AAUmisq/src" platform="posix"
-	dflags "-P-I$APPDATA\\Local\\zig\\p\\cimgui-0.1.0-AAAAAFY9hQDGQK0j2IAENxZoZeVPFyxhL8_m4AAUmisq\\src" platform="windows"
-	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/bufferoffsets.d" "src/examples/instancing.d" "src/examples/offscreen.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/vertexpull.d" "src/examples/quad.d" "src/examples/noninterleaved.d" "src/examples/debugtext.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/cube.d" "src/examples/mrt.d" "src/examples/blend.d" "src/examples/user_data.d" "src/examples/texcube.d" "src/examples/imgui.d" "src/examples/shapes.d" "src/examples/shaders/*.d"
+	dflags "-P-I$HOME/.cache/zig/p/cimgui-0.1.0-44ClkTt5hgBU8BelH8W_G8mso3ys_hrqNUWwJvaxXDs5/src" platform="posix"
+	dflags "-P-I$APPDATA\\Local\\zig\\p\\cimgui-0.1.0-44ClkTt5hgBU8BelH8W_G8mso3ys_hrqNUWwJvaxXDs5\\src" platform="windows"
+	excludedSourceFiles "src/examples/sgl_context.d" "src/examples/bufferoffsets.d" "src/examples/instancingcompute.d" "src/examples/instancing.d" "src/examples/offscreen.d" "src/examples/clear.d" "src/examples/saudio.d" "src/examples/vertexpull.d" "src/examples/quad.d" "src/examples/noninterleaved.d" "src/examples/debugtext.d" "src/examples/triangle.d" "src/examples/sgl_points.d" "src/examples/cube.d" "src/examples/mrt.d" "src/examples/blend.d" "src/examples/user_data.d" "src/examples/texcube.d" "src/examples/imgui.d" "src/examples/shapes.d" "src/examples/shaders/*.d"
 	preBuildCommands "zig build -Doptimize=ReleaseFast -Dimgui -Dartifact"
 }
