@@ -344,7 +344,7 @@ pub fn build(b: *Build) !void {
                 .artifact = lib_sokol,
                 .imgui = lib_imgui,
                 .sources = &[_][]const u8{
-                    b.fmt("{s}/src/examples/{s}.d", .{ rootPath(), example }),
+                    b.fmt("{s}/examples/{s}.d", .{ rootPath(), example }),
                 },
                 .betterC = if (std.mem.eql(u8, example, "user-data")) false else opt_betterC,
                 .dflags = &.{
@@ -512,8 +512,14 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*Build.Step.InstallDir {
         "-i=sokol",
         "-i=shaders",
         "-i=handmade",
-        "-i=imgui",
     });
+
+    if (options.imgui) |_| {
+        ldc_exec.addArgs(&.{
+            "-i=imgui",
+            "--d-version=has_imgui", // C Macro equivalent to D Version()
+        });
+    }
 
     // sokol include path
     ldc_exec.addArg(b.fmt("-I{s}", .{b.pathJoin(&.{ rootPath(), "src" })}));
@@ -1004,7 +1010,7 @@ fn buildShaders(b: *Build) void {
     if (b.lazyDependency("shdc", .{})) |dep| {
         const shdc_dep = dep.path("").getPath(b);
         const sokol_tools_bin_dir = b.pathJoin(&.{ shdc_dep, "bin" });
-        const shaders_dir = "src/examples/shaders/";
+        const shaders_dir = "examples/shaders/";
         const shaders = .{
             .{ .src = "bufferoffsets.glsl", .needs_compute = false },
             .{ .src = "cube.glsl", .needs_compute = false },
