@@ -895,9 +895,9 @@ void Image(size_t user_texture_id, const ImVec2_t image_size) @trusted
     igImage(user_texture_id, image_size);
 }
 
-void ImageEx(size_t user_texture_id, const ImVec2_t image_size, const ImVec2_t uv0, const ImVec2_t uv1, const ImVec4_t tint_col, const ImVec4_t border_col) @trusted
+void ImageEx(size_t user_texture_id, const ImVec2_t image_size, const ImVec2_t uv0, const ImVec2_t uv1) @trusted
 {
-    igImageEx(user_texture_id, image_size, uv0, uv1, tint_col, border_col);
+    igImageEx(user_texture_id, image_size, uv0, uv1);
 }
 
 bool ImageButton(scope const(char)* str_id, size_t user_texture_id, const ImVec2_t image_size) @trusted
@@ -3529,13 +3529,6 @@ void calcCustomRectUV(scope const(ImFontAtlas_t)* self, scope const(ImFontAtlasC
             ImVec2_t*) out_uv_max);
 }
 
-bool getMouseCursorTexData(scope const(ImFontAtlas_t)* self, int cursor, scope const(ImVec2_t)* out_offset, scope const(
-        ImVec2_t)* out_size, const(ImVec2_t)[2] out_uv_border, const(ImVec2_t)[2] out_uv_fill) @trusted
-{
-    return ImFontAtlas_GetMouseCursorTexData(cast(ImFontAtlas_t*) self, cursor, cast(ImVec2_t*) out_offset, cast(
-            ImVec2_t*) out_size, cast(ImVec2_t*)&out_uv_border[0], cast(ImVec2_t*)&out_uv_fill[0]);
-}
-
 scope const(ImFontGlyph_t)* findGlyph(scope const(ImFont_t)* self, ushort c) @trusted
 {
     return ImFont_FindGlyph(cast(ImFont_t*) self, c);
@@ -3616,11 +3609,6 @@ void addGlyph(scope const(ImFont_t)* self, const(ImFontConfig_t)* src_cfg, ushor
 void addRemapChar(scope const(ImFont_t)* self, ushort dst, ushort src, bool overwrite_dst) @trusted
 {
     ImFont_AddRemapChar(cast(ImFont_t*) self, dst, src, overwrite_dst);
-}
-
-void setGlyphVisible(scope const(ImFont_t)* self, ushort c, bool visible) @trusted
-{
-    ImFont_SetGlyphVisible(cast(ImFont_t*) self, c, visible);
 }
 
 bool isGlyphRangeUnused(scope const(ImFont_t)* self, uint c_begin, uint c_last) @trusted
