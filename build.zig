@@ -517,7 +517,7 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*Build.Step.InstallDir {
     if (options.imgui) |_| {
         ldc_exec.addArgs(&.{
             "-i=imgui",
-            "--d-version=has_imgui", // C Macro equivalent to D Version()
+            "--d-version=has_imgui", // C Macro equivalent to D
         });
     }
 
@@ -555,7 +555,7 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*Build.Step.InstallDir {
         ldc_exec.addFileArg(
             tmp.add(
                 "assert.d",
-                \\ module emscripten;
+                \\ module ems_assert;
                 \\
                 \\ extern (C):
                 \\
@@ -893,6 +893,7 @@ const generated_zcc =
     \\ const std = @import("std");
     \\ const builtin = @import("builtin");
     \\ const build_options = @import("build_options");
+    \\
     \\ // [NOT CHANGE!!] => skip flag
     \\ // replace system-provider resources to zig provider resources
     \\
@@ -946,8 +947,6 @@ const generated_zcc =
     \\         } else if (std.mem.endsWith(u8, arg, "gcc") or
     \\             std.mem.endsWith(u8, arg, "gcc_s"))
     \\         {
-    \\             // NOT CHANGE!!
-    \\         } else if (std.mem.startsWith(u8, arg, "-lFortran")) {
     \\             // NOT CHANGE!!
     \\         } else if (std.mem.endsWith(u8, arg, "linkonceodr-outlining")) {
     \\             // NOT CHANGE!!

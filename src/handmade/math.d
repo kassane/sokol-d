@@ -12,88 +12,138 @@ module handmade.math;
 extern (C):
 @safe:
 
-version (WebAssembly) {
-    // zig stdlib no-libc math functions
+version (WebAssembly)
+{
+    /** Approximate value of pi*/
     enum PI = 3.14159265358979323846264338327950288419716939937510;
+
+    /** Cosine function from Zig standard library */
     double zig_cos(double value) @nogc nothrow @trusted;
+
+    /** Floor function from Zig standard library */
     double zig_floor(double value) @nogc nothrow @trusted;
+
+    /** Sine function from Zig standard library */
     double zig_sin(double value) @nogc nothrow @trusted;
+
+    /** Square root function for size_t from Zig standard library */
     double zig_sqrt(size_t value) @nogc nothrow @trusted;
+
+    /** Square root function for floating point from Zig standard library */
     double zig_sqrtf(double value) @nogc nothrow @trusted;
+
+    /** Tangent function from Zig standard library */
     double zig_tan(double value) @nogc nothrow @trusted;
+
     alias cos = zig_cos;
     alias floor = zig_floor;
     alias sin = zig_sin;
     alias tan = zig_tan;
 
-    auto sqrt(T)(T value) {
-        static if (is(T == double) || is(T == float)) {
+    /** Generic square root function */
+    auto sqrt(T)(T value)
+    {
+        static if (is(T == double) || is(T == float))
+        {
             return zig_sqrtf(value);
-        } else {
+        }
+        else
+        {
             return zig_sqrt(value);
         }
     }
-} else {
+}
+else
+{
     public import core.stdc.math : sqrt, cos, sin, tan, floor;
     public import std.math : PI;
 }
 
-struct Vec2 {
+/** 2D Vector structure with x and y coordinates */
+struct Vec2
+{
     float x = 0.0, y = 0.0;
 
-    static Vec2 zero() @nogc nothrow {
+    /** Creates a zero vector */
+    static Vec2 zero() @nogc nothrow
+    {
         return Vec2(0, 0);
     }
 
-    this(float x, float y) @nogc nothrow {
+    /** Constructor for Vec2 */
+    this(float x, float y) @nogc nothrow
+    {
         this.x = x;
         this.y = y;
     }
 }
 
-struct Vec3 {
+/** 3D Vector structure with x, y, and z coordinates */
+struct Vec3
+{
     float x = 0.0, y = 0.0, z = 0.0;
 
-    static Vec3 zero() @nogc nothrow {
+    /** Creates a zero vector */
+    static Vec3 zero() @nogc nothrow
+    {
         return Vec3(0, 0, 0);
     }
 
-    this(float x, float y, float z) @nogc nothrow {
+    /** Constructor for Vec3 */
+    this(float x, float y, float z) @nogc nothrow
+    {
         this.x = x;
         this.y = y;
         this.z = z;
     }
 
-    static Vec3 up() @nogc nothrow {
+    /** Returns a vector pointing upwards (0, 1, 0) */
+    static Vec3 up() @nogc nothrow
+    {
         return Vec3(0, 1, 0);
     }
 
-    float len() const @nogc nothrow {
+    /** Calculates the length of the vector */
+    float len() const @nogc nothrow
+    {
         return sqrt(dot(this, this));
     }
 
-    static Vec3 add(Vec3 left, Vec3 right) @nogc nothrow {
+    /** Adds two vectors component-wise */
+    static Vec3 add(Vec3 left, Vec3 right) @nogc nothrow
+    {
         return Vec3(left.x + right.x, left.y + right.y, left.z + right.z);
     }
 
-    static Vec3 sub(Vec3 left, Vec3 right) @nogc nothrow {
+    /** Subtracts two vectors component-wise */
+    static Vec3 sub(Vec3 left, Vec3 right) @nogc nothrow
+    {
         return Vec3(left.x - right.x, left.y - right.y, left.z - right.z);
     }
 
-    static Vec3 mul(Vec3 v, float s) @nogc nothrow {
+    /** Multiplies a vector by a scalar */
+    static Vec3 mul(Vec3 v, float s) @nogc nothrow
+    {
         return Vec3(v.x * s, v.y * s, v.z * s);
     }
 
-    static Vec3 norm(Vec3 v) @nogc nothrow {
+    /** Normalizes a vector */
+    static Vec3 norm(Vec3 v) @nogc nothrow
+    {
         auto l = v.len();
-        if (l != 0) {
+        if (l != 0)
+        {
             return Vec3(v.x / l, v.y / l, v.z / l);
-        } else {
+        }
+        else
+        {
             return Vec3.zero;
         }
     }
 
-    static Vec3 cross(Vec3 v0, Vec3 v1) @nogc nothrow {
+    /** Calculates the cross product of two vectors */
+    static Vec3 cross(Vec3 v0, Vec3 v1) @nogc nothrow
+    {
         return Vec3(
             (v0.y * v1.z) - (v0.z * v1.y),
             (v0.z * v1.x) - (v0.x * v1.z),
@@ -101,28 +151,40 @@ struct Vec3 {
         );
     }
 
-    static float dot(Vec3 v0, Vec3 v1) @nogc nothrow {
+    /** Calculates the dot product of two vectors */
+    static float dot(Vec3 v0, Vec3 v1) @nogc nothrow
+    {
         return v0.x * v1.x + v0.y * v1.y + v0.z * v1.z;
     }
 }
 
-struct Mat4 {
+/** 4x4 Matrix structure for transformations */
+struct Mat4
+{
     float[4][4] m;
 
-    static Mat4 identity() @nogc nothrow {
+    /** Creates an identity matrix */
+    static Mat4 identity() @nogc nothrow
+    {
         return Mat4([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]);
     }
 
-    static Mat4 zero() @nogc nothrow {
+    /** Creates a zero matrix */
+    static Mat4 zero() @nogc nothrow
+    {
         return Mat4([[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]);
     }
 
-    static Mat4 mul(Mat4 left, Mat4 right) @nogc nothrow {
+    /** Multiplies two matrices */
+    static Mat4 mul(Mat4 left, Mat4 right) @nogc nothrow
+    {
         Mat4 result = Mat4.zero;
-        foreach (col; 0 .. 4) {
-            foreach (row; 0 .. 4) {
+        foreach (col; 0 .. 4)
+        {
+            foreach (row; 0 .. 4)
+            {
                 result.m[col][row] =
-                      left.m[0][row] * right.m[col][0]
+                    left.m[0][row] * right.m[col][0]
                     + left.m[1][row] * right.m[col][1]
                     + left.m[2][row] * right.m[col][2]
                     + left.m[3][row] * right.m[col][3];
@@ -131,7 +193,9 @@ struct Mat4 {
         return result;
     }
 
-    static Mat4 perspective(float fov, float aspect, float near, float far) @nogc nothrow {
+    /** Creates a perspective projection matrix */
+    static Mat4 perspective(float fov, float aspect, float near, float far) @nogc nothrow
+    {
         Mat4 result = Mat4.identity;
 
         float t = tan(fov * (PI / 360.0));
@@ -145,7 +209,9 @@ struct Mat4 {
         return result;
     }
 
-    static Mat4 lookAt(Vec3 eye, Vec3 center, Vec3 up) @nogc nothrow {
+    /** Creates a view matrix for camera positioning */
+    static Mat4 lookAt(Vec3 eye, Vec3 center, Vec3 up) @nogc nothrow
+    {
         Mat4 result = Mat4.zero();
 
         Vec3 f = Vec3.norm(Vec3.sub(center, eye));
@@ -172,7 +238,9 @@ struct Mat4 {
         return result;
     }
 
-    static Mat4 rotate(float angle, Vec3 axis) @nogc nothrow {
+    /** Creates a rotation matrix around a specified axis */
+    static Mat4 rotate(float angle, Vec3 axis) @nogc nothrow
+    {
         Mat4 result = Mat4.identity;
 
         axis = Vec3.norm(axis);
@@ -195,7 +263,9 @@ struct Mat4 {
         return result;
     }
 
-    static Mat4 translate(Vec3 translation) @nogc nothrow {
+    /** Creates a translation matrix */
+    static Mat4 translate(Vec3 translation) @nogc nothrow
+    {
         Mat4 result = Mat4.identity;
 
         result.m[3][0] = translation.x;
@@ -206,11 +276,14 @@ struct Mat4 {
     }
 }
 
-float radians(float deg) @nogc nothrow {
+/** Converts degrees to radians */
+float radians(float deg) @nogc nothrow
+{
     return deg * (PI / 180.0);
 }
 
-unittest {
+unittest
+{
     import std.math : isClose;
 
     // Vec3.zero test
@@ -223,7 +296,8 @@ unittest {
 
 }
 
-unittest {
+unittest
+{
     import std.math : isClose;
 
     // Vec3.new test
@@ -236,17 +310,23 @@ unittest {
 
 }
 
-unittest {
+unittest
+{
     import std.math : isClose;
 
     // Mat4.identity test
     {
         auto m = Mat4.identity();
-        foreach (i; 0 .. 4) {
-            foreach (j; 0 .. 4) {
-                if (i == j) {
+        foreach (i; 0 .. 4)
+        {
+            foreach (j; 0 .. 4)
+            {
+                if (i == j)
+                {
                     assert(m.m[i][j].isClose(1.0));
-                } else {
+                }
+                else
+                {
                     assert(m.m[i][j].isClose(0.0));
                 }
             }
