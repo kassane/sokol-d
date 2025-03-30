@@ -2278,6 +2278,7 @@ enum LogItem {
     Validate_apip_depth_format,
     Validate_apip_sample_count,
     Validate_abnd_pass_expected,
+    Validate_abnd_empty_bindings,
     Validate_abnd_pipeline,
     Validate_abnd_pipeline_exists,
     Validate_abnd_pipeline_valid,
