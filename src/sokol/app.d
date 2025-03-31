@@ -882,6 +882,18 @@ extern(C) int sapp_gl_get_minor_version() @system @nogc nothrow;
 int glGetMinorVersion() @trusted @nogc nothrow {
     return sapp_gl_get_minor_version();
 }
+/// X11: get Window
+extern(C) const(void)* sapp_x11_get_window() @system @nogc nothrow;
+/// X11: get Window
+scope const(void)* x11GetWindow() @trusted @nogc nothrow {
+    return sapp_x11_get_window();
+}
+/// X11: get Display
+extern(C) const(void)* sapp_x11_get_display() @system @nogc nothrow;
+/// X11: get Display
+scope const(void)* x11GetDisplay() @trusted @nogc nothrow {
+    return sapp_x11_get_display();
+}
 /// Android: get native activity handle
 extern(C) const(void)* sapp_android_get_native_activity() @system @nogc nothrow;
 /// Android: get native activity handle
