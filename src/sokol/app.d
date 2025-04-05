@@ -870,17 +870,23 @@ extern(C) uint sapp_gl_get_framebuffer() @system @nogc nothrow;
 uint glGetFramebuffer() @trusted @nogc nothrow {
     return sapp_gl_get_framebuffer();
 }
-/// GL: get major version (only valid for desktop GL)
+/// GL: get major version
 extern(C) int sapp_gl_get_major_version() @system @nogc nothrow;
-/// GL: get major version (only valid for desktop GL)
+/// GL: get major version
 int glGetMajorVersion() @trusted @nogc nothrow {
     return sapp_gl_get_major_version();
 }
-/// GL: get minor version (only valid for desktop GL)
+/// GL: get minor version
 extern(C) int sapp_gl_get_minor_version() @system @nogc nothrow;
-/// GL: get minor version (only valid for desktop GL)
+/// GL: get minor version
 int glGetMinorVersion() @trusted @nogc nothrow {
     return sapp_gl_get_minor_version();
+}
+/// GL: return true if the context is GLES
+extern(C) bool sapp_gl_is_gles() @system @nogc nothrow;
+/// GL: return true if the context is GLES
+bool glIsGles() @trusted @nogc nothrow {
+    return sapp_gl_is_gles();
 }
 /// X11: get Window
 extern(C) const(void)* sapp_x11_get_window() @system @nogc nothrow;
