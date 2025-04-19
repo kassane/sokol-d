@@ -65,7 +65,7 @@ void frame() @trusted
         state.pass_action.colors[0].clear_value.g,
         state.pass_action.colors[0].clear_value.b
     ];
-    ColorEdit3(label, rgb, ImGuiColorEditFlags_.ImGuiColorEditFlags_None);
+    ColorEdit3(label, rgb.ptr, ImGuiColorEditFlags_.ImGuiColorEditFlags_None);
     End();
     /*=== UI CODE ENDS HERE ===*/
 
