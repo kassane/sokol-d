@@ -18,13 +18,13 @@
             .lazy = true,
         },
         .emsdk = .{
-            .url = "git+https://github.com/emscripten-core/emsdk#4.0.4",
-            .hash = "N-V-__8AAFi6BQDeMj7wH24J1F5Mj8s7kkJZEPJanR8j0W6u",
+            .url = "git+https://github.com/emscripten-core/emsdk#4.0.7",
+            .hash = "N-V-__8AAHpwDwAUM-uM9dsnIV3FWct7km9c8J1cz83bRWjp",
             .lazy = true,
         },
         .shdc = .{
-            .url = "git+https://github.com/floooh/sokol-tools-bin#9b5a3e2b57fe9783ba4d1f3249059bc4720b592f",
-            .hash = "sokolshdc-0.1.0-r2KZDss89wN1gxiX0wHwfT7jmRGtSfks2vSZsZzjJfBY",
+            .url = "git+https://github.com/floooh/sokol-tools-bin#e3756ae7fb9463ee12004bd3f435c84f73bee7f6",
+            .hash = "sokolshdc-0.1.0-r2KZDkQrkARXk479xVYTXJZnBZgusffeE1MPM4__QT6s",
             .lazy = true,
         },
     },

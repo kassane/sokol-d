@@ -582,19 +582,19 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*Build.Step.InstallDir {
                 \\         _IONBF = 2,
                 \\     }
                 \\
-                \\     void __assert(scope const(char)* msg, scope const(char)* file, uint line) @nogc nothrow
+                \\     void __assert(scope const(char)* msg, scope const(char)* file, uint line) @nogc nothrow @trusted
                 \\     {
                 \\         fprintf(stderr, "Assertion failed in %s:%u: %s\n", file, line, msg);
                 \\         abort();
                 \\     }
                 \\
-                \\     void _d_assert(string file, uint line) @nogc nothrow
+                \\     void _d_assert(string file, uint line) @nogc nothrow @trusted
                 \\     {
                 \\         fprintf(stderr, "Assertion failed in %s:%u\n", file.ptr, line);
                 \\         abort();
                 \\     }
                 \\
-                \\     void _d_assert_msg(string msg, string file, uint line) @nogc nothrow
+                \\     void _d_assert_msg(string msg, string file, uint line) @nogc nothrow @trusted
                 \\     {
                 \\         __assert(msg.ptr, file.ptr, line);
                 \\     }
@@ -605,7 +605,7 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*Build.Step.InstallDir {
                 \\     int fprintf(FILE* __restrict, scope const(char)* __restrict, scope...) @nogc nothrow;
                 \\
                 \\     // boundchecking
-                \\     void _d_arraybounds_index(string file, uint line, size_t index, size_t length) @nogc nothrow
+                \\     void _d_arraybounds_index(string file, uint line, size_t index, size_t length) @nogc nothrow @trusted
                 \\     {
                 \\         if (index >= length)
                 \\             __assert("Array index out of bounds".ptr, file.ptr, line);
