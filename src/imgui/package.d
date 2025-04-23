@@ -737,51 +737,54 @@ version (has_imgui)
         igTextUnformattedEx(text, text_end);
     }
 
-    alias Text = igText;
+    void Text(Args...)(scope const(char)* fmt, Args args) @trusted
+    {
+        igText(fmt, args);
+    }
 
-    void TextV(scope const(char)* fmt, __builtin_va_list args) @trusted
+    void TextV(Args...)(scope const(char)* fmt, Args args) @trusted
     {
         igTextV(fmt, args);
     }
 
-    void TextColored(ImVec4 col, scope const(char)* fmt) @trusted
+    void TextColored(Args...)(ImVec4 col, scope const(char)* fmt, Args args) @trusted
     {
-        igTextColored(col, fmt);
+        igTextColored(col, fmt, args);
     }
 
-    void TextColoredV(ImVec4 col, scope const(char)* fmt, __builtin_va_list args) @trusted
+    void TextColoredV(Args...)(ImVec4 col, scope const(char)* fmt, Args args) @trusted
     {
         igTextColoredV(col, fmt, args);
     }
 
-    void TextDisabled(
-        scope const(char)* fmt) @trusted
+    void TextDisabled(Args...)(
+        scope const(char)* fmt, Args args) @trusted
     {
-        igTextDisabled(fmt);
+        igTextDisabled(fmt, args);
     }
 
-    void TextDisabledV(scope const(char)* fmt, __builtin_va_list args) @trusted
+    void TextDisabledV(Args...)(scope const(char)* fmt, Args args) @trusted
     {
         igTextDisabledV(fmt, args);
     }
 
-    void TextWrapped(
-        scope const(char)* fmt) @trusted
+    void TextWrapped(Args...)(
+        scope const(char)* fmt, Args args) @trusted
     {
-        igTextWrapped(fmt);
+        igTextWrapped(fmt, args);
     }
 
-    void TextWrappedV(scope const(char)* fmt, __builtin_va_list args) @trusted
+    void TextWrappedV(Args...)(scope const(char)* fmt, Args args) @trusted
     {
         igTextWrappedV(fmt, args);
     }
 
-    void LabelText(scope const(char)* label, scope const(char)* fmt) @trusted
+    void LabelText(Args...)(scope const(char)* label, scope const(char)* fmt, Args args) @trusted
     {
-        igLabelText(label, fmt);
+        igLabelText(label, fmt, args);
     }
 
-    void LabelTextV(scope const(char)* label, scope const(char)* fmt, __builtin_va_list args) @trusted
+    void LabelTextV(Args...)(scope const(char)* label, scope const(char)* fmt, Args args) @trusted
     {
         igLabelTextV(label, fmt, args);
     }
@@ -792,7 +795,7 @@ version (has_imgui)
         igBulletText(fmt);
     }
 
-    void BulletTextV(scope const(char)* fmt, __builtin_va_list args) @trusted
+    void BulletTextV(Args...)(scope const(char)* fmt, Args args) @trusted
     {
         igBulletTextV(fmt, args);
     }
@@ -1432,12 +1435,12 @@ version (has_imgui)
         return igTreeNodePtr(ptr_id, fmt);
     }
 
-    bool TreeNodeV(scope const(char)* str_id, scope const(char)* fmt, __builtin_va_list args) @trusted
+    bool TreeNodeV(Args...)(scope const(char)* str_id, scope const(char)* fmt, Args args) @trusted
     {
         return igTreeNodeV(str_id, fmt, args);
     }
 
-    bool TreeNodeVPtr(scope void* ptr_id, scope const(char)* fmt, __builtin_va_list args) @trusted
+    bool TreeNodeVPtr(Args...)(scope void* ptr_id, scope const(char)* fmt, Args args) @trusted
     {
         return igTreeNodeVPtr(ptr_id, fmt, args);
     }
@@ -1457,12 +1460,12 @@ version (has_imgui)
         return igTreeNodeExPtr(ptr_id, flags, fmt);
     }
 
-    bool TreeNodeExV(scope const(char)* str_id, ImGuiTreeNodeFlags flags, scope const(char)* fmt, __builtin_va_list args) @trusted
+    bool TreeNodeExV(Args...)(scope const(char)* str_id, ImGuiTreeNodeFlags flags, scope const(char)* fmt, Args args) @trusted
     {
         return igTreeNodeExV(str_id, flags, fmt, args);
     }
 
-    bool TreeNodeExVPtr(scope void* ptr_id, ImGuiTreeNodeFlags flags, scope const(char)* fmt, __builtin_va_list args) @trusted
+    bool TreeNodeExVPtr(Args...)(scope void* ptr_id, ImGuiTreeNodeFlags flags, scope const(char)* fmt, Args args) @trusted
     {
         return igTreeNodeExVPtr(ptr_id, flags, fmt, args);
     }
@@ -1705,7 +1708,7 @@ version (has_imgui)
         igSetTooltip(fmt);
     }
 
-    void SetTooltipV(scope const(char)* fmt, __builtin_va_list args) @trusted
+    void SetTooltipV(Args...)(scope const(char)* fmt, Args args) @trusted
     {
         igSetTooltipV(fmt, args);
     }
@@ -1721,7 +1724,7 @@ version (has_imgui)
         igSetItemTooltip(fmt);
     }
 
-    void SetItemTooltipV(scope const(char)* fmt, __builtin_va_list args) @trusted
+    void SetItemTooltipV(Args...)(scope const(char)* fmt, Args args) @trusted
     {
         igSetItemTooltipV(fmt, args);
     }
@@ -2030,7 +2033,7 @@ version (has_imgui)
         igLogText(fmt);
     }
 
-    void LogTextV(scope const(char)* fmt, __builtin_va_list args) @trusted
+    void LogTextV(Args...)(scope const(char)* fmt, Args args) @trusted
     {
         igLogTextV(fmt, args);
     }
@@ -2573,7 +2576,7 @@ version (has_imgui)
         igDebugLog(fmt);
     }
 
-    void DebugLogV(scope const(char)* fmt, __builtin_va_list args) @trusted
+    void DebugLogV(Args...)(scope const(char)* fmt, Args args) @trusted
     {
         igDebugLogV(fmt, args);
     }
