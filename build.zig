@@ -22,6 +22,7 @@ pub const LibSokolOptions = struct {
     use_egl: bool = false,
     use_x11: bool = true,
     use_wayland: bool = false,
+    dynamic_linking: bool = false,
     emsdk: ?*Build.Dependency = null,
     use_ubsan: bool = false,
     use_tsan: bool = false,
@@ -76,18 +77,16 @@ fn rootPath() []const u8 {
 
 // build sokol into a static library
 pub fn buildLibSokol(b: *Build, options: LibSokolOptions) !*CompileStep {
-    const sharedlib = b.option(bool, "shared", "Build sokol dynamic library (default: static)") orelse false;
-    const lib = if (sharedlib) b.addSharedLibrary(.{
+    const lib = b.addLibrary(.{
         .name = "sokol",
-        .target = options.target,
-        .optimize = options.optimize,
-        .link_libc = true,
-    }) else b.addStaticLibrary(.{
-        .name = "sokol",
-        .target = options.target,
-        .optimize = options.optimize,
-        .link_libc = true,
+        .root_module = b.createModule(.{
+            .target = options.target,
+            .optimize = options.optimize,
+        }),
+        .linkage = if (options.dynamic_linking) .dynamic else .static,
     });
+
+    lib.linkLibC();
 
     lib.root_module.sanitize_c = options.use_ubsan;
     lib.root_module.sanitize_thread = options.use_tsan;
@@ -249,6 +248,7 @@ pub fn build(b: *Build) !void {
     const opt_with_sokol_imgui = b.option(bool, "imgui", "Add support for sokol_imgui.h bindings") orelse false;
     const opt_sokol_imgui_cprefix = b.option([]const u8, "sokol_imgui_cprefix", "Override Dear ImGui C bindings prefix for sokol_imgui.h (see SOKOL_IMGUI_CPREFIX)");
     const opt_cimgui_header_path = b.option([]const u8, "cimgui_header_path", "Override the Dear ImGui C bindings header name (default: cimgui.h)");
+    const sharedlib = b.option(bool, "shared", "Build sokol dynamic library (default: static)") orelse false;
     const sokol_backend: SokolBackend = if (opt_use_gl) .gl else if (opt_use_gles3) .gles3 else if (opt_use_wgpu) .wgpu else .auto;
     const imguiver_path = switch (b.option(
         imguiVersion,
@@ -281,6 +281,7 @@ pub fn build(b: *Build) !void {
         .use_wayland = opt_use_wayland,
         .use_x11 = opt_use_x11,
         .use_egl = opt_use_egl,
+        .dynamic_linking = sharedlib,
         .with_sokol_imgui = opt_with_sokol_imgui,
         .sokol_imgui_cprefix = opt_sokol_imgui_cprefix,
         .cimgui_header_path = opt_cimgui_header_path,
