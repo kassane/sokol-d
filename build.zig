@@ -440,8 +440,12 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*Build.Step.InstallDir {
     if (options.betterC)
         ldc_exec.addArg("-betterC");
 
-    // verbose error messages
-    ldc_exec.addArg("-verrors=context");
+    // verbose messages
+    ldc_exec.addArgs(&.{
+        "-verrors=context",
+        "-vgc",
+        "-vtls",
+    });
 
     switch (options.optimize) {
         .Debug => {
@@ -450,10 +454,10 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*Build.Step.InstallDir {
                 "-d-debug",
                 "--gc",
                 "-g",
-                "-gf",
-                "-gs",
-                "-vgc",
-                "-vtls",
+                "--write-experimental-debuginfo",
+                "--data-sections",
+                "--function-sections",
+                "--force-dwarf-frame-section",
                 "-boundscheck=on",
                 "--link-debuglib",
             });
@@ -1121,7 +1125,7 @@ pub fn emLinkStep(b: *Build, options: EmLinkOptions) !*Build.Step.InstallDir {
         emcc.setName("emcc"); // hide emcc path
         if (options.optimize == .Debug) {
             emcc.addArgs(&.{
-                "-Og",
+                "-gsource-map",
                 "-sSAFE_HEAP=1",
                 "-sSTACK_OVERFLOW_CHECK=1",
             });
