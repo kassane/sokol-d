@@ -484,11 +484,23 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*Build.Step.InstallDir {
     // Print character (column) numbers in diagnostics
     ldc_exec.addArg("-vcolumns");
 
-    const extFile = switch (options.kind) {
-        .exe, .@"test" => options.target.result.exeFileExt(),
-        .lib => if (options.linkage == .static) options.target.result.staticLibSuffix() else options.target.result.dynamicLibSuffix(),
-        .obj => if (isPlatform(options.target.result, .windows)) ".obj" else ".o",
-    };
+    var extFile: []const u8 = undefined;
+    if (options.kind == .exe or options.kind == .@"test") {
+        extFile = options.target.result.exeFileExt();
+    } else if (options.kind == .lib) {
+        if (options.linkage == .static) {
+            extFile = options.target.result.staticLibSuffix();
+        } else {
+            extFile = options.target.result.dynamicLibSuffix();
+        }
+    } else if (options.kind == .obj) {
+        if (isPlatform(options.target.result, .windows)) {
+            extFile = ".obj";
+        } else {
+            extFile = ".o";
+        }
+    }
+
     // object file output (zig-cache/o/{hash_id}/*.o)
     const objpath = ldc_exec.addPrefixedOutputFileArg("-of=", try std.mem.concat(b.allocator, u8, &.{ options.name, extFile }));
     if (b.cache_root.path) |dir| {
@@ -711,12 +723,16 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*Build.Step.InstallDir {
     const cpu_model = options.target.result.cpu.model.llvm_name orelse "generic";
     ldc_exec.addArg(b.fmt("-mcpu={s}", .{cpu_model}));
 
-    const outputDir = switch (options.kind) {
-        .lib => "lib",
-        .exe => "bin",
-        .@"test" => "test",
-        .obj => "obj",
-    };
+    var outputDir: []const u8 = undefined;
+    if (options.kind == .lib) {
+        outputDir = "lib";
+    } else if (options.kind == .exe) {
+        outputDir = "bin";
+    } else if (options.kind == .@"test") {
+        outputDir = "test";
+    } else if (options.kind == .obj) {
+        outputDir = "obj";
+    }
 
     // output file
     const installdir = b.addInstallDirectory(.{
