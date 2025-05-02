@@ -12,8 +12,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: mlugg/setup-zig@v1
-        with:
-          version: master
+        # with:
+        #   version: master
       - uses: dlang-community/setup-dlang@v2
         with:
           compiler: ldc-master
