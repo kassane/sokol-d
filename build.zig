@@ -1317,7 +1317,7 @@ fn buildImgui(b: *Build, options: libImGuiOptions) !*CompileStep {
             },
             .flags = cflags.slice(),
         });
-        libimgui.root_module.sanitize_c = false;
+
         if (libimgui.rootModuleTarget().os.tag == .windows)
             libimgui.linkSystemLibrary("imm32");
 
