@@ -1,11 +1,10 @@
 .{
     .name = .sokol,
-    .version = "0.2.0",
+    .version = "0.2.1",
     .min_zig_version = "0.14.0",
     .fingerprint = 0xf9f6f48d67869e98,
     .paths = .{
         "src",
-        "tools",
         "build.zig",
         "build.zig.zon",
         "LICENSE",
