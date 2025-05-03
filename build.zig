@@ -738,7 +738,11 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*Build.Step.InstallDir {
         if (feature.llvm_name) |llvm_name| {
             const plus_or_minus = "-+"[@intFromBool(is_enabled)];
             if (is_enabled) {
-                try cpu_args.writer().print("{c}{s},", .{ plus_or_minus, llvm_name });
+                if (std.mem.endsWith(u8, llvm_name, "contextidrel2")) {
+                    try cpu_args.writer().print("{c}CONTEXTIDREL2,", .{plus_or_minus});
+                } else {
+                    try cpu_args.writer().print("{c}{s},", .{ plus_or_minus, llvm_name });
+                }
             }
         }
     }
