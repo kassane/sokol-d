@@ -725,31 +725,31 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*Build.Step.InstallDir {
 
     ldc_exec.addArg(b.fmt("-mtriple={s}", .{mtriple}));
 
-    const cpu_model = options.target.result.cpu.model.llvm_name orelse "generic";
-    ldc_exec.addArg(b.fmt("-mcpu={s}", .{cpu_model}));
+    if (options.target.query.isNative()) {
+        ldc_exec.addArg("-mcpu=native");
+    } else {
+        const cpu_model = options.target.result.cpu.model.llvm_name orelse "generic";
+        ldc_exec.addArg(b.fmt("-mcpu={s}", .{cpu_model}));
 
-    // zig workaround for ldc2 get cpu-features
-    var cpu_args = std.ArrayList(u8).init(b.allocator);
-    defer cpu_args.deinit();
-    const all_features_list = options.target.result.cpu.arch.allFeaturesList();
-    for (all_features_list, 0..) |feature, index_usize| {
-        const index = @as(std.Target.Cpu.Feature.Set.Index, @intCast(index_usize));
-        const is_enabled = options.target.result.cpu.features.isEnabled(index);
-        if (feature.llvm_name) |llvm_name| {
-            const plus_or_minus = "-+"[@intFromBool(is_enabled)];
-            if (is_enabled) {
-                if (std.mem.endsWith(u8, llvm_name, "contextidrel2")) {
-                    try cpu_args.writer().print("{c}CONTEXTIDREL2,", .{plus_or_minus});
-                } else {
+        // zig workaround for ldc2 get cpu-features
+        var cpu_args = std.ArrayList(u8).init(b.allocator);
+        defer cpu_args.deinit();
+        const all_features_list = options.target.result.cpu.arch.allFeaturesList();
+        for (all_features_list, 0..) |feature, index_usize| {
+            const index = @as(std.Target.Cpu.Feature.Set.Index, @intCast(index_usize));
+            const is_enabled = options.target.result.cpu.features.isEnabled(index);
+            if (feature.llvm_name) |llvm_name| {
+                const plus_or_minus = "-+"[@intFromBool(is_enabled)];
+                if (is_enabled) {
                     try cpu_args.writer().print("{c}{s},", .{ plus_or_minus, llvm_name });
                 }
             }
         }
-    }
-    if (cpu_args.items.len > 0) {
-        // Remove trailing comma
-        _ = cpu_args.pop();
-        ldc_exec.addArg(b.fmt("-mattr={s}", .{cpu_args.items}));
+        if (cpu_args.items.len > 0) {
+            // Remove trailing comma
+            _ = cpu_args.pop();
+            ldc_exec.addArg(b.fmt("-mattr={s}", .{cpu_args.items}));
+        }
     }
 
     var outputDir: []const u8 = undefined;
