@@ -447,6 +447,22 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*Build.Step.InstallDir {
         "-vtls",
     });
 
+    if (options.optimize != .Debug) {
+        ldc_exec.addArgs(&.{
+            "--data-sections",
+            "--function-sections",
+        });
+        if (options.optimize != .ReleaseSafe) {
+            ldc_exec.addArgs(&.{
+                "-boundscheck=off",
+                "--enable-asserts=false",
+            });
+        } else {
+            ldc_exec.addArgs(&.{
+                "-boundscheck=safeonly",
+            });
+        }
+    }
     switch (options.optimize) {
         .Debug => {
             ldc_exec.addArgs(&.{
@@ -455,33 +471,21 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*Build.Step.InstallDir {
                 "--gc",
                 "-g",
                 "--write-experimental-debuginfo",
-                "--data-sections",
-                "--function-sections",
                 "--force-dwarf-frame-section",
                 "-boundscheck=on",
                 "--link-debuglib",
             });
         },
-        .ReleaseSafe => {
+        .ReleaseSafe, .ReleaseFast => {
             ldc_exec.addArgs(&.{
                 "-O",
-                "-boundscheck=safeonly",
-            });
-        },
-        .ReleaseFast => {
-            ldc_exec.addArgs(&.{
-                "-O",
-                "-boundscheck=off",
-                "--enable-asserts=false",
-                "--strip-debug",
             });
         },
         .ReleaseSmall => {
             ldc_exec.addArgs(&.{
-                "-Oz",
-                "-boundscheck=off",
-                "--enable-asserts=false",
+                "-Os",
                 "--strip-debug",
+                "--strip-global-constants",
             });
         },
     }
