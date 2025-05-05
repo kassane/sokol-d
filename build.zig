@@ -993,6 +993,11 @@ const generated_zcc =
     \\             // NOT CHANGE!!
     \\         } else if (std.mem.endsWith(u8, arg, "as-needed")) {
     \\             // NOT CHANGE!!
+    \\         } else if (std.mem.startsWith(u8, arg, "/NOLOGO") or
+    \\             std.mem.startsWith(u8, arg, "/P") or std.mem.startsWith(u8, arg, "/F")
+    \\             or std.mem.startsWith(u8, arg, "/Zc"))
+    \\         {
+    \\             // NOT CHANGE!!
     \\         } else if (std.mem.endsWith(u8, arg, "gcc") or
     \\             std.mem.endsWith(u8, arg, "gcc_s"))
     \\         {
