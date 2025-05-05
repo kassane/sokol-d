@@ -999,11 +999,7 @@ const generated_zcc =
     \\             or std.mem.startsWith(u8, arg, "/DE") or std.mem.startsWith(u8, arg, "/IG"))
     \\         {
     \\             // NOT CHANGE!!
-    \\         } else if (std.mem.endsWith(u8, arg, "32.lib")
-    \\             or std.mem.startsWith(u8, arg, "oldnames") 
-    \\             or std.mem.startsWith(u8, arg, "legacy_stdio_definitions")
-    \\             or std.mem.startsWith(u8, arg, "uuid") 
-    \\             or std.mem.startsWith(u8, arg, "winspool"))
+    \\         } else if (std.mem.endsWith(u8, arg, ".lib"))
     \\         {
     \\             // NOT CHANGE!!
     \\         } else if (std.mem.endsWith(u8, arg, "gcc") or
