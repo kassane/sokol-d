@@ -85,7 +85,10 @@ pub fn buildLibSokol(b: *Build, options: LibSokolOptions) !*CompileStep {
         }),
         .linkage = if (options.dynamic_linking) .dynamic else .static,
     });
+
     lib.linkLibC();
+
+    lib.root_module.sanitize_c = options.use_ubsan;
     lib.root_module.sanitize_thread = options.use_tsan;
 
     switch (options.optimize) {
@@ -117,9 +120,6 @@ pub fn buildLibSokol(b: *Build, options: LibSokolOptions) !*CompileStep {
     try cflags.append("-DIMPL");
     if (options.optimize != .Debug) {
         try cflags.append("-DNDEBUG");
-    }
-    if (!options.use_ubsan) {
-        try cflags.append("-fno-sanitize=undefined");
     }
     const backend = resolveSokolBackend(options.backend, lib.rootModuleTarget());
     switch (backend) {
@@ -344,7 +344,6 @@ pub fn build(b: *Build) !void {
                 .name = example,
                 .artifact = lib_sokol,
                 .imgui = lib_imgui,
-                .use_ubsan = sanitize_c,
                 .sources = &[_][]const u8{
                     b.fmt("{s}/examples/{s}.d", .{ rootPath(), example }),
                 },
@@ -822,7 +821,7 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*Build.Step.InstallDir {
             .use_webgl2 = backend != .wgpu,
             .use_emmalloc = true,
             .use_filesystem = false,
-            .use_ubsan = options.use_ubsan,
+            .use_ubsan = options.artifact.?.root_module.sanitize_c orelse false,
             .release_use_lto = options.artifact.?.want_lto orelse false,
             .shell_file_path = b.path("src/sokol/web/shell.html"),
             .extra_args = &.{"-sSTACK_SIZE=512KB"},
@@ -874,7 +873,6 @@ pub const DCompileStep = struct {
     artifact: ?*Build.Step.Compile = null,
     imgui: ?*Build.Step.Compile = null,
     with_sokol_imgui: bool = false,
-    use_ubsan: bool = false,
     emsdk: ?*Build.Dependency = null,
     backend: SokolBackend = .auto,
 };
@@ -1197,8 +1195,8 @@ pub fn emLinkStep(b: *Build, options: EmLinkOptions) !*Build.Step.InstallDir {
         if (options.use_offset_converter) {
             emcc.addArg("-sUSE_OFFSET_CONVERTER");
         }
-        if (!options.use_ubsan) {
-            emcc.addArg("-fno-sanitize=undefined");
+        if (options.use_ubsan) {
+            emcc.addArg("-fsanitize=undefined");
         }
         if (options.shell_file_path) |shell_file_path| {
             emcc.addPrefixedFileArg("--shell-file=", shell_file_path);
@@ -1311,14 +1309,13 @@ fn buildImgui(b: *Build, options: libImGuiOptions) !*CompileStep {
         .target = options.target,
         .optimize = options.optimize,
     });
+
+    libimgui.root_module.sanitize_c = options.use_ubsan;
     libimgui.root_module.sanitize_thread = options.use_tsan;
 
     var cflags = try std.BoundedArray([]const u8, 64).init(0);
     if (options.optimize != .Debug) {
         try cflags.append("-DNDEBUG");
-    }
-    if (!options.use_ubsan) {
-        try cflags.append("-fno-sanitize=undefined");
     }
     try cflags.appendSlice(&.{
         "-Wall",
