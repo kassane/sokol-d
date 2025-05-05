@@ -1002,6 +1002,7 @@ const generated_zcc =
     \\         } else if (std.mem.endsWith(u8, arg, "32.lib")
     \\             or std.mem.startsWith(u8, arg, "oldnames") 
     \\             or std.mem.startsWith(u8, arg, "legacy_stdio_definitions")
+    \\             or std.mem.startsWith(u8, arg, "d3d11") 
     \\             or std.mem.startsWith(u8, arg, "uuid") 
     \\             or std.mem.startsWith(u8, arg, "winspool"))
     \\         {
