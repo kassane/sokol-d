@@ -1,6 +1,9 @@
 name: D
 
-on: [push]
+on:
+  push:
+    branches: [ main ]
+  pull_request:
 
 jobs:
   build:
@@ -11,7 +14,7 @@ jobs:
     runs-on: ${{ matrix.runs-on }}
     steps:
       - uses: actions/checkout@v4
-      - uses: mlugg/setup-zig@v1
+      - uses: mlugg/setup-zig@v2
         # with:
         #   version: master
       - uses: dlang-community/setup-dlang@v2
@@ -56,4 +59,4 @@ jobs:
       - name: (Zig) Build Native
         run: zig build -Dimgui --summary all
       - name: (Zig + emsdk) Build Wasm
-        run: zig build -Dimgui -DzigCC --summary all -Dtarget=wasm32-emscripten-none -Doptimize=ReleaseSmall
+        run: zig build -Dimgui -DzigCC --summary all -Dtarget=wasm32-emscripten-none -Dcpu=generic

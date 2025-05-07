@@ -22,6 +22,7 @@ pub const LibSokolOptions = struct {
     use_egl: bool = false,
     use_x11: bool = true,
     use_wayland: bool = false,
+    dynamic_linking: bool = false,
     emsdk: ?*Build.Dependency = null,
     use_ubsan: bool = false,
     use_tsan: bool = false,
@@ -76,18 +77,16 @@ fn rootPath() []const u8 {
 
 // build sokol into a static library
 pub fn buildLibSokol(b: *Build, options: LibSokolOptions) !*CompileStep {
-    const sharedlib = b.option(bool, "shared", "Build sokol dynamic library (default: static)") orelse false;
-    const lib = if (sharedlib) b.addSharedLibrary(.{
+    const lib = b.addLibrary(.{
         .name = "sokol",
-        .target = options.target,
-        .optimize = options.optimize,
-        .link_libc = true,
-    }) else b.addStaticLibrary(.{
-        .name = "sokol",
-        .target = options.target,
-        .optimize = options.optimize,
-        .link_libc = true,
+        .root_module = b.createModule(.{
+            .target = options.target,
+            .optimize = options.optimize,
+        }),
+        .linkage = if (options.dynamic_linking) .dynamic else .static,
     });
+
+    lib.linkLibC();
 
     lib.root_module.sanitize_c = options.use_ubsan;
     lib.root_module.sanitize_thread = options.use_tsan;
@@ -249,6 +248,7 @@ pub fn build(b: *Build) !void {
     const opt_with_sokol_imgui = b.option(bool, "imgui", "Add support for sokol_imgui.h bindings") orelse false;
     const opt_sokol_imgui_cprefix = b.option([]const u8, "sokol_imgui_cprefix", "Override Dear ImGui C bindings prefix for sokol_imgui.h (see SOKOL_IMGUI_CPREFIX)");
     const opt_cimgui_header_path = b.option([]const u8, "cimgui_header_path", "Override the Dear ImGui C bindings header name (default: cimgui.h)");
+    const sharedlib = b.option(bool, "shared", "Build sokol dynamic library (default: static)") orelse false;
     const sokol_backend: SokolBackend = if (opt_use_gl) .gl else if (opt_use_gles3) .gles3 else if (opt_use_wgpu) .wgpu else .auto;
     const imguiver_path = switch (b.option(
         imguiVersion,
@@ -281,6 +281,7 @@ pub fn build(b: *Build) !void {
         .use_wayland = opt_use_wayland,
         .use_x11 = opt_use_x11,
         .use_egl = opt_use_egl,
+        .dynamic_linking = sharedlib,
         .with_sokol_imgui = opt_with_sokol_imgui,
         .sokol_imgui_cprefix = opt_sokol_imgui_cprefix,
         .cimgui_header_path = opt_cimgui_header_path,
@@ -439,9 +440,29 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*Build.Step.InstallDir {
     if (options.betterC)
         ldc_exec.addArg("-betterC");
 
-    // verbose error messages
-    ldc_exec.addArg("-verrors=context");
+    // verbose messages
+    ldc_exec.addArgs(&.{
+        "-verrors=context",
+        "-vgc",
+        "-vtls",
+    });
 
+    if (options.optimize != .Debug) {
+        ldc_exec.addArgs(&.{
+            "--data-sections",
+            "--function-sections",
+        });
+        if (options.optimize != .ReleaseSafe) {
+            ldc_exec.addArgs(&.{
+                "-boundscheck=off",
+                "--enable-asserts=false",
+            });
+        } else {
+            ldc_exec.addArgs(&.{
+                "-boundscheck=safeonly",
+            });
+        }
+    }
     switch (options.optimize) {
         .Debug => {
             ldc_exec.addArgs(&.{
@@ -449,34 +470,22 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*Build.Step.InstallDir {
                 "-d-debug",
                 "--gc",
                 "-g",
-                "-gf",
-                "-gs",
-                "-vgc",
-                "-vtls",
+                "--write-experimental-debuginfo",
+                "--force-dwarf-frame-section",
                 "-boundscheck=on",
                 "--link-debuglib",
             });
         },
-        .ReleaseSafe => {
+        .ReleaseSafe, .ReleaseFast => {
             ldc_exec.addArgs(&.{
                 "-O",
-                "-boundscheck=safeonly",
-            });
-        },
-        .ReleaseFast => {
-            ldc_exec.addArgs(&.{
-                "-O",
-                "-boundscheck=off",
-                "--enable-asserts=false",
-                "--strip-debug",
             });
         },
         .ReleaseSmall => {
             ldc_exec.addArgs(&.{
-                "-Oz",
-                "-boundscheck=off",
-                "--enable-asserts=false",
+                "-Os",
                 "--strip-debug",
+                "--strip-global-constants",
             });
         },
     }
@@ -720,8 +729,32 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*Build.Step.InstallDir {
 
     ldc_exec.addArg(b.fmt("-mtriple={s}", .{mtriple}));
 
-    const cpu_model = options.target.result.cpu.model.llvm_name orelse "generic";
-    ldc_exec.addArg(b.fmt("-mcpu={s}", .{cpu_model}));
+    if (options.target.query.isNative()) {
+        ldc_exec.addArg("-mcpu=native");
+    } else {
+        const cpu_model = options.target.result.cpu.model.llvm_name orelse "generic";
+        ldc_exec.addArg(b.fmt("-mcpu={s}", .{cpu_model}));
+
+        // zig workaround for ldc2 get cpu-features
+        var cpu_args = std.ArrayList(u8).init(b.allocator);
+        defer cpu_args.deinit();
+        const all_features_list = options.target.result.cpu.arch.allFeaturesList();
+        for (all_features_list, 0..) |feature, index_usize| {
+            const index = @as(std.Target.Cpu.Feature.Set.Index, @intCast(index_usize));
+            const is_enabled = options.target.result.cpu.features.isEnabled(index);
+            if (feature.llvm_name) |llvm_name| {
+                const plus_or_minus = "-+"[@intFromBool(is_enabled)];
+                if (is_enabled) {
+                    try cpu_args.writer().print("{c}{s},", .{ plus_or_minus, llvm_name });
+                }
+            }
+        }
+        if (cpu_args.items.len > 0) {
+            // Remove trailing comma
+            _ = cpu_args.pop();
+            ldc_exec.addArg(b.fmt("-mattr={s}", .{cpu_args.items}));
+        }
+    }
 
     var outputDir: []const u8 = undefined;
     if (options.kind == .lib) {
@@ -960,6 +993,20 @@ const generated_zcc =
     \\             // NOT CHANGE!!
     \\         } else if (std.mem.endsWith(u8, arg, "as-needed")) {
     \\             // NOT CHANGE!!
+    \\         } else if (std.mem.startsWith(u8, arg, "/NOLOGO") or std.mem.startsWith(u8, arg, "/nologo")
+    \\             or std.mem.startsWith(u8, arg, "/P") or std.mem.startsWith(u8, arg, "/F")
+    \\             or std.mem.startsWith(u8, arg, "/Zc") or std.mem.startsWith(u8, arg, "/O") 
+    \\             or std.mem.startsWith(u8, arg, "/DE") or std.mem.startsWith(u8, arg, "/IG"))
+    \\         {
+    \\             // NOT CHANGE!!
+    \\         } else if (std.mem.endsWith(u8, arg, "32.lib")
+    \\             or std.mem.startsWith(u8, arg, "oldnames") 
+    \\             or std.mem.startsWith(u8, arg, "legacy_stdio_definitions")
+    \\             or std.mem.startsWith(u8, arg, "d3d11") 
+    \\             or std.mem.startsWith(u8, arg, "uuid") 
+    \\             or std.mem.startsWith(u8, arg, "winspool"))
+    \\         {
+    \\             // NOT CHANGE!!
     \\         } else if (std.mem.endsWith(u8, arg, "gcc") or
     \\             std.mem.endsWith(u8, arg, "gcc_s"))
     \\         {
@@ -1118,9 +1165,11 @@ pub fn emLinkStep(b: *Build, options: EmLinkOptions) !*Build.Step.InstallDir {
         const emcc_path = emSdkLazyPath(b, emsdk, &.{ "upstream", "emscripten", "emcc" }).getPath(b);
         const emcc = b.addSystemCommand(&.{emcc_path});
         emcc.setName("emcc"); // hide emcc path
+        if (b.verbose)
+            emcc.addArg("-v");
         if (options.optimize == .Debug) {
             emcc.addArgs(&.{
-                "-Og",
+                "-gsource-map",
                 "-sSAFE_HEAP=1",
                 "-sSTACK_OVERFLOW_CHECK=1",
             });
@@ -1312,7 +1361,7 @@ fn buildImgui(b: *Build, options: libImGuiOptions) !*CompileStep {
             },
             .flags = cflags.slice(),
         });
-        libimgui.root_module.sanitize_c = false;
+
         if (libimgui.rootModuleTarget().os.tag == .windows)
             libimgui.linkSystemLibrary("imm32");
 

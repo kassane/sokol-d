@@ -43,17 +43,17 @@ void frame_userdata(scope void* userdata) @trusted
         {
             state.map.clear();
         }
-    }
-    debug
-    {
-        import std.stdio : writeln;
+        debug
+        {
+            import std.stdio : writeln;
 
-        try
-        {
-            writeln(*state);
-        }
-        catch (Exception)
-        {
+            try
+            {
+                writeln(*state);
+            }
+            catch (Exception)
+            {
+            }
         }
     }
 

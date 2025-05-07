@@ -1,5 +1,5 @@
 name "sokol-d"
-version "0.2.0"
+version "0.2.1"
 description "D bindings for sokol"
 authors "Matheus Catarino França" "Andre Weissflog"
 copyright "Copyright 2023-2024 - Matheus Catarino França"
@@ -24,7 +24,7 @@ buildType "release-nobounds" {
 buildType "release-debug" {
 	buildOptions "releaseMode" "debugInfo" "inline" "optimize"
 }
-toolchainRequirements dmd=">=2.105.0" ldc=">=1.35.0" gdc=">=9.3.0"
+toolchainRequirements frontend=">=2.105.0"
 
 configuration "default" {
 	targetType "sourceLibrary"
