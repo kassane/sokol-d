@@ -106,9 +106,14 @@
 		},
 		{
 			"name": "genshaders",
-			"targetType": "none",
 			"preGenerateCommands": [
 				"$DC -run $PACKAGE_DIR/build.d --download-sokol-tools"
+			],
+			"postBuildCommands-posix": [
+				"rm $PACKAGE_DIR/*.a"
+			],
+			"postBuildCommands-windows": [
+				"powershell -Command Remove-Item $PACKAGE_DIR\\*.lib"
 			]
 		},
 		{

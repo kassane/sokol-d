@@ -29,6 +29,8 @@ jobs:
 
       # - name: (Dub) Build Native
       #   run: dub -- --download-emsdk --download-zig --download-imgui --download-sokol-tools
+      - name: (Dub) Genshaders
+        run: dub build -c genshaders -v
       - name: (Dub) Build Native
         run: dub build -v
       - name: (Dub) Build Wasm32
