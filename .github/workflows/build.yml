@@ -27,15 +27,17 @@ jobs:
             sudo apt-get update
             sudo apt-get install libglu1-mesa-dev mesa-common-dev xorg-dev libasound-dev
 
-      # - name: (Dub) Build Native
+      # - name: (dub) Build Native
       #   run: dub -- --download-emsdk --download-zig --download-imgui --download-sokol-tools
-      - name: (Dub) Genshaders
+      - name: (dub) Genshaders
         run: dub build -c genshaders -v
-      - name: (Dub) Build Native
+      - name: (dub) Build sokol-native
         run: dub build -v
-      - name: (Dub) Build imgui-native
+      - name: (dub) Build imgui-native
         run: dub build -c imgui -v
-      - name: (Dub) Build imgui + emscripten
+      - name: (dub) Build imgui + emscripten
         run: dub build -c imgui-wasm -v
-      - name: (Dub) Build Wasm32
-        run: dub build -c emscripten -v
+      - name: (dub) Build sokol-wgpu
+        run: dub build -c sokol-wgpu -v
+      - name: (dub) Build sokol-wgles3
+        run: dub build -c sokol-wgles3 -v
