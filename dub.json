@@ -75,17 +75,17 @@
 			"preBuildCommands-osx": [
 				"mkdir -p $PACKAGE_DIR/build",
 				"$DC -run $PACKAGE_DIR/build.d --download-zig",
-				"$PACKAGE_DIR/vendor/zig/zig cc -DNDEBUG -DIMPL -DSOKOL_METAL -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_log.o $PACKAGE_DIR/src/sokol/c/sokol_log.c",
-				"$PACKAGE_DIR/vendor/zig/zig cc -DNDEBUG -DIMPL -DSOKOL_METAL -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_app.o $PACKAGE_DIR/src/sokol/c/sokol_app.c",
-				"$PACKAGE_DIR/vendor/zig/zig cc -DNDEBUG -DIMPL -DSOKOL_METAL -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_gfx.o $PACKAGE_DIR/src/sokol/c/sokol_gfx.c",
-				"$PACKAGE_DIR/vendor/zig/zig cc -DNDEBUG -DIMPL -DSOKOL_METAL -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_time.o $PACKAGE_DIR/src/sokol/c/sokol_time.c",
-				"$PACKAGE_DIR/vendor/zig/zig cc -DNDEBUG -DIMPL -DSOKOL_METAL -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_audio.o $PACKAGE_DIR/src/sokol/c/sokol_audio.c",
-				"$PACKAGE_DIR/vendor/zig/zig cc -DNDEBUG -DIMPL -DSOKOL_METAL -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_gl.o $PACKAGE_DIR/src/sokol/c/sokol_gl.c",
-				"$PACKAGE_DIR/vendor/zig/zig cc -DNDEBUG -DIMPL -DSOKOL_METAL -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_debugtext.o $PACKAGE_DIR/src/sokol/c/sokol_debugtext.c",
-				"$PACKAGE_DIR/vendor/zig/zig cc -DNDEBUG -DIMPL -DSOKOL_METAL -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_shape.o $PACKAGE_DIR/src/sokol/c/sokol_shape.c",
-				"$PACKAGE_DIR/vendor/zig/zig cc -DNDEBUG -DIMPL -DSOKOL_METAL -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_glue.o $PACKAGE_DIR/src/sokol/c/sokol_glue.c",
-				"$PACKAGE_DIR/vendor/zig/zig cc -DNDEBUG -DIMPL -DSOKOL_METAL -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_fetch.o $PACKAGE_DIR/src/sokol/c/sokol_fetch.c",
-				"$PACKAGE_DIR/vendor/zig/zig cc -DNDEBUG -DIMPL -DSOKOL_METAL -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_memtrack.o $PACKAGE_DIR/src/sokol/c/sokol_memtrack.c",
+				"$PACKAGE_DIR/vendor/zig/zig cc -target native-native -DNDEBUG -DIMPL -DSOKOL_METAL -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_log.o $PACKAGE_DIR/src/sokol/c/sokol_log.c",
+				"$PACKAGE_DIR/vendor/zig/zig cc -target native-native -DNDEBUG -DIMPL -DSOKOL_METAL -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_app.o $PACKAGE_DIR/src/sokol/c/sokol_app.c",
+				"$PACKAGE_DIR/vendor/zig/zig cc -target native-native -DNDEBUG -DIMPL -DSOKOL_METAL -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_gfx.o $PACKAGE_DIR/src/sokol/c/sokol_gfx.c",
+				"$PACKAGE_DIR/vendor/zig/zig cc -target native-native -DNDEBUG -DIMPL -DSOKOL_METAL -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_time.o $PACKAGE_DIR/src/sokol/c/sokol_time.c",
+				"$PACKAGE_DIR/vendor/zig/zig cc -target native-native -DNDEBUG -DIMPL -DSOKOL_METAL -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_audio.o $PACKAGE_DIR/src/sokol/c/sokol_audio.c",
+				"$PACKAGE_DIR/vendor/zig/zig cc -target native-native -DNDEBUG -DIMPL -DSOKOL_METAL -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_gl.o $PACKAGE_DIR/src/sokol/c/sokol_gl.c",
+				"$PACKAGE_DIR/vendor/zig/zig cc -target native-native -DNDEBUG -DIMPL -DSOKOL_METAL -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_debugtext.o $PACKAGE_DIR/src/sokol/c/sokol_debugtext.c",
+				"$PACKAGE_DIR/vendor/zig/zig cc -target native-native -DNDEBUG -DIMPL -DSOKOL_METAL -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_shape.o $PACKAGE_DIR/src/sokol/c/sokol_shape.c",
+				"$PACKAGE_DIR/vendor/zig/zig cc -target native-native -DNDEBUG -DIMPL -DSOKOL_METAL -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_glue.o $PACKAGE_DIR/src/sokol/c/sokol_glue.c",
+				"$PACKAGE_DIR/vendor/zig/zig cc -target native-native -DNDEBUG -DIMPL -DSOKOL_METAL -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_fetch.o $PACKAGE_DIR/src/sokol/c/sokol_fetch.c",
+				"$PACKAGE_DIR/vendor/zig/zig cc -target native-native -DNDEBUG -DIMPL -DSOKOL_METAL -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_memtrack.o $PACKAGE_DIR/src/sokol/c/sokol_memtrack.c",
 				"$PACKAGE_DIR/vendor/zig/zig ar rcs $PACKAGE_DIR/build/libsokol.a $PACKAGE_DIR/build/*.o",
 				"rm $PACKAGE_DIR/build/*.o"
 			],
@@ -118,6 +118,7 @@
 			"dflags-ldc": [
 				"-mtriple=wasm32-unknown-emscripten"
 			],
+			"targetPath": "build",
 			"preBuildCommands-posix": [
 				"mkdir -p $PACKAGE_DIR/build",
 				"$DC -run $PACKAGE_DIR/build.d --download-emsdk",
