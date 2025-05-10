@@ -14,6 +14,9 @@ jobs:
     runs-on: ${{ matrix.runs-on }}
     steps:
       - uses: actions/checkout@v4
+      - uses: egor-tensin/vs-shell@v2
+        with:
+          arch: x64
       - uses: dlang-community/setup-dlang@v2
         with:
           compiler: ldc-master
