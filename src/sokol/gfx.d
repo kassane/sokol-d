@@ -1038,7 +1038,7 @@ struct BufferUsage {
     bool vertex_buffer = false;
     bool index_buffer = false;
     bool storage_buffer = false;
-    bool immutable = false;
+    bool _immutable = false;
     bool dynamic_update = false;
     bool stream_update = false;
 }
@@ -1112,7 +1112,7 @@ extern(C)
 struct ImageUsage {
     bool render_attachment = false;
     bool storage_attachment = false;
-    bool immutable = false;
+    bool _immutable = false;
     bool dynamic_update = false;
     bool stream_update = false;
 }
