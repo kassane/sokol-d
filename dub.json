@@ -86,17 +86,17 @@
 			],
 			"preBuildCommands-osx": [
 				"mkdir -p $PACKAGE_DIR/build",
-				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -ObjC -O3 -fPIE -framework Foundation -framework MetalKit -framework Metal -c -o $PACKAGE_DIR/build/sokol_log.o $PACKAGE_DIR/src/sokol/c/sokol_log.c",
-				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -ObjC -O3 -fPIE -framework Foundation -framework MetalKit -framework Metal -c -o $PACKAGE_DIR/build/sokol_app.o $PACKAGE_DIR/src/sokol/c/sokol_app.c",
-				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -ObjC -O3 -fPIE -framework Foundation -framework MetalKit -framework Metal -c -o $PACKAGE_DIR/build/sokol_gfx.o $PACKAGE_DIR/src/sokol/c/sokol_gfx.c",
-				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -ObjC -O3 -fPIE -framework Foundation -framework MetalKit -framework Metal -c -o $PACKAGE_DIR/build/sokol_time.o $PACKAGE_DIR/src/sokol/c/sokol_time.c",
-				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -ObjC -O3 -fPIE -framework Foundation -framework MetalKit -framework Metal -c -o $PACKAGE_DIR/build/sokol_audio.o $PACKAGE_DIR/src/sokol/c/sokol_audio.c",
-				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -ObjC -O3 -fPIE -framework Foundation -framework MetalKit -framework Metal -c -o $PACKAGE_DIR/build/sokol_gl.o $PACKAGE_DIR/src/sokol/c/sokol_gl.c",
-				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -ObjC -O3 -fPIE -framework Foundation -framework MetalKit -framework Metal -c -o $PACKAGE_DIR/build/sokol_debugtext.o $PACKAGE_DIR/src/sokol/c/sokol_debugtext.c",
-				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -ObjC -O3 -fPIE -framework Foundation -framework MetalKit -framework Metal -c -o $PACKAGE_DIR/build/sokol_shape.o $PACKAGE_DIR/src/sokol/c/sokol_shape.c",
-				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -ObjC -O3 -fPIE -framework Foundation -framework MetalKit -framework Metal -c -o $PACKAGE_DIR/build/sokol_glue.o $PACKAGE_DIR/src/sokol/c/sokol_glue.c",
-				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -ObjC -O3 -fPIE -framework Foundation -framework MetalKit -framework Metal -c -o $PACKAGE_DIR/build/sokol_fetch.o $PACKAGE_DIR/src/sokol/c/sokol_fetch.c",
-				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -ObjC -O3 -fPIE -framework Foundation -framework MetalKit -framework Metal -c -o $PACKAGE_DIR/build/sokol_memtrack.o $PACKAGE_DIR/src/sokol/c/sokol_memtrack.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -ObjC -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_log.o $PACKAGE_DIR/src/sokol/c/sokol_log.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -ObjC -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_app.o $PACKAGE_DIR/src/sokol/c/sokol_app.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -ObjC -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_gfx.o $PACKAGE_DIR/src/sokol/c/sokol_gfx.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -ObjC -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_time.o $PACKAGE_DIR/src/sokol/c/sokol_time.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -ObjC -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_audio.o $PACKAGE_DIR/src/sokol/c/sokol_audio.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -ObjC -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_gl.o $PACKAGE_DIR/src/sokol/c/sokol_gl.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -ObjC -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_debugtext.o $PACKAGE_DIR/src/sokol/c/sokol_debugtext.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -ObjC -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_shape.o $PACKAGE_DIR/src/sokol/c/sokol_shape.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -ObjC -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_glue.o $PACKAGE_DIR/src/sokol/c/sokol_glue.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -ObjC -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_fetch.o $PACKAGE_DIR/src/sokol/c/sokol_fetch.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -ObjC -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_memtrack.o $PACKAGE_DIR/src/sokol/c/sokol_memtrack.c",
 				"ar rcs $PACKAGE_DIR/build/libsokol.a $PACKAGE_DIR/build/*.o",
 				"rm $PACKAGE_DIR/build/*.o"
 			],
@@ -212,6 +212,9 @@
 		},
 		{
 			"name": "sokol-wgles3",
+			"sourcePaths": [
+				"src/sokol"
+			],
 			"dflags-ldc": [
 				"-mtriple=wasm32-unknown-emscripten",
 				"-gcc=$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc"
@@ -255,6 +258,9 @@
 		},
 		{
 			"name": "sokol-wgpu",
+			"sourcePaths": [
+				"src/sokol"
+			],
 			"dflags-ldc": [
 				"-mtriple=wasm32-unknown-emscripten",
 				"-gcc=$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc"
