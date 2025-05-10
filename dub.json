@@ -182,7 +182,8 @@
 			"targetPath": "build",
 			"dflags-ldc": [
 				"-P-I$PACKAGE_DIR/vendor/cimgui",
-				"-mcpu=wasm32-unknown-emscripten"
+				"-mtriple=wasm32-unknown-emscripten",
+				"-gcc=$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc"
 			],
 			"preBuildCommands-posix": [
 				"mkdir -p $PACKAGE_DIR/build",
@@ -212,7 +213,8 @@
 		{
 			"name": "sokol-wgles3",
 			"dflags-ldc": [
-				"-mtriple=wasm32-unknown-emscripten"
+				"-mtriple=wasm32-unknown-emscripten",
+				"-gcc=$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc"
 			],
 			"targetName": "sokold",
 			"targetPath": "build",
@@ -254,7 +256,8 @@
 		{
 			"name": "sokol-wgpu",
 			"dflags-ldc": [
-				"-mtriple=wasm32-unknown-emscripten"
+				"-mtriple=wasm32-unknown-emscripten",
+				"-gcc=$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc"
 			],
 			"targetName": "sokold",
 			"targetPath": "build",
