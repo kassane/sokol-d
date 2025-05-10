@@ -35,5 +35,7 @@ jobs:
         run: dub build -v
       - name: (Dub) Build imgui-native
         run: dub build -c imgui -v
+      - name: (Dub) Build imgui + emscripten
+        run: dub build -c imgui-wasm -v
       - name: (Dub) Build Wasm32
         run: dub build -c emscripten -v
