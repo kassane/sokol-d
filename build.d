@@ -307,7 +307,6 @@ void extractZip(string zipFile, string destination) @trusted
 
 void download(string url, string fileName) @trusted
 {
-
     auto buf = appender!(ubyte[])();
     size_t contentLength;
 
@@ -317,24 +316,43 @@ void download(string url, string fileName) @trusted
         if (k == "content-length")
             contentLength = to!size_t(v);
     });
+
+    // Progress bar
+    int barWidth = 50;
     http.onReceive((data) {
         buf.put(data);
-        writef("%sk/%sk\r", buf.data.length / 1024,
-            contentLength ? to!string(contentLength / 1024) : "?");
-        stdout.flush();
+        if (contentLength > 0)
+        {
+            float progress = cast(float) buf.data.length / contentLength;
+            int pos = cast(int)(barWidth * progress);
+
+            write("\r[");
+            for (int i = 0; i < barWidth; ++i)
+            {
+                if (i < pos)
+                    write("=");
+                else if (i == pos)
+                    write(">");
+                else
+                    write(" ");
+            }
+            writef("] %d%%", cast(int)(progress * 100));
+            stdout.flush();
+        }
         return data.length;
     });
+
     http.dataTimeout = dur!"msecs"(0);
     http.perform();
     immutable sc = http.statusLine().code;
     enforce(sc / 100 == 2 || sc == 302,
         fmt("HTTP request returned status code %s", sc));
-    writeln("done                    ");
 
     auto file = File(fileName, "wb");
     scope (success)
         file.close();
     file.rawWrite(buf.data);
+    writeln();
 }
 
 enum SokolBackend : ushort

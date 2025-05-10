@@ -33,5 +33,7 @@ jobs:
         run: dub build -c genshaders -v
       - name: (Dub) Build Native
         run: dub build -v
+      - name: (Dub) Build imgui-native
+        run: dub build -c imgui -v
       - name: (Dub) Build Wasm32
         run: dub build -c emscripten -v
