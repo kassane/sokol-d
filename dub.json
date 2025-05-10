@@ -33,6 +33,15 @@
 				"optimize"
 			]
 		},
+		"release-betterc": {
+			"buildOptions": [
+				"betterC",
+				"releaseMode",
+				"inline",
+				"noBoundsCheck",
+				"optimize"
+			]
+		},
 		"unittest": {
 			"buildOptions": [
 				"debugMode",
@@ -46,7 +55,7 @@
 	"name": "sokol-d",
 	"version": "0.2.1",
 	"toolchainRequirements": {
-		"frontend": ">=2.105.0"
+		"ldc": ">=1.40.0"
 	},
 	"configurations": [
 		{
@@ -54,6 +63,10 @@
 			"sourcePaths": [
 				"src/sokol"
 			],
+			"dflags-ldc": [
+				"-mcpu=native"
+			],
+			"targetName": "sokold",
 			"targetPath": "build",
 			"preBuildCommands-linux": [
 				"mkdir -p $PACKAGE_DIR/build",
@@ -105,15 +118,55 @@
 			]
 		},
 		{
-			"name": "genshaders",
-			"preGenerateCommands": [
-				"$DC -run $PACKAGE_DIR/build.d --download-sokol-tools"
+			"name": "imgui",
+			"sourcePaths": [
+				"src/imgui"
 			],
-			"postBuildCommands-posix": [
-				"rm $PACKAGE_DIR/*.a"
+			"excludedSourceFiles": [
+				"src/sokol/*.d",
+				"src/handmade/*.d"
 			],
-			"postBuildCommands-windows": [
-				"powershell -Command Remove-Item $PACKAGE_DIR\\*.lib"
+			"targetName": "cimguid",
+			"targetPath": "build",
+			"dflags-ldc": [
+				"-P-I$PACKAGE_DIR/vendor/cimgui",
+				"-mcpu=native"
+			],
+			"preBuildCommands-linux": [
+				"mkdir -p $PACKAGE_DIR/build",
+				"$DC -run $PACKAGE_DIR/build.d --download-imgui",
+				"g++ -DNDEBUG -O3 -fPIE -c -o $PACKAGE_DIR/build/imgui.o $PACKAGE_DIR/vendor/cimgui/imgui/imgui.cpp",
+				"g++ -DNDEBUG -O3 -fPIE -c -o $PACKAGE_DIR/build/imgui_demo.o $PACKAGE_DIR/vendor/cimgui/imgui/imgui_demo.cpp",
+				"g++ -DNDEBUG -O3 -fPIE -c -o $PACKAGE_DIR/build/imgui_draw.o $PACKAGE_DIR/vendor/cimgui/imgui/imgui_draw.cpp",
+				"g++ -DNDEBUG -O3 -fPIE -c -o $PACKAGE_DIR/build/imgui_tables.o $PACKAGE_DIR/vendor/cimgui/imgui/imgui_tables.cpp",
+				"g++ -DNDEBUG -O3 -fPIE -c -o $PACKAGE_DIR/build/imgui_widgets.o $PACKAGE_DIR/vendor/cimgui/imgui/imgui_widgets.cpp",
+				"g++ -DNDEBUG -O3 -fPIE -c -o $PACKAGE_DIR/build/cimgui.o $PACKAGE_DIR/vendor/cimgui/cimgui.cpp",
+				"ar rcs $PACKAGE_DIR/build/libcimgui.a $PACKAGE_DIR/build/*.o",
+				"rm $PACKAGE_DIR/build/*.o"
+			],
+			"preBuildCommands-osx": [
+				"mkdir -p $PACKAGE_DIR/build",
+				"$DC -run $PACKAGE_DIR/build.d --download-imgui",
+				"clang++ -DNDEBUG -O3 -fPIE -c -o $PACKAGE_DIR/build/imgui.o $PACKAGE_DIR/vendor/cimgui/imgui/imgui.cpp",
+				"clang++ -DNDEBUG -O3 -fPIE -c -o $PACKAGE_DIR/build/imgui_demo.o $PACKAGE_DIR/vendor/cimgui/imgui/imgui_demo.cpp",
+				"clang++ -DNDEBUG -O3 -fPIE -c -o $PACKAGE_DIR/build/imgui_draw.o $PACKAGE_DIR/vendor/cimgui/imgui/imgui_draw.cpp",
+				"clang++ -DNDEBUG -O3 -fPIE -c -o $PACKAGE_DIR/build/imgui_tables.o $PACKAGE_DIR/vendor/cimgui/imgui/imgui_tables.cpp",
+				"clang++ -DNDEBUG -O3 -fPIE -c -o $PACKAGE_DIR/build/imgui_widgets.o $PACKAGE_DIR/vendor/cimgui/imgui/imgui_widgets.cpp",
+				"clang++ -DNDEBUG -O3 -fPIE -c -o $PACKAGE_DIR/build/cimgui.o $PACKAGE_DIR/vendor/cimgui/cimgui.cpp",
+				"ar rcs $PACKAGE_DIR/build/libcimgui.a $PACKAGE_DIR/build/*.o",
+				"rm $PACKAGE_DIR/build/*.o"
+			],
+			"preBuildCommands-windows": [
+				"powershell -Command \"mkdir -Force $PACKAGE_DIR\\build\"",
+				"$DC -run $PACKAGE_DIR/build.d --download-imgui",
+				"cl.exe /DNDEBUG /O2 /nologo /c /Fo$PACKAGE_DIR\\build\\imgui.obj $PACKAGE_DIR\\vendor\\cimgui\\imgui\\imgui.cpp",
+				"cl.exe /DNDEBUG /O2 /nologo /c /Fo$PACKAGE_DIR\\build\\imgui_demo.obj $PACKAGE_DIR\\vendor\\cimgui\\imgui\\imgui_demo.cpp",
+				"cl.exe /DNDEBUG /O2 /nologo /c /Fo$PACKAGE_DIR\\build\\imgui_draw.obj $PACKAGE_DIR\\vendor\\cimgui\\imgui\\imgui_draw.cpp",
+				"cl.exe /DNDEBUG /O2 /nologo /c /Fo$PACKAGE_DIR\\build\\imgui_tables.obj $PACKAGE_DIR\\vendor\\cimgui\\imgui\\imgui_tables.cpp",
+				"cl.exe /DNDEBUG /O2 /nologo /c /Fo$PACKAGE_DIR\\build\\imgui_widgets.obj $PACKAGE_DIR\\vendor\\cimgui\\imgui\\imgui_widgets.cpp",
+				"cl.exe /DNDEBUG /O2 /nologo /c /Fo$PACKAGE_DIR\\build\\cimgui.obj $PACKAGE_DIR\\vendor\\cimgui\\cimgui.cpp",
+				"lib.exe /nologo /OUT:$PACKAGE_DIR\\build\\cimgui.lib $PACKAGE_DIR\\build\\*.obj",
+				"powershell -Command \"Remove-Item $PACKAGE_DIR\\build\\*.obj\""
 			]
 		},
 		{
@@ -121,6 +174,7 @@
 			"dflags-ldc": [
 				"-mtriple=wasm32-unknown-emscripten"
 			],
+			"targetName": "sokold",
 			"targetPath": "build",
 			"preBuildCommands-posix": [
 				"mkdir -p $PACKAGE_DIR/build",
@@ -155,6 +209,18 @@
 				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -DNDEBUG -DIMPL -DSOKOL_GLES3 -O3 -fPIE -c -o $PACKAGE_DIR\\build\\sokol_memtrack.o $PACKAGE_DIR\\src\\sokol\\c\\sokol_memtrack.c",
 				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\emar.bat rcs $PACKAGE_DIR\\build\\libsokol.a $PACKAGE_DIR\\build\\*.o",
 				"powershell -Command Remove-Item $PACKAGE_DIR\\build\\*.obj"
+			]
+		},
+		{
+			"name": "genshaders",
+			"preGenerateCommands": [
+				"$DC -run $PACKAGE_DIR/build.d --download-sokol-tools"
+			],
+			"postBuildCommands-posix": [
+				"rm $PACKAGE_DIR/*.a"
+			],
+			"postBuildCommands-windows": [
+				"powershell -Command Remove-Item $PACKAGE_DIR\\*.lib"
 			]
 		}
 	]
