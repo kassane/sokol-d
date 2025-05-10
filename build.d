@@ -174,7 +174,7 @@ void getZigToolchain() @safe
             extractTarXZ(filename ~ ext, rootpath);
     }
 
-    // Rename extracted directory to "zig"
+    // move from vendor/zig-{os}-{arch}-{version} to vendor/zig
     immutable string extractedPath = buildPath(rootpath, filename);
     immutable string newPath = buildPath(rootpath, "zig");
     if (exists(extractedPath) && !exists(newPath))
@@ -182,6 +182,7 @@ void getZigToolchain() @safe
 
     rootpath = newPath;
 
+    // Check if Zig toolchain is installed
     auto res = execute([
         absolutePath(buildPath(rootpath, "zig")) ~ exe, "version"
     ]);
@@ -201,6 +202,9 @@ void getEmSDK() @safe
     // Extract EMSDK
     if (!exists(rootpath))
         extractZip(filename, rootpath);
+    else if (exists(filename))
+        scope (exit)
+            remove(filename);
 
     writeln("rootpath: ", rootpath);
     emSdkSetupStep(rootpath);
