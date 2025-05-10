@@ -68,7 +68,7 @@ void init() {
 
     // a zero-initialized storage buffer for the particle state
     sg.BufferDesc sbufd = {
-        type: sg.BufferType.Storagebuffer,
+        usage: { storage_buffer: true },
         size: shd.Particle.sizeof * max_particles,
         label: "particle-buffer",
     };
@@ -105,7 +105,7 @@ void init() {
         label: "geometry-vbuf",
     };
     sg.BufferDesc ibufd = {
-        type: sg.BufferType.Indexbuffer,
+        usage: { index_buffer: true },
         data: { ptr: indices.ptr, size: indices.sizeof },
         label: "geometry-ibuf",
     };
