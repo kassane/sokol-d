@@ -1,0 +1,157 @@
+{
+	"authors": [
+		"Matheus Catarino França",
+		"Andre Weissflog"
+	],
+	"buildTypes": {
+		"debug": {
+			"buildOptions": [
+				"debugMode",
+				"debugInfo"
+			]
+		},
+		"release": {
+			"buildOptions": [
+				"releaseMode",
+				"inline",
+				"optimize"
+			]
+		},
+		"release-debug": {
+			"buildOptions": [
+				"releaseMode",
+				"debugInfo",
+				"inline",
+				"optimize"
+			]
+		},
+		"release-nobounds": {
+			"buildOptions": [
+				"releaseMode",
+				"inline",
+				"noBoundsCheck",
+				"optimize"
+			]
+		},
+		"unittest": {
+			"buildOptions": [
+				"debugMode",
+				"debugInfo",
+				"unittests"
+			]
+		}
+	},
+	"description": "D bindings for sokol",
+	"license": "Zlib",
+	"name": "sokol-d",
+	"version": "0.2.1",
+	"toolchainRequirements": {
+		"frontend": ">=2.105.0"
+	},
+	"configurations": [
+		{
+			"name": "sokol",
+			"sourcePaths": [
+				"src/sokol"
+			],
+			"targetPath": "build",
+			"preBuildCommands-linux": [
+				"mkdir -p $PACKAGE_DIR/build",
+				"$DC -run $PACKAGE_DIR/build.d --download-zig",
+				"$PACKAGE_DIR/vendor/zig/zig cc -DNDEBUG -DIMPL -DSOKOL_GLCORE -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_log.o $PACKAGE_DIR/src/sokol/c/sokol_log.c",
+				"$PACKAGE_DIR/vendor/zig/zig cc -DNDEBUG -DIMPL -DSOKOL_GLCORE -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_app.o $PACKAGE_DIR/src/sokol/c/sokol_app.c",
+				"$PACKAGE_DIR/vendor/zig/zig cc -DNDEBUG -DIMPL -DSOKOL_GLCORE -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_gfx.o $PACKAGE_DIR/src/sokol/c/sokol_gfx.c",
+				"$PACKAGE_DIR/vendor/zig/zig cc -DNDEBUG -DIMPL -DSOKOL_GLCORE -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_time.o $PACKAGE_DIR/src/sokol/c/sokol_time.c",
+				"$PACKAGE_DIR/vendor/zig/zig cc -DNDEBUG -DIMPL -DSOKOL_GLCORE -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_audio.o $PACKAGE_DIR/src/sokol/c/sokol_audio.c",
+				"$PACKAGE_DIR/vendor/zig/zig cc -DNDEBUG -DIMPL -DSOKOL_GLCORE -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_gl.o $PACKAGE_DIR/src/sokol/c/sokol_gl.c",
+				"$PACKAGE_DIR/vendor/zig/zig cc -DNDEBUG -DIMPL -DSOKOL_GLCORE -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_debugtext.o $PACKAGE_DIR/src/sokol/c/sokol_debugtext.c",
+				"$PACKAGE_DIR/vendor/zig/zig cc -DNDEBUG -DIMPL -DSOKOL_GLCORE -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_shape.o $PACKAGE_DIR/src/sokol/c/sokol_shape.c",
+				"$PACKAGE_DIR/vendor/zig/zig cc -DNDEBUG -DIMPL -DSOKOL_GLCORE -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_glue.o $PACKAGE_DIR/src/sokol/c/sokol_glue.c",
+				"$PACKAGE_DIR/vendor/zig/zig cc -DNDEBUG -DIMPL -DSOKOL_GLCORE -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_fetch.o $PACKAGE_DIR/src/sokol/c/sokol_fetch.c",
+				"$PACKAGE_DIR/vendor/zig/zig cc -DNDEBUG -DIMPL -DSOKOL_GLCORE -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_memtrack.o $PACKAGE_DIR/src/sokol/c/sokol_memtrack.c",
+				"$PACKAGE_DIR/vendor/zig/zig ar rcs $PACKAGE_DIR/build/libsokol.a $PACKAGE_DIR/build/*.o",
+				"rm $PACKAGE_DIR/build/*.o"
+			],
+			"preBuildCommands-osx": [
+				"mkdir -p $PACKAGE_DIR/build",
+				"$DC -run $PACKAGE_DIR/build.d --download-zig",
+				"$PACKAGE_DIR/vendor/zig/zig cc -DNDEBUG -DIMPL -DSOKOL_METAL -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_log.o $PACKAGE_DIR/src/sokol/c/sokol_log.c",
+				"$PACKAGE_DIR/vendor/zig/zig cc -DNDEBUG -DIMPL -DSOKOL_METAL -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_app.o $PACKAGE_DIR/src/sokol/c/sokol_app.c",
+				"$PACKAGE_DIR/vendor/zig/zig cc -DNDEBUG -DIMPL -DSOKOL_METAL -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_gfx.o $PACKAGE_DIR/src/sokol/c/sokol_gfx.c",
+				"$PACKAGE_DIR/vendor/zig/zig cc -DNDEBUG -DIMPL -DSOKOL_METAL -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_time.o $PACKAGE_DIR/src/sokol/c/sokol_time.c",
+				"$PACKAGE_DIR/vendor/zig/zig cc -DNDEBUG -DIMPL -DSOKOL_METAL -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_audio.o $PACKAGE_DIR/src/sokol/c/sokol_audio.c",
+				"$PACKAGE_DIR/vendor/zig/zig cc -DNDEBUG -DIMPL -DSOKOL_METAL -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_gl.o $PACKAGE_DIR/src/sokol/c/sokol_gl.c",
+				"$PACKAGE_DIR/vendor/zig/zig cc -DNDEBUG -DIMPL -DSOKOL_METAL -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_debugtext.o $PACKAGE_DIR/src/sokol/c/sokol_debugtext.c",
+				"$PACKAGE_DIR/vendor/zig/zig cc -DNDEBUG -DIMPL -DSOKOL_METAL -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_shape.o $PACKAGE_DIR/src/sokol/c/sokol_shape.c",
+				"$PACKAGE_DIR/vendor/zig/zig cc -DNDEBUG -DIMPL -DSOKOL_METAL -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_glue.o $PACKAGE_DIR/src/sokol/c/sokol_glue.c",
+				"$PACKAGE_DIR/vendor/zig/zig cc -DNDEBUG -DIMPL -DSOKOL_METAL -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_fetch.o $PACKAGE_DIR/src/sokol/c/sokol_fetch.c",
+				"$PACKAGE_DIR/vendor/zig/zig cc -DNDEBUG -DIMPL -DSOKOL_METAL -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_memtrack.o $PACKAGE_DIR/src/sokol/c/sokol_memtrack.c",
+				"$PACKAGE_DIR/vendor/zig/zig ar rcs $PACKAGE_DIR/build/libsokol.a $PACKAGE_DIR/build/*.o",
+				"rm $PACKAGE_DIR/build/*.o"
+			],
+			"preBuildCommands-windows": [
+				"$DC -run $PACKAGE_DIR/build.d --download-zig",
+				"$PACKAGE_DIR/vendor/zig/zig.exe cc -target native-native-msvc -DNDEBUG -DIMPL -DSOKOL_D3D11 -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_log.obj $PACKAGE_DIR/src/sokol/c/sokol_log.c",
+				"$PACKAGE_DIR/vendor/zig/zig.exe cc -target native-native-msvc -DNDEBUG -DIMPL -DSOKOL_D3D11 -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_app.obj $PACKAGE_DIR/src/sokol/c/sokol_app.c",
+				"$PACKAGE_DIR/vendor/zig/zig.exe cc -target native-native-msvc -DNDEBUG -DIMPL -DSOKOL_D3D11 -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_gfx.obj $PACKAGE_DIR/src/sokol/c/sokol_gfx.c",
+				"$PACKAGE_DIR/vendor/zig/zig.exe cc -target native-native-msvc -DNDEBUG -DIMPL -DSOKOL_D3D11 -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_time.obj $PACKAGE_DIR/src/sokol/c/sokol_time.c",
+				"$PACKAGE_DIR/vendor/zig/zig.exe cc -target native-native-msvc -DNDEBUG -DIMPL -DSOKOL_D3D11 -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_audio.obj $PACKAGE_DIR/src/sokol/c/sokol_audio.c",
+				"$PACKAGE_DIR/vendor/zig/zig.exe cc -target native-native-msvc -DNDEBUG -DIMPL -DSOKOL_D3D11 -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_gl.obj $PACKAGE_DIR/src/sokol/c/sokol_gl.c",
+				"$PACKAGE_DIR/vendor/zig/zig.exe cc -target native-native-msvc -DNDEBUG -DIMPL -DSOKOL_D3D11 -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_debugtext.obj $PACKAGE_DIR/src/sokol/c/sokol_debugtext.c",
+				"$PACKAGE_DIR/vendor/zig/zig.exe cc -target native-native-msvc -DNDEBUG -DIMPL -DSOKOL_D3D11 -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_shape.obj $PACKAGE_DIR/src/sokol/c/sokol_shape.c",
+				"$PACKAGE_DIR/vendor/zig/zig.exe cc -target native-native-msvc -DNDEBUG -DIMPL -DSOKOL_D3D11 -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_glue.obj $PACKAGE_DIR/src/sokol/c/sokol_glue.c",
+				"$PACKAGE_DIR/vendor/zig/zig.exe cc -target native-native-msvc -DNDEBUG -DIMPL -DSOKOL_D3D11 -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_fetch.obj $PACKAGE_DIR/src/sokol/c/sokol_fetch.c",
+				"$PACKAGE_DIR/vendor/zig/zig.exe cc -target native-native-msvc -DNDEBUG -DIMPL -DSOKOL_D3D11 -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_memtrack.obj $PACKAGE_DIR/src/sokol/c/sokol_memtrack.c",
+				"$PACKAGE_DIR/vendor/zig/zig.exe ar rcs $PACKAGE_DIR/build/sokol.lib $PACKAGE_DIR/build/*.obj",
+				"rm $PACKAGE_DIR/build/*.obj"
+			]
+		},
+		{
+			"name": "genshaders",
+			"targetType": "none",
+			"preGenerateCommands": [
+				"$DC -run $PACKAGE_DIR/build.d --download-sokol-tools"
+			]
+		},
+		{
+			"name": "emscripten",
+			"dflags-ldc": [
+				"-mtriple=wasm32-unknown-emscripten"
+			],
+			"preBuildCommands-posix": [
+				"mkdir -p $PACKAGE_DIR/build",
+				"$DC -run $PACKAGE_DIR/build.d --download-emsdk",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc -DNDEBUG -DIMPL -DSOKOL_GLES3 -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_log.o $PACKAGE_DIR/src/sokol/c/sokol_log.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc -DNDEBUG -DIMPL -DSOKOL_GLES3 -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_app.o $PACKAGE_DIR/src/sokol/c/sokol_app.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc -DNDEBUG -DIMPL -DSOKOL_GLES3 -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_gfx.o $PACKAGE_DIR/src/sokol/c/sokol_gfx.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc -DNDEBUG -DIMPL -DSOKOL_GLES3 -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_time.o $PACKAGE_DIR/src/sokol/c/sokol_time.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc -DNDEBUG -DIMPL -DSOKOL_GLES3 -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_audio.o $PACKAGE_DIR/src/sokol/c/sokol_audio.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc -DNDEBUG -DIMPL -DSOKOL_GLES3 -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_gl.o $PACKAGE_DIR/src/sokol/c/sokol_gl.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc -DNDEBUG -DIMPL -DSOKOL_GLES3 -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_debugtext.o $PACKAGE_DIR/src/sokol/c/sokol_debugtext.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc -DNDEBUG -DIMPL -DSOKOL_GLES3 -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_shape.o $PACKAGE_DIR/src/sokol/c/sokol_shape.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc -DNDEBUG -DIMPL -DSOKOL_GLES3 -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_glue.o $PACKAGE_DIR/src/sokol/c/sokol_glue.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc -DNDEBUG -DIMPL -DSOKOL_GLES3 -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_fetch.o $PACKAGE_DIR/src/sokol/c/sokol_fetch.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc -DNDEBUG -DIMPL -DSOKOL_GLES3 -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_memtrack.o $PACKAGE_DIR/src/sokol/c/sokol_memtrack.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emar rcs $PACKAGE_DIR/build/libsokol.a $PACKAGE_DIR/build/*.o",
+				"rm $PACKAGE_DIR/build/*.o"
+			],
+			"preBuildCommands-windows": [
+				"mkdir -p $PACKAGE_DIR/build",
+				"$DC -run $PACKAGE_DIR/build.d --download-emsdk",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc.bat -DNDEBUG -DIMPL -DSOKOL_GLES3 -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_log.o $PACKAGE_DIR/src/sokol/c/sokol_log.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc.bat -DNDEBUG -DIMPL -DSOKOL_GLES3 -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_app.o $PACKAGE_DIR/src/sokol/c/sokol_app.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc.bat -DNDEBUG -DIMPL -DSOKOL_GLES3 -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_gfx.o $PACKAGE_DIR/src/sokol/c/sokol_gfx.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc.bat -DNDEBUG -DIMPL -DSOKOL_GLES3 -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_time.o $PACKAGE_DIR/src/sokol/c/sokol_time.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc.bat -DNDEBUG -DIMPL -DSOKOL_GLES3 -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_audio.o $PACKAGE_DIR/src/sokol/c/sokol_audio.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc.bat -DNDEBUG -DIMPL -DSOKOL_GLES3 -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_gl.o $PACKAGE_DIR/src/sokol/c/sokol_gl.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc.bat -DNDEBUG -DIMPL -DSOKOL_GLES3 -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_debugtext.o $PACKAGE_DIR/src/sokol/c/sokol_debugtext.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc.bat -DNDEBUG -DIMPL -DSOKOL_GLES3 -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_shape.o $PACKAGE_DIR/src/sokol/c/sokol_shape.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc.bat -DNDEBUG -DIMPL -DSOKOL_GLES3 -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_glue.o $PACKAGE_DIR/src/sokol/c/sokol_glue.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc.bat -DNDEBUG -DIMPL -DSOKOL_GLES3 -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_fetch.o $PACKAGE_DIR/src/sokol/c/sokol_fetch.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc.bat -DNDEBUG -DIMPL -DSOKOL_GLES3 -O3 -fPIE -c -o $PACKAGE_DIR/build/sokol_memtrack.o $PACKAGE_DIR/src/sokol/c/sokol_memtrack.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emar.bat rcs $PACKAGE_DIR/build/libsokol.a $PACKAGE_DIR/build/*.o",
+				"rm $PACKAGE_DIR/build/*.o"
+			]
+		}
+	]
+}
