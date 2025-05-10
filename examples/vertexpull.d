@@ -87,7 +87,7 @@ void init()
 
     // dfmt off
     sg.BufferDesc vbufd = {
-        type: sg.BufferType.Storagebuffer,
+        usage: { storage_buffer: true },
         data:
         {
             ptr: vertices.ptr,
@@ -110,7 +110,7 @@ void init()
 
     // dfmt off
     sg.BufferDesc ibufd = {
-        type: sg.BufferType.Indexbuffer,
+        usage: { index_buffer: true },
         data: {ptr: indices.ptr, size: indices.sizeof},
     };
     state.bind.index_buffer = sg.makeBuffer(ibufd);

@@ -73,36 +73,39 @@ void init()
         5, 3, 4, 5, 4, 1,
     ];
     sg.BufferDesc ibufd = {
-        type: sg.BufferType.Indexbuffer,
-        data: {ptr: indices.ptr, size: indices.sizeof},};
-        state.bind.index_buffer = sg.makeBuffer(ibufd);
+        usage: {index_buffer: true},
+        data: {ptr: indices.ptr, size: indices.sizeof}
+    };
+    state.bind.index_buffer = sg.makeBuffer(ibufd);
 
-        sg.BufferDesc vbufd1 = {
-            type: sg.BufferType.Vertexbuffer,
-            usage: sg.Usage.Stream,
-            size: max_particles * Vec3.sizeof,};
-            state.bind.vertex_buffers[1] = sg.makeBuffer(vbufd1);
+    sg.BufferDesc vbufd1 = {
+        usage: {stream_update: true},
+        size: max_particles * Vec3.sizeof
+    };
+    state.bind.vertex_buffers[1] = sg.makeBuffer(vbufd1);
 
-            sg.PipelineDesc pld = {
-                layout: {
-                    attrs: [
-                        shd.ATTR_INSTANCING_POS: {
-                            format: sg.VertexFormat.Float3, buffer_index: 0
-    },
-    shd.ATTR_INSTANCING_COLOR0 : {
-        format: sg.VertexFormat.Float4, buffer_index: 0
+    sg.PipelineDesc pld = {
+        layout: {
+            attrs: [
+                shd.ATTR_INSTANCING_POS: {
+                    format: sg.VertexFormat.Float3, buffer_index: 0
+                },
+                shd.ATTR_INSTANCING_COLOR0: {
+                    format: sg.VertexFormat.Float4, buffer_index: 0
+                },
+                shd.ATTR_INSTANCING_INST_POS: {
+                    format: sg.VertexFormat.Float3, buffer_index: 1
+                }
+            ],
         },
-        shd.ATTR_INSTANCING_INST_POS : {
-            format: sg.VertexFormat.Float3, buffer_index: 1
-                        }],
-    },
-    shader: sg.makeShader(shd.instancingShaderDesc(sg.queryBackend())),
-    index_type: sg.IndexType.Uint16,
-    cull_mode: sg.CullMode.Back,
-    depth: {write_enabled: true,
-    compare: sg.CompareFunc.Less_equal
+        shader: sg.makeShader(shd.instancingShaderDesc(sg.queryBackend())),
+        index_type: sg.IndexType.Uint16,
+        cull_mode: sg.CullMode.Back,
+        depth: {
+            write_enabled: true, 
+            compare: sg.CompareFunc.Less_equal
         },
-                };
+    };
     pld.layout.buffers[1].step_func = sg.VertexStep.Per_instance;
     state.pip = sg.makePipeline(pld);
 }
