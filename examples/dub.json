@@ -1,0 +1,366 @@
+{
+	"authors": [
+		"Matheus Catarino França",
+		"Andre Weissflog"
+	],
+	"buildTypes": {
+		"debug": {
+			"buildOptions": [
+				"debugMode",
+				"debugInfo"
+			]
+		},
+		"release": {
+			"buildOptions": [
+				"releaseMode",
+				"inline",
+				"optimize"
+			]
+		},
+		"release-debug": {
+			"buildOptions": [
+				"releaseMode",
+				"debugInfo",
+				"inline",
+				"optimize"
+			]
+		},
+		"release-nobounds": {
+			"buildOptions": [
+				"releaseMode",
+				"inline",
+				"noBoundsCheck",
+				"optimize"
+			]
+		},
+		"unittest": {
+			"buildOptions": [
+				"debugMode",
+				"debugInfo",
+				"unittests"
+			]
+		}
+	},
+	"description": "D bindings for sokol",
+	"license": "Zlib",
+	"name": "examples",
+	"subPackages": [
+		{
+			"name": "blend",
+			"sourceFiles": [
+				"blend.d",
+				"shaders/blend.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"subConfigurations": {
+				"sokol-d": "sokol-static"
+			}
+		},
+		{
+			"name": "bufferoffsets",
+			"sourceFiles": [
+				"bufferoffsets.d",
+				"shaders/bufferoffsets.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"subConfigurations": {
+				"sokol-d": "sokol-static"
+			}
+		},
+		{
+			"name": "clear",
+			"sourceFiles": [
+				"clear.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"subConfigurations": {
+				"sokol-d": "sokol-static"
+			}
+		},
+		{
+			"name": "cube",
+			"sourceFiles": [
+				"cube.d",
+				"shaders/cube.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"subConfigurations": {
+				"sokol-d": "sokol-static"
+			}
+		},
+		{
+			"name": "debugtext",
+			"sourceFiles": [
+				"debugtext.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"subConfigurations": {
+				"sokol-d": "sokol-static"
+			}
+		},
+		{
+			"name": "instancing",
+			"sourceFiles": [
+				"instancing.d",
+				"shaders/instancing.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"subConfigurations": {
+				"sokol-d": "sokol-static"
+			}
+		},
+		{
+			"name": "instancingcompute",
+			"sourceFiles": [
+				"instancingcompute.d",
+				"shaders/instancingcompute.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"subConfigurations": {
+				"sokol-d": "sokol-static"
+			}
+		},
+		{
+			"name": "mrt",
+			"sourceFiles": [
+				"mrt.d",
+				"shaders/mrt.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"subConfigurations": {
+				"sokol-d": "sokol-static"
+			}
+		},
+		{
+			"name": "noninterleaved",
+			"sourceFiles": [
+				"noninterleaved.d",
+				"shaders/noninterleaved.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"subConfigurations": {
+				"sokol-d": "sokol-static"
+			}
+		},
+		{
+			"name": "offscreen",
+			"sourceFiles": [
+				"offscreen.d",
+				"shaders/offscreen.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"subConfigurations": {
+				"sokol-d": "sokol-static"
+			}
+		},
+		{
+			"name": "quad",
+			"sourceFiles": [
+				"quad.d",
+				"shaders/quad.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"subConfigurations": {
+				"sokol-d": "sokol-static"
+			}
+		},
+		{
+			"name": "shapes",
+			"sourceFiles": [
+				"shapes.d",
+				"shaders/shapes.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"subConfigurations": {
+				"sokol-d": "sokol-static"
+			}
+		},
+		{
+			"name": "saudio",
+			"sourceFiles": [
+				"saudio.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"subConfigurations": {
+				"sokol-d": "sokol-static"
+			}
+		},
+		{
+			"name": "sglcontext",
+			"sourceFiles": [
+				"sgl_context.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"subConfigurations": {
+				"sokol-d": "sokol-static"
+			}
+		},
+		{
+			"name": "sglcontext",
+			"sourceFiles": [
+				"sgl_points.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"subConfigurations": {
+				"sokol-d": "sokol-static"
+			}
+		},
+		{
+			"name": "triangle",
+			"sourceFiles": [
+				"triangle.d",
+				"shaders/triangle.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"subConfigurations": {
+				"sokol-d": "sokol-static"
+			}
+		},
+		{
+			"name": "texcube",
+			"sourceFiles": [
+				"texcube.d",
+				"shaders/texcube.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"subConfigurations": {
+				"sokol-d": "sokol-static"
+			}
+		},
+		{
+			"name": "userdata",
+			"sourceFiles": [
+				"user_data.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"subConfigurations": {
+				"sokol-d": "sokol-static"
+			}
+		},
+		{
+			"name": "vertexpull",
+			"sourceFiles": [
+				"vertexpull.d",
+				"shaders/vertexpull.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"subConfigurations": {
+				"sokol-d": "sokol-static"
+			}
+		}
+	]
+}

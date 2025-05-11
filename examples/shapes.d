@@ -14,7 +14,7 @@ import handmade.math : Mat4, Vec3;
 import sglue = sokol.glue;
 import sdtx = sokol.debugtext;
 import sshape = sokol.shape;
-import shd = examples.shaders.shapes;
+import shd = shaders.shapes;
 
 extern (C):
 @safe:
