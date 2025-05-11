@@ -12,7 +12,7 @@ import app = sokol.app;
 import log = sokol.log;
 import handmade.math : Mat4, Vec3;
 import sglue = sokol.glue;
-import shd = examples.shaders.cube;
+import shd = shaders.cube;
 
 extern (C):
 @safe:
