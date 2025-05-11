@@ -81,6 +81,11 @@
 			"excludedSourceFiles": [
 				"src/sokol/imgui.d"
 			],
+			"dflags": [
+				"-i=sokol",
+				"-i=shaders",
+				"-i=handmade"
+			],
 			"dflags-ldc": [
 				"-mcpu=native"
 			],
@@ -170,6 +175,11 @@
 			],
 			"excludedSourceFiles": [
 				"src/sokol/imgui.d"
+			],
+			"dflags": [
+				"-i=sokol",
+				"-i=shaders",
+				"-i=handmade"
 			],
 			"dflags-ldc": [
 				"-mcpu=native",
@@ -266,6 +276,11 @@
 			"excludedSourceFiles": [
 				"src/sokol/imgui.d"
 			],
+			"dflags": [
+				"-i=sokol",
+				"-i=shaders",
+				"-i=handmade"
+			],
 			"dflags-ldc": [
 				"-mcpu=native"
 			],
@@ -350,6 +365,11 @@
 			],
 			"targetName": "cimguid",
 			"targetPath": "build",
+			"dflags": [
+				"-i=sokol",
+				"-i=shaders",
+				"-i=imgui"
+			],
 			"dflags-ldc": [
 				"-P-I$PACKAGE_DIR/vendor/cimgui",
 				"-P-I$PACKAGE_DIR/vendor/cimgui/imgui",
