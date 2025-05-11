@@ -280,7 +280,7 @@
 			}
 		},
 		{
-			"name": "sglcontext",
+			"name": "sglpoints",
 			"sourceFiles": [
 				"sgl_points.d"
 			],
