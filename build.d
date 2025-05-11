@@ -118,7 +118,7 @@ void main(string[] args) @safe
         version (LDC)
             getEmSDK;
         else
-            static assert(0, "Emscripten SDK is only supported on LDC");
+            enforce(0, "Emscripten SDK is only supported on LDC");
     }
     if (downloadIMGUI)
         getIMGUI;
