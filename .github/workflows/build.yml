@@ -11,6 +11,7 @@ jobs:
       fail-fast: false
       matrix:
         runs-on: [ubuntu-24.04-arm, ubuntu-latest, macos-latest, windows-latest]
+        compiler: [ldc-master, dmd-master]
     runs-on: ${{ matrix.runs-on }}
     steps:
       - uses: actions/checkout@v4
@@ -19,7 +20,7 @@ jobs:
           arch: x64
       - uses: dlang-community/setup-dlang@v2
         with:
-          compiler: ldc-master
+          compiler: ${{ matrix.compiler }}
 
       - name: prepare-linux
         if: runner.os == 'Linux'
@@ -38,8 +39,11 @@ jobs:
       - name: (dub) Build imgui-shared
         run: dub build -c imgui-shared -v
       - name: (dub) Build imgui + emscripten
+        if: matrix.compiler == 'ldc-master'
         run: dub build -c imgui-wasm -v
       - name: (dub) Build sokol-wgpu
+        if: matrix.compiler == 'ldc-master'
         run: dub build -c sokol-wgpu -v
       - name: (dub) Build sokol-wgles3
+        if: matrix.compiler == 'ldc-master'
         run: dub build -c sokol-wgles3 -v
