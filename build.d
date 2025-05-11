@@ -11,7 +11,7 @@ module build;
 import std;
 
 enum emsdk_version = "4.0.4";
-enum imgui_version = "1.91.8";
+enum imgui_version = "1.91.9";
 enum zig_version = "0.14.0";
 
 void main(string[] args) @safe
