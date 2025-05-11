@@ -1,13 +1,18 @@
 {
+	"name": "sokol-d",
+	"description": "D bindings for sokol",
+	"license": "Zlib",
+	"version": "0.2.1",
 	"authors": [
-		"Matheus Catarino França",
+		"Matheus C. França",
 		"Andre Weissflog"
 	],
 	"buildTypes": {
 		"debug": {
 			"buildOptions": [
 				"debugMode",
-				"debugInfo"
+				"debugInfo",
+				"debugInfoC"
 			]
 		},
 		"release": {
@@ -50,13 +55,6 @@
 			]
 		}
 	},
-	"description": "D bindings for sokol",
-	"license": "Zlib",
-	"name": "sokol-d",
-	"version": "0.2.1",
-	"toolchainRequirements": {
-		"ldc": ">=1.40.0"
-	},
 	"dflags": [
 		"-preview=all"
 	],
@@ -93,6 +91,9 @@
 			"targetPath": "build",
 			"libs": [
 				"sokol"
+			],
+			"libs-osx": [
+				"objC"
 			],
 			"lflags-osx": [
 				"-framework",
