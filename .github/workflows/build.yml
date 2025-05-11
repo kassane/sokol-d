@@ -27,16 +27,14 @@ jobs:
             sudo apt-get update
             sudo apt-get install libglu1-mesa-dev mesa-common-dev xorg-dev libasound-dev
 
-      # - name: (dub) Build Native
-      #   run: dub -- --download-emsdk --download-zig --download-imgui --download-sokol-tools
-      - name: (dub) Genshaders
+      - name: (dub) Running shdc
         run: dub build -c genshaders -v
-      - name: (dub) Build sokol-static
+      - name: (dub) Build sokol-static (default)
         run: dub build -v
-      - name: (dub) Build sokol-shared
-        run: dub build -c sokol-shared -v      
       - name: (dub) Build imgui-static
         run: dub build -c imgui-static -v
+      - name: (dub) Build sokol-shared
+        run: dub build -c sokol-shared -v      
       - name: (dub) Build imgui-shared
         run: dub build -c imgui-shared -v
       - name: (dub) Build imgui + emscripten
