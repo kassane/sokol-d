@@ -434,6 +434,10 @@
 			"libs-windows": [
 				"imm32"
 			],
+			"libs-windows-dmd": [
+				"imm32",
+				"msvcrt"
+			],
 			"preBuildCommands-linux": [
 				"mkdir -p $PACKAGE_DIR/build",
 				"$DC -run $PACKAGE_DIR/build.d --download-imgui",
