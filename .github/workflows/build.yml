@@ -70,8 +70,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: mlugg/setup-zig@v1
-        with:
-          version: master
+        # with:
+        #   version: master
       - name: Install opend
         run: |
           if [ "$RUNNER_OS" == "Linux" ]; then
