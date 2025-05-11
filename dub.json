@@ -176,18 +176,21 @@
 				"sokol"
 			],
 			"lflags-osx": [
-				"-L-framework",
-				"-LCocoa",
-				"-L-framework",
-				"-LQuartzCore",
-				"-L-framework",
-				"-LFoundation",
-				"-L-framework",
-				"-LMetalKit",
-				"-L-framework",
-				"-LMetal",
-				"-L-framework",
-				"-LAudioToolbox"
+				"-framework",
+				"Cocoa",
+				"-framework",
+				"QuartzCore",
+				"-framework",
+				"Foundation",
+				"-framework",
+				"MetalKit",
+				"-framework",
+				"Metal",
+				"-framework",
+				"AudioToolbox"
+			],
+			"libs-osx": [
+				"objC"
 			],
 			"libs-linux": [
 				"X11",
@@ -247,6 +250,81 @@
 				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /Fo$PACKAGE_DIR\\build\\sokol_memtrack.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_memtrack.c",
 				"lib.exe /nologo /OUT:$PACKAGE_DIR\\build\\sokol.lib $PACKAGE_DIR\\build\\*.obj",
 				"powershell -Command Remove-Item $PACKAGE_DIR\\build\\*.obj"
+			]
+		},
+		{
+			"name": "sokol-wayland-static",
+			"sourcePaths": [
+				"src/sokol"
+			],
+			"dflags-ldc": [
+				"-mcpu=native"
+			],
+			"targetName": "sokold",
+			"targetPath": "build",
+			"libs": [
+				"sokol"
+			],
+			"libs-linux": [
+				"wayland-client",
+				"wayland-egl",
+				"wayland-cursor",
+				"xkbcommon",
+				"asound"
+			],
+			"preBuildCommands-linux": [
+				"mkdir -p $PACKAGE_DIR/build",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_log.o $PACKAGE_DIR/src/sokol/c/sokol_log.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_app.o $PACKAGE_DIR/src/sokol/c/sokol_app.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_gfx.o $PACKAGE_DIR/src/sokol/c/sokol_gfx.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_time.o $PACKAGE_DIR/src/sokol/c/sokol_time.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_audio.o $PACKAGE_DIR/src/sokol/c/sokol_audio.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_gl.o $PACKAGE_DIR/src/sokol/c/sokol_gl.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_debugtext.o $PACKAGE_DIR/src/sokol/c/sokol_debugtext.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_shape.o $PACKAGE_DIR/src/sokol/c/sokol_shape.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_glue.o $PACKAGE_DIR/src/sokol/c/sokol_glue.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_fetch.o $PACKAGE_DIR/src/sokol/c/sokol_fetch.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_memtrack.o $PACKAGE_DIR/src/sokol/c/sokol_memtrack.c",
+				"ar rcs $PACKAGE_DIR/build/libsokol.a $PACKAGE_DIR/build/*.o",
+				"rm $PACKAGE_DIR/build/*.o"
+			]
+		},
+		{
+			"name": "sokol-wayland-shared",
+			"sourcePaths": [
+				"src/sokol"
+			],
+			"dflags-ldc": [
+				"-mcpu=native"
+			],
+			"targetType": "dynamicLibrary",
+			"targetName": "sokold",
+			"targetPath": "build",
+			"libs": [
+				"sokol"
+			],
+			"libs-linux": [
+				"wayland-client",
+				"wayland-egl",
+				"wayland-cursor",
+				"xkbcommon",
+				"asound"
+			],
+			"preBuildCommands-linux": [
+				"mkdir -p $PACKAGE_DIR/build",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_log.o $PACKAGE_DIR/src/sokol/c/sokol_log.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_app.o $PACKAGE_DIR/src/sokol/c/sokol_app.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_gfx.o $PACKAGE_DIR/src/sokol/c/sokol_gfx.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_time.o $PACKAGE_DIR/src/sokol/c/sokol_time.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_audio.o $PACKAGE_DIR/src/sokol/c/sokol_audio.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_gl.o $PACKAGE_DIR/src/sokol/c/sokol_gl.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_debugtext.o $PACKAGE_DIR/src/sokol/c/sokol_debugtext.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_shape.o $PACKAGE_DIR/src/sokol/c/sokol_shape.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_glue.o $PACKAGE_DIR/src/sokol/c/sokol_glue.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_fetch.o $PACKAGE_DIR/src/sokol/c/sokol_fetch.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_memtrack.o $PACKAGE_DIR/src/sokol/c/sokol_memtrack.c",
+				"ar rcs $PACKAGE_DIR/build/libsokol.a $PACKAGE_DIR/build/*.o",
+				"rm $PACKAGE_DIR/build/*.o"
 			]
 		},
 		{

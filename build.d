@@ -114,7 +114,12 @@ void main(string[] args) @safe
 
     // Download and setup Emscripten SDK if requested
     if (downloadEmsdk)
-        getEmSDK;
+    {
+        version (LDC)
+            getEmSDK;
+        else
+            static assert(0, "Emscripten SDK is only supported on LDC");
+    }
     if (downloadIMGUI)
         getIMGUI;
     if (downloadZig)
