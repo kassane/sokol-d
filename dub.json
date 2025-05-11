@@ -78,6 +78,9 @@
 			"sourcePaths": [
 				"src/sokol"
 			],
+			"excludedSourceFiles": [
+				"src/sokol/imgui.d"
+			],
 			"dflags-ldc": [
 				"-mcpu=native"
 			],
@@ -164,6 +167,9 @@
 			"name": "sokol-shared",
 			"sourcePaths": [
 				"src/sokol"
+			],
+			"excludedSourceFiles": [
+				"src/sokol/imgui.d"
 			],
 			"dflags-ldc": [
 				"-mcpu=native",
@@ -257,6 +263,9 @@
 			"sourcePaths": [
 				"src/sokol"
 			],
+			"excludedSourceFiles": [
+				"src/sokol/imgui.d"
+			],
 			"dflags-ldc": [
 				"-mcpu=native"
 			],
@@ -293,6 +302,9 @@
 			"name": "sokol-wayland-shared",
 			"sourcePaths": [
 				"src/sokol"
+			],
+			"excludedSourceFiles": [
+				"src/sokol/imgui.d"
 			],
 			"dflags-ldc": [
 				"-mcpu=native"
