@@ -350,7 +350,8 @@ pub fn build(b: *Build) !void {
                 .betterC = if (std.mem.eql(u8, example, "user-data")) false else opt_betterC,
                 .dflags = &.{
                     "-w",
-                    "-preview=all",
+                    "-preview=rvaluerefparam",
+                    "-preview=dip1000",
                 },
                 // fixme: https://github.com/kassane/sokol-d/issues/1 - betterC works on darwin
                 .zig_cc = if (isPlatform(target.result, .darwin) and !opt_betterC) false else opt_zigcc,
@@ -470,8 +471,6 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*Build.Step.InstallDir {
                 "-d-debug",
                 "--gc",
                 "-g",
-                "--write-experimental-debuginfo",
-                "--force-dwarf-frame-section",
                 "-boundscheck=on",
                 "--link-debuglib",
             });
@@ -580,6 +579,7 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*Build.Step.InstallDir {
                 \\
                 \\ extern (C):
                 \\
+                \\ version(D_BetterC):
                 \\ version (Emscripten)
                 \\ {
                 \\     union fpos_t
@@ -819,8 +819,9 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*Build.Step.InstallDir {
             .emsdk = options.emsdk orelse null,
             .use_webgpu = backend == .wgpu,
             .use_webgl2 = backend != .wgpu,
-            .use_emmalloc = true,
+            .use_emmalloc = options.betterC,
             .use_filesystem = false,
+            .use_drt = !options.betterC and isPlatform(options.target.result, .web),
             .use_ubsan = options.artifact.?.root_module.sanitize_c orelse false,
             .release_use_lto = options.artifact.?.want_lto orelse false,
             .shell_file_path = b.path("src/sokol/web/shell.html"),
@@ -1156,6 +1157,7 @@ pub const EmLinkOptions = struct {
     use_offset_converter: bool = false,
     use_filesystem: bool = true,
     use_ubsan: bool = false,
+    use_drt: bool = false,
     shell_file_path: ?Build.LazyPath,
     extra_args: []const []const u8 = &.{},
 };
@@ -1219,6 +1221,18 @@ pub fn emLinkStep(b: *Build, options: EmLinkOptions) !*Build.Step.InstallDir {
             emcc.addArg(arg);
         }
 
+        if (options.use_drt) {
+            const libdruntime = fetch(b, .{
+                .url = "https://github.com/opendlang/opend/releases/download/CI/opend-latest-xpack-emscripten.tar.xz",
+                .file_name = "lib/libdruntime-ldc.a",
+            });
+            const libphobos2 = fetch(b, .{
+                .url = "https://github.com/opendlang/opend/releases/download/CI/opend-latest-xpack-emscripten.tar.xz",
+                .file_name = "lib/libphobos2-ldc.a",
+            });
+            emcc.addFileArg(libdruntime);
+            emcc.addFileArg(libphobos2);
+        }
         // add the main lib, and then scan for library dependencies and add those too
         emcc.addArtifactArg(options.lib_main);
         for (options.lib_main.getCompileDependencies(false)) |item| {
@@ -1235,7 +1249,6 @@ pub fn emLinkStep(b: *Build, options: EmLinkOptions) !*Build.Step.InstallDir {
             .install_subdir = "web",
         });
         install.step.dependOn(&emcc.step);
-
         // get the emcc step to run on 'zig build'
         b.getInstallStep().dependOn(&install.step);
         return install;
@@ -1244,6 +1257,59 @@ pub fn emLinkStep(b: *Build, options: EmLinkOptions) !*Build.Step.InstallDir {
         .install_dir = .prefix,
         .install_subdir = "web",
     });
+}
+
+// Use 'zig fetch' to download and unpack the specified URL, optionally verifying the checksum.
+fn fetch(b: *std.Build, options: struct {
+    url: []const u8,
+    file_name: []const u8,
+    hash: ?[]const u8 = null,
+}) std.Build.LazyPath {
+    const copy_from_cache = b.addRunArtifact(b.addExecutable(.{
+        .name = "copy-from-cache",
+        .root_source_file = b.addWriteFiles().add("main.zig",
+            \\const std = @import("std");
+            \\const assert = std.debug.assert;
+            \\pub fn main() !void {
+            \\    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
+            \\    const allocator = arena.allocator();
+            \\    const args = try std.process.argsAlloc(allocator);
+            \\    assert(args.len == 5 or args.len == 6);
+            \\
+            \\    const hash_and_newline = try std.fs.cwd().readFileAlloc(allocator, args[2], 128);
+            \\    assert(hash_and_newline[hash_and_newline.len - 1] == '\n');
+            \\    const hash = hash_and_newline[0..hash_and_newline.len - 1];
+            \\    if (args.len == 6 and !std.mem.eql(u8, args[5], hash)) {
+            \\        std.debug.panic(
+            \\            \\bad hash
+            \\            \\specified:  {s}
+            \\            \\downloaded: {s}
+            \\            \\
+            \\        , .{args[5], hash, });
+            \\    }
+            \\    const source_path = try std.fs.path.join(allocator, &.{args[1], hash, args[3]});
+            \\    try std.fs.cwd().copyFile(
+            \\        source_path,
+            \\        std.fs.cwd(),
+            \\        args[4],
+            \\        .{},
+            \\    );
+            \\}
+        ),
+        .target = b.graph.host,
+    }));
+    copy_from_cache.addArg(
+        b.graph.global_cache_root.join(b.allocator, &.{"p"}) catch @panic("OOM"),
+    );
+    copy_from_cache.addFileArg(
+        b.addSystemCommand(&.{ b.graph.zig_exe, "fetch", options.url }).captureStdOut(),
+    );
+    copy_from_cache.addArg(options.file_name);
+    const result = copy_from_cache.addOutputFileArg(options.file_name);
+    if (options.hash) |hash| {
+        copy_from_cache.addArg(hash);
+    }
+    return result;
 }
 
 // build a run step which uses the emsdk emrun command to run a build target in the browser
