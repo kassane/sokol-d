@@ -90,7 +90,7 @@ void init()
         22, 21, 20, 23, 22, 20,
     ];
     sg.BufferDesc ibufd = {
-        type: sg.BufferType.Indexbuffer,
+        usage: {index_buffer: true},
         data: {ptr: indices.ptr, size: indices.sizeof},
     };
     state.bind.index_buffer = sg.makeBuffer(ibufd);
