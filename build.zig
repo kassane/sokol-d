@@ -471,8 +471,6 @@ pub fn ldcBuildStep(b: *Build, options: DCompileStep) !*Build.Step.InstallDir {
                 "-d-debug",
                 "--gc",
                 "-g",
-                "--write-experimental-debuginfo",
-                "--force-dwarf-frame-section",
                 "-boundscheck=on",
                 "--link-debuglib",
             });
