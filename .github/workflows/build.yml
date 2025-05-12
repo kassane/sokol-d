@@ -57,7 +57,7 @@ jobs:
       - name: (dub) Build sokol examples
         working-directory: examples
         run: |
-          dub build :blend
+          dub build :blend -f
           dub build :bufferoffsets
           dub build :clear
           dub build :cube
