@@ -11,15 +11,19 @@ jobs:
       fail-fast: false
       matrix:
         runs-on: [ubuntu-24.04-arm, ubuntu-latest, macos-latest, windows-latest]
+        compiler: [ldc-master, dmd-master]
+        exclude:
+          - runs-on: ubuntu-24.04-arm
+            compiler: dmd-master
     runs-on: ${{ matrix.runs-on }}
     steps:
       - uses: actions/checkout@v4
-      - uses: mlugg/setup-zig@v2
-        # with:
-        #   version: master
+      - uses: egor-tensin/vs-shell@v2
+        with:
+          arch: x64
       - uses: dlang-community/setup-dlang@v2
         with:
-          compiler: ldc-master
+          compiler: ${{ matrix.compiler }}
 
       - name: prepare-linux
         if: runner.os == 'Linux'
@@ -27,36 +31,49 @@ jobs:
             sudo apt-get update
             sudo apt-get install libglu1-mesa-dev mesa-common-dev xorg-dev libasound-dev
 
-      - name: (Dub) Build Native
-        if: runner.os != 'Windows'
+      - name: (dub) Running shdc
+        run: dub build -c genshaders -v
+      - name: (dub) Build sokol-static (default)
+        run: dub build -v
+      - name: (dub) Build imgui-static
+        run: dub build -c imgui-static -v
+      - name: (dub) Build sokol-shared
+        run: dub build -c sokol-shared -v      
+      - name: (dub) Build imgui-shared
+        run: dub build -c imgui-shared -v
+      - name: (dub) Build sokol examples
+        working-directory: examples
         run: |
-            dub build :clear
-            dub build :sgl_context
-            dub build :sgl_points
-            dub build :debugtext
-            dub build :cube
-            dub build :texcube
-            dub build :blend
-            dub build :triangle
-            dub build :instancing
-            dub build :instancingcompute
-            dub build :mrt
-            dub build :noninterleaved
-            dub build :quad
-            dub build :offscreen
-            dub build :bufferoffsets
-            dub build :user_data
-            dub build :vertexpull
-            dub build :shapes
-            dub build :imgui
-            dub build :droptest
-
-      - name: (Zig) Build Shaders
-        run: zig build -Dshaders
-      - name: (Zig) Running Test
-        if: runner.os != 'Windows'
-        run: zig build test -DzigCC
-      - name: (Zig) Build Native
-        run: zig build -Dimgui --summary all
-      - name: (Zig + emsdk) Build Wasm
-        run: zig build -Dimgui -DzigCC --summary all -Dtarget=wasm32-emscripten-none -Dcpu=generic
+          dub build :blend -f
+          dub build :bufferoffsets
+          dub build :clear
+          dub build :cube
+          dub build :debugtext
+          dub build :droptest
+          dub build :imgui
+          dub build :instancing
+          dub build :instancingcompute
+          dub build :mrt
+          dub build :noninterleaved
+          dub build :offscreen
+          dub build :quad
+          dub build :shapes
+          dub build :saudio
+          dub build :sglcontext
+          dub build :sglpoints
+          dub build :triangle
+          dub build :texcube
+          dub build :userdata
+          dub build :vertexpull
+      - name: (dub) Build sokol+imgui-wgles3
+        if: matrix.compiler == 'ldc-master'
+        run: dub build -c imgui-wgles3 -v --arch=wasm32-unknown-emscripten
+      - name: (dub) Build sokol+imgui-wgpu
+        if: matrix.compiler == 'ldc-master'
+        run: dub build -c imgui-wgpu -v --arch=wasm32-unknown-emscripten
+      - name: (dub) Build sokol-wgpu
+        if: matrix.compiler == 'ldc-master'
+        run: dub build -c sokol-wgpu -v --arch=wasm32-unknown-emscripten
+      - name: (dub) Build sokol-wgles3
+        if: matrix.compiler == 'ldc-master'
+        run: dub build -c sokol-wgles3 -v --arch=wasm32-unknown-emscripten
