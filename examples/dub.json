@@ -218,6 +218,76 @@
 			]
 		},
 		{
+			"name": "droptest",
+			"sourceFiles": [
+				"droptest.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "imgui-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "droptest.html",
+					"subConfigurations": {
+						"sokol-d": "imgui-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "droptest.html",
+					"subConfigurations": {
+						"sokol-d": "imgui-wgpu"
+					}
+				}
+			]
+		},
+		{
+			"name": "imgui",
+			"sourceFiles": [
+				"imgui.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "imgui-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "imgui.html",
+					"subConfigurations": {
+						"sokol-d": "imgui-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "imgui.html",
+					"subConfigurations": {
+						"sokol-d": "imgui-wgpu"
+					}
+				}
+			]
+		},
+		{
 			"name": "instancing",
 			"sourceFiles": [
 				"instancing.d",
