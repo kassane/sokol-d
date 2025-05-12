@@ -4,7 +4,7 @@
 	"license": "Zlib",
 	"version": "0.2.1",
 	"authors": [
-		"Matheus C. França",
+		"Matheus França",
 		"Andre Weissflog"
 	],
 	"buildTypes": {
@@ -18,14 +18,6 @@
 		"release": {
 			"buildOptions": [
 				"releaseMode",
-				"inline",
-				"optimize"
-			]
-		},
-		"release-debug": {
-			"buildOptions": [
-				"releaseMode",
-				"debugInfo",
 				"inline",
 				"optimize"
 			]
@@ -55,14 +47,16 @@
 			]
 		}
 	},
-	"dflags": [
-		"-preview=all"
+	"dflags-gdc": [
+		"-fpreview=all"
 	],
 	"dflags-dmd": [
-		"-verrors=context"
+		"-verrors=context",
+		"-preview=all"
 	],
 	"dflags-ldc": [
-		"--verrors-context"
+		"--verrors-context",
+		"-preview=all"
 	],
 	"lflags-posix": [
 		"-L$PACKAGE_DIR/build"
@@ -322,6 +316,11 @@
 			"excludedSourceFiles": [
 				"src/sokol/imgui.d"
 			],
+			"dflags": [
+				"-i=sokol",
+				"-i=shaders",
+				"-i=handmade"
+			],
 			"dflags-ldc": [
 				"-mcpu=native"
 			],
@@ -497,23 +496,33 @@
 			]
 		},
 		{
-			"name": "imgui-wasm",
+			"name": "imgui-wgles3",
 			"sourcePaths": [
-				"src/imgui"
-			],
-			"excludedSourceFiles": [
-				"src/sokol/*.d",
-				"src/handmade/*.d"
+				"src"
 			],
 			"libs": [
+				"sokol",
 				"cimgui"
 			],
 			"targetName": "cimguid",
 			"targetPath": "build",
-			"dflags-ldc": [
+			"dflags": [
 				"-P-I$PACKAGE_DIR/vendor/cimgui",
-				"-mtriple=wasm32-unknown-emscripten",
-				"-gcc=$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/em++"
+				"-i=sokol",
+				"-i=shaders",
+				"-i=handmade",
+				"--disable-linker-strip-dead",
+				"-mattr=+bulk-memory,+extended-const,+multivalue,+mutable-globals,+nontrapping-fptoint,+sign-ext",
+				"-gcc=$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/em++",
+				"-linker=$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc",
+				"-Xcc=--closure",
+				"-Xcc=1",
+				"-P-sASSERTIONS=0",
+				"-P-sUSE_WEBGL2=1",
+				"-P-sNO_FILESYSTEM=1",
+				"-P-sMALLOC='emmalloc'",
+				"-Xcc=--shell-file=$PACKAGE_DIR/src/sokol/web/shell.html",
+				"-P-sSTACK_SIZE=512KB"
 			],
 			"preBuildCommands-posix": [
 				"mkdir -p $PACKAGE_DIR/build",
@@ -525,6 +534,19 @@
 				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/em++ -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR/build/imgui_widgets.o $PACKAGE_DIR/vendor/cimgui/imgui/imgui_widgets.cpp",
 				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/em++ -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR/build/cimgui.o $PACKAGE_DIR/vendor/cimgui/cimgui.cpp",
 				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emar rcs $PACKAGE_DIR/build/libcimgui.a $PACKAGE_DIR/build/*.o",
+				"rm $PACKAGE_DIR/build/*.o",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc -DNDEBUG -DIMPL -DSOKOL_GLES3 -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_log.o $PACKAGE_DIR/src/sokol/c/sokol_log.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc -DNDEBUG -DIMPL -DSOKOL_GLES3 -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_app.o $PACKAGE_DIR/src/sokol/c/sokol_app.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc -DNDEBUG -DIMPL -DSOKOL_GLES3 -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_gfx.o $PACKAGE_DIR/src/sokol/c/sokol_gfx.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc -DNDEBUG -DIMPL -DSOKOL_GLES3 -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_time.o $PACKAGE_DIR/src/sokol/c/sokol_time.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc -DNDEBUG -DIMPL -DSOKOL_GLES3 -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_audio.o $PACKAGE_DIR/src/sokol/c/sokol_audio.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc -DNDEBUG -DIMPL -DSOKOL_GLES3 -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_gl.o $PACKAGE_DIR/src/sokol/c/sokol_gl.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc -DNDEBUG -DIMPL -DSOKOL_GLES3 -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_debugtext.o $PACKAGE_DIR/src/sokol/c/sokol_debugtext.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc -DNDEBUG -DIMPL -DSOKOL_GLES3 -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_shape.o $PACKAGE_DIR/src/sokol/c/sokol_shape.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc -DNDEBUG -DIMPL -DSOKOL_GLES3 -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_glue.o $PACKAGE_DIR/src/sokol/c/sokol_glue.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc -DNDEBUG -DIMPL -DSOKOL_GLES3 -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_fetch.o $PACKAGE_DIR/src/sokol/c/sokol_fetch.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc -DNDEBUG -DIMPL -DSOKOL_GLES3 -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_memtrack.o $PACKAGE_DIR/src/sokol/c/sokol_memtrack.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emar rcs $PACKAGE_DIR/build/libsokol.a $PACKAGE_DIR/build/*.o",
 				"rm $PACKAGE_DIR/build/*.o"
 			],
 			"preBuildCommands-windows": [
@@ -537,7 +559,100 @@
 				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\em++.bat -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR\\build\\imgui_widgets.o $PACKAGE_DIR\\vendor\\cimgui\\imgui\\imgui_widgets.cpp",
 				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\em++.bat -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR\\build\\cimgui.o $PACKAGE_DIR\\vendor\\cimgui\\cimgui.cpp",
 				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\emar.bat rcs $PACKAGE_DIR\\build\\libcimgui.a $PACKAGE_DIR\\build\\*.o",
-				"powershell -Command \"Remove-Item $PACKAGE_DIR\\build\\*.obj\""
+				"powershell -Command \"Remove-Item $PACKAGE_DIR\\build\\*.obj\"",
+				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -DNDEBUG -DIMPL -DSOKOL_GLES3 -O2 -fPIE -c -o $PACKAGE_DIR\\build\\sokol_log.o $PACKAGE_DIR\\src\\sokol\\c\\sokol_log.c",
+				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -DNDEBUG -DIMPL -DSOKOL_GLES3 -O2 -fPIE -c -o $PACKAGE_DIR\\build\\sokol_app.o $PACKAGE_DIR\\src\\sokol\\c\\sokol_app.c",
+				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -DNDEBUG -DIMPL -DSOKOL_GLES3 -O2 -fPIE -c -o $PACKAGE_DIR\\build\\sokol_gfx.o $PACKAGE_DIR\\src\\sokol\\c\\sokol_gfx.c",
+				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -DNDEBUG -DIMPL -DSOKOL_GLES3 -O2 -fPIE -c -o $PACKAGE_DIR\\build\\sokol_time.o $PACKAGE_DIR\\src\\sokol\\c\\sokol_time.c",
+				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -DNDEBUG -DIMPL -DSOKOL_GLES3 -O2 -fPIE -c -o $PACKAGE_DIR\\build\\sokol_audio.o $PACKAGE_DIR\\src\\sokol\\c\\sokol_audio.c",
+				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -DNDEBUG -DIMPL -DSOKOL_GLES3 -O2 -fPIE -c -o $PACKAGE_DIR\\build\\sokol_gl.o $PACKAGE_DIR\\src\\sokol\\c\\sokol_gl.c",
+				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -DNDEBUG -DIMPL -DSOKOL_GLES3 -O2 -fPIE -c -o $PACKAGE_DIR\\build\\sokol_debugtext.o $PACKAGE_DIR\\src\\sokol\\c\\sokol_debugtext.c",
+				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -DNDEBUG -DIMPL -DSOKOL_GLES3 -O2 -fPIE -c -o $PACKAGE_DIR\\build\\sokol_shape.o $PACKAGE_DIR\\src\\sokol\\c\\sokol_shape.c",
+				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -DNDEBUG -DIMPL -DSOKOL_GLES3 -O2 -fPIE -c -o $PACKAGE_DIR\\build\\sokol_glue.o $PACKAGE_DIR\\src\\sokol\\c\\sokol_glue.c",
+				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -DNDEBUG -DIMPL -DSOKOL_GLES3 -O2 -fPIE -c -o $PACKAGE_DIR\\build\\sokol_fetch.o $PACKAGE_DIR\\src\\sokol\\c\\sokol_fetch.c",
+				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -DNDEBUG -DIMPL -DSOKOL_GLES3 -O2 -fPIE -c -o $PACKAGE_DIR\\build\\sokol_memtrack.o $PACKAGE_DIR\\src\\sokol\\c\\sokol_memtrack.c",
+				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\emar.bat rcs $PACKAGE_DIR\\build\\libsokol.a $PACKAGE_DIR\\build\\*.o",
+				"powershell -Command Remove-Item $PACKAGE_DIR\\build\\*.obj"
+			]
+		},
+		{
+			"name": "imgui-wgpu",
+			"sourcePaths": [
+				"src"
+			],
+			"libs": [
+				"sokol",
+				"cimgui"
+			],
+			"targetName": "cimguid",
+			"targetPath": "build",
+			"dflags": [
+				"-P-I$PACKAGE_DIR/vendor/cimgui",
+				"-i=sokol",
+				"-i=shaders",
+				"-i=handmade",
+				"--disable-linker-strip-dead",
+				"-mattr=+bulk-memory,+extended-const,+multivalue,+mutable-globals,+nontrapping-fptoint,+sign-ext",
+				"-gcc=$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/em++",
+				"-linker=$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc",
+				"-Xcc=--closure",
+				"-Xcc=1",
+				"-P-sASSERTIONS=0",
+				"-P-sUSE_WGPU=1",
+				"-P-sNO_FILESYSTEM=1",
+				"-P-sMALLOC='emmalloc'",
+				"-Xcc=--shell-file=$PACKAGE_DIR/src/sokol/web/shell.html",
+				"-P-sSTACK_SIZE=512KB"
+			],
+			"preBuildCommands-posix": [
+				"mkdir -p $PACKAGE_DIR/build",
+				"$DC -run $PACKAGE_DIR/build.d --download-emsdk --download-imgui",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/em++ -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR/build/imgui.o $PACKAGE_DIR/vendor/cimgui/imgui/imgui.cpp",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/em++ -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR/build/imgui_demo.o $PACKAGE_DIR/vendor/cimgui/imgui/imgui_demo.cpp",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/em++ -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR/build/imgui_draw.o $PACKAGE_DIR/vendor/cimgui/imgui/imgui_draw.cpp",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/em++ -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR/build/imgui_tables.o $PACKAGE_DIR/vendor/cimgui/imgui/imgui_tables.cpp",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/em++ -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR/build/imgui_widgets.o $PACKAGE_DIR/vendor/cimgui/imgui/imgui_widgets.cpp",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/em++ -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR/build/cimgui.o $PACKAGE_DIR/vendor/cimgui/cimgui.cpp",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emar rcs $PACKAGE_DIR/build/libcimgui.a $PACKAGE_DIR/build/*.o",
+				"rm $PACKAGE_DIR/build/*.o",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc -DNDEBUG -DIMPL -DSOKOL_WGPU -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_log.o $PACKAGE_DIR/src/sokol/c/sokol_log.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc -DNDEBUG -DIMPL -DSOKOL_WGPU -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_app.o $PACKAGE_DIR/src/sokol/c/sokol_app.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc -DNDEBUG -DIMPL -DSOKOL_WGPU -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_gfx.o $PACKAGE_DIR/src/sokol/c/sokol_gfx.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc -DNDEBUG -DIMPL -DSOKOL_WGPU -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_time.o $PACKAGE_DIR/src/sokol/c/sokol_time.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc -DNDEBUG -DIMPL -DSOKOL_WGPU -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_audio.o $PACKAGE_DIR/src/sokol/c/sokol_audio.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc -DNDEBUG -DIMPL -DSOKOL_WGPU -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_gl.o $PACKAGE_DIR/src/sokol/c/sokol_gl.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc -DNDEBUG -DIMPL -DSOKOL_WGPU -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_debugtext.o $PACKAGE_DIR/src/sokol/c/sokol_debugtext.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc -DNDEBUG -DIMPL -DSOKOL_WGPU -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_shape.o $PACKAGE_DIR/src/sokol/c/sokol_shape.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc -DNDEBUG -DIMPL -DSOKOL_WGPU -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_glue.o $PACKAGE_DIR/src/sokol/c/sokol_glue.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc -DNDEBUG -DIMPL -DSOKOL_WGPU -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_fetch.o $PACKAGE_DIR/src/sokol/c/sokol_fetch.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc -DNDEBUG -DIMPL -DSOKOL_WGPU -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_memtrack.o $PACKAGE_DIR/src/sokol/c/sokol_memtrack.c",
+				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emar rcs $PACKAGE_DIR/build/libsokol.a $PACKAGE_DIR/build/*.o",
+				"rm $PACKAGE_DIR/build/*.o"
+			],
+			"preBuildCommands-windows": [
+				"powershell -Command \"mkdir -Force $PACKAGE_DIR\\build\"",
+				"$DC -run $PACKAGE_DIR\\build.d --download-emsdk --download-imgui",
+				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\em++.bat -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR\\build\\imgui.o $PACKAGE_DIR\\vendor\\cimgui\\imgui\\imgui.cpp",
+				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\em++.bat -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR\\build\\imgui_demo.o $PACKAGE_DIR\\vendor\\cimgui\\imgui\\imgui_demo.cpp",
+				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\em++.bat -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR\\build\\imgui_draw.o $PACKAGE_DIR\\vendor\\cimgui\\imgui\\imgui_draw.cpp",
+				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\em++.bat -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR\\build\\imgui_tables.o $PACKAGE_DIR\\vendor\\cimgui\\imgui\\imgui_tables.cpp",
+				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\em++.bat -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR\\build\\imgui_widgets.o $PACKAGE_DIR\\vendor\\cimgui\\imgui\\imgui_widgets.cpp",
+				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\em++.bat -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR\\build\\cimgui.o $PACKAGE_DIR\\vendor\\cimgui\\cimgui.cpp",
+				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\emar.bat rcs $PACKAGE_DIR\\build\\libcimgui.a $PACKAGE_DIR\\build\\*.o",
+				"powershell -Command \"Remove-Item $PACKAGE_DIR\\build\\*.obj\"",
+				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -DNDEBUG -DIMPL -DSOKOL_WGPU -O2 -fPIE -c -o $PACKAGE_DIR\\build\\sokol_log.o $PACKAGE_DIR\\src\\sokol\\c\\sokol_log.c",
+				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -DNDEBUG -DIMPL -DSOKOL_WGPU -O2 -fPIE -c -o $PACKAGE_DIR\\build\\sokol_app.o $PACKAGE_DIR\\src\\sokol\\c\\sokol_app.c",
+				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -DNDEBUG -DIMPL -DSOKOL_WGPU -O2 -fPIE -c -o $PACKAGE_DIR\\build\\sokol_gfx.o $PACKAGE_DIR\\src\\sokol\\c\\sokol_gfx.c",
+				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -DNDEBUG -DIMPL -DSOKOL_WGPU -O2 -fPIE -c -o $PACKAGE_DIR\\build\\sokol_time.o $PACKAGE_DIR\\src\\sokol\\c\\sokol_time.c",
+				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -DNDEBUG -DIMPL -DSOKOL_WGPU -O2 -fPIE -c -o $PACKAGE_DIR\\build\\sokol_audio.o $PACKAGE_DIR\\src\\sokol\\c\\sokol_audio.c",
+				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -DNDEBUG -DIMPL -DSOKOL_WGPU -O2 -fPIE -c -o $PACKAGE_DIR\\build\\sokol_gl.o $PACKAGE_DIR\\src\\sokol\\c\\sokol_gl.c",
+				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -DNDEBUG -DIMPL -DSOKOL_WGPU -O2 -fPIE -c -o $PACKAGE_DIR\\build\\sokol_debugtext.o $PACKAGE_DIR\\src\\sokol\\c\\sokol_debugtext.c",
+				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -DNDEBUG -DIMPL -DSOKOL_WGPU -O2 -fPIE -c -o $PACKAGE_DIR\\build\\sokol_shape.o $PACKAGE_DIR\\src\\sokol\\c\\sokol_shape.c",
+				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -DNDEBUG -DIMPL -DSOKOL_WGPU -O2 -fPIE -c -o $PACKAGE_DIR\\build\\sokol_glue.o $PACKAGE_DIR\\src\\sokol\\c\\sokol_glue.c",
+				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -DNDEBUG -DIMPL -DSOKOL_WGPU -O2 -fPIE -c -o $PACKAGE_DIR\\build\\sokol_fetch.o $PACKAGE_DIR\\src\\sokol\\c\\sokol_fetch.c",
+				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -DNDEBUG -DIMPL -DSOKOL_WGPU -O2 -fPIE -c -o $PACKAGE_DIR\\build\\sokol_memtrack.o $PACKAGE_DIR\\src\\sokol\\c\\sokol_memtrack.c",
+				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\emar.bat rcs $PACKAGE_DIR\\build\\libsokol.a $PACKAGE_DIR\\build\\*.o",
+				"powershell -Command Remove-Item $PACKAGE_DIR\\build\\*.obj"
 			]
 		},
 		{
@@ -545,9 +660,22 @@
 			"sourcePaths": [
 				"src/sokol"
 			],
-			"dflags-ldc": [
-				"-mtriple=wasm32-unknown-emscripten",
-				"-gcc=$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc"
+			"dflags": [
+				"-i=sokol",
+				"-i=shaders",
+				"-i=handmade",
+				"--disable-linker-strip-dead",
+				"-mattr=+bulk-memory,+extended-const,+multivalue,+mutable-globals,+nontrapping-fptoint,+sign-ext",
+				"-gcc=$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc",
+				"-linker=$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc",
+				"-Xcc=--closure",
+				"-Xcc=1",
+				"-P-sASSERTIONS=0",
+				"-P-sUSE_WEBGL2=1",
+				"-P-sNO_FILESYSTEM=1",
+				"-P-sMALLOC='emmalloc'",
+				"-Xcc=--shell-file=$PACKAGE_DIR/src/sokol/web/shell.html",
+				"-P-sSTACK_SIZE=512KB"
 			],
 			"targetName": "sokold",
 			"targetPath": "build",
@@ -591,9 +719,22 @@
 			"sourcePaths": [
 				"src/sokol"
 			],
-			"dflags-ldc": [
-				"-mtriple=wasm32-unknown-emscripten",
-				"-gcc=$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc"
+			"dflags": [
+				"-i=sokol",
+				"-i=shaders",
+				"-i=handmade",
+				"--disable-linker-strip-dead",
+				"-mattr=+bulk-memory,+extended-const,+multivalue,+mutable-globals,+nontrapping-fptoint,+sign-ext",
+				"-gcc=$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc",
+				"-linker=$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc",
+				"-Xcc=--closure",
+				"-Xcc=1",
+				"-P-sASSERTIONS=0",
+				"-P-sUSE_WGPU=1",
+				"-P-sNO_FILESYSTEM=1",
+				"-P-sMALLOC='emmalloc'",
+				"-Xcc=--shell-file=$PACKAGE_DIR/src/sokol/web/shell.html",
+				"-P-sSTACK_SIZE=512KB"
 			],
 			"targetName": "sokold",
 			"targetPath": "build",
@@ -630,6 +771,20 @@
 				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -DNDEBUG -DIMPL -DSOKOL_WGPU -O2 -fPIE -c -o $PACKAGE_DIR\\build\\sokol_memtrack.o $PACKAGE_DIR\\src\\sokol\\c\\sokol_memtrack.c",
 				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\emar.bat rcs $PACKAGE_DIR\\build\\libsokol.a $PACKAGE_DIR\\build\\*.o",
 				"powershell -Command Remove-Item $PACKAGE_DIR\\build\\*.obj"
+			]
+		},
+		{
+			"name": "sokol-android",
+			"targetPath": "build",
+			"dflags-ldc": [
+				"-mtriple=aarch64-unknown-linux-android"
+			]
+		},
+		{
+			"name": "sokol-ios",
+			"targetPath": "build",
+			"dflags-ldc": [
+				"-mtriple=arm64-apple-ios12.0"
 			]
 		},
 		{
