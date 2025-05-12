@@ -218,23 +218,19 @@ void getEmSDK() @safe
 void getIMGUI() @safe
 {
     writeln("Downloading IMGUI");
-    string rootpath = absolutePath(buildPath("vendor", "cimgui"));
+    string rootpath = absolutePath(buildPath("vendor", "imgui"));
     string filename = "imgui.zip";
 
     scope (exit)
     {
         if (exists(filename))
             remove(filename);
-        if (exists("c" ~ filename))
-            remove("c" ~ filename);
     }
 
     if (!exists(rootpath))
     {
-        download(fmt("https://github.com/cimgui/cimgui/archive/refs/tags/%s.zip", imgui_version), "c" ~ filename);
-        download(fmt("https://github.com/ocornut/imgui/archive/refs/tags/v%s.zip", imgui_version), filename);
-        extractZip("c" ~ filename, rootpath);
-        extractZip(filename, buildPath(rootpath, "imgui"));
+        download(fmt("https://github.com/floooh/dcimgui/archive/refs/tags/v%s.zip", imgui_version), filename);
+        extractZip(filename, rootpath);
     }
     writeln("rootpath: ", rootpath);
 }
