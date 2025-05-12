@@ -1,6 +1,9 @@
 {
+	"name": "examples",
+	"description": "D bindings for sokol",
+	"license": "Zlib",
 	"authors": [
-		"Matheus Catarino França",
+		"Matheus França",
 		"Andre Weissflog"
 	],
 	"buildTypes": {
@@ -17,14 +20,6 @@
 				"optimize"
 			]
 		},
-		"release-debug": {
-			"buildOptions": [
-				"releaseMode",
-				"debugInfo",
-				"inline",
-				"optimize"
-			]
-		},
 		"release-nobounds": {
 			"buildOptions": [
 				"releaseMode",
@@ -33,17 +28,16 @@
 				"optimize"
 			]
 		},
-		"unittest": {
+		"release-betterc": {
 			"buildOptions": [
-				"debugMode",
-				"debugInfo",
-				"unittests"
+				"betterC",
+				"releaseMode",
+				"inline",
+				"noBoundsCheck",
+				"optimize"
 			]
 		}
 	},
-	"description": "D bindings for sokol",
-	"license": "Zlib",
-	"name": "examples",
 	"subPackages": [
 		{
 			"name": "blend",
@@ -58,9 +52,28 @@
 					"path": ".."
 				}
 			},
-			"subConfigurations": {
-				"sokol-d": "sokol-static"
-			}
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "sokol-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "blend.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "blend.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgpu"
+					}
+				}
+			]
 		},
 		{
 			"name": "bufferoffsets",
@@ -75,9 +88,28 @@
 					"path": ".."
 				}
 			},
-			"subConfigurations": {
-				"sokol-d": "sokol-static"
-			}
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "sokol-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "bufferoffsets.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "bufferoffsets.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgpu"
+					}
+				}
+			]
 		},
 		{
 			"name": "clear",
@@ -91,9 +123,28 @@
 					"path": ".."
 				}
 			},
-			"subConfigurations": {
-				"sokol-d": "sokol-static"
-			}
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "sokol-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "clear.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "clear.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgpu"
+					}
+				}
+			]
 		},
 		{
 			"name": "cube",
@@ -108,9 +159,28 @@
 					"path": ".."
 				}
 			},
-			"subConfigurations": {
-				"sokol-d": "sokol-static"
-			}
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "sokol-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "cube.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "cube.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgpu"
+					}
+				}
+			]
 		},
 		{
 			"name": "debugtext",
@@ -124,9 +194,28 @@
 					"path": ".."
 				}
 			},
-			"subConfigurations": {
-				"sokol-d": "sokol-static"
-			}
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "sokol-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "debugtext.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "debugtext.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgpu"
+					}
+				}
+			]
 		},
 		{
 			"name": "instancing",
@@ -141,9 +230,28 @@
 					"path": ".."
 				}
 			},
-			"subConfigurations": {
-				"sokol-d": "sokol-static"
-			}
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "sokol-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "instancing.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "instancing.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgpu"
+					}
+				}
+			]
 		},
 		{
 			"name": "instancingcompute",
@@ -158,9 +266,28 @@
 					"path": ".."
 				}
 			},
-			"subConfigurations": {
-				"sokol-d": "sokol-static"
-			}
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "sokol-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "instancingcompute.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "instancingcompute.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgpu"
+					}
+				}
+			]
 		},
 		{
 			"name": "mrt",
@@ -175,9 +302,28 @@
 					"path": ".."
 				}
 			},
-			"subConfigurations": {
-				"sokol-d": "sokol-static"
-			}
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "sokol-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "mrt.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "mrt.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgpu"
+					}
+				}
+			]
 		},
 		{
 			"name": "noninterleaved",
@@ -192,9 +338,28 @@
 					"path": ".."
 				}
 			},
-			"subConfigurations": {
-				"sokol-d": "sokol-static"
-			}
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "sokol-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "noninterleaved.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "noninterleaved.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgpu"
+					}
+				}
+			]
 		},
 		{
 			"name": "offscreen",
@@ -209,9 +374,28 @@
 					"path": ".."
 				}
 			},
-			"subConfigurations": {
-				"sokol-d": "sokol-static"
-			}
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "sokol-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "offscreen.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "offscreen.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgpu"
+					}
+				}
+			]
 		},
 		{
 			"name": "quad",
@@ -226,9 +410,28 @@
 					"path": ".."
 				}
 			},
-			"subConfigurations": {
-				"sokol-d": "sokol-static"
-			}
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "sokol-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "quad.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "quad.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgpu"
+					}
+				}
+			]
 		},
 		{
 			"name": "shapes",
@@ -243,9 +446,28 @@
 					"path": ".."
 				}
 			},
-			"subConfigurations": {
-				"sokol-d": "sokol-static"
-			}
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "sokol-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "shapes.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "shapes.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgpu"
+					}
+				}
+			]
 		},
 		{
 			"name": "saudio",
@@ -259,9 +481,28 @@
 					"path": ".."
 				}
 			},
-			"subConfigurations": {
-				"sokol-d": "sokol-static"
-			}
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "sokol-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "saudio.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "saudio.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgpu"
+					}
+				}
+			]
 		},
 		{
 			"name": "sglcontext",
@@ -275,9 +516,28 @@
 					"path": ".."
 				}
 			},
-			"subConfigurations": {
-				"sokol-d": "sokol-static"
-			}
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "sokol-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "sglcontext.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "sglcontext.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgpu"
+					}
+				}
+			]
 		},
 		{
 			"name": "sglpoints",
@@ -291,9 +551,28 @@
 					"path": ".."
 				}
 			},
-			"subConfigurations": {
-				"sokol-d": "sokol-static"
-			}
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "sokol-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "sglpoints.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "sglpoints.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgpu"
+					}
+				}
+			]
 		},
 		{
 			"name": "triangle",
@@ -308,9 +587,28 @@
 					"path": ".."
 				}
 			},
-			"subConfigurations": {
-				"sokol-d": "sokol-static"
-			}
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "sokol-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "triangle.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "triangle.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgpu"
+					}
+				}
+			]
 		},
 		{
 			"name": "texcube",
@@ -325,9 +623,28 @@
 					"path": ".."
 				}
 			},
-			"subConfigurations": {
-				"sokol-d": "sokol-static"
-			}
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "sokol-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "texcube.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "texcube.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgpu"
+					}
+				}
+			]
 		},
 		{
 			"name": "userdata",
@@ -341,9 +658,28 @@
 					"path": ".."
 				}
 			},
-			"subConfigurations": {
-				"sokol-d": "sokol-static"
-			}
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "sokol-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "userdata.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "userdata.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgpu"
+					}
+				}
+			]
 		},
 		{
 			"name": "vertexpull",
@@ -358,9 +694,28 @@
 					"path": ".."
 				}
 			},
-			"subConfigurations": {
-				"sokol-d": "sokol-static"
-			}
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "sokol-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "vertexpull.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "vertexpull.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgpu"
+					}
+				}
+			]
 		}
 	]
 }
