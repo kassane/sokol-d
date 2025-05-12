@@ -41,19 +41,6 @@ jobs:
         run: dub build -c sokol-shared -v      
       - name: (dub) Build imgui-shared
         run: dub build -c imgui-shared -v
-      - name: (dub) Build sokol+imgui-wgles3
-        if: matrix.compiler == 'ldc-master'
-        run: dub build -c imgui-wgles3 -v --arch=wasm32-unknown-emscripten
-      - name: (dub) Build sokol+imgui-wgpu
-        if: matrix.compiler == 'ldc-master'
-        run: dub build -c imgui-wgpu -v --arch=wasm32-unknown-emscripten
-      - name: (dub) Build sokol-wgpu
-        if: matrix.compiler == 'ldc-master'
-        run: dub build -c sokol-wgpu -v --arch=wasm32-unknown-emscripten
-      - name: (dub) Build sokol-wgles3
-        if: matrix.compiler == 'ldc-master'
-        run: dub build -c sokol-wgles3 -v --arch=wasm32-unknown-emscripten
-
       - name: (dub) Build sokol examples
         working-directory: examples
         run: |
@@ -78,3 +65,15 @@ jobs:
           dub build :texcube
           dub build :userdata
           dub build :vertexpull
+      - name: (dub) Build sokol+imgui-wgles3
+        if: matrix.compiler == 'ldc-master'
+        run: dub build -c imgui-wgles3 -v --arch=wasm32-unknown-emscripten
+      - name: (dub) Build sokol+imgui-wgpu
+        if: matrix.compiler == 'ldc-master'
+        run: dub build -c imgui-wgpu -v --arch=wasm32-unknown-emscripten
+      - name: (dub) Build sokol-wgpu
+        if: matrix.compiler == 'ldc-master'
+        run: dub build -c sokol-wgpu -v --arch=wasm32-unknown-emscripten
+      - name: (dub) Build sokol-wgles3
+        if: matrix.compiler == 'ldc-master'
+        run: dub build -c sokol-wgles3 -v --arch=wasm32-unknown-emscripten
