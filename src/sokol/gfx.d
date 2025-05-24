@@ -1032,7 +1032,21 @@ struct Bindings {
 }
 /// sg_buffer_usage
 /// 
-/// TODO
+/// Describes how a buffer object is going to be used:
+/// 
+/// .vertex_buffer (default: true)
+///     the buffer will bound as vertex buffer via sg_bindings.vertex_buffers[]
+/// .index_buffer (default: false)
+///     the buffer will bound as index buffer via sg_bindings.index_buffer
+/// .storage_buffer (default: false)
+///     the buffer will bound as storage buffer via sg_bindings.storage_buffers[]
+/// .immutable (default: true)
+///     the buffer content will never be updated from the CPU side (but
+///     may be written to by a compute shader)
+/// .dynamic_update (default: false)
+///     the buffer content will be infrequently updated from the CPU side
+/// .stream_upate (default: false)
+///     the buffer content will be updated each frame from the CPU side
 extern(C)
 struct BufferUsage {
     bool vertex_buffer = false;
@@ -1044,15 +1058,14 @@ struct BufferUsage {
 }
 /// sg_buffer_desc
 /// 
-/// Creation parameters for sg_buffer objects, used in the
-/// sg_make_buffer() call.
+/// Creation parameters for sg_buffer objects, used in the sg_make_buffer() call.
 /// 
 /// The default configuration is:
 /// 
 /// .size:      0       (*must* be >0 for buffers without data)
 /// .usage              .vertex_buffer = true, .immutable = true
-/// .data.ptr   0       (*must* be valid for immutable buffers)
-/// .data.size  0       (*must* be > 0 for immutable buffers)
+/// .data.ptr   0       (*must* be valid for immutable buffers without storage buffer usage)
+/// .data.size  0       (*must* be > 0 for immutable buffers without storage buffer usage)
 /// .label      0       (optional string label)
 /// 
 /// For immutable buffers which are initialized with initial data,
@@ -1062,13 +1075,17 @@ struct BufferUsage {
 /// For immutable or mutable buffers without initial data, keep the .data item
 /// zero-initialized, and set the buffer size in the .size item instead.
 /// 
-/// NOTE: Immutable buffers without initial data are guaranteed to be
-/// zero-initialized. For mutable (dynamic or streaming) buffers, the
-/// initial content is undefined.
-/// 
 /// You can also set both size values, but currently both size values must
 /// be identical (this may change in the future when the dynamic resource
 /// management may become more flexible).
+/// 
+/// NOTE: Immutable buffers without storage-buffer-usage *must* be created
+/// with initial content, this restriction doesn't apply to storage buffer usage,
+/// because storage buffers may also get their initial content by running
+/// a compute shader on them.
+/// 
+/// NOTE: Buffers without initial data will have undefined content, e.g.
+/// do *not* expect the buffer to be zero-initialized!
 /// 
 /// ADVANCED TOPIC: Injecting native 3D-API buffers:
 /// 
@@ -1080,12 +1097,12 @@ struct BufferUsage {
 /// .d3d11_buffer
 /// 
 /// You must still provide all other struct items except the .data item, and
-/// these must match the creation parameters of the native buffers you
-/// provide. For SG_USAGE_IMMUTABLE, only provide a single native 3D-API
-/// buffer, otherwise you need to provide SG_NUM_INFLIGHT_FRAMES buffers
+/// these must match the creation parameters of the native buffers you provide.
+/// For sg_buffer_desc.usage.immutable buffers, only provide a single native
+/// 3D-API buffer, otherwise you need to provide SG_NUM_INFLIGHT_FRAMES buffers
 /// (only for GL and Metal, not D3D11). Providing multiple buffers for GL and
-/// Metal is necessary because sokol_gfx will rotate through them when
-/// calling sg_update_buffer() to prevent lock-stalls.
+/// Metal is necessary because sokol_gfx will rotate through them when calling
+/// sg_update_buffer() to prevent lock-stalls.
 /// 
 /// Note that it is expected that immutable injected buffer have already been
 /// initialized with content, and the .content member must be 0!
@@ -1107,7 +1124,23 @@ struct BufferDesc {
 }
 /// sg_image_usage
 /// 
-/// TODO
+/// Describes how the image object is going to be used:
+/// 
+/// .render_attachment (default: false)
+///     the image object is used as color-, resolve- or depth-stencil-
+///     attachment in a render pass
+/// .storage_attachment (default: false)
+///     the image object is used as storage-attachment in a
+///     compute pass (to be written to by compute shaders)
+/// .immutable (default: true)
+///     the image content cannot be updated from the CPU side
+///     (but may be updated by the GPU in a render- or compute-pass)
+/// .dynamic_update (default: false)
+///     the image content is updated infrequently by the CPU
+/// .stream_update (default: false)
+///     the image content is updated each frame by the CPU via
+/// 
+/// Note that the usage as texture binding is implicit and always allowed.
 extern(C)
 struct ImageUsage {
     bool render_attachment = false;
@@ -1137,7 +1170,6 @@ struct ImageData {
 /// .height             0 (must be set to >0)
 /// .num_slices         1 (3D textures: depth; array textures: number of layers)
 /// .num_mipmaps        1
-/// .usage              SG_USAGE_IMMUTABLE
 /// .pixel_format       SG_PIXELFORMAT_RGBA8 for textures, or sg_desc.environment.defaults.color_format for render targets
 /// .sample_count       1 for textures, or sg_desc.environment.defaults.sample_count for render targets
 /// .data               an sg_image_data struct to define the initial content
@@ -1154,8 +1186,12 @@ struct ImageData {
 /// 
 /// NOTE:
 /// 
-/// Images with usage SG_USAGE_IMMUTABLE must be fully initialized by
+/// Regular (non-attachment) images with usage.immutable must be fully initialized by
 /// providing a valid .data member which points to initialization data.
+/// 
+/// Images with usage.render_attachment or usage.storage_attachment must
+/// *not* be created with initial content. Be aware that the initial
+/// content of render- and storage-attachment images is undefined.
 /// 
 /// ADVANCED TOPIC: Injecting native 3D-API textures:
 /// 
@@ -1244,7 +1280,7 @@ struct SamplerDesc {
 /// reflection information to sokol-gfx.
 /// 
 /// If you use sokol-shdc you can ignore the following information since
-/// the sg_shader_desc struct will be code generated.
+/// the sg_shader_desc struct will be code-generated.
 /// 
 /// Otherwise you need to provide the following information to the
 /// sg_make_shader() call:
@@ -1279,7 +1315,7 @@ struct SamplerDesc {
 ///         - WGSL: `@workgroup_size(x, y, z)`
 ///       ...but in Metal the workgroup size is declared on the CPU side
 /// 
-/// - reflection information for each uniform block used by the shader:
+/// - reflection information for each uniform block binding used by the shader:
 ///     - the shader stage the uniform block appears in (SG_SHADERSTAGE_*)
 ///     - the size in bytes of the uniform block
 ///     - backend-specific bindslots:
@@ -1293,14 +1329,14 @@ struct SamplerDesc {
 ///             - if the member is an array, the array count
 ///             - the member name
 /// 
-/// - reflection information for each texture used by the shader:
+/// - reflection information for each texture binding used by the shader:
 ///     - the shader stage the texture appears in (SG_SHADERSTAGE_*)
 ///     - the image type (SG_IMAGETYPE_*)
 ///     - the image-sample type (SG_IMAGESAMPLETYPE_*)
 ///     - whether the texture is multisampled
 ///     - backend specific bindslots:
 ///         - HLSL: the texture register `register(t0..23)`
-///         - MSL: the texture attribute `[[texture(0..15)]]`
+///         - MSL: the texture attribute `[[texture(0..19)]]`
 ///         - WGSL: the binding in `@group(1) @binding(0..127)`
 /// 
 /// - reflection information for each sampler used by the shader:
@@ -1311,17 +1347,30 @@ struct SamplerDesc {
 ///         - MSL: the sampler attribute `[[sampler(0..15)]]`
 ///         - WGSL: the binding in `@group(0) @binding(0..127)`
 /// 
-/// - reflection information for each storage buffer used by the shader:
+/// - reflection information for each storage buffer binding used by the shader:
 ///     - the shader stage the storage buffer appears in (SG_SHADERSTAGE_*)
-///     - whether the storage buffer is readonly (currently this must
-///       always be true)
+///     - whether the storage buffer is readonly
 ///     - backend specific bindslots:
 ///         - HLSL:
 ///             - for readonly storage buffer bindings: `register(t0..23)`
-///             - for read/write storage buffer bindings: `register(u0..7)`
+///             - for read/write storage buffer bindings: `register(u0..11)`
 ///         - MSL: the buffer attribute `[[buffer(8..15)]]`
 ///         - WGSL: the binding in `@group(1) @binding(0..127)`
 ///         - GL: the binding in `layout(binding=0..7)`
+/// 
+/// - reflection information for each storage image binding used by the shader:
+///     - the shader stage (*must* be SG_SHADERSTAGE_COMPUTE)
+///     - whether the storage image is writeonly or readwrite (for readonly
+///       access use a regular texture binding instead)
+///     - the image type expected by the shader (SG_IMAGETYPE_*)
+///     - the access pixel format expected by the shader (SG_PIXELFORMAT_*),
+///       note that only a subset of pixel formats is allowed for storage image
+///       bindings
+///     - backend specific bindslots:
+///         - HLSL: the UAV register `register(u0..u11)`
+///         - MSL: the texture attribute `[[texture(0..19)]]`
+///         - WGSL: the binding in `@group(2) @binding(0..3)`
+///         - GLSL: the binding in `layout(binding=0..3, [access_format])`
 /// 
 /// - reflection information for each combined image-sampler object
 ///   used by the shader:
@@ -1352,9 +1401,9 @@ struct SamplerDesc {
 /// For all GL backends, shader source-code must be provided. For D3D11 and Metal,
 /// either shader source-code or byte-code can be provided.
 /// 
-/// NOTE that the uniform block, image, sampler and storage_buffer arrays
-/// can have gaps. This allows to use the same sg_bindings struct for
-/// different related shader variants.
+/// NOTE that the uniform block, image, sampler, storage_buffer and
+/// storage_image arrays may have gaps. This allows to use the same sg_bindings
+/// struct for different related shader variants.
 /// 
 /// For D3D11, if source code is provided, the d3dcompiler_47.dll will be loaded
 /// on demand. If this fails, shader creation will fail. When compiling HLSL
@@ -1499,6 +1548,10 @@ struct ShaderDesc {
 /// Please note that ALL vertex attribute offsets must be 0 in order for the
 /// automatic offset computation to kick in.
 /// 
+/// Note that if you use vertex-pulling from storage buffers instead of
+/// fixed-function vertex input you can simply omit the entire nested .layout
+/// struct.
+/// 
 /// The default configuration is as follows:
 /// 
 /// .compute:               false (must be set to true for a compute pipeline)
@@ -1632,11 +1685,25 @@ struct PipelineDesc {
 /// Creation parameters for an sg_attachments object, used as argument to the
 /// sg_make_attachments() function.
 /// 
-/// An attachments object bundles 0..4 color attachments, 0..4 msaa-resolve
-/// attachments, and none or one depth-stencil attachmente for use
-/// in a render pass. At least one color attachment or one depth-stencil
-/// attachment must be provided (no color attachment and a depth-stencil
-/// attachment is useful for a depth-only render pass).
+/// An attachments object bundles either bundles 'render attachments' for
+/// a render pass, or 'storage attachments' for a compute pass which writes
+/// to storage images.
+/// 
+/// Render attachments are:
+/// 
+///     - 0..4 color attachment images
+///     - 0..4 msaa-resolve attachment images
+///     - 0 or one depth-stencil attachment image
+/// 
+/// Note that all types of render attachment images must be created with
+/// `sg_image_desc.usage.render_attachment = true`. At least one color-attachment
+/// or depth-stencil-attachment image must be provided in a render pass
+/// (only providing a depth-stencil-attachment is useful for depth-only passes).
+/// 
+/// Alternatively provide 1..4 storage attachment images which must be created
+/// with `sg_image_desc.usage.storage_attachment = true`.
+/// 
+/// An sg_attachments object cannot have both render- and storage-attachments.
 /// 
 /// Each attachment definition consists of an image object, and two additional indices
 /// describing which subimage the pass will render into: one mipmap index, and if the image
@@ -2098,7 +2165,6 @@ enum LogItem {
     Validate_bufferdesc_expect_nonzero_size,
     Validate_bufferdesc_expect_matching_data_size,
     Validate_bufferdesc_expect_zero_data_size,
-    Valiate_expect_data,
     Validate_bufferdesc_expect_no_data,
     Validate_bufferdesc_expect_data,
     Validate_bufferdesc_storagebuffer_supported,
