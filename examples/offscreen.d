@@ -69,7 +69,7 @@ void init()
     // dfmt off
     // a render pass with one color- and one depth-attachment image
     sg.ImageDesc img_desc = {
-        render_target: true,
+        usage: { render_attachment: true },
         width: 256,
         height: 256,
         pixel_format: sg.PixelFormat.Rgba8,

@@ -102,7 +102,7 @@ void init()
 
     // create an offscreen render target texture, pass-attachments object and pass-action
     sg.ImageDesc imgd = {
-        render_target: true,
+        usage: { render_attachment: true },
         width: offscreen_width,
         height: offscreen_height,
         pixel_format: offscreen_pixel_format,
