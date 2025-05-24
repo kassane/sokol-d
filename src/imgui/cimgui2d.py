@@ -255,7 +255,7 @@ def generate_dlang_wrapper(ast):
 def main():
     """Main function to generate D bindings."""
     try:
-        local_path = os.path.join(os.path.expanduser('~'), '.cache/zig/p/cimgui-0.1.0-44ClkTt5hgBU8BelH8W_G8mso3ys_hrqNUWwJvaxXDs5/src/cimgui.h')
+        local_path = '../vendor/dcimgui/src/cimgui.h'
         if not os.path.exists(local_path):
             raise FileNotFoundError(f"Header file not found at {local_path}")
         

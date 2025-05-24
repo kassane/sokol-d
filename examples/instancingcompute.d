@@ -12,7 +12,7 @@ import sapp = sokol.app;
 import slog = sokol.log;
 import handmade.math: Mat4, Vec3;
 import sglue = sokol.glue;
-import shd = examples.shaders.instancingcompute;
+import shd = shaders.instancingcompute;
 
 extern (C):
 @safe nothrow @nogc:

@@ -1,0 +1,791 @@
+{
+	"name": "examples",
+	"description": "D bindings for sokol",
+	"license": "Zlib",
+	"authors": [
+		"Matheus França",
+		"Andre Weissflog"
+	],
+	"buildTypes": {
+		"debug": {
+			"buildOptions": [
+				"debugMode",
+				"debugInfo"
+			]
+		},
+		"release": {
+			"buildOptions": [
+				"releaseMode",
+				"inline",
+				"optimize"
+			]
+		},
+		"release-nobounds": {
+			"buildOptions": [
+				"releaseMode",
+				"inline",
+				"noBoundsCheck",
+				"optimize"
+			]
+		},
+		"release-betterc": {
+			"buildOptions": [
+				"betterC",
+				"releaseMode",
+				"inline",
+				"noBoundsCheck",
+				"optimize"
+			]
+		}
+	},
+	"subPackages": [
+		{
+			"name": "blend",
+			"sourceFiles": [
+				"blend.d",
+				"shaders/blend.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "sokol-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "blend.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "blend.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgpu"
+					}
+				}
+			]
+		},
+		{
+			"name": "bufferoffsets",
+			"sourceFiles": [
+				"bufferoffsets.d",
+				"shaders/bufferoffsets.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "sokol-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "bufferoffsets.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "bufferoffsets.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgpu"
+					}
+				}
+			]
+		},
+		{
+			"name": "clear",
+			"sourceFiles": [
+				"clear.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "sokol-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "clear.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "clear.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgpu"
+					}
+				}
+			]
+		},
+		{
+			"name": "cube",
+			"sourceFiles": [
+				"cube.d",
+				"shaders/cube.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "sokol-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "cube.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "cube.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgpu"
+					}
+				}
+			]
+		},
+		{
+			"name": "debugtext",
+			"sourceFiles": [
+				"debugtext.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "sokol-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "debugtext.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "debugtext.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgpu"
+					}
+				}
+			]
+		},
+		{
+			"name": "droptest",
+			"sourceFiles": [
+				"droptest.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "imgui-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "droptest.html",
+					"subConfigurations": {
+						"sokol-d": "imgui-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "droptest.html",
+					"subConfigurations": {
+						"sokol-d": "imgui-wgpu"
+					}
+				}
+			]
+		},
+		{
+			"name": "imgui",
+			"sourceFiles": [
+				"imgui.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "imgui-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "imgui.html",
+					"subConfigurations": {
+						"sokol-d": "imgui-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "imgui.html",
+					"subConfigurations": {
+						"sokol-d": "imgui-wgpu"
+					}
+				}
+			]
+		},
+		{
+			"name": "instancing",
+			"sourceFiles": [
+				"instancing.d",
+				"shaders/instancing.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "sokol-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "instancing.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "instancing.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgpu"
+					}
+				}
+			]
+		},
+		{
+			"name": "instancingcompute",
+			"sourceFiles": [
+				"instancingcompute.d",
+				"shaders/instancingcompute.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "sokol-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "instancingcompute.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "instancingcompute.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgpu"
+					}
+				}
+			]
+		},
+		{
+			"name": "mrt",
+			"sourceFiles": [
+				"mrt.d",
+				"shaders/mrt.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "sokol-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "mrt.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "mrt.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgpu"
+					}
+				}
+			]
+		},
+		{
+			"name": "noninterleaved",
+			"sourceFiles": [
+				"noninterleaved.d",
+				"shaders/noninterleaved.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "sokol-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "noninterleaved.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "noninterleaved.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgpu"
+					}
+				}
+			]
+		},
+		{
+			"name": "offscreen",
+			"sourceFiles": [
+				"offscreen.d",
+				"shaders/offscreen.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "sokol-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "offscreen.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "offscreen.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgpu"
+					}
+				}
+			]
+		},
+		{
+			"name": "quad",
+			"sourceFiles": [
+				"quad.d",
+				"shaders/quad.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "sokol-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "quad.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "quad.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgpu"
+					}
+				}
+			]
+		},
+		{
+			"name": "shapes",
+			"sourceFiles": [
+				"shapes.d",
+				"shaders/shapes.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "sokol-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "shapes.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "shapes.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgpu"
+					}
+				}
+			]
+		},
+		{
+			"name": "saudio",
+			"sourceFiles": [
+				"saudio.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "sokol-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "saudio.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "saudio.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgpu"
+					}
+				}
+			]
+		},
+		{
+			"name": "sglcontext",
+			"sourceFiles": [
+				"sgl_context.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "sokol-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "sglcontext.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "sglcontext.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgpu"
+					}
+				}
+			]
+		},
+		{
+			"name": "sglpoints",
+			"sourceFiles": [
+				"sgl_points.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "sokol-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "sglpoints.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "sglpoints.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgpu"
+					}
+				}
+			]
+		},
+		{
+			"name": "triangle",
+			"sourceFiles": [
+				"triangle.d",
+				"shaders/triangle.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "sokol-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "triangle.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "triangle.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgpu"
+					}
+				}
+			]
+		},
+		{
+			"name": "texcube",
+			"sourceFiles": [
+				"texcube.d",
+				"shaders/texcube.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "sokol-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "texcube.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "texcube.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgpu"
+					}
+				}
+			]
+		},
+		{
+			"name": "userdata",
+			"sourceFiles": [
+				"user_data.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "sokol-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "userdata.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "userdata.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgpu"
+					}
+				}
+			]
+		},
+		{
+			"name": "vertexpull",
+			"sourceFiles": [
+				"vertexpull.d",
+				"shaders/vertexpull.d"
+			],
+			"targetPath": "build",
+			"targetType": "executable",
+			"dependencies": {
+				"sokol-d": {
+					"path": ".."
+				}
+			},
+			"configurations": [
+				{
+					"name": "native",
+					"subConfigurations": {
+						"sokol-d": "sokol-static"
+					}
+				},
+				{
+					"name": "wasm",
+					"targetName": "vertexpull.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgles3"
+					}
+				},
+				{
+					"name": "wgpu",
+					"targetName": "vertexpull.html",
+					"subConfigurations": {
+						"sokol-d": "sokol-wgpu"
+					}
+				}
+			]
+		}
+	]
+}
