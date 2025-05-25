@@ -362,7 +362,7 @@
 				"-i=shaders",
 				"-i=handmade",
 				"-i=imgui",
-				"-P-I$PACKAGE_DIR/vendor/imgui/src",
+				"-P-I$PACKAGE_DIR/vendor/imgui/src"
 			],
 			"dflags-ldc": [
 				"-Xcc=-std=c99",
@@ -495,7 +495,7 @@
 				"-i=shaders",
 				"-i=handmade",
 				"-i=imgui",
-				"-P-I$PACKAGE_DIR/vendor/imgui/src",
+				"-P-I$PACKAGE_DIR/vendor/imgui/src"
 			],
 			"dflags-ldc": [
 				"-Xcc=-std=c99",
@@ -639,18 +639,12 @@
 				"-i=shaders",
 				"-i=handmade",
 				"-i=imgui",
+				"-i=emscripten",
+				"-defaultlib=",
 				"--disable-linker-strip-dead",
+				"--mtriple=wasm32-unknown-unknown-wasm",
 				"-mattr=+bulk-memory,+extended-const,+multivalue,+mutable-globals,+nontrapping-fptoint,+sign-ext",
-				"-gcc=$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc",
-				"-linker=$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc",
-				"-P--closure",
-				"-P1",
-				"-P-sASSERTIONS=0",
-				"-P-sUSE_WEBGL2=1",
-				"-P-sNO_FILESYSTEM=1",
-				"-P-sMALLOC='emmalloc'",
-				"-Xcc=--shell-file=$PACKAGE_DIR/src/sokol/web/shell.html",
-				"-P-sSTACK_SIZE=512KB"
+				"-gcc=$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc"
 			],
 			"preBuildCommands-posix": [
 				"mkdir -p $PACKAGE_DIR/build",
@@ -722,18 +716,12 @@
 				"-i=shaders",
 				"-i=handmade",
 				"-i=imgui",
+				"-i=emscripten",
+				"-defaultlib=",
 				"--disable-linker-strip-dead",
+				"--mtriple=wasm32-unknown-unknown-wasm",
 				"-mattr=+bulk-memory,+extended-const,+multivalue,+mutable-globals,+nontrapping-fptoint,+sign-ext",
-				"-gcc=$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc",
-				"-linker=$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc",
-				"-P--closure",
-				"-P1",
-				"-P-sASSERTIONS=0",
-				"-P-sUSE_WEBGPU=1",
-				"-P-sNO_FILESYSTEM=1",
-				"-P-sMALLOC='emmalloc'",
-				"-Xcc=--shell-file=$PACKAGE_DIR/src/sokol/web/shell.html",
-				"-P-sSTACK_SIZE=512KB"
+				"-gcc=$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc"
 			],
 			"preBuildCommands-posix": [
 				"mkdir -p $PACKAGE_DIR/build",
@@ -799,18 +787,17 @@
 				"-i=sokol",
 				"-i=shaders",
 				"-i=handmade",
+				"-i=emscripten",
 				"--disable-linker-strip-dead",
+				"--mtriple=wasm32-unknown-emscripten-wasm",
 				"-mattr=+bulk-memory,+extended-const,+multivalue,+mutable-globals,+nontrapping-fptoint,+sign-ext",
-				"-gcc=$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc",
-				"-linker=$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc",
-				"-P--closure",
-				"-P1",
-				"-P-sASSERTIONS=0",
-				"-P-sUSE_WEBGL2=1",
-				"-P-sNO_FILESYSTEM=1",
-				"-P-sMALLOC='emmalloc'",
-				"-Xcc=--shell-file=$PACKAGE_DIR/src/sokol/web/shell.html",
-				"-P-sSTACK_SIZE=512KB"
+				"-defaultlib="
+			],
+			"libs": [
+				"sokol"
+			],
+			"lflags": [
+				"-L$PACKAGE_DIR/build"
 			],
 			"targetName": "sokold",
 			"targetPath": "build",
@@ -860,18 +847,14 @@
 				"-i=sokol",
 				"-i=shaders",
 				"-i=handmade",
+				"-i=emscripten",
 				"--disable-linker-strip-dead",
+				"--mtriple=wasm32-unknown-emscripten-wasm",
 				"-mattr=+bulk-memory,+extended-const,+multivalue,+mutable-globals,+nontrapping-fptoint,+sign-ext",
-				"-gcc=$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc",
-				"-linker=$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc",
-				"-P--closure",
-				"-P1",
-				"-P-sASSERTIONS=0",
-				"-P-sUSE_WEBGPU=1",
-				"-P-sNO_FILESYSTEM=1",
-				"-P-sMALLOC='emmalloc'",
-				"-Xcc=--shell-file=$PACKAGE_DIR/src/sokol/web/shell.html",
-				"-P-sSTACK_SIZE=512KB"
+				"-defaultlib="
+			],
+			"libs": [
+				"sokol"
 			],
 			"targetName": "sokold",
 			"targetPath": "build",
