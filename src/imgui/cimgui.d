@@ -12,7 +12,7 @@ Features:
 module imgui.cimgui;
 public import imgui.c.dcimgui;
 
-@nogc nothrow:
+pure @nogc nothrow:
 
 // Callback function types
 extern (C) alias ImGuiGetterFunc = const(char)* function(const(void)*, int);
@@ -2059,7 +2059,7 @@ bool BeginDragDropTarget() @trusted
 }
 
 scope ImGuiPayload* AcceptDragDropPayload(
-    scope const(char)* type, ImGuiDragDropFlags flags) @trusted
+    const(char)* type, ImGuiDragDropFlags flags) @trusted
 {
     return igAcceptDragDropPayload(type, flags);
 }
@@ -2536,7 +2536,7 @@ void SaveIniSettingsToDisk(
 }
 
 scope const(char)* SaveIniSettingsToMemory(
-    scope size_t* out_ini_size) @trusted
+    size_t* out_ini_size) @trusted
 {
     return igSaveIniSettingsToMemory(
         out_ini_size);
