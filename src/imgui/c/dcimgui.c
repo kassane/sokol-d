@@ -1,4 +1,7 @@
 // Use importC to import the C header files.
-#pragma attribute(push, nogc, nothrow, pure) // dmdfrontend-2.111.x feature
+#ifndef DCIMGUI_H
+#define DCIMGUI_H
+#pragma attribute(push, nogc, nothrow) // dmd-2.111.x feature
 #include <cimgui.h>
 #pragma attribute(pop)
+#endif // DCIMGUI_H
