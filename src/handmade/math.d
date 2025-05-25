@@ -12,15 +12,20 @@ module handmade.math;
 extern (C):
 @safe:
 
-public import core.stdc.math : sqrt, cos, sin, tan, floor;
-
 version (WebAssembly)
 {
     debug
     {
         import emscripten.assertd;
     }
+    pure nothrow @nogc double floor(double x);
+    pure nothrow @nogc double sqrt(double x);
+    pure nothrow @nogc double cos(double x);
+    pure nothrow @nogc double sin(double x);
+    pure nothrow @nogc double tan(double x);
 }
+else
+    public import core.stdc.math : sqrt, cos, sin, tan, floor;
 
 enum PI = 3.14159265358979323846;
 

@@ -358,11 +358,11 @@
 				"has_imgui"
 			],
 			"dflags": [
+				"-P-I$PACKAGE_DIR/vendor/imgui/src",
 				"-i=sokol",
 				"-i=shaders",
 				"-i=handmade",
-				"-i=imgui",
-				"-P-I$PACKAGE_DIR/vendor/imgui/src"
+				"-i=imgui"
 			],
 			"dflags-ldc": [
 				"-Xcc=-std=c99",
@@ -491,11 +491,11 @@
 				"has_imgui"
 			],
 			"dflags": [
+				"-P-I$PACKAGE_DIR/vendor/imgui/src",
 				"-i=sokol",
 				"-i=shaders",
 				"-i=handmade",
-				"-i=imgui",
-				"-P-I$PACKAGE_DIR/vendor/imgui/src"
+				"-i=imgui"
 			],
 			"dflags-ldc": [
 				"-Xcc=-std=c99",
