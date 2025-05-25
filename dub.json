@@ -642,9 +642,14 @@
 				"-i=emscripten",
 				"-defaultlib=",
 				"--disable-linker-strip-dead",
-				"--mtriple=wasm32-unknown-unknown-wasm",
+				"--mtriple=wasm32-unknown-emscripten-wasm",
 				"-mattr=+bulk-memory,+extended-const,+multivalue,+mutable-globals,+nontrapping-fptoint,+sign-ext",
+			],
+			"dflags-posix": [
 				"-gcc=$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc"
+			],
+			"dflags-windows": [
+				"-gcc=$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat"
 			],
 			"preBuildCommands-posix": [
 				"mkdir -p $PACKAGE_DIR/build",
@@ -719,9 +724,14 @@
 				"-i=emscripten",
 				"-defaultlib=",
 				"--disable-linker-strip-dead",
-				"--mtriple=wasm32-unknown-unknown-wasm",
-				"-mattr=+bulk-memory,+extended-const,+multivalue,+mutable-globals,+nontrapping-fptoint,+sign-ext",
+				"--mtriple=wasm32-unknown-emscripten-wasm",
+				"-mattr=+bulk-memory,+extended-const,+multivalue,+mutable-globals,+nontrapping-fptoint,+sign-ext"
+			],
+			"dflags-posix": [
 				"-gcc=$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc"
+			],
+			"dflags-windows": [
+				"-gcc=$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat"
 			],
 			"preBuildCommands-posix": [
 				"mkdir -p $PACKAGE_DIR/build",
