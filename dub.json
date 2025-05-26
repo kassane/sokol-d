@@ -649,7 +649,7 @@
 				"-gcc=$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc"
 			],
 			"dflags-windows": [
-				"-gcc=$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat"
+				"-gcc=$PACKAGE_DIR\\vendor\\emsdk\\upstream\\bin\\wasm32-clang.exe"
 			],
 			"preBuildCommands-posix": [
 				"mkdir -p $PACKAGE_DIR/build",
@@ -731,7 +731,7 @@
 				"-gcc=$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc"
 			],
 			"dflags-windows": [
-				"-gcc=$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat"
+				"-gcc=$PACKAGE_DIR\\vendor\\emsdk\\upstream\\bin\\wasm32-clang.exe"
 			],
 			"preBuildCommands-posix": [
 				"mkdir -p $PACKAGE_DIR/build",
