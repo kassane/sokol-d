@@ -634,6 +634,7 @@
 			"targetName": "cimguid",
 			"targetPath": "build",
 			"dflags": [
+				"-P-I$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/cache/sysroot/include",
 				"-P-I$PACKAGE_DIR/vendor/imgui/src",
 				"-i=sokol",
 				"-i=shaders",
@@ -716,6 +717,7 @@
 			"targetName": "cimguid",
 			"targetPath": "build",
 			"dflags": [
+				"-P-I$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/cache/sysroot/include",
 				"-P-I$PACKAGE_DIR/vendor/imgui/src",
 				"-i=sokol",
 				"-i=shaders",
