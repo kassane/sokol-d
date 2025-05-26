@@ -13,6 +13,12 @@ By default, the backend 3D API will be selected based on the target platform:
 - Linux: GL/Wayland
 - Wasm (LDC2 required) - WebGL3/WebGPU support
 
+#### Usage - template project
+
+```console
+dub init -t sokol-d
+```
+
 ## BUILD
 
 **Required**

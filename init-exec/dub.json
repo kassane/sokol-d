@@ -1,0 +1,17 @@
+{
+	"name": "init-exec",
+	"description": "A minimal sokol-d application.",
+	"dependencies": {
+		"sokol-d": "~>0.2.1"
+	},
+	"targetPath": "build",
+	"targetType": "executable",
+	"configurations": [
+		{
+			"name": "native",
+			"subConfigurations": {
+				"sokol-d": "sokol-static"
+			}
+		}
+	]
+}
