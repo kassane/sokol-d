@@ -64,13 +64,11 @@
 					"targetType": "staticLibrary",
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/blend.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lblend -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/blend.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\blend.html -L..\\build -Lbuild -lsokol -lblend -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\blend.html"
+						"del build\\*.a"
 					],
 					"targetName": "blend",
 					"subConfigurations": {
@@ -82,13 +80,11 @@
 					"targetType": "staticLibrary",
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/blend.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lblend -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/blend.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\blend.html -L..\\build -Lbuild -lsokol -lblend -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\blend.html"
+						"del build\\*.a"
 					],
 					"targetName": "blend",
 					"subConfigurations": {
@@ -122,13 +118,11 @@
 					"targetType": "staticLibrary",
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/bufferoffsets.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lclear -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/bufferoffsets.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\bufferoffsets.html -L..\\build -Lbuild -lsokol -lclear -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\bufferoffsets.html"
+						"del build\\*.a"
 					],
 					"targetName": "bufferoffsets",
 					"subConfigurations": {
@@ -140,13 +134,11 @@
 					"targetType": "staticLibrary",
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/bufferoffsets.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lbufferoffsets -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/bufferoffsets.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\bufferoffsets.html -L..\\build -Lbuild -lsokol -lbufferoffsets -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\bufferoffsets.html"
+						"del build\\*.a"
 					],
 					"targetName": "bufferoffsets",
 					"subConfigurations": {
@@ -179,13 +171,11 @@
 					"targetType": "staticLibrary",
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/clear.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lclear -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/clear.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\clear.html -L..\\build -Lbuild -lsokol -lclear -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\clear.html"
+						"del build\\*.a"
 					],
 					"targetName": "clear",
 					"subConfigurations": {
@@ -197,13 +187,11 @@
 					"targetType": "staticLibrary",
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/clear.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lclear -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/clear.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\clear.html -L..\\build -Lbuild -lsokol -lclear -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\clear.html"
+						"del build\\*.a"
 					],
 					"targetName": "clear",
 					"subConfigurations": {
@@ -240,13 +228,11 @@
 					],
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/cube.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lcube -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/cube.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\cube.html -L..\\build -Lbuild -lsokol -lcube -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\cube.html"
+						"del build\\*.a"
 					],
 					"targetName": "cube",
 					"subConfigurations": {
@@ -261,13 +247,11 @@
 					],
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/cube.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lcube -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/cube.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\cube.html -L..\\build -Lbuild -lsokol -lcube -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\cube.html"
+						"del build\\*.a"
 					],
 					"targetName": "cube",
 					"subConfigurations": {
@@ -303,13 +287,11 @@
 					],
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/debugtext.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -ldebugtext -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/debugtext.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\debugtext.html -L..\\build -Lbuild -lsokol -ldebugtext -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\debugtext.html"
+						"del build\\*.a"
 					],
 					"targetName": "debugtext",
 					"subConfigurations": {
@@ -324,13 +306,11 @@
 					],
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/debugtext.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -ldebugtext -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/debugtext.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\debugtext.html -L..\\build -Lbuild -lsokol -ldebugtext -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\debugtext.html"
+						"del build\\*.a"
 					],
 					"targetName": "debugtext",
 					"subConfigurations": {
@@ -366,13 +346,11 @@
 					],
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/droptest.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lcimgui -ldroptest -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/droptest.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\droptest.html -L..\\build -Lbuild -lsokol -lcimgui -ldroptest -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\droptest.html"
+						"del build\\*.a"
 					],
 					"targetName": "droptest",
 					"subConfigurations": {
@@ -387,13 +365,11 @@
 					],
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/droptest.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -ldroptest -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/droptest.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\droptest.html -L..\\build -Lbuild -lsokol -lcimgui -ldroptest -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\droptest.html"
+						"del build\\*.a"
 					],
 					"targetName": "droptest",
 					"subConfigurations": {
@@ -429,13 +405,11 @@
 					],
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/imgui.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lcimgui -limgui -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/imgui.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\imgui.html -L..\\build -Lbuild -lsokol -lcimgui -limgui -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\imgui.html"
+						"del build\\*.a"
 					],
 					"targetName": "imgui",
 					"subConfigurations": {
@@ -450,13 +424,11 @@
 					],
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/imgui.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lcimgui -limgui -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/imgui.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\imgui.html -L..\\build -Lbuild -lsokol -lcimgui -limgui -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\imgui.html"
+						"del build\\*.a"
 					],
 					"targetName": "imgui",
 					"subConfigurations": {
@@ -493,13 +465,11 @@
 					],
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/instancing.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -linstancing -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/instancing.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\instancing.html -L..\\build -Lbuild -lsokol -linstancing -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\instancing.html"
+						"del build\\*.a"
 					],
 					"targetName": "instancing",
 					"subConfigurations": {
@@ -514,13 +484,11 @@
 					],
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/instancing.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -linstancing -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/instancing.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\instancing.html -L..\\build -Lbuild -lsokol -linstancing -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\instancing.html"
+						"del build\\*.a"
 					],
 					"targetName": "instancing",
 					"subConfigurations": {
@@ -557,13 +525,11 @@
 					],
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/instancingcompute.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -linstancingcompute -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/instancingcompute.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\instancingcompute.html -L..\\build -Lbuild -lsokol -linstancingcompute -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\instancingcompute.html"
+						"del build\\*.a"
 					],
 					"targetName": "instancingcompute",
 					"subConfigurations": {
@@ -578,13 +544,11 @@
 					],
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/instancingcompute.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -linstancingcompute -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/instancingcompute.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\instancingcompute.html -L..\\build -Lbuild -lsokol -linstancingcompute -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\instancingcompute.html"
+						"del build\\*.a"
 					],
 					"targetName": "instancingcompute",
 					"subConfigurations": {
@@ -621,13 +585,11 @@
 					],
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/mrt.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lmrt -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/mrt.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\mrt.html -L..\\build -Lbuild -lsokol -lmrt -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\mrt.html"
+						"del build\\*.a"
 					],
 					"targetName": "mrt",
 					"subConfigurations": {
@@ -642,13 +604,11 @@
 					],
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/mrt.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lmrt -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/mrt.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\mrt.html -L..\\build -Lbuild -lsokol -lmrt -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\mrt.html"
+						"del build\\*.a"
 					],
 					"targetName": "mrt",
 					"subConfigurations": {
@@ -685,13 +645,11 @@
 					],
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/noninterleaved.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lnoninterleaved -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/noninterleaved.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\noninterleaved.html -L..\\build -Lbuild -lsokol -lnoninterleaved -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\noninterleaved.html"
+						"del build\\*.a"
 					],
 					"targetName": "noninterleaved",
 					"subConfigurations": {
@@ -706,13 +664,11 @@
 					],
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/noninterleaved.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lnoninterleaved -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/noninterleaved.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\noninterleaved.html -L..\\build -Lbuild -lsokol -lnoninterleaved -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\noninterleaved.html"
+						"del build\\*.a"
 					],
 					"targetName": "noninterleaved",
 					"subConfigurations": {
@@ -749,13 +705,11 @@
 					],
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/offscreen.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -loffscreen -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/offscreen.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\offscreen.html -L..\\build -Lbuild -lsokol -loffscreen -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\offscreen.html"
+						"del build\\*.a"
 					],
 					"targetName": "offscreen",
 					"subConfigurations": {
@@ -770,13 +724,11 @@
 					],
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/offscreen.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -loffscreen -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/offscreen.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\offscreen.html -L..\\build -Lbuild -lsokol -loffscreen -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\offscreen.html"
+						"del build\\*.a"
 					],
 					"targetName": "offscreen",
 					"subConfigurations": {
@@ -813,13 +765,11 @@
 					],
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/quad.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lquad -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/quad.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\quad.html -L..\\build -Lbuild -lsokol -lquad -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\quad.html"
+						"del build\\*.a"
 					],
 					"targetName": "quad",
 					"subConfigurations": {
@@ -834,13 +784,11 @@
 					],
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/quad.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lquad -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/quad.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\quad.html -L..\\build -Lbuild -lsokol -lquad -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\quad.html"
+						"del build\\*.a"
 					],
 					"targetName": "quad",
 					"subConfigurations": {
@@ -877,13 +825,11 @@
 					],
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/shapes.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lshapes -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/shapes.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\shapes.html -L..\\build -Lbuild -lsokol -lshapes -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\shapes.html"
+						"del build\\*.a"
 					],
 					"targetName": "shapes",
 					"subConfigurations": {
@@ -898,13 +844,11 @@
 					],
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/shapes.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lshapes -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/shapes.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\shapes.html -L..\\build -Lbuild -lsokol -lshapes -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\shapes.html"
+						"del build\\*.a"
 					],
 					"targetName": "shapes",
 					"subConfigurations": {
@@ -940,13 +884,11 @@
 					],
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/saudio.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lsaudio -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/saudio.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\saudio.html -L..\\build -Lbuild -lsokol -lsaudio -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\saudio.html"
+						"del build\\*.a"
 					],
 					"targetName": "saudio",
 					"subConfigurations": {
@@ -961,13 +903,11 @@
 					],
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/saudio.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lsaudio -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/saudio.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\saudio.html -L..\\build -Lbuild -lsokol -lsaudio -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\saudio.html"
+						"del build\\*.a"
 					],
 					"targetName": "saudio",
 					"subConfigurations": {
@@ -1003,13 +943,11 @@
 					],
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/sglcontext.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lsglcontext -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/sglcontext.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\sglcontext.html -L..\\build -Lbuild -lsokol -lsglcontext -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\sglcontext.html"
+						"del build\\*.a"
 					],
 					"targetName": "sglcontext",
 					"subConfigurations": {
@@ -1024,13 +962,11 @@
 					],
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/sglcontext.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lsglcontext -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/sglcontext.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\sglcontext.html -L..\\build -Lbuild -lsokol -lsglcontext -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\sglcontext.html"
+						"del build\\*.a"
 					],
 					"targetName": "sglcontext",
 					"subConfigurations": {
@@ -1066,13 +1002,11 @@
 					],
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/sglpoints.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lsglpoints -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/sglpoints.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\sglpoints.html -L..\\build -Lbuild -lsokol -lsglpoints -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\sglpoints.html"
+						"del build\\*.a"
 					],
 					"targetName": "sglpoints",
 					"subConfigurations": {
@@ -1087,13 +1021,11 @@
 					],
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/sglpoints.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lsglpoints -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/sglpoints.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\sglpoints.html -L..\\build -Lbuild -lsokol -lsglpoints -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\sglpoints.html"
+						"del build\\*.a"
 					],
 					"targetName": "sglpoints",
 					"subConfigurations": {
@@ -1130,13 +1062,11 @@
 					],
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/triangle.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -ltriangle -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/triangle.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\triangle.html -L..\\build -Lbuild -lsokol -ltriangle -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\triangle.html"
+						"del build\\*.a"
 					],
 					"targetName": "triangle",
 					"subConfigurations": {
@@ -1151,13 +1081,11 @@
 					],
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/triangle.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -ltriangle -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/triangle.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\triangle.html -L..\\build -Lbuild -lsokol -ltriangle -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\triangle.html"
+						"del build\\*.a"
 					],
 					"targetName": "triangle",
 					"subConfigurations": {
@@ -1194,13 +1122,11 @@
 					],
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/texcube.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -ltexcube -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/texcube.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\texcube.html -L..\\build -Lbuild -lsokol -ltexcube -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\texcube.html"
+						"del build\\*.a"
 					],
 					"targetName": "texcube",
 					"subConfigurations": {
@@ -1215,13 +1141,11 @@
 					],
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/texcube.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -ltexcube -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/texcube.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\texcube.html -L..\\build -Lbuild -lsokol -ltexcube -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\texcube.html"
+						"del build\\*.a"
 					],
 					"targetName": "texcube",
 					"subConfigurations": {
@@ -1257,13 +1181,11 @@
 					],
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/userdata.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -luserdata -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/userdata.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\userdata.html -L..\\build -Lbuild -lsokol -luserdata -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\userdata.html"
+						"del build\\*.a"
 					],
 					"targetName": "userdata",
 					"subConfigurations": {
@@ -1278,13 +1200,11 @@
 					],
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/userdata.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -luserdata -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/userdata.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\userdata.html -L..\\build -Lbuild -lsokol -luserdata -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\userdata.html"
+						"del build\\*.a"
 					],
 					"targetName": "userdata",
 					"subConfigurations": {
@@ -1321,13 +1241,11 @@
 					],
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/vertexpull.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lvertexpull -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/vertexpull.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\vertexpull.html -L..\\build -Lbuild -lsokol -lvertexpull -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\vertexpull.html"
+						"del build\\*.a"
 					],
 					"targetName": "vertexpull",
 					"subConfigurations": {
@@ -1342,13 +1260,11 @@
 					],
 					"postBuildCommands-posix": [
 						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/vertexpull.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lvertexpull -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a",
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emrun --port 8080 build/vertexpull.html"
+						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\vertexpull.html -L..\\build -Lbuild -lsokol -lvertexpull -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
-						"del build\\*.a",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emrun.bat --port 8080 build\\vertexpull.html"
+						"del build\\*.a"
 					],
 					"targetName": "vertexpull",
 					"subConfigurations": {
