@@ -72,7 +72,7 @@ Checkout [sokol-tools](https://github.com/floooh/sokol-tools) for a sokol shader
 here have been compiled using it with `-f sokol_d`!
 
 ```bash
-dub :genshaders
+dub -c genshaders
 ```
 
 <br>

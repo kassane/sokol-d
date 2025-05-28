@@ -15,6 +15,8 @@ jobs:
         exclude:
           - runs-on: ubuntu-24.04-arm
             compiler: dmd-master
+          - runs-on: macos-latest
+            compiler: dmd-master
     runs-on: ${{ matrix.runs-on }}
     steps:
       - uses: actions/checkout@v4
@@ -65,15 +67,48 @@ jobs:
           dub build :texcube
           dub build :userdata
           dub build :vertexpull
+
+  build-wasm:
+    strategy:
+      fail-fast: false
+      matrix:
+        runs-on: [ubuntu-24.04-arm, ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.runs-on }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dlang-community/setup-dlang@v2
+        with:
+          compiler: ldc-master
       - name: (dub) Build sokol+imgui-wgles3
-        if: matrix.compiler == 'ldc-master'
         run: dub build -c imgui-wgles3 -v
       - name: (dub) Build sokol+imgui-wgpu
-        if: matrix.compiler == 'ldc-master'
         run: dub build -c imgui-wgpu -v
       - name: (dub) Build sokol-wgpu
-        if: matrix.compiler == 'ldc-master'
         run: dub build -c sokol-wgpu -v
       - name: (dub) Build sokol-wgles3
-        if: matrix.compiler == 'ldc-master'
         run: dub build -c sokol-wgles3 -v
+      - name: (dub) Build sokol examples
+        working-directory: examples
+        run: |
+          dub build :blend -f -c wasm
+          dub build :bufferoffsets -c wasm
+          dub build :clear -c wasm
+          dub build :cube -c wasm
+          dub build :debugtext -c wasm
+          dub build :droptest -c wasm
+          dub build :imgui -c wasm
+          dub build :instancing -c wasm
+          dub build :instancingcompute -c wasm
+          dub build :mrt -c wasm
+          dub build :noninterleaved -c wasm
+          dub build :offscreen -c wasm
+          dub build :quad -c wasm
+          dub build :shapes -c wasm
+          dub build :saudio -c wasm
+          dub build :sglcontext -c wasm
+          dub build :sglpoints -c wasm
+          dub build :triangle -c wasm
+          dub build :texcube -c wasm
+          dub build :userdata -c wasm
+          dub build :vertexpull -c wasm
+

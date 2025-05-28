@@ -652,9 +652,14 @@
 			"dflags-windows": [
 				"-gcc=$PACKAGE_DIR\\vendor\\emsdk\\upstream\\bin\\wasm32-clang.exe"
 			],
+			"preGenerateCommands-posix": [
+				"$DC -run $PACKAGE_DIR/build.d --download-emsdk --download-imgui"
+			],
+			"preGenerateCommands-windows": [
+				"$DC -run $PACKAGE_DIR\\build.d --download-emsdk --download-imgui"
+			],
 			"preBuildCommands-posix": [
 				"mkdir -p $PACKAGE_DIR/build",
-				"$DC -run $PACKAGE_DIR/build.d --download-emsdk --download-imgui",
 				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/em++ -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR/build/imgui.o $PACKAGE_DIR/vendor/imgui/src/imgui.cpp",
 				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/em++ -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR/build/imgui_demo.o $PACKAGE_DIR/vendor/imgui/src/imgui_demo.cpp",
 				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/em++ -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR/build/imgui_draw.o $PACKAGE_DIR/vendor/imgui/src/imgui_draw.cpp",
@@ -680,7 +685,6 @@
 			],
 			"preBuildCommands-windows": [
 				"powershell -Command \"mkdir -Force $PACKAGE_DIR\\build\"",
-				"$DC -run $PACKAGE_DIR\\build.d --download-emsdk --download-imgui",
 				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\em++.bat -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR\\build\\imgui.o $PACKAGE_DIR\\vendor\\imgui\\src\\imgui.cpp",
 				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\em++.bat -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR\\build\\imgui_demo.o $PACKAGE_DIR\\vendor\\imgui\\src\\imgui_demo.cpp",
 				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\em++.bat -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR\\build\\imgui_draw.o $PACKAGE_DIR\\vendor\\imgui\\src\\imgui_draw.cpp",
@@ -735,9 +739,14 @@
 			"dflags-windows": [
 				"-gcc=$PACKAGE_DIR\\vendor\\emsdk\\upstream\\bin\\wasm32-clang.exe"
 			],
+			"preGenerateCommands-posix": [
+				"$DC -run $PACKAGE_DIR/build.d --download-emsdk --download-imgui"
+			],
+			"preGenerateCommands-windows": [
+				"$DC -run $PACKAGE_DIR\\build.d --download-emsdk --download-imgui"
+			],
 			"preBuildCommands-posix": [
 				"mkdir -p $PACKAGE_DIR/build",
-				"$DC -run $PACKAGE_DIR/build.d --download-emsdk --download-imgui",
 				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/em++ -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR/build/imgui.o $PACKAGE_DIR/vendor/imgui/src/imgui.cpp",
 				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/em++ -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR/build/imgui_demo.o $PACKAGE_DIR/vendor/imgui/src/imgui_demo.cpp",
 				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/em++ -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR/build/imgui_draw.o $PACKAGE_DIR/vendor/imgui/src/imgui_draw.cpp",
@@ -763,7 +772,6 @@
 			],
 			"preBuildCommands-windows": [
 				"powershell -Command \"mkdir -Force $PACKAGE_DIR\\build\"",
-				"$DC -run $PACKAGE_DIR\\build.d --download-emsdk --download-imgui",
 				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\em++.bat -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR\\build\\imgui.o $PACKAGE_DIR\\vendor\\imgui\\src\\imgui.cpp",
 				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\em++.bat -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR\\build\\imgui_demo.o $PACKAGE_DIR\\vendor\\imgui\\src\\imgui_demo.cpp",
 				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\em++.bat -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR\\build\\imgui_draw.o $PACKAGE_DIR\\vendor\\imgui\\src\\imgui_draw.cpp",
@@ -813,9 +821,14 @@
 			],
 			"targetName": "sokold",
 			"targetPath": "build",
+			"preGenerateCommands-posix": [
+				"$DC -run $PACKAGE_DIR/build.d --download-emsdk"
+			],
+			"preGenerateCommands-windows": [
+				"$DC -run $PACKAGE_DIR\\build.d --download-emsdk"
+			],
 			"preBuildCommands-posix": [
 				"mkdir -p $PACKAGE_DIR/build",
-				"$DC -run $PACKAGE_DIR/build.d --download-emsdk",
 				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc -DNDEBUG -DIMPL -DSOKOL_GLES3 -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_log.o $PACKAGE_DIR/src/sokol/c/sokol_log.c",
 				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc -DNDEBUG -DIMPL -DSOKOL_GLES3 -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_app.o $PACKAGE_DIR/src/sokol/c/sokol_app.c",
 				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc -DNDEBUG -DIMPL -DSOKOL_GLES3 -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_gfx.o $PACKAGE_DIR/src/sokol/c/sokol_gfx.c",
@@ -832,7 +845,6 @@
 			],
 			"preBuildCommands-windows": [
 				"powershell -Command \"mkdir -Force $PACKAGE_DIR\\build\"",
-				"$DC -run $PACKAGE_DIR\\build.d --download-emsdk",
 				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -DNDEBUG -DIMPL -DSOKOL_GLES3 -O2 -fPIE -c -o $PACKAGE_DIR\\build\\sokol_log.o $PACKAGE_DIR\\src\\sokol\\c\\sokol_log.c",
 				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -DNDEBUG -DIMPL -DSOKOL_GLES3 -O2 -fPIE -c -o $PACKAGE_DIR\\build\\sokol_app.o $PACKAGE_DIR\\src\\sokol\\c\\sokol_app.c",
 				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -DNDEBUG -DIMPL -DSOKOL_GLES3 -O2 -fPIE -c -o $PACKAGE_DIR\\build\\sokol_gfx.o $PACKAGE_DIR\\src\\sokol\\c\\sokol_gfx.c",
@@ -870,9 +882,14 @@
 			],
 			"targetName": "sokold",
 			"targetPath": "build",
+			"preGenerateCommands-posix": [
+				"$DC -run $PACKAGE_DIR/build.d --download-emsdk"
+			],
+			"preGenerateCommands-windows": [
+				"$DC -run $PACKAGE_DIR\\build.d --download-emsdk"
+			],
 			"preBuildCommands-posix": [
 				"mkdir -p $PACKAGE_DIR/build",
-				"$DC -run $PACKAGE_DIR/build.d --download-emsdk",
 				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc -DNDEBUG -DIMPL -DSOKOL_WGPU -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_log.o $PACKAGE_DIR/src/sokol/c/sokol_log.c",
 				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc -DNDEBUG -DIMPL -DSOKOL_WGPU -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_app.o $PACKAGE_DIR/src/sokol/c/sokol_app.c",
 				"$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc -DNDEBUG -DIMPL -DSOKOL_WGPU -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_gfx.o $PACKAGE_DIR/src/sokol/c/sokol_gfx.c",
@@ -889,7 +906,6 @@
 			],
 			"preBuildCommands-windows": [
 				"powershell -Command \"mkdir -Force $PACKAGE_DIR\\build\"",
-				"$DC -run $PACKAGE_DIR\\build.d --download-emsdk",
 				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -DNDEBUG -DIMPL -DSOKOL_WGPU -O2 -fPIE -c -o $PACKAGE_DIR\\build\\sokol_log.o $PACKAGE_DIR\\src\\sokol\\c\\sokol_log.c",
 				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -DNDEBUG -DIMPL -DSOKOL_WGPU -O2 -fPIE -c -o $PACKAGE_DIR\\build\\sokol_app.o $PACKAGE_DIR\\src\\sokol\\c\\sokol_app.c",
 				"$PACKAGE_DIR\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -DNDEBUG -DIMPL -DSOKOL_WGPU -O2 -fPIE -c -o $PACKAGE_DIR\\build\\sokol_gfx.o $PACKAGE_DIR\\src\\sokol\\c\\sokol_gfx.c",
@@ -935,5 +951,8 @@
 				"powershell -Command Remove-Item $PACKAGE_DIR\\*.lib"
 			]
 		}
+	],
+	"subPackages": [
+		"init-exec"
 	]
 }
