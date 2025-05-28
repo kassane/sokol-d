@@ -90,25 +90,25 @@ jobs:
       - name: (dub) Build sokol examples
         working-directory: examples
         run: |
-          dub build :blend -f -c wasm
-          dub build :bufferoffsets -c wasm
-          dub build :clear -c wasm
-          dub build :cube -c wasm
-          dub build :debugtext -c wasm
-          dub build :droptest -c wasm
-          dub build :imgui -c wasm
-          dub build :instancing -c wasm
-          dub build :instancingcompute -c wasm
-          dub build :mrt -c wasm
-          dub build :noninterleaved -c wasm
-          dub build :offscreen -c wasm
-          dub build :quad -c wasm
-          dub build :shapes -c wasm
-          dub build :saudio -c wasm
-          dub build :sglcontext -c wasm
-          dub build :sglpoints -c wasm
-          dub build :triangle -c wasm
-          dub build :texcube -c wasm
-          dub build :userdata -c wasm
-          dub build :vertexpull -c wasm
+          dub build :blend -f -c wasm -b release
+          dub build :bufferoffsets -c wasm -b release
+          dub build :clear -c wasm -b release
+          dub build :cube -c wasm -b release
+          dub build :debugtext -c wasm -b release
+          dub build :droptest -c wasm -b release
+          dub build :imgui -c wasm -b release
+          dub build :instancing -c wasm -b release
+          dub build :instancingcompute -c wasm -b release
+          dub build :mrt -c wasm -b release
+          dub build :noninterleaved -c wasm -b release
+          dub build :offscreen -c wasm -b release
+          dub build :quad -c wasm -b release
+          dub build :shapes -c wasm -b release
+          dub build :saudio -c wasm -b release
+          dub build :sglcontext -c wasm -b release
+          dub build :sglpoints -c wasm -b release
+          dub build :triangle -c wasm -b release
+          dub build :texcube -c wasm -b release
+          dub build :userdata -c wasm -b release
+          dub build :vertexpull -c wasm -b release
 
