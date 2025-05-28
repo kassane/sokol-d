@@ -67,6 +67,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\blend.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lblend -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
@@ -83,6 +84,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\blend.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lblend -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
@@ -121,6 +123,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\bufferoffsets.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lbufferoffsets -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
@@ -137,6 +140,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\bufferoffsets.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lbufferoffsets -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
@@ -174,6 +178,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\clear.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lclear -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
@@ -190,6 +195,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\clear.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lclear -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
@@ -231,6 +237,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\cube.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lcube -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
@@ -250,6 +257,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\cube.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lcube -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
@@ -290,6 +298,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\debugtext.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -ldebugtext -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
@@ -309,6 +318,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\debugtext.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -ldebugtext -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
@@ -349,6 +359,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\droptest.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lcimgui -ldroptest -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
@@ -368,6 +379,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\droptest.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lcimgui -ldroptest -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
@@ -408,6 +420,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\imgui.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lcimgui -limgui -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
@@ -427,6 +440,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\imgui.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lcimgui -limgui -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
@@ -468,6 +482,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\instancing.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -linstancing -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
@@ -487,6 +502,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\instancing.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -linstancing -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
@@ -528,6 +544,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\instancingcompute.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -linstancingcompute -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
@@ -547,6 +564,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\instancingcompute.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -linstancingcompute -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
@@ -588,6 +606,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\mrt.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lmrt -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
@@ -607,6 +626,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\mrt.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lmrt -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
@@ -648,6 +668,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\noninterleaved.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lnoninterleaved -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
@@ -667,6 +688,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\noninterleaved.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lnoninterleaved -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
@@ -708,6 +730,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\offscreen.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -loffscreen -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
@@ -727,6 +750,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\offscreen.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -loffscreen -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
@@ -768,6 +792,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\quad.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lquad -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
@@ -787,6 +812,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\quad.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lquad -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
@@ -828,6 +854,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\shapes.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lshapes -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
@@ -847,6 +874,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\shapes.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lshapes -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
@@ -887,6 +915,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\saudio.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lsaudio -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
@@ -906,6 +935,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\saudio.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lsaudio -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
@@ -946,6 +976,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\sglcontext.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lsglcontext -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
@@ -965,6 +996,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\sglcontext.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lsglcontext -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
@@ -1005,6 +1037,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\sglpoints.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lsglpoints -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
@@ -1024,6 +1057,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\sglpoints.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lsglpoints -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
@@ -1065,6 +1099,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\triangle.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -ltriangle -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
@@ -1084,6 +1119,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\triangle.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -ltriangle -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
@@ -1125,6 +1161,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\texcube.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -ltexcube -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
@@ -1144,6 +1181,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\texcube.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -ltexcube -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
@@ -1184,6 +1222,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\userdata.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -luserdata -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
@@ -1203,6 +1242,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\userdata.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -luserdata -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
@@ -1244,6 +1284,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\vertexpull.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lvertexpull -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
@@ -1263,6 +1304,7 @@
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
+						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
 						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\vertexpull.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lvertexpull -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],

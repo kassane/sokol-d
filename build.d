@@ -201,15 +201,18 @@ void getEmSDK() @safe
     string rootpath = absolutePath(buildPath("vendor", "emsdk"));
     immutable string filename = "emsdk.zip";
 
-    // Download EMSDK
-    if (!exists(filename))
-        download(fmt("https://github.com/emscripten-core/emsdk/archive/refs/tags/%s.zip", emsdk_version), filename);
-    // Extract EMSDK
-    if (!exists(rootpath))
-        extractZip(filename, rootpath);
-    else if (exists(filename))
-        scope (exit)
+    scope (exit)
+    {
+        if (exists(filename))
             remove(filename);
+    }
+
+    if (!exists(rootpath))
+    {
+        if (!exists(filename))
+            download(fmt("https://github.com/emscripten-core/emsdk/archive/refs/tags/%s.zip", emsdk_version), filename);
+        extractZip(filename, rootpath);
+    }
 
     writeln("rootpath: ", rootpath);
     emSdkSetupStep(rootpath);
