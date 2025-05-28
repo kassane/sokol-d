@@ -193,3 +193,11 @@ void main()
     app.run(runner);
 }
 // dfmt on
+
+version (WebAssembly)
+{
+    debug
+    {
+        import emscripten.assertd;
+    }
+}

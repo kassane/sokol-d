@@ -255,3 +255,11 @@ else
         }
     }
 }
+
+version (WebAssembly)
+{
+    debug
+    {
+        import emscripten.assertd;
+    }
+}

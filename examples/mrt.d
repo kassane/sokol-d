@@ -353,3 +353,11 @@ Mat4 computeMvp(float rx, float ry)
 
     return Mat4.mul(view_proj, model);
 }
+
+version (WebAssembly)
+{
+    debug
+    {
+        import emscripten.assertd;
+    }
+}

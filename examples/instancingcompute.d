@@ -231,3 +231,11 @@ void main() {
     };
     sapp.run(adesc);
 }
+
+version (WebAssembly)
+{
+    debug
+    {
+        import emscripten.assertd;
+    }
+}

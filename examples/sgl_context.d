@@ -228,3 +228,11 @@ void draw_cube()
     sgl.v3fT2f(1.0, 1.0, -1.0, 0.0, 0.0);
     sgl.end();
 }
+
+version (WebAssembly)
+{
+    debug
+    {
+        import emscripten.assertd;
+    }
+}

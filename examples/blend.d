@@ -169,3 +169,11 @@ void main()
     };
     app.run(runner);
 }
+
+version (WebAssembly)
+{
+    debug
+    {
+        import emscripten.assertd;
+    }
+}
