@@ -117,11 +117,11 @@
 					"name": "wasm",
 					"targetType": "staticLibrary",
 					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/bufferoffsets.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lclear -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
+						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/bufferoffsets.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lbufferoffsets -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
 						"rm build/*.a"
 					],
 					"postBuildCommands-windows": [
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\bufferoffsets.html -L..\\build -Lbuild -lsokol -lclear -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
+						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\bufferoffsets.html -L..\\build -Lbuild -lsokol -lbufferoffsets -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=..\\src\\sokol\\web\\shell.html",
 						"del build\\*.a"
 					],
 					"targetName": "bufferoffsets",
