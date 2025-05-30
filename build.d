@@ -127,10 +127,10 @@ void main(string[] args) @safe
         getIMGUI(vendorPath);
     if (downloadZig)
         getZigToolchain(vendorPath);
+
     if (downloadSHDC)
         buildShaders(vendorPath);
-
-    if (link)
+    else if (link)
     {
         // Link WASM example
         EmLinkOptions linkOptions = {
@@ -177,7 +177,9 @@ void main(string[] args) @safe
             verbose: verbose,
             vendor: vendorPath,
         };
-        buildLibSokol(options);
+        //FIXME: enable in all targets
+        if (target.canFind("wasm"))
+            buildLibSokol(options);
     }
 }
 
@@ -504,7 +506,7 @@ void buildLibSokol(LibSokolOptions options) @safe
             "-framework", "MetalKit", "-framework", "Metal", "-framework",
             "AudioToolbox"
         ];
-        libs ~= "objC";
+        libs ~= "-lobjC";
         if (compiler.empty)
             compiler = findProgram("clang");
     }
@@ -555,7 +557,11 @@ void buildLibSokol(LibSokolOptions options) @safe
 
     // Handle shared library
     if (options.sharedlib && !options.target.canFind("windows"))
-        cflags ~= "-fPIC";
+    {
+        cflags ~= ["-fPIC"];
+        cflags ~= linkFlags;
+        cflags ~= libs;
+    }
 
     // Compile Sokol C sources
     string csrcRoot = absolutePath("src/sokol/c");
