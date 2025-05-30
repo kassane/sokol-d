@@ -80,35 +80,35 @@ jobs:
         with:
           compiler: ldc-master
       - name: (dub) Build sokol+imgui-wgles3
-        run: dub build -c imgui-wgles3 -v
+        run: dub build -c imgui-wgles3 -v --arch wasm32-unknown-emscripten-wasm
       - name: (dub) Build sokol+imgui-wgpu
-        run: dub build -c imgui-wgpu -v
+        run: dub build -c imgui-wgpu -v --arch wasm32-unknown-emscripten-wasm
       - name: (dub) Build sokol-wgpu
-        run: dub build -c sokol-wgpu -v
+        run: dub build -c sokol-wgpu -v --arch wasm32-unknown-emscripten-wasm
       - name: (dub) Build sokol-wgles3
-        run: dub build -c sokol-wgles3 -v
+        run: dub build -c sokol-wgles3 -v --arch wasm32-unknown-emscripten-wasm
       - name: (dub) Build sokol examples
         working-directory: examples
         run: |
-          dub build :blend -f -c wasm -v
-          dub build :bufferoffsets -c wasm -v
-          dub build :clear -c wasm -v
-          dub build :cube -c wasm -v
-          dub build :debugtext -c wasm -v
-          dub build :droptest -c wasm -v
-          dub build :imgui -c wasm -v
-          dub build :instancing -c wasm -v
-          dub build :instancingcompute -c wasm -v
-          dub build :mrt -c wasm -v
-          dub build :noninterleaved -c wasm -v
-          dub build :offscreen -c wasm -v
-          dub build :quad -c wasm -v
-          dub build :shapes -c wasm -v
-          dub build :saudio -c wasm -v
-          dub build :sglcontext -c wasm -v
-          dub build :sglpoints -c wasm -v
-          dub build :triangle -c wasm -v
-          dub build :texcube -c wasm -v
-          dub build :userdata -c wasm -v
-          dub build :vertexpull -c wasm -v
+          dub build :blend -f -c wasm -v --arch wasm32-unknown-emscripten-wasm
+          dub build :bufferoffsets -c wasm -v --arch wasm32-unknown-emscripten-wasm
+          dub build :clear -c wasm -v --arch wasm32-unknown-emscripten-wasm
+          dub build :cube -c wasm -v --arch wasm32-unknown-emscripten-wasm
+          dub build :debugtext -c wasm -v --arch wasm32-unknown-emscripten-wasm
+          dub build :droptest -c wasm -v --arch wasm32-unknown-emscripten-wasm
+          dub build :imgui -c wasm -v --arch wasm32-unknown-emscripten-wasm
+          dub build :instancing -c wasm -v --arch wasm32-unknown-emscripten-wasm
+          dub build :instancingcompute -c wasm -v --arch wasm32-unknown-emscripten-wasm
+          dub build :mrt -c wasm -v --arch wasm32-unknown-emscripten-wasm
+          dub build :noninterleaved -c wasm -v --arch wasm32-unknown-emscripten-wasm
+          dub build :offscreen -c wasm -v --arch wasm32-unknown-emscripten-wasm
+          dub build :quad -c wasm -v --arch wasm32-unknown-emscripten-wasm
+          dub build :shapes -c wasm -v --arch wasm32-unknown-emscripten-wasm
+          dub build :saudio -c wasm -v --arch wasm32-unknown-emscripten-wasm
+          dub build :sglcontext -c wasm -v --arch wasm32-unknown-emscripten-wasm
+          dub build :sglpoints -c wasm -v --arch wasm32-unknown-emscripten-wasm
+          dub build :triangle -c wasm -v --arch wasm32-unknown-emscripten-wasm
+          dub build :texcube -c wasm -v --arch wasm32-unknown-emscripten-wasm
+          dub build :userdata -c wasm -v --arch wasm32-unknown-emscripten-wasm
+          dub build :vertexpull -c wasm -v --arch wasm32-unknown-emscripten-wasm
 

@@ -52,6 +52,9 @@
 					"path": ".."
 				}
 			},
+			"environments": {
+				"SOKOL_ROOTPATH": "${SOKOL_D_PACKAGE_DIR}"
+			},
 			"configurations": [
 				{
 					"name": "native",
@@ -62,14 +65,8 @@
 				{
 					"name": "wasm",
 					"targetType": "staticLibrary",
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/blend.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lblend -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\blend.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lblend -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --link=blend --verbose"
 					],
 					"targetName": "blend",
 					"subConfigurations": {
@@ -79,14 +76,8 @@
 				{
 					"name": "wgpu",
 					"targetType": "staticLibrary",
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/blend.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lblend -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\blend.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lblend -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --link=blend --verbose"
 					],
 					"targetName": "blend",
 					"subConfigurations": {
@@ -108,6 +99,9 @@
 					"path": ".."
 				}
 			},
+			"environments": {
+				"SOKOL_ROOTPATH": "${SOKOL_D_PACKAGE_DIR}"
+			},
 			"configurations": [
 				{
 					"name": "native",
@@ -118,14 +112,8 @@
 				{
 					"name": "wasm",
 					"targetType": "staticLibrary",
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/bufferoffsets.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lbufferoffsets -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\bufferoffsets.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lbufferoffsets -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --link=bufferoffsets --verbose"
 					],
 					"targetName": "bufferoffsets",
 					"subConfigurations": {
@@ -135,14 +123,8 @@
 				{
 					"name": "wgpu",
 					"targetType": "staticLibrary",
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/bufferoffsets.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lbufferoffsets -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\bufferoffsets.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lbufferoffsets -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --link=bufferoffsets --verbose"
 					],
 					"targetName": "bufferoffsets",
 					"subConfigurations": {
@@ -163,6 +145,9 @@
 					"path": ".."
 				}
 			},
+			"environments": {
+				"SOKOL_ROOTPATH": "${SOKOL_D_PACKAGE_DIR}"
+			},
 			"configurations": [
 				{
 					"name": "native",
@@ -173,14 +158,8 @@
 				{
 					"name": "wasm",
 					"targetType": "staticLibrary",
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/clear.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lclear -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\clear.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lclear -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --link=clear --verbose"
 					],
 					"targetName": "clear",
 					"subConfigurations": {
@@ -190,14 +169,8 @@
 				{
 					"name": "wgpu",
 					"targetType": "staticLibrary",
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/clear.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lclear -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\clear.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lclear -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --link=clear --verbose"
 					],
 					"targetName": "clear",
 					"subConfigurations": {
@@ -219,6 +192,9 @@
 					"path": ".."
 				}
 			},
+			"environments": {
+				"SOKOL_ROOTPATH": "${SOKOL_D_PACKAGE_DIR}"
+			},
 			"configurations": [
 				{
 					"name": "native",
@@ -232,14 +208,8 @@
 					"buildOptions": [
 						"betterC"
 					],
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/cube.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lcube -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\cube.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lcube -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --link=cube --verbose"
 					],
 					"targetName": "cube",
 					"subConfigurations": {
@@ -252,14 +222,8 @@
 					"buildOptions": [
 						"betterC"
 					],
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/cube.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lcube -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\cube.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lcube -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --link=cube --verbose"
 					],
 					"targetName": "cube",
 					"subConfigurations": {
@@ -280,6 +244,9 @@
 					"path": ".."
 				}
 			},
+			"environments": {
+				"SOKOL_ROOTPATH": "${SOKOL_D_PACKAGE_DIR}"
+			},
 			"configurations": [
 				{
 					"name": "native",
@@ -293,14 +260,8 @@
 					"buildOptions": [
 						"betterC"
 					],
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/debugtext.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -ldebugtext -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\debugtext.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -ldebugtext -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --link=debugtext --verbose"
 					],
 					"targetName": "debugtext",
 					"subConfigurations": {
@@ -313,14 +274,8 @@
 					"buildOptions": [
 						"betterC"
 					],
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/debugtext.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -ldebugtext -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\debugtext.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -ldebugtext -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --link=debugtext --verbose"
 					],
 					"targetName": "debugtext",
 					"subConfigurations": {
@@ -341,6 +296,9 @@
 					"path": ".."
 				}
 			},
+			"environments": {
+				"SOKOL_ROOTPATH": "${SOKOL_D_PACKAGE_DIR}"
+			},
 			"configurations": [
 				{
 					"name": "native",
@@ -354,14 +312,8 @@
 					"buildOptions": [
 						"betterC"
 					],
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/droptest.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lcimgui -ldroptest -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\droptest.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lcimgui -ldroptest -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --with-sokol-imgui --link=droptest --verbose"
 					],
 					"targetName": "droptest",
 					"subConfigurations": {
@@ -374,14 +326,8 @@
 					"buildOptions": [
 						"betterC"
 					],
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/droptest.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -ldroptest -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\droptest.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lcimgui -ldroptest -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --with-sokol-imgui --link=droptest --verbose"
 					],
 					"targetName": "droptest",
 					"subConfigurations": {
@@ -402,6 +348,9 @@
 					"path": ".."
 				}
 			},
+			"environments": {
+				"SOKOL_ROOTPATH": "${SOKOL_D_PACKAGE_DIR}"
+			},
 			"configurations": [
 				{
 					"name": "native",
@@ -415,14 +364,8 @@
 					"buildOptions": [
 						"betterC"
 					],
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/imgui.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lcimgui -limgui -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\imgui.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lcimgui -limgui -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --with-sokol-imgui --link=imgui --verbose"
 					],
 					"targetName": "imgui",
 					"subConfigurations": {
@@ -435,14 +378,8 @@
 					"buildOptions": [
 						"betterC"
 					],
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/imgui.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lcimgui -limgui -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\imgui.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lcimgui -limgui -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --with-sokol-imgui --link=imgui --verbose"
 					],
 					"targetName": "imgui",
 					"subConfigurations": {
@@ -464,6 +401,9 @@
 					"path": ".."
 				}
 			},
+			"environments": {
+				"SOKOL_ROOTPATH": "${SOKOL_D_PACKAGE_DIR}"
+			},
 			"configurations": [
 				{
 					"name": "native",
@@ -477,14 +417,8 @@
 					"buildOptions": [
 						"betterC"
 					],
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/instancing.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -linstancing -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\instancing.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -linstancing -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --link=instancing --verbose"
 					],
 					"targetName": "instancing",
 					"subConfigurations": {
@@ -497,14 +431,8 @@
 					"buildOptions": [
 						"betterC"
 					],
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/instancing.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -linstancing -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\instancing.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -linstancing -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --link=instancing --verbose"
 					],
 					"targetName": "instancing",
 					"subConfigurations": {
@@ -526,6 +454,9 @@
 					"path": ".."
 				}
 			},
+			"environments": {
+				"SOKOL_ROOTPATH": "${SOKOL_D_PACKAGE_DIR}"
+			},
 			"configurations": [
 				{
 					"name": "native",
@@ -539,14 +470,8 @@
 					"buildOptions": [
 						"betterC"
 					],
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/instancingcompute.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -linstancingcompute -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\instancingcompute.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -linstancingcompute -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --link=instancingcompute --verbose"
 					],
 					"targetName": "instancingcompute",
 					"subConfigurations": {
@@ -559,14 +484,8 @@
 					"buildOptions": [
 						"betterC"
 					],
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/instancingcompute.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -linstancingcompute -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\instancingcompute.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -linstancingcompute -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --link=instancingcompute --verbose"
 					],
 					"targetName": "instancingcompute",
 					"subConfigurations": {
@@ -588,6 +507,9 @@
 					"path": ".."
 				}
 			},
+			"environments": {
+				"SOKOL_ROOTPATH": "${SOKOL_D_PACKAGE_DIR}"
+			},
 			"configurations": [
 				{
 					"name": "native",
@@ -601,14 +523,8 @@
 					"buildOptions": [
 						"betterC"
 					],
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/mrt.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lmrt -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\mrt.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lmrt -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --link=mrt --verbose"
 					],
 					"targetName": "mrt",
 					"subConfigurations": {
@@ -621,14 +537,8 @@
 					"buildOptions": [
 						"betterC"
 					],
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/mrt.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lmrt -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\mrt.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lmrt -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --link=mrt --verbose"
 					],
 					"targetName": "mrt",
 					"subConfigurations": {
@@ -650,6 +560,9 @@
 					"path": ".."
 				}
 			},
+			"environments": {
+				"SOKOL_ROOTPATH": "${SOKOL_D_PACKAGE_DIR}"
+			},
 			"configurations": [
 				{
 					"name": "native",
@@ -663,14 +576,8 @@
 					"buildOptions": [
 						"betterC"
 					],
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/noninterleaved.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lnoninterleaved -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\noninterleaved.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lnoninterleaved -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --link=noninterleaved --verbose"
 					],
 					"targetName": "noninterleaved",
 					"subConfigurations": {
@@ -683,14 +590,8 @@
 					"buildOptions": [
 						"betterC"
 					],
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/noninterleaved.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lnoninterleaved -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\noninterleaved.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lnoninterleaved -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --link=noninterleaved --verbose"
 					],
 					"targetName": "noninterleaved",
 					"subConfigurations": {
@@ -712,6 +613,9 @@
 					"path": ".."
 				}
 			},
+			"environments": {
+				"SOKOL_ROOTPATH": "${SOKOL_D_PACKAGE_DIR}"
+			},
 			"configurations": [
 				{
 					"name": "native",
@@ -725,14 +629,8 @@
 					"buildOptions": [
 						"betterC"
 					],
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/offscreen.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -loffscreen -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\offscreen.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -loffscreen -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --link=offscreen --verbose"
 					],
 					"targetName": "offscreen",
 					"subConfigurations": {
@@ -745,14 +643,8 @@
 					"buildOptions": [
 						"betterC"
 					],
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/offscreen.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -loffscreen -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\offscreen.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -loffscreen -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --link=offscreen --verbose"
 					],
 					"targetName": "offscreen",
 					"subConfigurations": {
@@ -774,6 +666,9 @@
 					"path": ".."
 				}
 			},
+			"environments": {
+				"SOKOL_ROOTPATH": "${SOKOL_D_PACKAGE_DIR}"
+			},
 			"configurations": [
 				{
 					"name": "native",
@@ -787,14 +682,8 @@
 					"buildOptions": [
 						"betterC"
 					],
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/quad.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lquad -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\quad.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lquad -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --link=quad --verbose"
 					],
 					"targetName": "quad",
 					"subConfigurations": {
@@ -807,14 +696,8 @@
 					"buildOptions": [
 						"betterC"
 					],
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/quad.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lquad -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\quad.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lquad -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --link=quad --verbose"
 					],
 					"targetName": "quad",
 					"subConfigurations": {
@@ -836,6 +719,9 @@
 					"path": ".."
 				}
 			},
+			"environments": {
+				"SOKOL_ROOTPATH": "${SOKOL_D_PACKAGE_DIR}"
+			},
 			"configurations": [
 				{
 					"name": "native",
@@ -849,14 +735,8 @@
 					"buildOptions": [
 						"betterC"
 					],
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/shapes.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lshapes -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\shapes.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lshapes -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --link=shapes --verbose"
 					],
 					"targetName": "shapes",
 					"subConfigurations": {
@@ -869,14 +749,8 @@
 					"buildOptions": [
 						"betterC"
 					],
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/shapes.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lshapes -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\shapes.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lshapes -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --link=shapes --verbose"
 					],
 					"targetName": "shapes",
 					"subConfigurations": {
@@ -897,6 +771,9 @@
 					"path": ".."
 				}
 			},
+			"environments": {
+				"SOKOL_ROOTPATH": "${SOKOL_D_PACKAGE_DIR}"
+			},
 			"configurations": [
 				{
 					"name": "native",
@@ -910,14 +787,8 @@
 					"buildOptions": [
 						"betterC"
 					],
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/saudio.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lsaudio -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\saudio.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lsaudio -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --link=saudio --verbose"
 					],
 					"targetName": "saudio",
 					"subConfigurations": {
@@ -930,14 +801,8 @@
 					"buildOptions": [
 						"betterC"
 					],
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/saudio.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lsaudio -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\saudio.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lsaudio -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --link=saudio --verbose"
 					],
 					"targetName": "saudio",
 					"subConfigurations": {
@@ -958,6 +823,9 @@
 					"path": ".."
 				}
 			},
+			"environments": {
+				"SOKOL_ROOTPATH": "${SOKOL_D_PACKAGE_DIR}"
+			},
 			"configurations": [
 				{
 					"name": "native",
@@ -971,14 +839,8 @@
 					"buildOptions": [
 						"betterC"
 					],
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/sglcontext.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lsglcontext -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\sglcontext.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lsglcontext -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --link=sglcontext --verbose"
 					],
 					"targetName": "sglcontext",
 					"subConfigurations": {
@@ -991,14 +853,8 @@
 					"buildOptions": [
 						"betterC"
 					],
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/sglcontext.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lsglcontext -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\sglcontext.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lsglcontext -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --link=sglcontext --verbose"
 					],
 					"targetName": "sglcontext",
 					"subConfigurations": {
@@ -1019,6 +875,9 @@
 					"path": ".."
 				}
 			},
+			"environments": {
+				"SOKOL_ROOTPATH": "${SOKOL_D_PACKAGE_DIR}"
+			},
 			"configurations": [
 				{
 					"name": "native",
@@ -1032,14 +891,8 @@
 					"buildOptions": [
 						"betterC"
 					],
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/sglpoints.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lsglpoints -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\sglpoints.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lsglpoints -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --link=sglpoints --verbose"
 					],
 					"targetName": "sglpoints",
 					"subConfigurations": {
@@ -1052,14 +905,8 @@
 					"buildOptions": [
 						"betterC"
 					],
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/sglpoints.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lsglpoints -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\sglpoints.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lsglpoints -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --link=sglpoints --verbose"
 					],
 					"targetName": "sglpoints",
 					"subConfigurations": {
@@ -1081,6 +928,9 @@
 					"path": ".."
 				}
 			},
+			"environments": {
+				"SOKOL_ROOTPATH": "${SOKOL_D_PACKAGE_DIR}"
+			},
 			"configurations": [
 				{
 					"name": "native",
@@ -1094,14 +944,8 @@
 					"buildOptions": [
 						"betterC"
 					],
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/triangle.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -ltriangle -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\triangle.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -ltriangle -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --link=triangle --verbose"
 					],
 					"targetName": "triangle",
 					"subConfigurations": {
@@ -1114,14 +958,8 @@
 					"buildOptions": [
 						"betterC"
 					],
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/triangle.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -ltriangle -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\triangle.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -ltriangle -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --link=triangle --verbose"
 					],
 					"targetName": "triangle",
 					"subConfigurations": {
@@ -1143,6 +981,9 @@
 					"path": ".."
 				}
 			},
+			"environments": {
+				"SOKOL_ROOTPATH": "${SOKOL_D_PACKAGE_DIR}"
+			},
 			"configurations": [
 				{
 					"name": "native",
@@ -1156,14 +997,8 @@
 					"buildOptions": [
 						"betterC"
 					],
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/texcube.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -ltexcube -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\texcube.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -ltexcube -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --link=texcube --verbose"
 					],
 					"targetName": "texcube",
 					"subConfigurations": {
@@ -1176,14 +1011,8 @@
 					"buildOptions": [
 						"betterC"
 					],
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/texcube.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -ltexcube -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\texcube.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -ltexcube -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --link=texcube --verbose"
 					],
 					"targetName": "texcube",
 					"subConfigurations": {
@@ -1204,6 +1033,9 @@
 					"path": ".."
 				}
 			},
+			"environments": {
+				"SOKOL_ROOTPATH": "${SOKOL_D_PACKAGE_DIR}"
+			},
 			"configurations": [
 				{
 					"name": "native",
@@ -1217,14 +1049,8 @@
 					"buildOptions": [
 						"betterC"
 					],
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/userdata.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -luserdata -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\userdata.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -luserdata -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --link=userdata --verbose"
 					],
 					"targetName": "userdata",
 					"subConfigurations": {
@@ -1237,14 +1063,8 @@
 					"buildOptions": [
 						"betterC"
 					],
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/userdata.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -luserdata -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\userdata.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -luserdata -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --link=userdata --verbose"
 					],
 					"targetName": "userdata",
 					"subConfigurations": {
@@ -1266,6 +1086,9 @@
 					"path": ".."
 				}
 			},
+			"environments": {
+				"SOKOL_ROOTPATH": "${SOKOL_D_PACKAGE_DIR}"
+			},
 			"configurations": [
 				{
 					"name": "native",
@@ -1279,14 +1102,8 @@
 					"buildOptions": [
 						"betterC"
 					],
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/vertexpull.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lvertexpull -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\vertexpull.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lvertexpull -sUSE_WEBGL2=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --link=vertexpull --verbose"
 					],
 					"targetName": "vertexpull",
 					"subConfigurations": {
@@ -1299,14 +1116,8 @@
 					"buildOptions": [
 						"betterC"
 					],
-					"postBuildCommands-posix": [
-						"${SOKOL_D_PACKAGE_DIR}/vendor/emsdk/upstream/emscripten/emcc -o build/vertexpull.html -L${SOKOL_D_PACKAGE_DIR}/build -Lbuild/ -lsokol -lvertexpull -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}/src/sokol/web/shell.html",
-						"rm build/*.a"
-					],
-					"postBuildCommands-windows": [
-						"powershell -Command \"Get-ChildItem -Path build\\*.lib | ForEach-Object { Rename-Item -Path $_.FullName -NewName ('lib' + $_.Name.Replace('.lib','.a')) }\"",
-						"${SOKOL_D_PACKAGE_DIR}\\vendor\\emsdk\\upstream\\emscripten\\emcc.bat -o build\\vertexpull.html -L${SOKOL_D_PACKAGE_DIR}\\build -Lbuild -lsokol -lvertexpull -sUSE_WEBGPU=1 -sNO_FILESYSTEM=1 -sMALLOC=emmalloc --closure 1 -sSTACK_SIZE=512KB -sASSERTIONS=0 --shell-file=${SOKOL_D_PACKAGE_DIR}\\src\\sokol\\web\\shell.html",
-						"del build\\*.a"
+					"postBuildCommands": [
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --link=vertexpull --verbose"
 					],
 					"targetName": "vertexpull",
 					"subConfigurations": {

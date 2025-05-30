@@ -6,11 +6,38 @@
 	},
 	"targetPath": "build",
 	"targetType": "executable",
+	"environments": {
+		"SOKOL_ROOTPATH": "${SOKOL_D_PACKAGE_DIR}"
+	},
 	"configurations": [
 		{
 			"name": "native",
 			"subConfigurations": {
 				"sokol-d": "sokol-static"
+			}
+		},
+		{
+			"name": "wasm",
+			"targetType": "staticLibrary",
+			"postBuildCommands": [
+				"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --link=blend --verbose",
+				"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --run=blend --verbose"
+			],
+			"targetName": "blend",
+			"subConfigurations": {
+				"sokol-d": "sokol-wgles3"
+			}
+		},
+		{
+			"name": "wgpu",
+			"targetType": "staticLibrary",
+			"postBuildCommands": [
+				"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --link=blend --verbose",
+				"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --run=blend --verbose"
+			],
+			"targetName": "blend",
+			"subConfigurations": {
+				"sokol-d": "sokol-wgpu"
 			}
 		}
 	]
