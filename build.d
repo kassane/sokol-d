@@ -928,9 +928,10 @@ void buildShaders(ref string vendor) @safe
         immutable string glsl = "glsl430";
     string slang = glsl ~ ":metal_macos:hlsl5:glsl300es:wgsl";
 
+    int status;
     version (Posix)
     {
-        int status = wait(spawnProcess(["chmod", "+x", shdcPath]));
+        status = wait(spawnProcess(["chmod", "+x", shdcPath]));
         if (status != 0)
             throw new Exception("Error: failed to set permissions on shader compiler");
     }
