@@ -33,9 +33,6 @@ void main(string[] args) @safe
     bool run = false;
     string runExample;
     // backend options
-    bool opt_use_glcore = false;
-    bool opt_use_gles3 = false;
-    bool opt_use_wgpu = false;
     bool opt_use_x11 = true;
     bool opt_use_wayland = false;
     bool opt_use_egl = false;
@@ -74,19 +71,13 @@ void main(string[] args) @safe
             run = true;
             runExample = arg["--run=".length .. $];
         }
-        else if (arg == "--use-glcore")
-            opt_use_glcore = true;
-        else if (arg == "--use-gles3")
-            opt_use_gles3 = true;
-        else if (arg == "--use-wgpu")
-            opt_use_wgpu = true;
         else if (arg == "--with-sokol-imgui")
             opt_with_sokol_imgui = true;
     }
 
     if (args.length < 2 || help)
     {
-        writeln("Usage: dub run -- [options]");
+        writeln("Usage: build [options]");
         writeln("Options:");
         writeln("  --help                   Show this help message");
         writeln("  --verbose                Enable verbose output for compiler commands");
@@ -100,9 +91,6 @@ void main(string[] args) @safe
         writeln("  --download-sokol-tools   Download and setup sokol-tools");
         writeln("  --link=<example>         Link WASM example (e.g., triangle, cube)");
         writeln("  --run=<example>          Run WASM example HTML (e.g., triangle, cube)");
-        writeln("  --use-glcore             Enable GL Core backend");
-        writeln("  --use-gles3              Enable GLES3 backend");
-        writeln("  --use-wgpu               Enable WebGPU backend");
         writeln("  --with-sokol-imgui       Enable sokol_imgui integration");
         return;
     }
@@ -138,8 +126,7 @@ void main(string[] args) @safe
             optimize: optimize,
             lib_main: buildPath("build", "lib" ~ linkExample ~ ".a"),
             vendor: vendorPath,
-            use_webgl2: opt_use_gles3,
-            use_webgpu: opt_use_wgpu,
+            backend: sokol_backend,
             use_emmalloc: true,
             use_imgui: opt_with_sokol_imgui,
             use_filesystem: false,
@@ -170,9 +157,6 @@ void main(string[] args) @safe
             use_wayland: opt_use_wayland,
             use_x11: opt_use_x11,
             use_egl: opt_use_egl,
-            use_glcore: opt_use_glcore,
-            use_gles3: opt_use_gles3,
-            use_wgpu: opt_use_wgpu,
             with_sokol_imgui: opt_with_sokol_imgui,
             verbose: verbose,
             vendor: vendorPath,
@@ -420,12 +404,9 @@ struct LibSokolOptions
     string optimize;
     string toolchain;
     SokolBackend backend;
-    bool use_glcore = false;
-    bool use_gles3 = false;
     bool use_egl = false;
     bool use_x11 = true;
     bool use_wayland = false;
-    bool use_wgpu = false;
     string vendor = null;
     bool with_sokol_imgui = false;
     bool sharedlib = false;
@@ -536,13 +517,6 @@ void buildLibSokol(LibSokolOptions options) @safe
     }
     else if (options.target.canFind("wasm"))
     {
-        if (options.use_gles3)
-            cflags ~= "-DSOKOL_GLES3";
-        else if (options.use_wgpu)
-            cflags ~= "-DSOKOL_WGPU";
-        else
-            cflags ~= "-DSOKOL_GLES3"; // Default for WASM
-
         cflags ~= ["-fPIE"];
         compiler = buildPath(options.vendor, "emsdk", "upstream", "emscripten", "emcc");
         version (Windows)
@@ -779,8 +753,7 @@ struct EmLinkOptions
     string vendor;
     bool release_use_closure = true;
     bool release_use_lto = false;
-    bool use_webgpu = false;
-    bool use_webgl2 = false;
+    SokolBackend backend;
     bool use_emmalloc = false;
     bool use_filesystem = true;
     bool use_imgui = false;
@@ -812,9 +785,9 @@ void emLinkStep(EmLinkOptions options) @safe
             emcc_cmd ~= ["--closure", "1"];
     }
 
-    if (options.use_webgpu)
+    if (options.backend == SokolBackend.wgpu)
         emcc_cmd ~= "-sUSE_WEBGPU=1";
-    if (options.use_webgl2)
+    if (options.backend == SokolBackend.gles3)
         emcc_cmd ~= "-sUSE_WEBGL2=1";
     if (!options.use_filesystem)
         emcc_cmd ~= "-sNO_FILESYSTEM=1";

@@ -66,7 +66,7 @@
 					"name": "wasm",
 					"targetType": "staticLibrary",
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --link=blend --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=gles3 --link=blend --verbose"
 					],
 					"targetName": "blend",
 					"subConfigurations": {
@@ -77,7 +77,7 @@
 					"name": "wgpu",
 					"targetType": "staticLibrary",
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --link=blend --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=wgpu --link=blend --verbose"
 					],
 					"targetName": "blend",
 					"subConfigurations": {
@@ -113,7 +113,7 @@
 					"name": "wasm",
 					"targetType": "staticLibrary",
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --link=bufferoffsets --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=gles3 --link=bufferoffsets --verbose"
 					],
 					"targetName": "bufferoffsets",
 					"subConfigurations": {
@@ -124,7 +124,7 @@
 					"name": "wgpu",
 					"targetType": "staticLibrary",
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --link=bufferoffsets --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=wgpu --link=bufferoffsets --verbose"
 					],
 					"targetName": "bufferoffsets",
 					"subConfigurations": {
@@ -159,7 +159,7 @@
 					"name": "wasm",
 					"targetType": "staticLibrary",
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --link=clear --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=gles3 --link=clear --verbose"
 					],
 					"targetName": "clear",
 					"subConfigurations": {
@@ -170,7 +170,7 @@
 					"name": "wgpu",
 					"targetType": "staticLibrary",
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --link=clear --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=wgpu --link=clear --verbose"
 					],
 					"targetName": "clear",
 					"subConfigurations": {
@@ -209,7 +209,7 @@
 						"betterC"
 					],
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --link=cube --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=gles3 --link=cube --verbose"
 					],
 					"targetName": "cube",
 					"subConfigurations": {
@@ -223,7 +223,7 @@
 						"betterC"
 					],
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --link=cube --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=wgpu --link=cube --verbose"
 					],
 					"targetName": "cube",
 					"subConfigurations": {
@@ -261,7 +261,7 @@
 						"betterC"
 					],
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --link=debugtext --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=gles3 --link=debugtext --verbose"
 					],
 					"targetName": "debugtext",
 					"subConfigurations": {
@@ -275,7 +275,7 @@
 						"betterC"
 					],
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --link=debugtext --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=wgpu --link=debugtext --verbose"
 					],
 					"targetName": "debugtext",
 					"subConfigurations": {
@@ -313,7 +313,7 @@
 						"betterC"
 					],
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --with-sokol-imgui --link=droptest --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=gles3 --with-sokol-imgui --link=droptest --verbose"
 					],
 					"targetName": "droptest",
 					"subConfigurations": {
@@ -327,7 +327,7 @@
 						"betterC"
 					],
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --with-sokol-imgui --link=droptest --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=wgpu --with-sokol-imgui --link=droptest --verbose"
 					],
 					"targetName": "droptest",
 					"subConfigurations": {
@@ -365,7 +365,7 @@
 						"betterC"
 					],
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --with-sokol-imgui --link=imgui --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=gles3 --with-sokol-imgui --link=imgui --verbose"
 					],
 					"targetName": "imgui",
 					"subConfigurations": {
@@ -379,7 +379,7 @@
 						"betterC"
 					],
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --with-sokol-imgui --link=imgui --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=wgpu --with-sokol-imgui --link=imgui --verbose"
 					],
 					"targetName": "imgui",
 					"subConfigurations": {
@@ -418,7 +418,7 @@
 						"betterC"
 					],
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --link=instancing --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=gles3 --link=instancing --verbose"
 					],
 					"targetName": "instancing",
 					"subConfigurations": {
@@ -432,7 +432,7 @@
 						"betterC"
 					],
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --link=instancing --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=wgpu --link=instancing --verbose"
 					],
 					"targetName": "instancing",
 					"subConfigurations": {
@@ -471,7 +471,7 @@
 						"betterC"
 					],
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --link=instancingcompute --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=gles3 --link=instancingcompute --verbose"
 					],
 					"targetName": "instancingcompute",
 					"subConfigurations": {
@@ -485,7 +485,7 @@
 						"betterC"
 					],
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --link=instancingcompute --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=wgpu --link=instancingcompute --verbose"
 					],
 					"targetName": "instancingcompute",
 					"subConfigurations": {
@@ -524,7 +524,7 @@
 						"betterC"
 					],
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --link=mrt --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=gles3 --link=mrt --verbose"
 					],
 					"targetName": "mrt",
 					"subConfigurations": {
@@ -538,7 +538,7 @@
 						"betterC"
 					],
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --link=mrt --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=wgpu --link=mrt --verbose"
 					],
 					"targetName": "mrt",
 					"subConfigurations": {
@@ -577,7 +577,7 @@
 						"betterC"
 					],
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --link=noninterleaved --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=gles3 --link=noninterleaved --verbose"
 					],
 					"targetName": "noninterleaved",
 					"subConfigurations": {
@@ -591,7 +591,7 @@
 						"betterC"
 					],
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --link=noninterleaved --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=wgpu --link=noninterleaved --verbose"
 					],
 					"targetName": "noninterleaved",
 					"subConfigurations": {
@@ -630,7 +630,7 @@
 						"betterC"
 					],
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --link=offscreen --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=gles3 --link=offscreen --verbose"
 					],
 					"targetName": "offscreen",
 					"subConfigurations": {
@@ -644,7 +644,7 @@
 						"betterC"
 					],
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --link=offscreen --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=wgpu --link=offscreen --verbose"
 					],
 					"targetName": "offscreen",
 					"subConfigurations": {
@@ -683,7 +683,7 @@
 						"betterC"
 					],
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --link=quad --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=gles3 --link=quad --verbose"
 					],
 					"targetName": "quad",
 					"subConfigurations": {
@@ -697,7 +697,7 @@
 						"betterC"
 					],
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --link=quad --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=wgpu --link=quad --verbose"
 					],
 					"targetName": "quad",
 					"subConfigurations": {
@@ -736,7 +736,7 @@
 						"betterC"
 					],
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --link=shapes --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=gles3 --link=shapes --verbose"
 					],
 					"targetName": "shapes",
 					"subConfigurations": {
@@ -750,7 +750,7 @@
 						"betterC"
 					],
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --link=shapes --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=wgpu --link=shapes --verbose"
 					],
 					"targetName": "shapes",
 					"subConfigurations": {
@@ -788,7 +788,7 @@
 						"betterC"
 					],
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --link=saudio --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=gles3 --link=saudio --verbose"
 					],
 					"targetName": "saudio",
 					"subConfigurations": {
@@ -802,7 +802,7 @@
 						"betterC"
 					],
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --link=saudio --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=wgpu --link=saudio --verbose"
 					],
 					"targetName": "saudio",
 					"subConfigurations": {
@@ -840,7 +840,7 @@
 						"betterC"
 					],
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --link=sglcontext --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=gles3 --link=sglcontext --verbose"
 					],
 					"targetName": "sglcontext",
 					"subConfigurations": {
@@ -854,7 +854,7 @@
 						"betterC"
 					],
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --link=sglcontext --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=wgpu --link=sglcontext --verbose"
 					],
 					"targetName": "sglcontext",
 					"subConfigurations": {
@@ -892,7 +892,7 @@
 						"betterC"
 					],
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --link=sglpoints --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=gles3 --link=sglpoints --verbose"
 					],
 					"targetName": "sglpoints",
 					"subConfigurations": {
@@ -906,7 +906,7 @@
 						"betterC"
 					],
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --link=sglpoints --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=wgpu --link=sglpoints --verbose"
 					],
 					"targetName": "sglpoints",
 					"subConfigurations": {
@@ -945,7 +945,7 @@
 						"betterC"
 					],
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --link=triangle --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=gles3 --link=triangle --verbose"
 					],
 					"targetName": "triangle",
 					"subConfigurations": {
@@ -959,7 +959,7 @@
 						"betterC"
 					],
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --link=triangle --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=wgpu --link=triangle --verbose"
 					],
 					"targetName": "triangle",
 					"subConfigurations": {
@@ -998,7 +998,7 @@
 						"betterC"
 					],
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --link=texcube --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=gles3 --link=texcube --verbose"
 					],
 					"targetName": "texcube",
 					"subConfigurations": {
@@ -1012,7 +1012,7 @@
 						"betterC"
 					],
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --link=texcube --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=wgpu --link=texcube --verbose"
 					],
 					"targetName": "texcube",
 					"subConfigurations": {
@@ -1050,7 +1050,7 @@
 						"betterC"
 					],
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --link=userdata --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=gles3 --link=userdata --verbose"
 					],
 					"targetName": "userdata",
 					"subConfigurations": {
@@ -1064,7 +1064,7 @@
 						"betterC"
 					],
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --link=userdata --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=wgpu --link=userdata --verbose"
 					],
 					"targetName": "userdata",
 					"subConfigurations": {
@@ -1103,7 +1103,7 @@
 						"betterC"
 					],
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-gles3 --link=vertexpull --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=gles3 --link=vertexpull --verbose"
 					],
 					"targetName": "vertexpull",
 					"subConfigurations": {
@@ -1117,7 +1117,7 @@
 						"betterC"
 					],
 					"postBuildCommands": [
-						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --use-wgpu --link=vertexpull --verbose"
+						"$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=wgpu --link=vertexpull --verbose"
 					],
 					"targetName": "vertexpull",
 					"subConfigurations": {
