@@ -658,7 +658,7 @@
 				"-mattr=+bulk-memory,+extended-const,+multivalue,+mutable-globals,+nontrapping-fptoint,+sign-ext",
 				"-gcc=$PACKAGE_DIR/vendor/emsdk/upstream/bin/wasm32-clang"
 			],
-			"preGenerateCommands": [
+			"preBuildCommands": [
 				"$DC -run $PACKAGE_DIR/build.d --target=wasm --with-sokol-imgui --verbose"
 			]
 		},
@@ -686,7 +686,7 @@
 				"-mattr=+bulk-memory,+extended-const,+multivalue,+mutable-globals,+nontrapping-fptoint,+sign-ext",
 				"-gcc=$PACKAGE_DIR/vendor/emsdk/upstream/bin/wasm32-clang"
 			],
-			"preGenerateCommands": [
+			"preBuildCommands": [
 				"$DC -run $PACKAGE_DIR/build.d --target=wasm --with-sokol-imgui --verbose"
 			]
 		},
@@ -714,7 +714,7 @@
 			],
 			"targetName": "sokold",
 			"targetPath": "build",
-			"preGenerateCommands": [
+			"preBuildCommands": [
 				"$DC -run $PACKAGE_DIR/build.d --target=wasm --verbose"
 			]
 		},
@@ -739,7 +739,7 @@
 			],
 			"targetName": "sokold",
 			"targetPath": "build",
-			"preGenerateCommands": [
+			"preBuildCommands": [
 				"$DC -run $PACKAGE_DIR/build.d --target=wasm --verbose"
 			]
 		},
