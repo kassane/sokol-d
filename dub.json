@@ -655,13 +655,8 @@
 				"-i=emscripten",
 				"-defaultlib=",
 				"--disable-linker-strip-dead",
-				"-mattr=+bulk-memory,+extended-const,+multivalue,+mutable-globals,+nontrapping-fptoint,+sign-ext"
-			],
-			"dflags-posix": [
-				"-gcc=$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc"
-			],
-			"dflags-windows": [
-				"-gcc=$PACKAGE_DIR\\vendor\\emsdk\\upstream\\bin\\wasm32-clang.exe"
+				"-mattr=+bulk-memory,+extended-const,+multivalue,+mutable-globals,+nontrapping-fptoint,+sign-ext",
+				"-gcc=$PACKAGE_DIR/vendor/emsdk/upstream/bin/wasm32-clang"
 			],
 			"preGenerateCommands": [
 				"$DC -run $PACKAGE_DIR/build.d --target=wasm --with-sokol-imgui --verbose"
@@ -688,13 +683,8 @@
 				"-i=emscripten",
 				"-defaultlib=",
 				"--disable-linker-strip-dead",
-				"-mattr=+bulk-memory,+extended-const,+multivalue,+mutable-globals,+nontrapping-fptoint,+sign-ext"
-			],
-			"dflags-posix": [
-				"-gcc=$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/emcc"
-			],
-			"dflags-windows": [
-				"-gcc=$PACKAGE_DIR\\vendor\\emsdk\\upstream\\bin\\wasm32-clang.exe"
+				"-mattr=+bulk-memory,+extended-const,+multivalue,+mutable-globals,+nontrapping-fptoint,+sign-ext",
+				"-gcc=$PACKAGE_DIR/vendor/emsdk/upstream/bin/wasm32-clang"
 			],
 			"preGenerateCommands": [
 				"$DC -run $PACKAGE_DIR/build.d --target=wasm --with-sokol-imgui --verbose"
@@ -725,7 +715,7 @@
 			"targetName": "sokold",
 			"targetPath": "build",
 			"preGenerateCommands": [
-				"$DC -run $PACKAGE_DIR/build.d --target=wasm  --verbose"
+				"$DC -run $PACKAGE_DIR/build.d --target=wasm --verbose"
 			]
 		},
 		{
@@ -750,7 +740,7 @@
 			"targetName": "sokold",
 			"targetPath": "build",
 			"preGenerateCommands": [
-				"$DC -run $PACKAGE_DIR/build.d --target=wasm  --verbose"
+				"$DC -run $PACKAGE_DIR/build.d --target=wasm --verbose"
 			]
 		},
 		{
