@@ -14,7 +14,6 @@ import std;
 // Versions for dependencies
 enum emsdk_version = "4.0.9";
 enum imgui_version = "1.91.9";
-enum zig_version = "0.14.0";
 
 void main(string[] args) @safe
 {
@@ -25,7 +24,7 @@ void main(string[] args) @safe
     string target;
     string optimize = "debug";
     SokolBackend sokol_backend;
-    bool downloadEmsdk = false, downloadZig = false, downloadIMGUI = false, downloadSHDC = false;
+    bool downloadEmsdk = false, downloadIMGUI = false, downloadSHDC = false;
     string sokolEnv = environment.get("SOKOL_ROOTPATH", getcwd);
     string vendorPath = absolutePath(buildPath(sokolEnv, "vendor"));
     bool link = false;
@@ -55,8 +54,6 @@ void main(string[] args) @safe
             target = arg["--target=".length .. $];
         else if (arg == "--download-emsdk")
             downloadEmsdk = true;
-        else if (arg == "--download-zig")
-            downloadZig = true;
         else if (arg == "--download-imgui")
             downloadIMGUI = true;
         else if (arg == "--download-sokol-tools")
@@ -86,7 +83,6 @@ void main(string[] args) @safe
         writeln("  --optimize=<level>       Select optimization level (debug, release)");
         writeln("  --target=<target>        Select target (native, wasm, android)");
         writeln("  --download-emsdk         Download and setup Emscripten SDK");
-        writeln("  --download-zig           Download and setup Zig toolchain");
         writeln("  --download-imgui         Download and build imgui");
         writeln("  --download-sokol-tools   Download and setup sokol-tools");
         writeln("  --link=<example>         Link WASM example (e.g., triangle, cube)");
@@ -104,7 +100,6 @@ void main(string[] args) @safe
         writeln("Get imgui-libs: ", downloadIMGUI);
         writeln("Get sokol-tools: ", downloadSHDC);
         writeln("Get Emscripten: ", downloadEmsdk);
-        writeln("Download Zig: ", downloadZig);
         writeln("Verbose mode: ", verbose);
     }
 
@@ -113,8 +108,6 @@ void main(string[] args) @safe
         getEmSDK(vendorPath);
     if (downloadIMGUI || opt_with_sokol_imgui)
         getIMGUI(vendorPath);
-    if (downloadZig)
-        getZigToolchain(vendorPath);
 
     if (downloadSHDC)
         buildShaders(vendorPath);
@@ -165,68 +158,6 @@ void main(string[] args) @safe
         if (target.canFind("wasm"))
             buildLibSokol(options);
     }
-}
-
-void getZigToolchain(ref string rootpath) @safe
-{
-    writeln("Downloading and setting up Zig toolchain...");
-
-    version (Windows)
-        immutable string ext = ".zip", exe = ".exe";
-    else
-        immutable string ext = ".tar.xz", exe = "";
-
-    version (Windows)
-        immutable string os = "windows";
-    else version (linux)
-        immutable string os = "linux";
-    else version (OSX)
-        immutable string os = "macos";
-    else version (FreeBSD)
-        immutable string os = "freebsd";
-    else
-        static assert(0, "Unsupported OS");
-
-    version (X86_64)
-        immutable string arch = "x86_64";
-    else version (X86)
-        immutable string arch = "x86";
-    else version (AArch64)
-        immutable string arch = "aarch64";
-    else
-        static assert(0, "Unsupported architecture");
-
-    immutable string filename = fmt("zig-%s-%s-%s", os, arch, zig_version);
-    writeln("file: ", filename ~ ext);
-    writeln("rootpath: ", rootpath);
-
-    scope (exit)
-    {
-        if (exists(filename ~ ext))
-            remove(filename ~ ext);
-    }
-
-    if (!exists(rootpath))
-    {
-        download(fmt("https://ziglang.org/download/%s/%s", zig_version, filename ~ ext), filename ~ ext);
-        if (ext.endsWith("zip"))
-            extractZip(filename ~ ext, rootpath);
-        else
-            extractTarXZ(filename ~ ext, rootpath);
-    }
-
-    immutable string extractedPath = buildPath(rootpath, filename);
-    immutable string newPath = buildPath(rootpath, "zig");
-    if (exists(extractedPath) && !exists(newPath))
-        rename(extractedPath, newPath);
-
-    rootpath = newPath;
-
-    auto res = execute([
-        absolutePath(buildPath(rootpath, "zig")) ~ exe, "version"
-    ]);
-    enforce(res.status == 0, "Failed to run Zig toolchain");
-    writefln("zig version: %s", res.output);
 }
 
 void getEmSDK(ref string vendor) @safe
