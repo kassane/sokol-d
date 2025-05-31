@@ -1,22 +1,30 @@
-// machine generated, do not edit
-
+/++
++ Machine generated D bindings for Sokol library.
++ 
++     Generated on: 2025-06-01 10:38:02
++ 
++     Source header: sokol_app.h
++     Module: sokol.app
++ 
++     Do not edit manually; regenerate using gen_d.py.
++/
 module sokol.app;
 
-/// misc constants
-/// misc constants
+/++
++ misc constants
++/
 enum max_touchpoints = 8;
-/// misc constants
 enum max_mousebuttons = 3;
-/// misc constants
 enum max_keycodes = 512;
-/// misc constants
 enum max_iconimages = 8;
-/// sapp_event_type
-/// 
-/// The type of event that's passed to the event handler callback
-/// in the sapp_event.type field. These are not just "traditional"
-/// input events, but also notify the application about state changes
-/// or other user-invoked actions.
+/++
++ sapp_event_type
++ 
++     The type of event that's passed to the event handler callback
++     in the sapp_event.type field. These are not just "traditional"
++     input events, but also notify the application about state changes
++     or other user-invoked actions.
++/
 enum EventType {
     Invalid,
     Key_down,
@@ -44,12 +52,14 @@ enum EventType {
     Files_dropped,
     Num,
 }
-/// sapp_keycode
-/// 
-/// The 'virtual keycode' of a KEY_DOWN or KEY_UP event in the
-/// struct field sapp_event.key_code.
-/// 
-/// Note that the keycode values are identical with GLFW.
+/++
++ sapp_keycode
++ 
++     The 'virtual keycode' of a KEY_DOWN or KEY_UP event in the
++     struct field sapp_event.key_code.
++ 
++     Note that the keycode values are identical with GLFW.
++/
 enum Keycode {
     Invalid = 0,
     Space = 32,
@@ -173,84 +183,78 @@ enum Keycode {
     Right_super = 347,
     Menu = 348,
 }
-/// Android specific 'tool type' enum for touch events. This lets the
-/// application check what type of input device was used for
-/// touch events.
-/// 
-/// NOTE: the values must remain in sync with the corresponding
-/// Android SDK type, so don't change those.
-/// 
-/// See https://developer.android.com/reference/android/view/MotionEvent#TOOL_TYPE_UNKNOWN
+/++
++ Android specific 'tool type' enum for touch events. This lets the
++     application check what type of input device was used for
++     touch events.
++ 
++     NOTE: the values must remain in sync with the corresponding
++     Android SDK type, so don't change those.
++ 
++     See https://developer.android.com/reference/android/view/MotionEvent#TOOL_TYPE_UNKNOWN
++/
 enum AndroidTooltype {
     Unknown = 0,
     Finger = 1,
     Stylus = 2,
     Mouse = 3,
 }
-/// sapp_touchpoint
-/// 
-/// Describes a single touchpoint in a multitouch event (TOUCHES_BEGAN,
-/// TOUCHES_MOVED, TOUCHES_ENDED).
-/// 
-/// Touch points are stored in the nested array sapp_event.touches[],
-/// and the number of touches is stored in sapp_event.num_touches.
-extern(C)
-struct Touchpoint {
+/++
++ sapp_touchpoint
++ 
++     Describes a single touchpoint in a multitouch event (TOUCHES_BEGAN,
++     TOUCHES_MOVED, TOUCHES_ENDED).
++ 
++     Touch points are stored in the nested array sapp_event.touches[],
++     and the number of touches is stored in sapp_event.num_touches.
++/
+extern(C) struct Touchpoint {
     ulong identifier = 0;
     float pos_x = 0.0f;
     float pos_y = 0.0f;
-    AndroidTooltype android_tooltype;
+    AndroidTooltype android_tooltype = AndroidTooltype.Unknown;
     bool changed = false;
 }
-/// sapp_mousebutton
-/// 
-/// The currently pressed mouse button in the events MOUSE_DOWN
-/// and MOUSE_UP, stored in the struct field sapp_event.mouse_button.
+/++
++ sapp_mousebutton
++ 
++     The currently pressed mouse button in the events MOUSE_DOWN
++     and MOUSE_UP, stored in the struct field sapp_event.mouse_button.
++/
 enum Mousebutton {
     Left = 0,
     Right = 1,
     Middle = 2,
     Invalid = 256,
 }
-/// These are currently pressed modifier keys (and mouse buttons) which are
-/// passed in the event struct field sapp_event.modifiers.
-/// These are currently pressed modifier keys (and mouse buttons) which are
-/// passed in the event struct field sapp_event.modifiers.
+/++
++ These are currently pressed modifier keys (and mouse buttons) which are
++     passed in the event struct field sapp_event.modifiers.
++/
 enum modifier_shift = 1;
-/// These are currently pressed modifier keys (and mouse buttons) which are
-/// passed in the event struct field sapp_event.modifiers.
 enum modifier_ctrl = 2;
-/// These are currently pressed modifier keys (and mouse buttons) which are
-/// passed in the event struct field sapp_event.modifiers.
 enum modifier_alt = 4;
-/// These are currently pressed modifier keys (and mouse buttons) which are
-/// passed in the event struct field sapp_event.modifiers.
 enum modifier_super = 8;
-/// These are currently pressed modifier keys (and mouse buttons) which are
-/// passed in the event struct field sapp_event.modifiers.
 enum modifier_lmb = 256;
-/// These are currently pressed modifier keys (and mouse buttons) which are
-/// passed in the event struct field sapp_event.modifiers.
 enum modifier_rmb = 512;
-/// These are currently pressed modifier keys (and mouse buttons) which are
-/// passed in the event struct field sapp_event.modifiers.
 enum modifier_mmb = 1024;
-/// sapp_event
-/// 
-/// This is an all-in-one event struct passed to the event handler
-/// user callback function. Note that it depends on the event
-/// type what struct fields actually contain useful values, so you
-/// should first check the event type before reading other struct
-/// fields.
-extern(C)
-struct Event {
+/++
++ sapp_event
++ 
++     This is an all-in-one event struct passed to the event handler
++     user callback function. Note that it depends on the event
++     type what struct fields actually contain useful values, so you
++     should first check the event type before reading other struct
++     fields.
++/
+extern(C) struct Event {
     ulong frame_count = 0;
-    EventType type;
-    Keycode key_code;
+    EventType type = EventType.Invalid;
+    Keycode key_code = Keycode.Invalid;
     uint char_code = 0;
     bool key_repeat = false;
     uint modifiers = 0;
-    Mousebutton mouse_button;
+    Mousebutton mouse_button = Mousebutton.Left;
     float mouse_x = 0.0f;
     float mouse_y = 0.0f;
     float mouse_dx = 0.0f;
@@ -258,64 +262,68 @@ struct Event {
     float scroll_x = 0.0f;
     float scroll_y = 0.0f;
     int num_touches = 0;
-    Touchpoint[8] touches;
+    Touchpoint[8] touches = [];
     int window_width = 0;
     int window_height = 0;
     int framebuffer_width = 0;
     int framebuffer_height = 0;
 }
-/// sg_range
-/// 
-/// A general pointer/size-pair struct and constructor macros for passing binary blobs
-/// into sokol_app.h.
-extern(C)
-struct Range {
+/++
++ sg_range
++ 
++     A general pointer/size-pair struct and constructor macros for passing binary blobs
++     into sokol_app.h.
++/
+extern(C) struct Range {
     const(void)* ptr = null;
     size_t size = 0;
 }
-/// sapp_image_desc
-/// 
-/// This is used to describe image data to sokol_app.h (at first, window
-/// icons, later maybe cursor images).
-/// 
-/// Note that the actual image pixel format depends on the use case:
-/// 
-/// - window icon pixels are RGBA8
-extern(C)
-struct ImageDesc {
+/++
++ sapp_image_desc
++ 
++     This is used to describe image data to sokol_app.h (at first, window
++     icons, later maybe cursor images).
++ 
++     Note that the actual image pixel format depends on the use case:
++ 
++     - window icon pixels are RGBA8
++/
+extern(C) struct ImageDesc {
     int width = 0;
     int height = 0;
-    Range pixels;
+    Range pixels = {};
 }
-/// sapp_icon_desc
-/// 
-/// An icon description structure for use in sapp_desc.icon and
-/// sapp_set_icon().
-/// 
-/// When setting a custom image, the application can provide a number of
-/// candidates differing in size, and sokol_app.h will pick the image(s)
-/// closest to the size expected by the platform's window system.
-/// 
-/// To set sokol-app's default icon, set .sokol_default to true.
-/// 
-/// Otherwise provide candidate images of different sizes in the
-/// images[] array.
-/// 
-/// If both the sokol_default flag is set to true, any image candidates
-/// will be ignored and the sokol_app.h default icon will be set.
-extern(C)
-struct IconDesc {
+/++
++ sapp_icon_desc
++ 
++     An icon description structure for use in sapp_desc.icon and
++     sapp_set_icon().
++ 
++     When setting a custom image, the application can provide a number of
++     candidates differing in size, and sokol_app.h will pick the image(s)
++     closest to the size expected by the platform's window system.
++ 
++     To set sokol-app's default icon, set .sokol_default to true.
++ 
++     Otherwise provide candidate images of different sizes in the
++     images[] array.
++ 
++     If both the sokol_default flag is set to true, any image candidates
++     will be ignored and the sokol_app.h default icon will be set.
++/
+extern(C) struct IconDesc {
     bool sokol_default = false;
-    ImageDesc[8] images;
+    ImageDesc[8] images = [];
 }
-/// sapp_allocator
-/// 
-/// Used in sapp_desc to provide custom memory-alloc and -free functions
-/// to sokol_app.h. If memory management should be overridden, both the
-/// alloc_fn and free_fn function must be provided (e.g. it's not valid to
-/// override one function but not the other).
-extern(C)
-struct Allocator {
+/++
++ sapp_allocator
++ 
++     Used in sapp_desc to provide custom memory-alloc and -free functions
++     to sokol_app.h. If memory management should be overridden, both the
++     alloc_fn and free_fn function must be provided (e.g. it's not valid to
++     override one function but not the other).
++/
+extern(C) struct Allocator {
     extern(C) void* function(size_t, void*) alloc_fn = null;
     extern(C) void function(void*, void*) free_fn = null;
     void* user_data = null;
@@ -421,31 +429,33 @@ enum LogItem {
     Dropped_file_path_too_long,
     Clipboard_string_too_big,
 }
-/// sapp_logger
-/// 
-/// Used in sapp_desc to provide a logging function. Please be aware that
-/// without logging function, sokol-app will be completely silent, e.g. it will
-/// not report errors or warnings. For maximum error verbosity, compile in
-/// debug mode (e.g. NDEBUG *not* defined) and install a logger (for instance
-/// the standard logging function from sokol_log.h).
-extern(C)
-struct Logger {
+/++
++ sapp_logger
++ 
++     Used in sapp_desc to provide a logging function. Please be aware that
++     without logging function, sokol-app will be completely silent, e.g. it will
++     not report errors or warnings. For maximum error verbosity, compile in
++     debug mode (e.g. NDEBUG *not* defined) and install a logger (for instance
++     the standard logging function from sokol_log.h).
++/
+extern(C) struct Logger {
     extern(C) void function(const(char)*, uint, uint, const(char)*, uint, const(char)*, void*) func = null;
     void* user_data = null;
 }
-/// sokol-app initialization options, used as return value of sokol_main()
-/// or sapp_run() argument.
-extern(C)
-struct Desc {
+/++
++ sokol-app initialization options, used as return value of sokol_main()
++     or sapp_run() argument.
++/
+extern(C) struct Desc {
     extern(C) void function() init_cb = null;
     extern(C) void function() frame_cb = null;
     extern(C) void function() cleanup_cb = null;
-    extern(C) void function(const Event *) event_cb = null;
+    extern(C) void function(const Event*) event_cb = null;
     void* user_data = null;
     extern(C) void function(void*) init_userdata_cb = null;
     extern(C) void function(void*) frame_userdata_cb = null;
     extern(C) void function(void*) cleanup_userdata_cb = null;
-    extern(C) void function(const Event *, void*) event_userdata_cb = null;
+    extern(C) void function(const Event*, void*) event_userdata_cb = null;
     int width = 0;
     int height = 0;
     int sample_count = 0;
@@ -459,9 +469,9 @@ struct Desc {
     bool enable_dragndrop = false;
     int max_dropped_files = 0;
     int max_dropped_file_path_length = 0;
-    IconDesc icon;
-    Allocator allocator;
-    Logger logger;
+    IconDesc icon = {};
+    Allocator allocator = {};
+    Logger logger = {};
     int gl_major_version = 0;
     int gl_minor_version = 0;
     bool win32_console_utf8 = false;
@@ -482,32 +492,34 @@ struct Desc {
     bool html5_emsc_set_main_loop_simulate_infinite_loop = false;
     bool ios_keyboard_resizes_canvas = false;
 }
-/// HTML5 specific: request and response structs for
-///   asynchronously loading dropped-file content.
+/++
++ HTML5 specific: request and response structs for
++    asynchronously loading dropped-file content.
++/
 enum Html5FetchError {
     Fetch_error_no_error,
     Fetch_error_buffer_too_small,
     Fetch_error_other,
 }
-extern(C)
-struct Html5FetchResponse {
+extern(C) struct Html5FetchResponse {
     bool succeeded = false;
-    Html5FetchError error_code;
+    Html5FetchError error_code = Html5FetchError.Fetch_error_no_error;
     int file_index = 0;
-    Range data;
-    Range buffer;
+    Range data = {};
+    Range buffer = {};
     void* user_data = null;
 }
-extern(C)
-struct Html5FetchRequest {
+extern(C) struct Html5FetchRequest {
     int dropped_file_index = 0;
-    extern(C) void function(const Html5FetchResponse *) callback = null;
-    Range buffer;
+    extern(C) void function(const Html5FetchResponse*) callback = null;
+    Range buffer = {};
     void* user_data = null;
 }
-/// sapp_mouse_cursor
-/// 
-/// Predefined cursor image definitions, set with sapp_set_mouse_cursor(sapp_mouse_cursor cursor)
+/++
++ sapp_mouse_cursor
++ 
++     Predefined cursor image definitions, set with sapp_set_mouse_cursor(sapp_mouse_cursor cursor)
++/
 enum MouseCursor {
     Default = 0,
     Arrow,
@@ -522,387 +534,451 @@ enum MouseCursor {
     Not_allowed,
     Num,
 }
-/// returns true after sokol-app has been initialized
-extern(C) bool sapp_isvalid() @system @nogc nothrow;
-/// returns true after sokol-app has been initialized
-bool isvalid() @trusted @nogc nothrow {
+/++
++ returns true after sokol-app has been initialized
++/
+extern(C) bool sapp_isvalid() @system @nogc nothrow pure;
+bool isvalid() @trusted @nogc nothrow pure {
     return sapp_isvalid();
 }
-/// returns the current framebuffer width in pixels
-extern(C) int sapp_width() @system @nogc nothrow;
-/// returns the current framebuffer width in pixels
-int width() @trusted @nogc nothrow {
+/++
++ returns the current framebuffer width in pixels
++/
+extern(C) int sapp_width() @system @nogc nothrow pure;
+int width() @trusted @nogc nothrow pure {
     return sapp_width();
 }
-/// same as sapp_width(), but returns float
-extern(C) float sapp_widthf() @system @nogc nothrow;
-/// same as sapp_width(), but returns float
-float widthf() @trusted @nogc nothrow {
+/++
++ same as sapp_width(), but returns float
++/
+extern(C) float sapp_widthf() @system @nogc nothrow pure;
+float widthf() @trusted @nogc nothrow pure {
     return sapp_widthf();
 }
-/// returns the current framebuffer height in pixels
-extern(C) int sapp_height() @system @nogc nothrow;
-/// returns the current framebuffer height in pixels
-int height() @trusted @nogc nothrow {
+/++
++ returns the current framebuffer height in pixels
++/
+extern(C) int sapp_height() @system @nogc nothrow pure;
+int height() @trusted @nogc nothrow pure {
     return sapp_height();
 }
-/// same as sapp_height(), but returns float
-extern(C) float sapp_heightf() @system @nogc nothrow;
-/// same as sapp_height(), but returns float
-float heightf() @trusted @nogc nothrow {
+/++
++ same as sapp_height(), but returns float
++/
+extern(C) float sapp_heightf() @system @nogc nothrow pure;
+float heightf() @trusted @nogc nothrow pure {
     return sapp_heightf();
 }
-/// get default framebuffer color pixel format
-extern(C) int sapp_color_format() @system @nogc nothrow;
-/// get default framebuffer color pixel format
-int colorFormat() @trusted @nogc nothrow {
+/++
++ get default framebuffer color pixel format
++/
+extern(C) int sapp_color_format() @system @nogc nothrow pure;
+int colorFormat() @trusted @nogc nothrow pure {
     return sapp_color_format();
 }
-/// get default framebuffer depth pixel format
-extern(C) int sapp_depth_format() @system @nogc nothrow;
-/// get default framebuffer depth pixel format
-int depthFormat() @trusted @nogc nothrow {
+/++
++ get default framebuffer depth pixel format
++/
+extern(C) int sapp_depth_format() @system @nogc nothrow pure;
+int depthFormat() @trusted @nogc nothrow pure {
     return sapp_depth_format();
 }
-/// get default framebuffer sample count
-extern(C) int sapp_sample_count() @system @nogc nothrow;
-/// get default framebuffer sample count
-int sampleCount() @trusted @nogc nothrow {
+/++
++ get default framebuffer sample count
++/
+extern(C) int sapp_sample_count() @system @nogc nothrow pure;
+int sampleCount() @trusted @nogc nothrow pure {
     return sapp_sample_count();
 }
-/// returns true when high_dpi was requested and actually running in a high-dpi scenario
-extern(C) bool sapp_high_dpi() @system @nogc nothrow;
-/// returns true when high_dpi was requested and actually running in a high-dpi scenario
-bool highDpi() @trusted @nogc nothrow {
+/++
++ returns true when high_dpi was requested and actually running in a high-dpi scenario
++/
+extern(C) bool sapp_high_dpi() @system @nogc nothrow pure;
+bool highDpi() @trusted @nogc nothrow pure {
     return sapp_high_dpi();
 }
-/// returns the dpi scaling factor (window pixels to framebuffer pixels)
-extern(C) float sapp_dpi_scale() @system @nogc nothrow;
-/// returns the dpi scaling factor (window pixels to framebuffer pixels)
-float dpiScale() @trusted @nogc nothrow {
+/++
++ returns the dpi scaling factor (window pixels to framebuffer pixels)
++/
+extern(C) float sapp_dpi_scale() @system @nogc nothrow pure;
+float dpiScale() @trusted @nogc nothrow pure {
     return sapp_dpi_scale();
 }
-/// show or hide the mobile device onscreen keyboard
-extern(C) void sapp_show_keyboard(bool) @system @nogc nothrow;
-/// show or hide the mobile device onscreen keyboard
-void showKeyboard(bool show) @trusted @nogc nothrow {
+/++
++ show or hide the mobile device onscreen keyboard
++/
+extern(C) void sapp_show_keyboard(bool show) @system @nogc nothrow pure;
+void showKeyboard(bool show) @trusted @nogc nothrow pure {
     sapp_show_keyboard(show);
 }
-/// return true if the mobile device onscreen keyboard is currently shown
-extern(C) bool sapp_keyboard_shown() @system @nogc nothrow;
-/// return true if the mobile device onscreen keyboard is currently shown
-bool keyboardShown() @trusted @nogc nothrow {
+/++
++ return true if the mobile device onscreen keyboard is currently shown
++/
+extern(C) bool sapp_keyboard_shown() @system @nogc nothrow pure;
+bool keyboardShown() @trusted @nogc nothrow pure {
     return sapp_keyboard_shown();
 }
-/// query fullscreen mode
-extern(C) bool sapp_is_fullscreen() @system @nogc nothrow;
-/// query fullscreen mode
-bool isFullscreen() @trusted @nogc nothrow {
+/++
++ query fullscreen mode
++/
+extern(C) bool sapp_is_fullscreen() @system @nogc nothrow pure;
+bool isFullscreen() @trusted @nogc nothrow pure {
     return sapp_is_fullscreen();
 }
-/// toggle fullscreen mode
-extern(C) void sapp_toggle_fullscreen() @system @nogc nothrow;
-/// toggle fullscreen mode
-void toggleFullscreen() @trusted @nogc nothrow {
+/++
++ toggle fullscreen mode
++/
+extern(C) void sapp_toggle_fullscreen() @system @nogc nothrow pure;
+void toggleFullscreen() @trusted @nogc nothrow pure {
     sapp_toggle_fullscreen();
 }
-/// show or hide the mouse cursor
-extern(C) void sapp_show_mouse(bool) @system @nogc nothrow;
-/// show or hide the mouse cursor
-void showMouse(bool show) @trusted @nogc nothrow {
+/++
++ show or hide the mouse cursor
++/
+extern(C) void sapp_show_mouse(bool show) @system @nogc nothrow pure;
+void showMouse(bool show) @trusted @nogc nothrow pure {
     sapp_show_mouse(show);
 }
-/// show or hide the mouse cursor
-extern(C) bool sapp_mouse_shown() @system @nogc nothrow;
-/// show or hide the mouse cursor
-bool mouseShown() @trusted @nogc nothrow {
+/++
++ show or hide the mouse cursor
++/
+extern(C) bool sapp_mouse_shown() @system @nogc nothrow pure;
+bool mouseShown() @trusted @nogc nothrow pure {
     return sapp_mouse_shown();
 }
-/// enable/disable mouse-pointer-lock mode
-extern(C) void sapp_lock_mouse(bool) @system @nogc nothrow;
-/// enable/disable mouse-pointer-lock mode
-void lockMouse(bool lock) @trusted @nogc nothrow {
+/++
++ enable/disable mouse-pointer-lock mode
++/
+extern(C) void sapp_lock_mouse(bool lock) @system @nogc nothrow pure;
+void lockMouse(bool lock) @trusted @nogc nothrow pure {
     sapp_lock_mouse(lock);
 }
-/// return true if in mouse-pointer-lock mode (this may toggle a few frames later)
-extern(C) bool sapp_mouse_locked() @system @nogc nothrow;
-/// return true if in mouse-pointer-lock mode (this may toggle a few frames later)
-bool mouseLocked() @trusted @nogc nothrow {
+/++
++ return true if in mouse-pointer-lock mode (this may toggle a few frames later)
++/
+extern(C) bool sapp_mouse_locked() @system @nogc nothrow pure;
+bool mouseLocked() @trusted @nogc nothrow pure {
     return sapp_mouse_locked();
 }
-/// set mouse cursor type
-extern(C) void sapp_set_mouse_cursor(MouseCursor) @system @nogc nothrow;
-/// set mouse cursor type
-void setMouseCursor(MouseCursor cursor) @trusted @nogc nothrow {
+/++
++ set mouse cursor type
++/
+extern(C) void sapp_set_mouse_cursor(MouseCursor cursor) @system @nogc nothrow pure;
+void setMouseCursor(MouseCursor cursor) @trusted @nogc nothrow pure {
     sapp_set_mouse_cursor(cursor);
 }
-/// get current mouse cursor type
-extern(C) MouseCursor sapp_get_mouse_cursor() @system @nogc nothrow;
-/// get current mouse cursor type
-MouseCursor getMouseCursor() @trusted @nogc nothrow {
+/++
++ get current mouse cursor type
++/
+extern(C) MouseCursor sapp_get_mouse_cursor() @system @nogc nothrow pure;
+MouseCursor getMouseCursor() @trusted @nogc nothrow pure {
     return sapp_get_mouse_cursor();
 }
-/// return the userdata pointer optionally provided in sapp_desc
-extern(C) void* sapp_userdata() @system @nogc nothrow;
-/// return the userdata pointer optionally provided in sapp_desc
-scope void* userdata() @trusted @nogc nothrow {
+/++
++ return the userdata pointer optionally provided in sapp_desc
++/
+extern(C) void* sapp_userdata() @system @nogc nothrow pure;
+void* userdata() @trusted @nogc nothrow pure {
     return sapp_userdata();
 }
-/// return a copy of the sapp_desc structure
-extern(C) Desc sapp_query_desc() @system @nogc nothrow;
-/// return a copy of the sapp_desc structure
-Desc queryDesc() @trusted @nogc nothrow {
+/++
++ return a copy of the sapp_desc structure
++/
+extern(C) Desc sapp_query_desc() @system @nogc nothrow pure;
+Desc queryDesc() @trusted @nogc nothrow pure {
     return sapp_query_desc();
 }
-/// initiate a "soft quit" (sends SAPP_EVENTTYPE_QUIT_REQUESTED)
-extern(C) void sapp_request_quit() @system @nogc nothrow;
-/// initiate a "soft quit" (sends SAPP_EVENTTYPE_QUIT_REQUESTED)
-void requestQuit() @trusted @nogc nothrow {
+/++
++ initiate a "soft quit" (sends SAPP_EVENTTYPE_QUIT_REQUESTED)
++/
+extern(C) void sapp_request_quit() @system @nogc nothrow pure;
+void requestQuit() @trusted @nogc nothrow pure {
     sapp_request_quit();
 }
-/// cancel a pending quit (when SAPP_EVENTTYPE_QUIT_REQUESTED has been received)
-extern(C) void sapp_cancel_quit() @system @nogc nothrow;
-/// cancel a pending quit (when SAPP_EVENTTYPE_QUIT_REQUESTED has been received)
-void cancelQuit() @trusted @nogc nothrow {
+/++
++ cancel a pending quit (when SAPP_EVENTTYPE_QUIT_REQUESTED has been received)
++/
+extern(C) void sapp_cancel_quit() @system @nogc nothrow pure;
+void cancelQuit() @trusted @nogc nothrow pure {
     sapp_cancel_quit();
 }
-/// initiate a "hard quit" (quit application without sending SAPP_EVENTTYPE_QUIT_REQUESTED)
-extern(C) void sapp_quit() @system @nogc nothrow;
-/// initiate a "hard quit" (quit application without sending SAPP_EVENTTYPE_QUIT_REQUESTED)
-void quit() @trusted @nogc nothrow {
+/++
++ initiate a "hard quit" (quit application without sending SAPP_EVENTTYPE_QUIT_REQUESTED)
++/
+extern(C) void sapp_quit() @system @nogc nothrow pure;
+void quit() @trusted @nogc nothrow pure {
     sapp_quit();
 }
-/// call from inside event callback to consume the current event (don't forward to platform)
-extern(C) void sapp_consume_event() @system @nogc nothrow;
-/// call from inside event callback to consume the current event (don't forward to platform)
-void consumeEvent() @trusted @nogc nothrow {
+/++
++ call from inside event callback to consume the current event (don't forward to platform)
++/
+extern(C) void sapp_consume_event() @system @nogc nothrow pure;
+void consumeEvent() @trusted @nogc nothrow pure {
     sapp_consume_event();
 }
-/// get the current frame counter (for comparison with sapp_event.frame_count)
-extern(C) ulong sapp_frame_count() @system @nogc nothrow;
-/// get the current frame counter (for comparison with sapp_event.frame_count)
-ulong frameCount() @trusted @nogc nothrow {
+/++
++ get the current frame counter (for comparison with sapp_event.frame_count)
++/
+extern(C) ulong sapp_frame_count() @system @nogc nothrow pure;
+ulong frameCount() @trusted @nogc nothrow pure {
     return sapp_frame_count();
 }
-/// get an averaged/smoothed frame duration in seconds
-extern(C) double sapp_frame_duration() @system @nogc nothrow;
-/// get an averaged/smoothed frame duration in seconds
-double frameDuration() @trusted @nogc nothrow {
+/++
++ get an averaged/smoothed frame duration in seconds
++/
+extern(C) double sapp_frame_duration() @system @nogc nothrow pure;
+double frameDuration() @trusted @nogc nothrow pure {
     return sapp_frame_duration();
 }
-/// write string into clipboard
-extern(C) void sapp_set_clipboard_string(const(char)*) @system @nogc nothrow;
-/// write string into clipboard
-void setClipboardString(scope const(char)* str) @trusted @nogc nothrow {
+/++
++ write string into clipboard
++/
+extern(C) void sapp_set_clipboard_string(const(char)* str) @system @nogc nothrow pure;
+void setClipboardString(const(char)* str) @trusted @nogc nothrow pure {
     sapp_set_clipboard_string(str);
 }
-/// read string from clipboard (usually during SAPP_EVENTTYPE_CLIPBOARD_PASTED)
-extern(C) const(char)* sapp_get_clipboard_string() @system @nogc nothrow;
-/// read string from clipboard (usually during SAPP_EVENTTYPE_CLIPBOARD_PASTED)
-scope const(char)* getClipboardString() @trusted @nogc nothrow {
+/++
++ read string from clipboard (usually during SAPP_EVENTTYPE_CLIPBOARD_PASTED)
++/
+extern(C) const(char)* sapp_get_clipboard_string() @system @nogc nothrow pure;
+const(char)* getClipboardString() @trusted @nogc nothrow pure {
     return sapp_get_clipboard_string();
 }
-/// set the window title (only on desktop platforms)
-extern(C) void sapp_set_window_title(const(char)*) @system @nogc nothrow;
-/// set the window title (only on desktop platforms)
-void setWindowTitle(scope const(char)* str) @trusted @nogc nothrow {
+/++
++ set the window title (only on desktop platforms)
++/
+extern(C) void sapp_set_window_title(const(char)* str) @system @nogc nothrow pure;
+void setWindowTitle(const(char)* str) @trusted @nogc nothrow pure {
     sapp_set_window_title(str);
 }
-/// set the window icon (only on Windows and Linux)
-extern(C) void sapp_set_icon(const IconDesc *) @system @nogc nothrow;
-/// set the window icon (only on Windows and Linux)
-void setIcon(scope ref IconDesc icon_desc) @trusted @nogc nothrow {
+/++
++ set the window icon (only on Windows and Linux)
++/
+extern(C) void sapp_set_icon(const IconDesc* icon_desc) @system @nogc nothrow pure;
+void setIcon(scope ref IconDesc icon_desc) @trusted @nogc nothrow pure {
     sapp_set_icon(&icon_desc);
 }
-/// gets the total number of dropped files (after an SAPP_EVENTTYPE_FILES_DROPPED event)
-extern(C) int sapp_get_num_dropped_files() @system @nogc nothrow;
-/// gets the total number of dropped files (after an SAPP_EVENTTYPE_FILES_DROPPED event)
-int getNumDroppedFiles() @trusted @nogc nothrow {
+/++
++ gets the total number of dropped files (after an SAPP_EVENTTYPE_FILES_DROPPED event)
++/
+extern(C) int sapp_get_num_dropped_files() @system @nogc nothrow pure;
+int getNumDroppedFiles() @trusted @nogc nothrow pure {
     return sapp_get_num_dropped_files();
 }
-/// gets the dropped file paths
-extern(C) const(char)* sapp_get_dropped_file_path(int) @system @nogc nothrow;
-/// gets the dropped file paths
-scope const(char)* getDroppedFilePath(int index) @trusted @nogc nothrow {
+/++
++ gets the dropped file paths
++/
+extern(C) const(char)* sapp_get_dropped_file_path(int index) @system @nogc nothrow pure;
+const(char)* getDroppedFilePath(int index) @trusted @nogc nothrow pure {
     return sapp_get_dropped_file_path(index);
 }
-/// special run-function for SOKOL_NO_ENTRY (in standard mode this is an empty stub)
-extern(C) void sapp_run(const Desc *) @system @nogc nothrow;
-/// special run-function for SOKOL_NO_ENTRY (in standard mode this is an empty stub)
-void run(scope ref Desc desc) @trusted @nogc nothrow {
+/++
++ special run-function for SOKOL_NO_ENTRY (in standard mode this is an empty stub)
++/
+extern(C) void sapp_run(const Desc* desc) @system @nogc nothrow pure;
+void run(scope ref Desc desc) @trusted @nogc nothrow pure {
     sapp_run(&desc);
 }
-/// EGL: get EGLDisplay object
-extern(C) const(void)* sapp_egl_get_display() @system @nogc nothrow;
-/// EGL: get EGLDisplay object
-scope const(void)* eglGetDisplay() @trusted @nogc nothrow {
+/++
++ EGL: get EGLDisplay object
++/
+extern(C) const(void)* sapp_egl_get_display() @system @nogc nothrow pure;
+const(void)* eglGetDisplay() @trusted @nogc nothrow pure {
     return sapp_egl_get_display();
 }
-/// EGL: get EGLContext object
-extern(C) const(void)* sapp_egl_get_context() @system @nogc nothrow;
-/// EGL: get EGLContext object
-scope const(void)* eglGetContext() @trusted @nogc nothrow {
+/++
++ EGL: get EGLContext object
++/
+extern(C) const(void)* sapp_egl_get_context() @system @nogc nothrow pure;
+const(void)* eglGetContext() @trusted @nogc nothrow pure {
     return sapp_egl_get_context();
 }
-/// HTML5: enable or disable the hardwired "Leave Site?" dialog box
-extern(C) void sapp_html5_ask_leave_site(bool) @system @nogc nothrow;
-/// HTML5: enable or disable the hardwired "Leave Site?" dialog box
-void html5AskLeaveSite(bool ask) @trusted @nogc nothrow {
+/++
++ HTML5: enable or disable the hardwired "Leave Site?" dialog box
++/
+extern(C) void sapp_html5_ask_leave_site(bool ask) @system @nogc nothrow pure;
+void html5AskLeaveSite(bool ask) @trusted @nogc nothrow pure {
     sapp_html5_ask_leave_site(ask);
 }
-/// HTML5: get byte size of a dropped file
-extern(C) uint sapp_html5_get_dropped_file_size(int) @system @nogc nothrow;
-/// HTML5: get byte size of a dropped file
-uint html5GetDroppedFileSize(int index) @trusted @nogc nothrow {
+/++
++ HTML5: get byte size of a dropped file
++/
+extern(C) uint sapp_html5_get_dropped_file_size(int index) @system @nogc nothrow pure;
+uint html5GetDroppedFileSize(int index) @trusted @nogc nothrow pure {
     return sapp_html5_get_dropped_file_size(index);
 }
-/// HTML5: asynchronously load the content of a dropped file
-extern(C) void sapp_html5_fetch_dropped_file(const Html5FetchRequest *) @system @nogc nothrow;
-/// HTML5: asynchronously load the content of a dropped file
-void html5FetchDroppedFile(scope ref Html5FetchRequest request) @trusted @nogc nothrow {
+/++
++ HTML5: asynchronously load the content of a dropped file
++/
+extern(C) void sapp_html5_fetch_dropped_file(const Html5FetchRequest* request) @system @nogc nothrow pure;
+void html5FetchDroppedFile(scope ref Html5FetchRequest request) @trusted @nogc nothrow pure {
     sapp_html5_fetch_dropped_file(&request);
 }
-/// Metal: get bridged pointer to Metal device object
-extern(C) const(void)* sapp_metal_get_device() @system @nogc nothrow;
-/// Metal: get bridged pointer to Metal device object
-scope const(void)* metalGetDevice() @trusted @nogc nothrow {
+/++
++ Metal: get bridged pointer to Metal device object
++/
+extern(C) const(void)* sapp_metal_get_device() @system @nogc nothrow pure;
+const(void)* metalGetDevice() @trusted @nogc nothrow pure {
     return sapp_metal_get_device();
 }
-/// Metal: get bridged pointer to MTKView's current drawable of type CAMetalDrawable
-extern(C) const(void)* sapp_metal_get_current_drawable() @system @nogc nothrow;
-/// Metal: get bridged pointer to MTKView's current drawable of type CAMetalDrawable
-scope const(void)* metalGetCurrentDrawable() @trusted @nogc nothrow {
+/++
++ Metal: get bridged pointer to MTKView's current drawable of type CAMetalDrawable
++/
+extern(C) const(void)* sapp_metal_get_current_drawable() @system @nogc nothrow pure;
+const(void)* metalGetCurrentDrawable() @trusted @nogc nothrow pure {
     return sapp_metal_get_current_drawable();
 }
-/// Metal: get bridged pointer to MTKView's depth-stencil texture of type MTLTexture
-extern(C) const(void)* sapp_metal_get_depth_stencil_texture() @system @nogc nothrow;
-/// Metal: get bridged pointer to MTKView's depth-stencil texture of type MTLTexture
-scope const(void)* metalGetDepthStencilTexture() @trusted @nogc nothrow {
+/++
++ Metal: get bridged pointer to MTKView's depth-stencil texture of type MTLTexture
++/
+extern(C) const(void)* sapp_metal_get_depth_stencil_texture() @system @nogc nothrow pure;
+const(void)* metalGetDepthStencilTexture() @trusted @nogc nothrow pure {
     return sapp_metal_get_depth_stencil_texture();
 }
-/// Metal: get bridged pointer to MTKView's msaa-color-texture of type MTLTexture (may be null)
-extern(C) const(void)* sapp_metal_get_msaa_color_texture() @system @nogc nothrow;
-/// Metal: get bridged pointer to MTKView's msaa-color-texture of type MTLTexture (may be null)
-scope const(void)* metalGetMsaaColorTexture() @trusted @nogc nothrow {
+/++
++ Metal: get bridged pointer to MTKView's msaa-color-texture of type MTLTexture (may be null)
++/
+extern(C) const(void)* sapp_metal_get_msaa_color_texture() @system @nogc nothrow pure;
+const(void)* metalGetMsaaColorTexture() @trusted @nogc nothrow pure {
     return sapp_metal_get_msaa_color_texture();
 }
-/// macOS: get bridged pointer to macOS NSWindow
-extern(C) const(void)* sapp_macos_get_window() @system @nogc nothrow;
-/// macOS: get bridged pointer to macOS NSWindow
-scope const(void)* macosGetWindow() @trusted @nogc nothrow {
+/++
++ macOS: get bridged pointer to macOS NSWindow
++/
+extern(C) const(void)* sapp_macos_get_window() @system @nogc nothrow pure;
+const(void)* macosGetWindow() @trusted @nogc nothrow pure {
     return sapp_macos_get_window();
 }
-/// iOS: get bridged pointer to iOS UIWindow
-extern(C) const(void)* sapp_ios_get_window() @system @nogc nothrow;
-/// iOS: get bridged pointer to iOS UIWindow
-scope const(void)* iosGetWindow() @trusted @nogc nothrow {
+/++
++ iOS: get bridged pointer to iOS UIWindow
++/
+extern(C) const(void)* sapp_ios_get_window() @system @nogc nothrow pure;
+const(void)* iosGetWindow() @trusted @nogc nothrow pure {
     return sapp_ios_get_window();
 }
-/// D3D11: get pointer to ID3D11Device object
-extern(C) const(void)* sapp_d3d11_get_device() @system @nogc nothrow;
-/// D3D11: get pointer to ID3D11Device object
-scope const(void)* d3d11GetDevice() @trusted @nogc nothrow {
+/++
++ D3D11: get pointer to ID3D11Device object
++/
+extern(C) const(void)* sapp_d3d11_get_device() @system @nogc nothrow pure;
+const(void)* d3d11GetDevice() @trusted @nogc nothrow pure {
     return sapp_d3d11_get_device();
 }
-/// D3D11: get pointer to ID3D11DeviceContext object
-extern(C) const(void)* sapp_d3d11_get_device_context() @system @nogc nothrow;
-/// D3D11: get pointer to ID3D11DeviceContext object
-scope const(void)* d3d11GetDeviceContext() @trusted @nogc nothrow {
+/++
++ D3D11: get pointer to ID3D11DeviceContext object
++/
+extern(C) const(void)* sapp_d3d11_get_device_context() @system @nogc nothrow pure;
+const(void)* d3d11GetDeviceContext() @trusted @nogc nothrow pure {
     return sapp_d3d11_get_device_context();
 }
-/// D3D11: get pointer to IDXGISwapChain object
-extern(C) const(void)* sapp_d3d11_get_swap_chain() @system @nogc nothrow;
-/// D3D11: get pointer to IDXGISwapChain object
-scope const(void)* d3d11GetSwapChain() @trusted @nogc nothrow {
+/++
++ D3D11: get pointer to IDXGISwapChain object
++/
+extern(C) const(void)* sapp_d3d11_get_swap_chain() @system @nogc nothrow pure;
+const(void)* d3d11GetSwapChain() @trusted @nogc nothrow pure {
     return sapp_d3d11_get_swap_chain();
 }
-/// D3D11: get pointer to ID3D11RenderTargetView object for rendering
-extern(C) const(void)* sapp_d3d11_get_render_view() @system @nogc nothrow;
-/// D3D11: get pointer to ID3D11RenderTargetView object for rendering
-scope const(void)* d3d11GetRenderView() @trusted @nogc nothrow {
+/++
++ D3D11: get pointer to ID3D11RenderTargetView object for rendering
++/
+extern(C) const(void)* sapp_d3d11_get_render_view() @system @nogc nothrow pure;
+const(void)* d3d11GetRenderView() @trusted @nogc nothrow pure {
     return sapp_d3d11_get_render_view();
 }
-/// D3D11: get pointer ID3D11RenderTargetView object for msaa-resolve (may return null)
-extern(C) const(void)* sapp_d3d11_get_resolve_view() @system @nogc nothrow;
-/// D3D11: get pointer ID3D11RenderTargetView object for msaa-resolve (may return null)
-scope const(void)* d3d11GetResolveView() @trusted @nogc nothrow {
+/++
++ D3D11: get pointer ID3D11RenderTargetView object for msaa-resolve (may return null)
++/
+extern(C) const(void)* sapp_d3d11_get_resolve_view() @system @nogc nothrow pure;
+const(void)* d3d11GetResolveView() @trusted @nogc nothrow pure {
     return sapp_d3d11_get_resolve_view();
 }
-/// D3D11: get pointer ID3D11DepthStencilView
-extern(C) const(void)* sapp_d3d11_get_depth_stencil_view() @system @nogc nothrow;
-/// D3D11: get pointer ID3D11DepthStencilView
-scope const(void)* d3d11GetDepthStencilView() @trusted @nogc nothrow {
+/++
++ D3D11: get pointer ID3D11DepthStencilView
++/
+extern(C) const(void)* sapp_d3d11_get_depth_stencil_view() @system @nogc nothrow pure;
+const(void)* d3d11GetDepthStencilView() @trusted @nogc nothrow pure {
     return sapp_d3d11_get_depth_stencil_view();
 }
-/// Win32: get the HWND window handle
-extern(C) const(void)* sapp_win32_get_hwnd() @system @nogc nothrow;
-/// Win32: get the HWND window handle
-scope const(void)* win32GetHwnd() @trusted @nogc nothrow {
+/++
++ Win32: get the HWND window handle
++/
+extern(C) const(void)* sapp_win32_get_hwnd() @system @nogc nothrow pure;
+const(void)* win32GetHwnd() @trusted @nogc nothrow pure {
     return sapp_win32_get_hwnd();
 }
-/// WebGPU: get WGPUDevice handle
-extern(C) const(void)* sapp_wgpu_get_device() @system @nogc nothrow;
-/// WebGPU: get WGPUDevice handle
-scope const(void)* wgpuGetDevice() @trusted @nogc nothrow {
+/++
++ WebGPU: get WGPUDevice handle
++/
+extern(C) const(void)* sapp_wgpu_get_device() @system @nogc nothrow pure;
+const(void)* wgpuGetDevice() @trusted @nogc nothrow pure {
     return sapp_wgpu_get_device();
 }
-/// WebGPU: get swapchain's WGPUTextureView handle for rendering
-extern(C) const(void)* sapp_wgpu_get_render_view() @system @nogc nothrow;
-/// WebGPU: get swapchain's WGPUTextureView handle for rendering
-scope const(void)* wgpuGetRenderView() @trusted @nogc nothrow {
+/++
++ WebGPU: get swapchain's WGPUTextureView handle for rendering
++/
+extern(C) const(void)* sapp_wgpu_get_render_view() @system @nogc nothrow pure;
+const(void)* wgpuGetRenderView() @trusted @nogc nothrow pure {
     return sapp_wgpu_get_render_view();
 }
-/// WebGPU: get swapchain's MSAA-resolve WGPUTextureView (may return null)
-extern(C) const(void)* sapp_wgpu_get_resolve_view() @system @nogc nothrow;
-/// WebGPU: get swapchain's MSAA-resolve WGPUTextureView (may return null)
-scope const(void)* wgpuGetResolveView() @trusted @nogc nothrow {
+/++
++ WebGPU: get swapchain's MSAA-resolve WGPUTextureView (may return null)
++/
+extern(C) const(void)* sapp_wgpu_get_resolve_view() @system @nogc nothrow pure;
+const(void)* wgpuGetResolveView() @trusted @nogc nothrow pure {
     return sapp_wgpu_get_resolve_view();
 }
-/// WebGPU: get swapchain's WGPUTextureView for the depth-stencil surface
-extern(C) const(void)* sapp_wgpu_get_depth_stencil_view() @system @nogc nothrow;
-/// WebGPU: get swapchain's WGPUTextureView for the depth-stencil surface
-scope const(void)* wgpuGetDepthStencilView() @trusted @nogc nothrow {
+/++
++ WebGPU: get swapchain's WGPUTextureView for the depth-stencil surface
++/
+extern(C) const(void)* sapp_wgpu_get_depth_stencil_view() @system @nogc nothrow pure;
+const(void)* wgpuGetDepthStencilView() @trusted @nogc nothrow pure {
     return sapp_wgpu_get_depth_stencil_view();
 }
-/// GL: get framebuffer object
-extern(C) uint sapp_gl_get_framebuffer() @system @nogc nothrow;
-/// GL: get framebuffer object
-uint glGetFramebuffer() @trusted @nogc nothrow {
+/++
++ GL: get framebuffer object
++/
+extern(C) uint sapp_gl_get_framebuffer() @system @nogc nothrow pure;
+uint glGetFramebuffer() @trusted @nogc nothrow pure {
     return sapp_gl_get_framebuffer();
 }
-/// GL: get major version
-extern(C) int sapp_gl_get_major_version() @system @nogc nothrow;
-/// GL: get major version
-int glGetMajorVersion() @trusted @nogc nothrow {
+/++
++ GL: get major version
++/
+extern(C) int sapp_gl_get_major_version() @system @nogc nothrow pure;
+int glGetMajorVersion() @trusted @nogc nothrow pure {
     return sapp_gl_get_major_version();
 }
-/// GL: get minor version
-extern(C) int sapp_gl_get_minor_version() @system @nogc nothrow;
-/// GL: get minor version
-int glGetMinorVersion() @trusted @nogc nothrow {
+/++
++ GL: get minor version
++/
+extern(C) int sapp_gl_get_minor_version() @system @nogc nothrow pure;
+int glGetMinorVersion() @trusted @nogc nothrow pure {
     return sapp_gl_get_minor_version();
 }
-/// GL: return true if the context is GLES
-extern(C) bool sapp_gl_is_gles() @system @nogc nothrow;
-/// GL: return true if the context is GLES
-bool glIsGles() @trusted @nogc nothrow {
+/++
++ GL: return true if the context is GLES
++/
+extern(C) bool sapp_gl_is_gles() @system @nogc nothrow pure;
+bool glIsGles() @trusted @nogc nothrow pure {
     return sapp_gl_is_gles();
 }
-/// X11: get Window
-extern(C) const(void)* sapp_x11_get_window() @system @nogc nothrow;
-/// X11: get Window
-scope const(void)* x11GetWindow() @trusted @nogc nothrow {
+/++
++ X11: get Window
++/
+extern(C) const(void)* sapp_x11_get_window() @system @nogc nothrow pure;
+const(void)* x11GetWindow() @trusted @nogc nothrow pure {
     return sapp_x11_get_window();
 }
-/// X11: get Display
-extern(C) const(void)* sapp_x11_get_display() @system @nogc nothrow;
-/// X11: get Display
-scope const(void)* x11GetDisplay() @trusted @nogc nothrow {
+/++
++ X11: get Display
++/
+extern(C) const(void)* sapp_x11_get_display() @system @nogc nothrow pure;
+const(void)* x11GetDisplay() @trusted @nogc nothrow pure {
     return sapp_x11_get_display();
 }
-/// Android: get native activity handle
-extern(C) const(void)* sapp_android_get_native_activity() @system @nogc nothrow;
-/// Android: get native activity handle
-scope const(void)* androidGetNativeActivity() @trusted @nogc nothrow {
+/++
++ Android: get native activity handle
++/
+extern(C) const(void)* sapp_android_get_native_activity() @system @nogc nothrow pure;
+const(void)* androidGetNativeActivity() @trusted @nogc nothrow pure {
     return sapp_android_get_native_activity();
 }
