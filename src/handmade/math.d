@@ -14,50 +14,20 @@ extern (C):
 
 version (WebAssembly)
 {
-    /** Approximate value of pi*/
-    enum PI = 3.14159265358979323846264338327950288419716939937510;
-
-    /** Cosine function from Zig standard library */
-    double zig_cos(double value) @nogc nothrow @trusted;
-
-    /** Floor function from Zig standard library */
-    double zig_floor(double value) @nogc nothrow @trusted;
-
-    /** Sine function from Zig standard library */
-    double zig_sin(double value) @nogc nothrow @trusted;
-
-    /** Square root function for size_t from Zig standard library */
-    double zig_sqrt(size_t value) @nogc nothrow @trusted;
-
-    /** Square root function for floating point from Zig standard library */
-    double zig_sqrtf(double value) @nogc nothrow @trusted;
-
-    /** Tangent function from Zig standard library */
-    double zig_tan(double value) @nogc nothrow @trusted;
-
-    alias cos = zig_cos;
-    alias floor = zig_floor;
-    alias sin = zig_sin;
-    alias tan = zig_tan;
-
-    /** Generic square root function */
-    auto sqrt(T)(T value)
+    debug
     {
-        static if (is(T == double) || is(T == float))
-        {
-            return zig_sqrtf(value);
-        }
-        else
-        {
-            return zig_sqrt(value);
-        }
+        import emscripten.assertd;
     }
+    pure nothrow @nogc double floor(double x);
+    pure nothrow @nogc double sqrt(double x);
+    pure nothrow @nogc double cos(double x);
+    pure nothrow @nogc double sin(double x);
+    pure nothrow @nogc double tan(double x);
 }
 else
-{
     public import core.stdc.math : sqrt, cos, sin, tan, floor;
-    public import std.math : PI;
-}
+
+enum PI = 3.14159265358979323846;
 
 /** 2D Vector structure with x and y coordinates */
 struct Vec2
@@ -282,52 +252,55 @@ float radians(float deg) @nogc nothrow
     return deg * (PI / 180.0);
 }
 
-unittest
+version (unittest)
 {
-    import std.math : isClose;
-
-    // Vec3.zero test
+    unittest
     {
-        auto v = Vec3.zero();
-        assert(v.x.isClose(0.0));
-        assert(v.y.isClose(0.0));
-        assert(v.z.isClose(0.0));
-    }
+        import std.math : isClose;
 
-}
-
-unittest
-{
-    import std.math : isClose;
-
-    // Vec3.new test
-    {
-        auto v = Vec3(1.0, 2.0, 3.0);
-        assert(v.x.isClose(1.0));
-        assert(v.y.isClose(2.0));
-        assert(v.z.isClose(3.0));
-    }
-
-}
-
-unittest
-{
-    import std.math : isClose;
-
-    // Mat4.identity test
-    {
-        auto m = Mat4.identity();
-        foreach (i; 0 .. 4)
+        // Vec3.zero test
         {
-            foreach (j; 0 .. 4)
+            auto v = Vec3.zero();
+            assert(v.x.isClose(0.0));
+            assert(v.y.isClose(0.0));
+            assert(v.z.isClose(0.0));
+        }
+
+    }
+
+    unittest
+    {
+        import std.math : isClose;
+
+        // Vec3.new test
+        {
+            auto v = Vec3(1.0, 2.0, 3.0);
+            assert(v.x.isClose(1.0));
+            assert(v.y.isClose(2.0));
+            assert(v.z.isClose(3.0));
+        }
+
+    }
+
+    unittest
+    {
+        import std.math : isClose;
+
+        // Mat4.identity test
+        {
+            auto m = Mat4.identity();
+            foreach (i; 0 .. 4)
             {
-                if (i == j)
+                foreach (j; 0 .. 4)
                 {
-                    assert(m.m[i][j].isClose(1.0));
-                }
-                else
-                {
-                    assert(m.m[i][j].isClose(0.0));
+                    if (i == j)
+                    {
+                        assert(m.m[i][j].isClose(1.0));
+                    }
+                    else
+                    {
+                        assert(m.m[i][j].isClose(0.0));
+                    }
                 }
             }
         }

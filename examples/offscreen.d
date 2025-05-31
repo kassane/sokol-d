@@ -14,7 +14,7 @@ import log = sokol.log;
 import handmade.math : Mat4, Vec3;
 import sglue = sokol.glue;
 import sshape = sokol.shape;
-import shd = examples.shaders.offscreen;
+import shd = shaders.offscreen;
 
 extern (C):
 @safe:
@@ -247,4 +247,12 @@ void main()
     };
     app.run(runner);
     // dfmt on
+}
+
+version (WebAssembly)
+{
+    debug
+    {
+        import emscripten.assertd;
+    }
 }

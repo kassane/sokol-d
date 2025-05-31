@@ -131,3 +131,11 @@ RGB computeColor(float t)
     };
     return rgb;
 }
+
+version (WebAssembly)
+{
+    debug
+    {
+        import emscripten.assertd;
+    }
+}

@@ -13,7 +13,7 @@ import sapp = sokol.app;
 import sfetch = sokol.fetch;
 import simgui = sokol.imgui;
 import log = sokol.log;
-import imgui;
+import imgui.cimgui;
 
 enum MAX_FILE_SIZE = 1024 * 1024;
 
@@ -253,5 +253,13 @@ else
         {
             state.load_state = LoadState.Failed;
         }
+    }
+}
+
+version (WebAssembly)
+{
+    debug
+    {
+        import emscripten.assertd;
     }
 }

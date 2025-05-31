@@ -12,7 +12,7 @@ import sg = sokol.gfx;
 import app = sokol.app;
 import log = sokol.log;
 import sglue = sokol.glue;
-import shd = examples.shaders.bufferoffsets;
+import shd = shaders.bufferoffsets;
 
 extern (C):
 @safe:
@@ -129,3 +129,11 @@ void main()
     app.run(runner);
 }
 // dfmt on
+
+version (WebAssembly)
+{
+    debug
+    {
+        import emscripten.assertd;
+    }
+}

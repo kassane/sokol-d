@@ -14,6 +14,9 @@
 # Executables
 *.exe
 
+*.zip
+*.tar*
+
 # DUB
 .dub
 docs.json
@@ -21,12 +24,15 @@ __dummy.html
 docs/
 *.selections.json
 build/
+build
+web/
+sokol-d
 
 # Code coverage
 *.lst
 
-# Zig build
-*zig-*/
+# hidden folder
+.*/
 
-# VScode
-.vscode/
+# vendor
+vendor/
