@@ -1,13 +1,16 @@
-// machine generated, do not edit
-
+/++
+ * Machine generated D bindings for Sokol library.     Generated on: 2025-05-31
+ *  * 18:02:08     Source header: sokol_glue.h     Module: sokol.glue     Do not
+ *  * edit manually; regenerate using gen_d.py.
+ +/
 module sokol.glue;
 import sg = sokol.gfx;
 
-extern(C) sg.Environment sglue_environment() @system @nogc nothrow;
-sg.Environment environment() @trusted @nogc nothrow {
+extern(C) sg.Environment sglue_environment() @system @nogc nothrow pure;
+sg.Environment environment() @trusted @nogc nothrow pure {
     return sglue_environment();
 }
-extern(C) sg.Swapchain sglue_swapchain() @system @nogc nothrow;
-sg.Swapchain swapchain() @trusted @nogc nothrow {
+extern(C) sg.Swapchain sglue_swapchain() @system @nogc nothrow pure;
+sg.Swapchain swapchain() @trusted @nogc nothrow pure {
     return sglue_swapchain();
 }
