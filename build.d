@@ -1,7 +1,7 @@
 /*
 zlib/libpng license
 
-Copyright (c) 2023-2024 Matheus Catarino França <matheus-catarino@hotmail.com>
+Copyright (c) 2023-2025 Matheus Catarino França <matheus-catarino@hotmail.com>
 
 This software is provided 'as-is', without any express or implied warranty.
 In no event will the authors be held liable for any damages arising from the
@@ -11,317 +11,222 @@ module build;
 
 import std;
 
-// Versions for dependencies
+// Dependency versions
 enum emsdk_version = "4.0.9";
 enum imgui_version = "1.91.9";
 
 void main(string[] args) @safe
 {
-    // Parse command line arguments
-    bool help = false;
-    bool verbose = false;
-    string compiler;
-    string target;
-    string optimize = "debug";
-    SokolBackend sokol_backend;
-    bool downloadEmsdk = false, downloadIMGUI = false, downloadSHDC = false;
-    string sokolEnv = environment.get("SOKOL_ROOTPATH", getcwd);
-    string vendorPath = absolutePath(buildPath(sokolEnv, "vendor"));
-    bool link = false;
-    string linkExample;
-    bool run = false;
-    string runExample;
-    // backend options
-    bool opt_use_x11 = true;
-    bool opt_use_wayland = false;
-    bool opt_use_egl = false;
-    bool opt_with_sokol_imgui = false;
-
-    foreach (arg; args[1 .. $])
+    // Command-line options
+    struct Options
     {
-        if (arg == "--help")
-            help = true;
-        else if (arg == "--verbose")
-            verbose = true;
-        else if (arg.startsWith("--backend="))
-            sokol_backend = resolveSokolBackend(
-                arg["--backend=".length .. $].to!SokolBackend, target);
-        else if (arg.startsWith("--toolchain="))
-            compiler = findProgram(arg["--toolchain=".length .. $]);
-        else if (arg.startsWith("--optimize="))
-            optimize = arg["--optimize=".length .. $];
-        else if (arg.startsWith("--target="))
-            target = arg["--target=".length .. $];
-        else if (arg == "--download-emsdk")
-            downloadEmsdk = true;
-        else if (arg == "--download-imgui")
-            downloadIMGUI = true;
-        else if (arg == "--download-sokol-tools")
-            downloadSHDC = true;
-        else if (arg.startsWith("--link="))
-        {
-            link = true;
-            linkExample = arg["--link=".length .. $];
-        }
-        else if (arg.startsWith("--run="))
-        {
-            run = true;
-            runExample = arg["--run=".length .. $];
-        }
-        else if (arg == "--with-sokol-imgui")
-            opt_with_sokol_imgui = true;
+        bool help, verbose, downloadEmsdk, downloadImgui, downloadShdc;
+        string compiler, target = defaultTarget, optimize = "debug", linkExample, runExample, linkage = "static";
+        SokolBackend backend;
+        bool useX11 = true, useWayland, useEgl, withSokolImgui;
     }
 
-    if (args.length < 2 || help)
+    Options opts;
+    immutable sokolRoot = environment.get("SOKOL_ROOTPATH", getcwd);
+    immutable vendorPath = absolutePath(buildPath(sokolRoot, "vendor"));
+    immutable sokolSrcPath = absolutePath(buildPath(sokolRoot, "src", "sokol", "c"));
+
+    // Parse arguments
+    foreach (arg; args[1 .. $])
+        with (opts) switch (arg)
     {
-        writeln("Usage: build [options]");
-        writeln("Options:");
-        writeln("  --help                   Show this help message");
-        writeln("  --verbose                Enable verbose output for compiler commands");
-        writeln("  --backend=<backend>      Select backend (d3d11, metal, glcore, gles3, wgpu)");
-        writeln("  --toolchain=<compiler>   Select C toolchain (gcc, clang, emcc)");
-        writeln("  --optimize=<level>       Select optimization level (debug, release)");
-        writeln("  --target=<target>        Select target (native, wasm, android)");
-        writeln("  --download-emsdk         Download and setup Emscripten SDK");
-        writeln("  --download-imgui         Download and build imgui");
-        writeln("  --download-sokol-tools   Download and setup sokol-tools");
-        writeln("  --link=<example>         Link WASM example (e.g., triangle, cube)");
-        writeln("  --run=<example>          Run WASM example HTML (e.g., triangle, cube)");
-        writeln("  --with-sokol-imgui       Enable sokol_imgui integration");
+    case "--help":
+        help = true;
+        break;
+    case "--verbose":
+        verbose = true;
+        break;
+    case "--download-emsdk":
+        downloadEmsdk = true;
+        break;
+    case "--download-imgui":
+        downloadImgui = true;
+        break;
+    case "--download-sokol-tools":
+        downloadShdc = true;
+        break;
+    case "--with-sokol-imgui":
+        withSokolImgui = true;
+        break;
+    default:
+        if (arg.startsWith("--backend="))
+            backend = arg[10 .. $].to!SokolBackend;
+        else if (arg.startsWith("--toolchain="))
+            compiler = findProgram(arg[12 .. $]);
+        else if (arg.startsWith("--optimize="))
+            optimize = arg[11 .. $];
+        else if (arg.startsWith("--target="))
+            target = arg[9 .. $];
+        else if (arg.startsWith("--link="))
+            linkExample = arg[7 .. $];
+        else if (arg.startsWith("--run="))
+            runExample = arg[6 .. $];
+        else if (arg.startsWith("--linkage="))
+        {
+            linkage = arg[10 .. $];
+            if (!["static", "dynamic"].canFind(linkage))
+                throw new Exception("Invalid linkage: use static or dynamic");
+        }
+        else
+            throw new Exception("Unknown argument: " ~ arg);
+        break;
+    }
+
+    if (args.length < 2 || opts.help)
+    {
+        writeln("Usage: build [options]\nOptions:");
+        writeln("  --help                Show this help message");
+        writeln("  --verbose             Enable verbose output");
+        writeln("  --backend=<backend>   Select backend (d3d11, metal, glcore, gles3, wgpu)");
+        writeln("  --toolchain=<compiler> Select C toolchain (e.g., gcc, clang, emcc)");
+        writeln("  --optimize=<level>    Select optimization level (debug, release, small)");
+        writeln("  --target=<target>     Select target (native, wasm, android)");
+        writeln(
+            "  --linkage=<type>      Specify library linkage (static or dynamic, default: static)");
+        writeln("  --download-emsdk      Download Emscripten SDK");
+        writeln("  --download-imgui      Download ImGui");
+        writeln("  --download-sokol-tools Download sokol-tools");
+        writeln("  --link=<example>      Link WASM example (e.g., triangle)");
+        writeln("  --run=<example>       Run WASM example (e.g., triangle)");
+        writeln("  --with-sokol-imgui    Enable sokol_imgui integration");
         return;
     }
 
-    if (!link && !run)
+    if (opts.backend == SokolBackend._auto)
+        opts.backend = resolveSokolBackend(opts.backend, opts.target);
+
+    if (!opts.linkExample && !opts.runExample)
     {
-        writeln("Current configuration:");
-        writeln("Using target: ", target);
-        writeln("Using optimize: ", optimize);
-        writeln("Using backend: ", sokol_backend);
-        writeln("Get imgui-libs: ", downloadIMGUI);
-        writeln("Get sokol-tools: ", downloadSHDC);
-        writeln("Get Emscripten: ", downloadEmsdk);
-        writeln("Verbose mode: ", verbose);
+        writeln("Configuration:");
+        writeln("  Target: ", opts.target, ", Optimize: ", opts.optimize, ", Backend: ", opts
+                .backend);
+        writeln("  Linkage: ", opts.linkage);
+        writeln("  Download: Emscripten=", opts.downloadEmsdk, ", ImGui=", opts.downloadImgui, ", Sokol-tools=", opts
+                .downloadShdc);
+        writeln("  Verbose: ", opts.verbose);
     }
 
-    // Download and setup dependencies
-    if (downloadEmsdk || target.canFind("wasm"))
+    // Setup dependencies
+    if (opts.downloadEmsdk || opts.target.canFind("wasm"))
         getEmSDK(vendorPath);
-    if (downloadIMGUI || opt_with_sokol_imgui)
+    if (opts.downloadImgui || opts.withSokolImgui)
         getIMGUI(vendorPath);
 
-    if (downloadSHDC)
+    // Execute build steps
+    if (opts.downloadShdc)
         buildShaders(vendorPath);
-    else if (link)
+    else if (opts.linkExample)
     {
-        // Link WASM example
-        EmLinkOptions linkOptions = {
+        EmLinkOptions linkOpts = {
             target: "wasm",
-            optimize: optimize,
-            lib_main: buildPath("build", "lib" ~ linkExample ~ ".a"),
+            optimize: opts.optimize,
+            lib_main: buildPath("build", "lib" ~ opts.linkExample ~ ".a"),
             vendor: vendorPath,
-            backend: sokol_backend,
+            backend: opts.backend,
             use_emmalloc: true,
-            use_imgui: opt_with_sokol_imgui,
+            use_imgui: opts.withSokolImgui,
             use_filesystem: false,
-            shell_file_path: absolutePath(buildPath(sokolEnv, "src", "sokol", "web", "shell.html")),
+            shell_file_path: absolutePath(buildPath(sokolRoot, "src", "sokol", "web", "shell.html")),
             extra_args: [
-                "-L" ~ absolutePath(buildPath(sokolEnv, "build")),
-                "-lsokol", "-lsokold"
+                "-L" ~ absolutePath(buildPath(sokolRoot, "build")), "-lsokol"
             ],
-            verbose: verbose
+            verbose: opts.verbose
         };
-        emLinkStep(linkOptions);
+        emLinkStep(linkOpts);
     }
-    else if (run)
+    else if (opts.runExample)
     {
-        // Run WASM example
-        EmRunOptions runOptions = {name: runExample,
-        vendor: vendorPath};
-        emRunStep(runOptions);
+        emRunStep(EmRunOptions(opts.runExample, vendorPath, opts.verbose));
     }
     else
     {
-        // Build libsokol
-        LibSokolOptions options = {
-            target: target,
-            optimize: optimize,
-            toolchain: compiler,
-            backend: sokol_backend,
-            use_wayland: opt_use_wayland,
-            use_x11: opt_use_x11,
-            use_egl: opt_use_egl,
-            with_sokol_imgui: opt_with_sokol_imgui,
-            verbose: verbose,
+        LibSokolOptions libOpts = {
+            target: opts.target,
+            optimize: opts.optimize,
+            toolchain: opts.compiler,
             vendor: vendorPath,
+            sokolSrcPath: sokolSrcPath,
+            backend: opts.backend,
+            use_x11: opts.useX11,
+            use_wayland: opts.useWayland,
+            use_egl: opts.useEgl,
+            with_sokol_imgui: opts.withSokolImgui,
+            linkageStatic: opts.target.canFind("wasm") ? true : opts.linkage == "static",
+            verbose: opts.verbose
         };
         //FIXME: enable in all targets
-        if (target.canFind("wasm"))
-            buildLibSokol(options);
+        if (opts.target.canFind("wasm"))
+            buildLibSokol(libOpts);
     }
 }
 
-void getEmSDK(ref string vendor) @safe
+// Dependency management
+void getEmSDK(string vendor) @safe
 {
-    writeln("Downloading and setting up Emscripten SDK");
-    string rootpath = absolutePath(buildPath(vendor, "emsdk"));
-    string filename = "emsdk.zip";
-
-    scope (exit)
-    {
-        if (exists(filename))
-            remove(filename);
-    }
-
-    if (!exists(rootpath))
-    {
-        if (!exists(filename))
-            download(fmt("https://github.com/emscripten-core/emsdk/archive/refs/tags/%s.zip", emsdk_version), filename);
-        extractZip(filename, rootpath);
-    }
-
-    writeln("Emscripten SDK path: ", rootpath);
-    emSdkSetupStep(rootpath);
+    downloadAndExtract("Emscripten SDK", vendor, "emsdk",
+        format("https://github.com/emscripten-core/emsdk/archive/refs/tags/%s.zip", emsdk_version),
+        (path) => emSdkSetupStep(path));
 }
 
-void getIMGUI(ref string vendor) @safe
+void getIMGUI(string vendor) @safe
 {
-    writeln("Downloading IMGUI");
-    string rootpath = absolutePath(buildPath(vendor, "imgui"));
-    string filename = "imgui.zip";
-
-    scope (exit)
-    {
-        if (exists(filename))
-            remove(filename);
-    }
-
-    if (!exists(rootpath))
-    {
-        download(fmt("https://github.com/floooh/dcimgui/archive/refs/tags/v%s.zip", imgui_version), filename);
-        extractZip(filename, rootpath);
-    }
-    writeln("rootpath: ", rootpath);
+    downloadAndExtract("ImGui", vendor, "imgui",
+        format("https://github.com/floooh/dcimgui/archive/refs/tags/v%s.zip", imgui_version));
 }
 
-string getSHDC(ref string vendor) @safe
+void buildShaders(string vendor) @safe
 {
-    writeln("Downloading and setting up sokol-tools");
-    immutable string rootpath = absolutePath(buildPath(vendor, "shdc"));
-    immutable string filename = "shdc.zip";
+    immutable shdcPath = getSHDC(vendor);
+    immutable shadersDir = "examples/shaders";
+    immutable shaders = [
+        "triangle", "bufferoffsets", "cube", "instancing", "mrt",
+        "noninterleaved", "offscreen", "quad", "shapes", "texcube", "blend"
+    ];
 
-    if (!exists(rootpath))
-        download("https://github.com/floooh/sokol-tools-bin/archive/refs/heads/master.zip", filename);
-    else if (exists(filename))
-        scope (exit)
-            remove(filename);
-
-    if (!exists(rootpath))
-        extractZip(filename, rootpath);
-
-    version (Windows)
-        immutable string ext = ".bat";
+    version (OSX)
+        enum glsl = "glsl410";
     else
-        immutable string ext = "";
+        enum glsl = "glsl430";
+    immutable slang = glsl ~ ":metal_macos:hlsl5:glsl300es:wgsl";
 
-    writeln("rootpath: ", rootpath);
-    return rootpath;
+    version (Posix)
+        executeOrFail(["chmod", "+x", shdcPath], "Failed to set shader permissions", true);
+
+    foreach (shader; shaders)
+        executeOrFail([
+        shdcPath, "-i", buildPath(shadersDir, shader ~ ".glsl"),
+        "-o", buildPath(shadersDir, shader ~ ".d"), "-l", slang, "-f", "sokol_d"
+    ], "Shader compilation failed for " ~ shader, true);
 }
 
-void extractTarXZ(string tarFile, string destination) @safe
+// Download and extract utility
+void downloadAndExtract(string name, string vendor, string dir, string url, void delegate(string) @safe postExtract = null) @safe
 {
-    if (exists(destination))
-        rmdirRecurse(destination);
+    writeln("Setting up ", name);
+    string path = absolutePath(buildPath(vendor, dir));
+    string file = dir ~ ".zip";
+    scope (exit)
+        if (exists(file))
+            remove(file);
 
-    mkdirRecurse(destination);
-    auto pid = spawnProcess([
-        "tar", "xf", tarFile, fmt("--directory=%s", destination)
-    ]);
-    enforce(pid.wait() == 0, "Extraction failed");
-}
-
-void extractZip(string zipFile, string destination) @trusted
-{
-    ZipArchive archive = new ZipArchive(read(zipFile));
-    writeln("unpacking: ", zipFile);
-    string prefix;
-
-    if (exists(zipFile))
-        std.file.remove(zipFile);
-
-    if (exists(destination))
-        rmdirRecurse(destination);
-
-    mkdirRecurse(destination);
-
-    foreach (name, _; archive.directory)
+    if (!exists(path))
     {
-        prefix = name[0 .. $ - name.find("/").length + 1];
-        break;
+        download(url, file);
+        extractZip(file, path);
     }
-    foreach (name, am; archive.directory)
-    {
-        if (!am.expandedSize)
-            continue;
-
-        string path = buildPath(destination, chompPrefix(name, prefix));
-        auto dir = dirName(path);
-        if (!dir.empty && !dir.exists)
-            mkdirRecurse(dir);
-        archive.expand(am);
-        std.file.write(path, am.expandedData);
-    }
+    if (postExtract)
+        postExtract(path);
 }
 
-void download(string url, string fileName) @trusted
+// Core build structures
+enum SokolBackend
 {
-    auto buf = appender!(ubyte[])();
-    size_t contentLength;
-
-    auto http = HTTP(url);
-    http.method = HTTP.Method.get;
-    http.onReceiveHeader((in k, in v) {
-        if (k == "content-length")
-            contentLength = to!size_t(v);
-    });
-
-    int barWidth = 50;
-    http.onReceive((data) {
-        buf.put(data);
-        if (contentLength > 0)
-        {
-            float progress = cast(float) buf.data.length / contentLength;
-            int pos = cast(int)(barWidth * progress);
-
-            write("\r[");
-            for (int i = 0; i < barWidth; ++i)
-            {
-                if (i < pos)
-                    write("=");
-                else if (i == pos)
-                    write(">");
-                else
-                    write(" ");
-            }
-            writef("] %d%%", cast(int)(progress * 100));
-            stdout.flush();
-        }
-        return data.length;
-    });
-
-    http.dataTimeout = dur!"msecs"(0);
-    http.perform();
-    immutable sc = http.statusLine().code;
-    enforce(sc / 100 == 2 || sc == 302, fmt("HTTP request returned status code %s", sc));
-
-    auto file = File(fileName, "wb");
-    scope (success)
-        file.close();
-    file.rawWrite(buf.data);
-    writeln();
-}
-
-enum SokolBackend : ushort
-{
+    _auto,
     d3d11,
     metal,
     glcore,
@@ -331,334 +236,280 @@ enum SokolBackend : ushort
 
 struct LibSokolOptions
 {
-    string target;
-    string optimize;
-    string toolchain;
+    string target, optimize, toolchain, vendor, sokolSrcPath;
     SokolBackend backend;
-    bool use_egl = false;
-    bool use_x11 = true;
-    bool use_wayland = false;
-    string vendor = null;
-    bool with_sokol_imgui = false;
-    bool sharedlib = false;
-    bool verbose = false; // Add verbose flag
+    bool use_egl, use_x11 = true, use_wayland, with_sokol_imgui, linkageStatic, verbose;
 }
 
-SokolBackend resolveSokolBackend(SokolBackend backend, string target) @safe
+struct EmLinkOptions
 {
-    if (target.canFind("linux"))
-        return backend.glcore;
-    else if (target.canFind("darwin"))
-        return backend.metal;
-    else if (target.canFind("windows"))
-        return backend.d3d11;
-    else if (target.canFind("wasm"))
-        return backend != SokolBackend.wgpu ? backend.gles3 : backend;
-    else if (target.canFind("android"))
-        return backend.gles3;
-    else
-    {
-        // Default to auto-detect (host)
-        version (linux)
-            return backend.glcore;
-        else version (Windows)
-            return backend.d3d11;
-        else version (OSX)
-            return backend.metal;
-        else
-            return backend;
-    }
+    string target, optimize, lib_main, vendor, shell_file_path;
+    SokolBackend backend;
+    bool release_use_closure = true, release_use_lto, use_emmalloc, use_filesystem, use_imgui, verbose;
+    string[] extra_args;
 }
 
-void buildLibSokol(LibSokolOptions options) @safe
+struct EmRunOptions
 {
-    string buildDir = absolutePath("build");
+    string name, vendor;
+    bool verbose;
+}
+
+// Build Sokol and ImGui libraries
+void buildLibSokol(LibSokolOptions opts) @safe
+{
+    immutable buildDir = absolutePath("build");
     mkdirRecurse(buildDir);
 
-    // Common compiler flags
-    string[] cflags = ["-DNDEBUG", "-DIMPL"];
-    string[] csources = [
-        "sokol_log.c", "sokol_app.c", "sokol_gfx.c", "sokol_time.c",
-        "sokol_audio.c", "sokol_gl.c", "sokol_debugtext.c", "sokol_shape.c",
-        "sokol_glue.c", "sokol_fetch.c", "sokol_memtrack.c"
+    // Compiler setup
+    string compiler = opts.toolchain ? opts.toolchain : defaultCompiler(opts.target);
+    string[] cflags = [
+        "-DNDEBUG", "-DIMPL",
+        format("-DSOKOL_%s", resolveSokolBackend(opts.backend, opts.target).to!string.toUpper)
     ];
+    string[] lflags;
 
-    // Resolve backend
-    SokolBackend backend = resolveSokolBackend(options.backend, options.target);
-    string backendCflag = "-DSOKOL_" ~ backend.to!string.toUpper;
-    cflags ~= backendCflag;
-
-    // Platform-specific configurations
-    string compiler = options.toolchain;
-    if (compiler.empty)
+    // Platform-specific flags
+    switch (opts.target)
     {
-        version (linux)
-            compiler = findProgram("gcc");
-        else version (Windows)
-            compiler = findProgram("cl");
-        else version (OSX)
-            compiler = findProgram("clang");
-        else version (Android)
-            compiler = findProgram("clang");
-        else
-            static assert(false, "Unsupported platform");
-    }
-    string[] linkFlags;
-    string[] libs;
-
-    if (options.target.canFind("darwin"))
-    {
+    case "darwin":
         cflags ~= [
             "-ObjC", "-Wall", "-Wextra", "-Wno-unused-function",
             "-Wno-return-type-c-linkage"
         ];
-        linkFlags ~= [
+        lflags ~= [
             "-framework", "Cocoa", "-framework", "QuartzCore", "-framework",
             "Foundation",
             "-framework", "MetalKit", "-framework", "Metal", "-framework",
             "AudioToolbox"
         ];
-        libs ~= "-lobjC";
-        if (compiler.empty)
-            compiler = findProgram("clang");
-    }
-    else if (options.target.canFind("linux"))
-    {
+        break;
+    case "linux":
         cflags ~= ["-Wall", "-Wextra", "-Wno-unused-function"];
-        if (options.use_egl)
+        if (opts.use_egl)
             cflags ~= "-DSOKOL_FORCE_EGL";
-        if (!options.use_x11)
+        if (!opts.use_x11)
             cflags ~= "-DSOKOL_DISABLE_X11";
-        if (!options.use_wayland)
+        if (!opts.use_wayland)
             cflags ~= "-DSOKOL_DISABLE_WAYLAND";
-        else
-            libs ~= [
-            "wayland-client", "wayland-egl", "wayland-cursor", "xkbcommon"
-        ];
-        libs ~= ["X11", "GL", "Xi", "Xcursor", "asound"];
-        if (compiler.empty)
-            compiler = findProgram("gcc");
-    }
-    else if (options.target.canFind("windows"))
-    {
+        lflags ~= opts.use_wayland ? [
+            "-lwayland-client", "-lwayland-egl", "-lwayland-cursor", "-lxkbcommon"
+        ] : [];
+        lflags ~= ["-lX11", "-lGL", "-lXi", "-lXcursor", "-lasound"];
+        break;
+    case "windows":
         cflags ~= ["/DNDEBUG", "/DIMPL", "/wd4190", "/O2"];
-        libs ~= ["dxgi", "d3d11"];
-        if (compiler.empty)
-            compiler = findProgram("cl");
-    }
-    else if (options.target.canFind("wasm"))
-    {
+        lflags ~= ["dxgi.lib", "d3d11.lib"];
+        break;
+    case "wasm":
         cflags ~= ["-fPIE"];
-        compiler = buildPath(options.vendor, "emsdk", "upstream", "emscripten", "emcc");
-        version (Windows)
-            compiler ~= ".bat";
+        compiler = buildPath(opts.vendor, "emsdk", "upstream", "emscripten", "emcc") ~ (isWindows ? ".bat"
+                : "");
+        break;
+    default:
+        break;
     }
 
-    // Add optimization flags
-    if (options.optimize == "debug" && !options.target.canFind("windows"))
-        cflags ~= "-O0";
-    else
-        cflags ~= "-O2";
+    // Optimization and dynamic library flags
+    cflags ~= opts.optimize == "debug" && !opts.target.canFind("windows") ? "-O0" : "-O2";
+    if (!opts.linkageStatic && !opts.target.canFind("wasm"))
+        cflags ~= "-fPIC";
 
-    // Handle shared library
-    if (options.sharedlib && !options.target.canFind("windows"))
+    // Compile Sokol sources
+    immutable sokolSources = [
+        "sokol_log.c", "sokol_app.c", "sokol_gfx.c", "sokol_time.c",
+        "sokol_audio.c",
+        "sokol_gl.c", "sokol_debugtext.c", "sokol_shape.c", "sokol_glue.c",
+        "sokol_fetch.c", "sokol_memtrack.c"
+    ];
+    auto sokolObjs = compileSources(sokolSources, buildDir, opts.sokolSrcPath, compiler, cflags, "sokol_", opts
+            .verbose);
+
+    // Create Sokol library
+    immutable sokolLib = buildPath(buildDir, opts.linkageStatic ? "libsokol.a" : (opts.target.canFind("darwin") ? "libsokol.dylib" : opts
+            .target.canFind("windows") ? "sokol.dll" : "libsokol.so"));
+    linkLibrary(sokolLib, sokolObjs, opts.target, opts.linkageStatic, opts.vendor, lflags, opts
+            .verbose);
+    sokolObjs.each!(obj => exists(obj) && remove(obj));
+
+    // Handle ImGui
+    if (opts.with_sokol_imgui)
     {
-        cflags ~= ["-fPIC"];
-        cflags ~= linkFlags;
-        cflags ~= libs;
-    }
+        immutable imguiRoot = absolutePath(buildPath(opts.vendor, "imgui", "src"));
+        enforce(exists(imguiRoot), "ImGui source not found. Use --download-imgui.");
 
-    // Compile Sokol C sources
-    string csrcRoot = absolutePath("src/sokol/c");
-    string[] sokolObjFiles;
-
-    foreach (csrc; csources)
-    {
-        string srcPath = buildPath(csrcRoot, csrc);
-        if (!exists(srcPath))
-            throw new Exception(fmt("Source file %s does not exist", srcPath));
-
-        string objPath = buildPath(buildDir, "sokol_" ~ csrc.baseName ~ ".o");
-        sokolObjFiles ~= objPath;
-
-        string[] sokolCompileCmd = [compiler];
-        sokolCompileCmd ~= cflags;
-        sokolCompileCmd ~= ["-c", "-o", objPath, srcPath];
-        if (options.verbose)
-            writeln("Executing: ", sokolCompileCmd.join(" "));
-        auto sokolCompileResult = execute(sokolCompileCmd);
-        enforce(sokolCompileResult.status == 0, fmt("Failed to compile %s: %s", csrc, sokolCompileResult
-                .output));
-    }
-
-    // Create libsokol.a
-    string sokolLibPath = buildPath(buildDir, "libsokol.a");
-    string arCmd = options.target.canFind("wasm") ? buildPath(options.vendor, "emsdk", "upstream", "emscripten", "emar") : "ar";
-    version (Windows)
-        if (options.target.canFind("wasm"))
-            arCmd ~= ".bat";
-        else
-            arCmd = "lib.exe";
-
-    version (Windows)
-    {
-        if (!options.target.canFind("wasm"))
-        {
-            string[] sokolArchiveCmd = [
-                arCmd, "/nologo", fmt("/OUT:%s", sokolLibPath)
-            ];
-            sokolArchiveCmd ~= sokolObjFiles;
-            if (options.verbose)
-                writeln("Executing: ", sokolArchiveCmd.join(" "));
-            auto sokolArchiveResult = execute(sokolArchiveCmd);
-            enforce(sokolArchiveResult.status == 0, fmt("Failed to create archive %s: %s", sokolLibPath, sokolArchiveResult
-                    .output));
-        }
-        else
-        {
-            string[] sokolArchiveCmd = [arCmd, "rcs", sokolLibPath];
-            sokolArchiveCmd ~= sokolObjFiles;
-            if (options.verbose)
-                writeln("Executing: ", sokolArchiveCmd.join(" "));
-            auto sokolArchiveResult = execute(sokolArchiveCmd);
-            enforce(sokolArchiveResult.status == 0, fmt("Failed to create archive %s: %s", sokolLibPath, sokolArchiveResult
-                    .output));
-        }
-    }
-    else
-    {
-        string[] sokolArchiveCmd = [arCmd, "rcs", sokolLibPath];
-        sokolArchiveCmd ~= sokolObjFiles;
-        if (options.verbose)
-            writeln("Executing: ", sokolArchiveCmd.join(" "));
-        auto sokolArchiveResult = execute(sokolArchiveCmd);
-        enforce(sokolArchiveResult.status == 0, fmt("Failed to create archive %s: %s", sokolLibPath, sokolArchiveResult
-                .output));
-    }
-
-    // Clean up Sokol object files
-    foreach (obj; sokolObjFiles)
-        if (exists(obj))
-            remove(obj);
-
-    // Handle ImGui if enabled
-    if (options.with_sokol_imgui)
-    {
-        string imguiRoot = absolutePath(buildPath(options.vendor, "imgui", "src"));
-        if (!exists(imguiRoot))
-            throw new Exception("ImGui source directory not found. Run with --download-imgui.");
-
-        string[] imguiSources = [
-            "imgui.cpp", "imgui_demo.cpp", "imgui_draw.cpp",
-            "imgui_tables.cpp", "imgui_widgets.cpp", "cimgui.cpp"
+        immutable imguiSources = [
+            "cimgui.cpp", "imgui.cpp", "imgui_demo.cpp", "imgui_draw.cpp",
+            "imgui_tables.cpp", "imgui_widgets.cpp"
         ];
-        cflags ~= fmt("-I%s", imguiRoot);
+        cflags ~= format("-I%s", imguiRoot);
 
-        string imguiCompiler;
-        if (options.target.canFind("wasm"))
-            imguiCompiler = buildPath(options.vendor, "emsdk", "upstream", "emscripten", "em++");
-        else if (compiler.canFind("clang"))
-            imguiCompiler = findProgram(compiler ~ "++");
-        else if (compiler.canFind("gcc"))
-            imguiCompiler = findProgram("g++");
-        else
-            imguiCompiler = compiler;
-
-        version (Windows)
-            if (options.target.canFind("wasm"))
-                imguiCompiler ~= ".bat";
-
-        string[] imguiObjFiles;
+        string imguiCompiler = opts.target.canFind("wasm") ? buildPath(opts.vendor, "emsdk", "upstream", "emscripten", "em++") ~ (
+            isWindows ? ".bat" : "") : compiler.canFind("clang") ? findProgram(compiler ~ "++") : compiler.canFind(
+            "gcc") ? findProgram("g++") : compiler;
 
         // Compile ImGui sources
-        foreach (src; imguiSources)
-        {
-            string srcPath = buildPath(imguiRoot, src);
-            if (!exists(srcPath))
-                throw new Exception(fmt("ImGui source file %s does not exist", srcPath));
-
-            string objPath = buildPath(buildDir, "imgui_" ~ src.baseName ~ ".o");
-            imguiObjFiles ~= objPath;
-
-            string[] imguiCompileCmd = [imguiCompiler, "-DNDEBUG"];
-            if (options.target.canFind("wasm"))
-                imguiCompileCmd ~= "-fPIE";
-            imguiCompileCmd ~= cflags; // Include Sokol cflags for consistency
-            imguiCompileCmd ~= ["-c", "-o", objPath, srcPath];
-            if (options.verbose)
-                writeln("Executing: ", imguiCompileCmd.join(" "));
-            auto imguiCompileResult = execute(imguiCompileCmd);
-            enforce(imguiCompileResult.status == 0, fmt("Failed to compile %s: %s", src, imguiCompileResult
-                    .output));
-        }
+        auto imguiObjs = compileSources(imguiSources, buildDir, imguiRoot, imguiCompiler, cflags ~ "-DNDEBUG", "imgui_", opts
+                .verbose);
 
         // Compile sokol_imgui.c
-        string srcPath = buildPath(csrcRoot, "sokol_imgui.c");
-        if (!exists(srcPath))
-            throw new Exception(fmt("Source file %s does not exist", srcPath));
+        immutable sokolImguiPath = buildPath(opts.sokolSrcPath, "sokol_imgui.c");
+        enforce(exists(sokolImguiPath), "sokol_imgui.c not found");
+        immutable sokolImguiObj = buildPath(buildDir, "sokol_imgui.o");
+        compileSource(sokolImguiPath, sokolImguiObj, compiler, cflags, opts.verbose);
+        imguiObjs ~= sokolImguiObj;
 
-        string objPath = buildPath(buildDir, "sokol_imgui.o");
-        imguiObjFiles ~= objPath;
-
-        string[] sokolImguiCompileCmd = [compiler];
-        sokolImguiCompileCmd ~= cflags;
-        sokolImguiCompileCmd ~= ["-c", "-o", objPath, srcPath];
-        if (options.verbose)
-            writeln("Executing: ", sokolImguiCompileCmd.join(" "));
-        auto sokolImguiCompileResult = execute(sokolImguiCompileCmd);
-        enforce(sokolImguiCompileResult.status == 0, fmt("Failed to compile sokol_imgui.c: %s", sokolImguiCompileResult
-                .output));
-
-        // Create libcimgui.a
-        string imguiLibPath = buildPath(buildDir, "libcimgui.a");
-
-        version (Windows)
-        {
-            if (!options.target.canFind("wasm"))
-            {
-                string[] imguiArchiveCmd = [
-                    arCmd, "/nologo", fmt("/OUT:%s", imguiLibPath)
-                ];
-                imguiArchiveCmd ~= imguiObjFiles;
-                if (options.verbose)
-                    writeln("Executing: ", imguiArchiveCmd.join(" "));
-                auto imguiArchiveResult = execute(imguiArchiveCmd);
-                enforce(imguiArchiveResult.status == 0, fmt("Failed to create archive %s: %s", imguiLibPath, imguiArchiveResult
-                        .output));
-            }
-            else
-            {
-                string[] imguiArchiveCmd = [arCmd, "rcs", imguiLibPath];
-                imguiArchiveCmd ~= imguiObjFiles;
-                if (options.verbose)
-                    writeln("Executing: ", imguiArchiveCmd.join(" "));
-                auto imguiArchiveResult = execute(imguiArchiveCmd);
-                enforce(imguiArchiveResult.status == 0, fmt("Failed to create archive %s: %s", imguiLibPath, imguiArchiveResult
-                        .output));
-            }
-        }
-        else
-        {
-            string[] imguiArchiveCmd = [arCmd, "rcs", imguiLibPath];
-            imguiArchiveCmd ~= imguiObjFiles;
-            if (options.verbose)
-                writeln("Executing: ", imguiArchiveCmd.join(" "));
-            auto imguiArchiveResult = execute(imguiArchiveCmd);
-            enforce(imguiArchiveResult.status == 0, fmt("Failed to create archive %s: %s", imguiLibPath, imguiArchiveResult
-                    .output));
-        }
-
-        // Clean up ImGui object files
-        foreach (obj; imguiObjFiles)
-            if (exists(obj))
-                remove(obj);
+        // Create ImGui library
+        immutable imguiLib = buildPath(buildDir, opts.linkageStatic ? "libcimgui.a" : (opts.target.canFind("darwin") ? "libcimgui.dylib" : opts
+                .target.canFind("windows") ? "cimgui.dll" : "libcimgui.so"));
+        linkLibrary(imguiLib, imguiObjs, opts.target, opts.linkageStatic, opts.vendor, lflags, opts
+                .verbose);
+        imguiObjs.each!(obj => exists(obj) && remove(obj));
     }
 }
 
+// Compile a single source file
+void compileSource(string srcPath, string objPath, string compiler, string[] cflags, bool verbose) @safe
+{
+    enforce(exists(srcPath), format("Source file %s does not exist", srcPath));
+    string[] cmd = [compiler] ~ cflags ~ ["-c", "-o", objPath, srcPath];
+    if (verbose)
+        writeln("Executing: ", cmd.join(" "));
+    auto result = executeShell(cmd.join(" "));
+    if (verbose && result.output.length)
+        writeln("Output:\n", result.output);
+    enforce(result.status == 0, format("Failed to compile %s: %s", srcPath, result.output));
+}
+
+// Compile multiple sources
+string[] compileSources(const(string[]) sources, string buildDir, string srcRoot, string compiler, string[] cflags, string prefix, bool verbose) @safe
+{
+    string[] objFiles;
+    foreach (src; sources)
+    {
+        immutable srcPath = buildPath(srcRoot, src);
+        immutable objPath = buildPath(buildDir, prefix ~ src.baseName ~ ".o");
+        compileSource(srcPath, objPath, compiler, cflags, verbose);
+        objFiles ~= objPath;
+    }
+    return objFiles;
+}
+
+// Link objects into a static or dynamic library
+void linkLibrary(string libPath, string[] objFiles, string target, bool linkageStatic, string vendor, string[] lflags, bool verbose) @safe
+{
+    string arCmd = target.canFind("wasm") ? buildPath(vendor, "emsdk", "upstream", "emscripten", "emar") ~ (
+        isWindows ? ".bat" : "") : isWindows ? "lib.exe" : "ar";
+    string[] cmd;
+
+    if (!linkageStatic && !target.canFind("wasm"))
+    {
+        if (target.canFind("darwin"))
+        {
+            string linker = findProgram("clang");
+            cmd = [linker, "-dynamiclib", "-o", libPath] ~ objFiles ~ lflags;
+        }
+        else if (target.canFind("windows"))
+        {
+            string linker = findProgram("cl");
+            cmd = [linker, "/LD", format("/Fe:%s", libPath)] ~ objFiles ~ lflags;
+        }
+        else // Linux
+        {
+            string linker = findProgram("gcc");
+            cmd = [linker, "-shared", "-o", libPath] ~ objFiles ~ lflags;
+        }
+    }
+    else if (isWindows && !target.canFind("wasm"))
+    {
+        cmd = [arCmd, "/nologo", format("/OUT:%s", libPath)] ~ objFiles;
+    }
+    else
+    {
+        cmd = [arCmd, "rcs", libPath] ~ objFiles;
+    }
+
+    if (verbose)
+        writeln("Executing: ", cmd.join(" "));
+    auto result = executeShell(cmd.join(" "));
+    if (verbose && result.output.length)
+        writeln("Output:\n", result.output);
+    enforce(result.status == 0, format("Failed to create %s: %s", libPath, result.output));
+}
+
+// Link WASM executable
+void emLinkStep(EmLinkOptions opts) @safe
+{
+    string emcc = buildPath(opts.vendor, "emsdk", "upstream", "emscripten", opts.use_imgui ? "em++"
+            : "emcc") ~ (isWindows ? ".bat" : "");
+    string[] cmd = [emcc];
+
+    if (opts.use_imgui)
+        cmd ~= "-lcimgui";
+    if (opts.optimize == "debug")
+        cmd ~= ["-Og", "-sSAFE_HEAP=1", "-sSTACK_OVERFLOW_CHECK=1"];
+    else
+    {
+        cmd ~= "-sASSERTIONS=0";
+        cmd ~= opts.optimize == "small" ? "-Oz" : "-O3";
+        if (opts.release_use_lto)
+            cmd ~= "-flto";
+        if (opts.release_use_closure)
+            cmd ~= ["--closure", "1"];
+    }
+
+    if (opts.backend == SokolBackend.wgpu)
+        cmd ~= "-sUSE_WEBGPU=1";
+    if (opts.backend == SokolBackend.gles3)
+        cmd ~= "-sUSE_WEBGL2=1";
+    if (!opts.use_filesystem)
+        cmd ~= "-sNO_FILESYSTEM=1";
+    if (opts.use_emmalloc)
+        cmd ~= "-sMALLOC='emmalloc'";
+    if (opts.shell_file_path)
+        cmd ~= "--shell-file=" ~ opts.shell_file_path;
+
+    cmd ~= ["-sSTACK_SIZE=512KB"] ~ opts.extra_args ~ opts.lib_main;
+    immutable baseName = opts.lib_main.baseName[3 .. $ - 2]; // Strip "lib" and ".a"
+    string outFile = buildPath("build", baseName ~ ".html");
+    cmd ~= ["-o", outFile];
+
+    if (opts.verbose)
+        writeln("Executing: ", cmd.join(" "));
+    auto result = executeShell(cmd.join(" "));
+    if (opts.verbose && result.output.length)
+        writeln("Output:\n", result.output);
+    enforce(result.status == 0, format("emcc failed: %s: %s", outFile, result.output));
+
+    string webDir = "web";
+    mkdirRecurse(webDir);
+    foreach (ext; [".html", ".wasm", ".js"])
+        copy(buildPath("build", baseName ~ ext), buildPath(webDir, baseName ~ ext));
+}
+
+// Run WASM executable
+void emRunStep(EmRunOptions opts) @safe
+{
+    string emrun = buildPath(opts.vendor, "emsdk", "upstream", "emscripten", "emrun") ~ (
+        isWindows ? ".bat" : "");
+    executeOrFail([emrun, buildPath("web", opts.name ~ ".html")], "emrun failed", opts.verbose);
+}
+
+// Setup Emscripten SDK
+void emSdkSetupStep(string emsdk) @safe
+{
+    if (!exists(buildPath(emsdk, ".emscripten")))
+    {
+        immutable cmd = buildPath(emsdk, "emsdk") ~ (isWindows ? ".bat" : "");
+        executeOrFail([!isWindows ? "bash " ~ cmd : cmd, "install", "latest"], "emsdk install failed", true);
+        executeOrFail([!isWindows ? "bash " ~ cmd : cmd, "activate", "latest"], "emsdk activate failed", true);
+    }
+}
+
+// Utility functions
 string findProgram(string programName) @safe
 {
-    string[] paths = environment.get("PATH").split(pathSeparator);
-    foreach (path; paths)
+    foreach (path; environment.get("PATH").split(pathSeparator))
     {
         string fullPath = buildPath(path, programName);
         version (Windows)
@@ -666,194 +517,158 @@ string findProgram(string programName) @safe
         if (exists(fullPath) && isFile(fullPath))
             return fullPath;
     }
-    return programName; // Return the program name as-is if not found
+    throw new Exception(format("Program '%s' not found in PATH", programName));
 }
 
-string fmt(Args...)(string fmt, auto ref Args args) @safe
+string defaultCompiler(string target) @safe
 {
-    auto app = appender!string();
-    formattedWrite(app, fmt, args);
-    return app.data;
-}
-
-struct EmLinkOptions
-{
-    string target;
-    string optimize;
-    string lib_main;
-    string vendor;
-    bool release_use_closure = true;
-    bool release_use_lto = false;
-    SokolBackend backend;
-    bool use_emmalloc = false;
-    bool use_filesystem = true;
-    bool use_imgui = false;
-    string shell_file_path;
-    string[] extra_args;
-    bool verbose = false;
-}
-
-void emLinkStep(EmLinkOptions options) @safe
-{
-    string emcc_path = buildPath(options.vendor, "emsdk", "upstream", "emscripten", options.use_imgui ? "em++"
-            : "emcc");
+    if (target.canFind("wasm"))
+        return "";
+    version (linux)
+        return findProgram("gcc");
     version (Windows)
-        emcc_path ~= ".bat";
-    string[] emcc_cmd = [emcc_path];
-
-    if (options.use_imgui)
-        emcc_cmd ~= ["-lcimgui", "-lcimguid"];
-
-    if (options.optimize == "debug")
-        emcc_cmd ~= ["-Og", "-sSAFE_HEAP=1", "-sSTACK_OVERFLOW_CHECK=1"];
-    else
-    {
-        emcc_cmd ~= "-sASSERTIONS=0";
-        emcc_cmd ~= (options.optimize == "small") ? "-Oz" : "-O3";
-        if (options.release_use_lto)
-            emcc_cmd ~= "-flto";
-        if (options.release_use_closure)
-            emcc_cmd ~= ["--closure", "1"];
-    }
-
-    if (options.backend == SokolBackend.wgpu)
-        emcc_cmd ~= "-sUSE_WEBGPU=1";
-    if (options.backend == SokolBackend.gles3)
-        emcc_cmd ~= "-sUSE_WEBGL2=1";
-    if (!options.use_filesystem)
-        emcc_cmd ~= "-sNO_FILESYSTEM=1";
-    if (options.use_emmalloc)
-        emcc_cmd ~= "-sMALLOC='emmalloc'";
-    if (options.shell_file_path)
-        emcc_cmd ~= "--shell-file=" ~ options.shell_file_path;
-
-    emcc_cmd ~= ["-sSTACK_SIZE=512KB"];
-    emcc_cmd ~= options.extra_args;
-    emcc_cmd ~= options.lib_main;
-    immutable baseName = options.lib_main.baseName[3 .. $ - 2]; // drop  "lib" and ".a"
-    string out_file = buildPath("build", baseName ~ ".html");
-    emcc_cmd ~= ["-o", out_file];
-
-    if (options.verbose)
-        writeln("Executing: ", emcc_cmd.join(" "));
-    auto result = execute(emcc_cmd);
-    enforce(result.status == 0, fmt("Error: emcc command failed\n%s", result.output));
-
-    string install_dir = "web";
-    mkdirRecurse(install_dir);
-    copy(out_file, buildPath(install_dir, out_file.baseName));
-    copy(buildPath("build", baseName ~ ".wasm"), buildPath(install_dir, baseName ~ ".wasm"));
-    copy(buildPath("build", baseName ~ ".js"), buildPath(install_dir, baseName ~ ".js"));
-}
-
-struct EmRunOptions
-{
-    string name;
-    string vendor;
-}
-
-void emRunStep(EmRunOptions options) @safe
-{
-    string emrun_path = buildPath(options.vendor, "emsdk", "upstream", "emscripten", "emrun");
-    version (Windows)
-        emrun_path ~= ".bat";
-    string[] emrun_cmd = [emrun_path, buildPath("web", options.name ~ ".html")];
-
-    auto result = execute(emrun_cmd);
-    if (result.status != 0)
-    {
-        writeln("Error: emrun command failed");
-        writeln(result.output);
-    }
-}
-
-void emSdkSetupStep(string emsdk) @safe
-{
-    string dot_emsc_path = buildPath(emsdk, ".emscripten");
-    if (!exists(dot_emsc_path))
-    {
-        string[] emsdk_cmd;
-        version (Windows)
-            emsdk_cmd = [buildPath(emsdk, "emsdk.bat")];
-        else
-            emsdk_cmd = ["bash", buildPath(emsdk, "emsdk")];
-
-        auto status = wait(spawnProcess(emsdk_cmd ~ ["install", "latest"]));
-        if (status != 0)
-            throw new Exception("Error: emsdk install failed");
-
-        status = wait(spawnProcess(emsdk_cmd ~ ["activate", "latest"]));
-        if (status != 0)
-            throw new Exception("Error: emsdk activate failed");
-    }
-}
-
-void buildShaders(ref string vendor) @safe
-{
-    immutable string sokolToolsBinDir = buildPath(getSHDC(vendor), "bin");
-    immutable string shadersDir = buildPath("examples", "shaders");
-    immutable string[] shaders = [
-        "triangle.glsl",
-        "bufferoffsets.glsl",
-        "cube.glsl",
-        "instancing.glsl",
-        "mrt.glsl",
-        "noninterleaved.glsl",
-        "offscreen.glsl",
-        "quad.glsl",
-        "shapes.glsl",
-        "texcube.glsl",
-        "blend.glsl"
-    ];
-
-    string optionalShdc;
-    version (Windows)
-        optionalShdc = buildPath("win32", "sokol-shdc.exe");
-    else version (linux)
-    {
-        version (AArch64)
-            optionalShdc = buildPath("linux_arm64", "sokol-shdc");
-        else
-            optionalShdc = buildPath("linux", "sokol-shdc");
-    }
-    else version (OSX)
-    {
-        version (AArch64)
-            optionalShdc = buildPath("osx_arm64", "sokol-shdc");
-        else
-            optionalShdc = buildPath("osx", "sokol-shdc");
-    }
-
-    if (optionalShdc is null)
-    {
-        writeln("Warning: unsupported host platform, skipping shader compiler step");
-        return;
-    }
-
-    immutable string shdcPath = buildPath(sokolToolsBinDir, optionalShdc);
-
+        return findProgram("cl");
     version (OSX)
-        immutable string glsl = "glsl410";
+        return findProgram("clang");
+    version (Android)
+        return findProgram("clang");
+    throw new Exception("Unsupported platform");
+}
+
+SokolBackend resolveSokolBackend(SokolBackend backend, string target) @safe
+{
+    if (target.canFind("linux"))
+        return SokolBackend.glcore;
+    if (target.canFind("darwin"))
+        return SokolBackend.metal;
+    if (target.canFind("windows"))
+        return SokolBackend.d3d11;
+    if (target.canFind("wasm"))
+        return backend == SokolBackend.wgpu ? backend : SokolBackend.gles3;
+    if (target.canFind("android"))
+        return SokolBackend.gles3;
+    version (linux)
+        return SokolBackend.glcore;
+    version (Windows)
+        return SokolBackend.d3d11;
+    version (OSX)
+        return SokolBackend.metal;
+    return backend;
+}
+
+void executeOrFail(string[] cmd, string errorMsg, bool verbose) @safe
+{
+    if (verbose)
+        writeln("Executing: ", cmd.join(" "));
+    auto result = executeShell(cmd.join(" "));
+    if (verbose && result.output.length)
+        writeln("Output:\n", result.output);
+    enforce(result.status == 0, format("%s: %s", errorMsg, result.output));
+}
+
+bool isWindows() @safe
+{
+    version (Windows)
+        return true;
+    return false;
+}
+
+// Download and extract functions
+void download(string url, string fileName) @trusted
+{
+    auto buf = appender!(ubyte[])();
+    size_t contentLength;
+    auto http = HTTP(url);
+    http.onReceiveHeader((in k, in v) {
+        if (k == "content-length")
+            contentLength = to!size_t(v);
+    });
+
+    int barWidth = 50;
+    http.onReceive((data) {
+        buf.put(data);
+        if (contentLength)
+        {
+            float progress = cast(float) buf.data.length / contentLength;
+            write("\r[", "=".replicate(cast(int)(barWidth * progress)), ">", " ".replicate(
+                barWidth - cast(int)(barWidth * progress)), "] ",
+                format("%d%%", cast(int)(progress * 100)));
+            stdout.flush();
+        }
+        return data.length;
+    });
+
+    http.perform();
+    enforce(http.statusLine.code / 100 == 2 || http.statusLine.code == 302, format(
+            "HTTP request failed: %s", http.statusLine.code));
+    std.file.write(fileName, buf.data);
+    writeln();
+}
+
+void extractZip(string zipFile, string destination) @trusted
+{
+    ZipArchive archive = new ZipArchive(read(zipFile));
+    string prefix = archive.directory.keys.front[0 .. $ - archive.directory.keys.front.find("/")
+            .length + 1];
+
+    if (exists(destination))
+        rmdirRecurse(destination);
+    mkdirRecurse(destination);
+
+    foreach (name, am; archive.directory)
+    {
+        if (!am.expandedSize)
+            continue;
+        string path = buildPath(destination, chompPrefix(name, prefix));
+        mkdirRecurse(dirName(path));
+        std.file.write(path, archive.expand(am));
+    }
+}
+
+string getSHDC(string vendor) @safe
+{
+    string path = absolutePath(buildPath(vendor, "shdc"));
+    string file = "shdc.zip";
+    scope (exit)
+        if (exists(file))
+            remove(file);
+
+    if (!exists(path))
+    {
+        download("https://github.com/floooh/sokol-tools-bin/archive/refs/heads/master.zip", file);
+        extractZip(file, path);
+    }
+
+    version (Windows)
+        immutable shdc = buildPath("bin", "win32", "sokol-shdc.exe");
+    else version (linux)
+        immutable shdc = buildPath("bin", isAArch64 ? "linux_arm64" : "linux", "sokol-shdc");
+    else version (OSX)
+        immutable shdc = buildPath("bin", isAArch64 ? "osx_arm64" : "osx", "sokol-shdc");
     else
-        immutable string glsl = "glsl430";
-    string slang = glsl ~ ":metal_macos:hlsl5:glsl300es:wgsl";
+        throw new Exception("Unsupported platform for sokol-tools");
 
-    int status;
-    version (Posix)
-    {
-        status = wait(spawnProcess(["chmod", "+x", shdcPath]));
-        if (status != 0)
-            throw new Exception("Error: failed to set permissions on shader compiler");
-    }
+    return buildPath(path, shdc);
+}
 
-    foreach (shader; shaders)
-    {
-        status = wait(spawnProcess([
-            shdcPath, "-i", buildPath(shadersDir, shader),
-            "-o", buildPath(shadersDir, shader[0 .. $ - 5]) ~ ".d",
-            "-l", slang, "-f", "sokol_d"
-        ]));
-        if (status != 0)
-            throw new Exception("Error: shader compiler failed");
-    }
+bool isAArch64() @safe
+{
+    version (AArch64)
+        return true;
+    return false;
+}
+
+string defaultTarget() @safe
+{
+    version (linux)
+        return "linux";
+    version (Windows)
+        return "windows";
+    version (OSX)
+        return "darwin";
+    version (Android)
+        return "android";
+    version (Emscripten)
+        return "wasm";
+    throw new Exception("Unsupported platform");
 }
