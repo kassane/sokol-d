@@ -17,10 +17,16 @@ enum imgui_version = "1.91.9";
 
 void main(string[] args) @safe
 {
+
+    static if (__VERSION__ < 2111)
+    {
+        static assert(false, "This project requires DMD-frontend 2.111.0 or newer");
+    }
+
     // Command-line options
     struct Options
     {
-        bool help, verbose, downloadEmsdk, downloadImgui, downloadShdc;
+        bool help, verbose, downloadEmsdk, downloadShdc;
         string compiler, target = defaultTarget, optimize = "debug", linkExample, runExample, linkage = "static";
         SokolBackend backend;
         bool useX11 = true, useWayland, useEgl, withSokolImgui;
@@ -43,9 +49,6 @@ void main(string[] args) @safe
         break;
     case "--download-emsdk":
         downloadEmsdk = true;
-        break;
-    case "--download-imgui":
-        downloadImgui = true;
         break;
     case "--download-sokol-tools":
         downloadShdc = true;
@@ -89,7 +92,6 @@ void main(string[] args) @safe
         writeln(
             "  --linkage=<type>      Specify library linkage (static or dynamic, default: static)");
         writeln("  --download-emsdk      Download Emscripten SDK");
-        writeln("  --download-imgui      Download ImGui");
         writeln("  --download-sokol-tools Download sokol-tools");
         writeln("  --link=<example>      Link WASM example (e.g., triangle)");
         writeln("  --run=<example>       Run WASM example (e.g., triangle)");
@@ -102,11 +104,13 @@ void main(string[] args) @safe
 
     if (!opts.linkExample && !opts.runExample)
     {
+        if (opts.target.canFind("wasm"))
+            opts.downloadEmsdk = true;
         writeln("Configuration:");
         writeln("  Target: ", opts.target, ", Optimize: ", opts.optimize, ", Backend: ", opts
                 .backend);
         writeln("  Linkage: ", opts.linkage);
-        writeln("  Download: Emscripten=", opts.downloadEmsdk, ", ImGui=", opts.downloadImgui, ", Sokol-tools=", opts
+        writeln("  Download: Emscripten=", opts.downloadEmsdk, ", ImGui=", opts.withSokolImgui, ", Sokol-tools=", opts
                 .downloadShdc);
         writeln("  Verbose: ", opts.verbose);
     }
@@ -114,7 +118,7 @@ void main(string[] args) @safe
     // Setup dependencies
     if (opts.downloadEmsdk || opts.target.canFind("wasm"))
         getEmSDK(vendorPath);
-    if (opts.downloadImgui || opts.withSokolImgui)
+    if (opts.withSokolImgui)
         getIMGUI(vendorPath);
 
     // Execute build steps
@@ -485,6 +489,7 @@ void emLinkStep(EmLinkOptions opts) @safe
     mkdirRecurse(webDir);
     foreach (ext; [".html", ".wasm", ".js"])
         copy(buildPath("build", baseName ~ ext), buildPath(webDir, baseName ~ ext));
+    rmdirRecurse(buildPath("build"));
 }
 
 // Run WASM executable
@@ -501,8 +506,8 @@ void emSdkSetupStep(string emsdk) @safe
     if (!exists(buildPath(emsdk, ".emscripten")))
     {
         immutable cmd = buildPath(emsdk, "emsdk") ~ (isWindows ? ".bat" : "");
-        executeOrFail([!isWindows ? "bash " ~ cmd : cmd, "install", "latest"], "emsdk install failed", true);
-        executeOrFail([!isWindows ? "bash " ~ cmd : cmd, "activate", "latest"], "emsdk activate failed", true);
+        executeOrFail([!isWindows ? "bash " ~ cmd: cmd, "install", "latest"], "emsdk install failed", true);
+        executeOrFail([!isWindows ? "bash " ~ cmd: cmd, "activate", "latest"], "emsdk activate failed", true);
     }
 }
 

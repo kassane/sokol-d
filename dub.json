@@ -7,6 +7,9 @@
 		"Matheus França",
 		"Andre Weissflog"
 	],
+	"toolchainRequirements": {
+		"frontend": ">=2.111.0"
+	},
 	"buildTypes": {
 		"debug": {
 			"buildOptions": [
@@ -411,7 +414,7 @@
 			],
 			"preBuildCommands-linux": [
 				"mkdir -p $PACKAGE_DIR/build",
-				"$DC -run $PACKAGE_DIR/build.d --download-imgui",
+				"$DC -run $PACKAGE_DIR/build.d --with-sokol-imgui",
 				"g++ -Wall -Wextra -Wno-unused-function -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR/build/imgui.o $PACKAGE_DIR/vendor/imgui/src/imgui.cpp",
 				"g++ -Wall -Wextra -Wno-unused-function -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR/build/imgui_demo.o $PACKAGE_DIR/vendor/imgui/src/imgui_demo.cpp",
 				"g++ -Wall -Wextra -Wno-unused-function -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR/build/imgui_draw.o $PACKAGE_DIR/vendor/imgui/src/imgui_draw.cpp",
@@ -437,7 +440,7 @@
 			],
 			"preBuildCommands-osx": [
 				"mkdir -p $PACKAGE_DIR/build",
-				"$DC -run $PACKAGE_DIR/build.d --download-imgui",
+				"$DC -run $PACKAGE_DIR/build.d --with-sokol-imgui",
 				"clang++ -std=c++14 -Wall -Wextra -Wno-return-type-c-linkage -Wno-unused-function -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR/build/imgui.o $PACKAGE_DIR/vendor/imgui/src/imgui.cpp",
 				"clang++ -std=c++14 -Wall -Wextra -Wno-return-type-c-linkage -Wno-unused-function -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR/build/imgui_demo.o $PACKAGE_DIR/vendor/imgui/src/imgui_demo.cpp",
 				"clang++ -std=c++14 -Wall -Wextra -Wno-return-type-c-linkage -Wno-unused-function -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR/build/imgui_draw.o $PACKAGE_DIR/vendor/imgui/src/imgui_draw.cpp",
@@ -463,7 +466,7 @@
 			],
 			"preBuildCommands-windows": [
 				"powershell -Command \"mkdir -Force $PACKAGE_DIR\\build\"",
-				"$DC -run $PACKAGE_DIR/build.d --download-imgui",
+				"$DC -run $PACKAGE_DIR/build.d --with-sokol-imgui",
 				"cl.exe /DNDEBUG /O2 /nologo /c /Fo$PACKAGE_DIR\\build\\imgui.obj $PACKAGE_DIR\\vendor\\imgui\\src\\imgui.cpp",
 				"cl.exe /DNDEBUG /O2 /nologo /c /Fo$PACKAGE_DIR\\build\\imgui_demo.obj $PACKAGE_DIR\\vendor\\imgui\\src\\imgui_demo.cpp",
 				"cl.exe /DNDEBUG /O2 /nologo /c /Fo$PACKAGE_DIR\\build\\imgui_draw.obj $PACKAGE_DIR\\vendor\\imgui\\src\\imgui_draw.cpp",
@@ -557,7 +560,7 @@
 			],
 			"preBuildCommands-linux": [
 				"mkdir -p $PACKAGE_DIR/build",
-				"$DC -run $PACKAGE_DIR/build.d --download-imgui",
+				"$DC -run $PACKAGE_DIR/build.d --with-sokol-imgui",
 				"g++ -Wall -Wextra -Wno-unused-function -DNDEBUG -O2 -fPIC -c -o $PACKAGE_DIR/build/imgui.o $PACKAGE_DIR/vendor/imgui/src/imgui.cpp",
 				"g++ -Wall -Wextra -Wno-unused-function -DNDEBUG -O2 -fPIC -c -o $PACKAGE_DIR/build/imgui_demo.o $PACKAGE_DIR/vendor/imgui/src/imgui_demo.cpp",
 				"g++ -Wall -Wextra -Wno-unused-function -DNDEBUG -O2 -fPIC -c -o $PACKAGE_DIR/build/imgui_draw.o $PACKAGE_DIR/vendor/imgui/src/imgui_draw.cpp",
@@ -583,7 +586,7 @@
 			],
 			"preBuildCommands-osx": [
 				"mkdir -p $PACKAGE_DIR/build",
-				"$DC -run $PACKAGE_DIR/build.d --download-imgui",
+				"$DC -run $PACKAGE_DIR/build.d --with-sokol-imgui",
 				"clang++ -std=c++14 -Wall -Wextra -Wno-return-type-c-linkage -Wno-unused-function -DNDEBUG -O2 -fPIC -c -o $PACKAGE_DIR/build/imgui.o $PACKAGE_DIR/vendor/imgui/src/imgui.cpp",
 				"clang++ -std=c++14 -Wall -Wextra -Wno-return-type-c-linkage -Wno-unused-function -DNDEBUG -O2 -fPIC -c -o $PACKAGE_DIR/build/imgui_demo.o $PACKAGE_DIR/vendor/imgui/src/imgui_demo.cpp",
 				"clang++ -std=c++14 -Wall -Wextra -Wno-return-type-c-linkage -Wno-unused-function -DNDEBUG -O2 -fPIC -c -o $PACKAGE_DIR/build/imgui_draw.o $PACKAGE_DIR/vendor/imgui/src/imgui_draw.cpp",
@@ -609,7 +612,7 @@
 			],
 			"preBuildCommands-windows": [
 				"powershell -Command \"mkdir -Force $PACKAGE_DIR\\build\"",
-				"$DC -run $PACKAGE_DIR/build.d --download-imgui",
+				"$DC -run $PACKAGE_DIR/build.d --with-sokol-imgui",
 				"cl.exe /DNDEBUG /O2 /nologo /c /Fo$PACKAGE_DIR\\build\\imgui.obj $PACKAGE_DIR\\vendor\\imgui\\src\\imgui.cpp",
 				"cl.exe /DNDEBUG /O2 /nologo /c /Fo$PACKAGE_DIR\\build\\imgui_demo.obj $PACKAGE_DIR\\vendor\\imgui\\src\\imgui_demo.cpp",
 				"cl.exe /DNDEBUG /O2 /nologo /c /Fo$PACKAGE_DIR\\build\\imgui_draw.obj $PACKAGE_DIR\\vendor\\imgui\\src\\imgui_draw.cpp",

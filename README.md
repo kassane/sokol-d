@@ -21,7 +21,7 @@ dub init -t sokol-d
 
 ## Build Requirements
 
-- [D Compiler](https://dlang.org/download.html) (DMD/LDC2/GDC)
+- [D Compiler](https://dlang.org/download.html) (DMD/LDC2/GDC) v2.111.0 or higher
 - C/C++ compiler (GCC/Clang/MSVC)
 - Linux dependencies: libglu1-mesa-dev, mesa-common-dev, xorg-dev, libasound-dev (for X11/Wayland, GL and ALSA development)
 
