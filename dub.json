@@ -658,7 +658,6 @@
 				"-i=emscripten",
 				"-defaultlib=",
 				"--disable-linker-strip-dead",
-				"-mattr=+bulk-memory,+extended-const,+multivalue,+mutable-globals,+nontrapping-fptoint,+sign-ext",
 				"-gcc=$PACKAGE_DIR/vendor/emsdk/upstream/bin/wasm32-clang"
 			],
 			"preGenerateCommands": [
@@ -686,7 +685,6 @@
 				"-i=emscripten",
 				"-defaultlib=",
 				"--disable-linker-strip-dead",
-				"-mattr=+bulk-memory,+extended-const,+multivalue,+mutable-globals,+nontrapping-fptoint,+sign-ext",
 				"-gcc=$PACKAGE_DIR/vendor/emsdk/upstream/bin/wasm32-clang"
 			],
 			"preGenerateCommands": [
@@ -706,7 +704,6 @@
 				"-i=handmade",
 				"-i=emscripten",
 				"--disable-linker-strip-dead",
-				"-mattr=+bulk-memory,+extended-const,+multivalue,+mutable-globals,+nontrapping-fptoint,+sign-ext",
 				"-defaultlib="
 			],
 			"libs": [
@@ -734,7 +731,6 @@
 				"-i=handmade",
 				"-i=emscripten",
 				"--disable-linker-strip-dead",
-				"-mattr=+bulk-memory,+extended-const,+multivalue,+mutable-globals,+nontrapping-fptoint,+sign-ext",
 				"-defaultlib="
 			],
 			"libs": [
