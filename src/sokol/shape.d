@@ -25,7 +25,7 @@ extern(C) struct Range {
 + a 4x4 matrix wrapper struct
 +/
 extern(C) struct Mat4 {
-    float[4][4] m = [];
+    float[4][4] m = 0.0f;
 }
 /++
 + vertex layout of the generated geometry
