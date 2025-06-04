@@ -16,7 +16,7 @@ By default, the backend 3D API will be selected based on the target platform:
 #### Usage - template project
 
 ```console
-dub init -t sokol-d
+dub init -t sokol-d <project-name>
 ```
 
 ## Build Requirements
@@ -45,10 +45,10 @@ dub :imgui -c native
 1. First, build sokol for WebAssembly:
 ```bash
 # For WebGL2
-dub build -c sokol-wasm-webgl
+dub build -c sokol-webgl
 
 # For WebGPU
-dub build -c sokol-wasm-wgpu
+dub build -c sokol-wgpu
 ```
 
 2. Then build any example for WASM:
