@@ -1,6 +1,4 @@
 {
 	"name": "init-exec",
-	"description": "A minimal sokol-d application.",
-	"targetPath": "build",
 	"targetType": "executable"
 }
