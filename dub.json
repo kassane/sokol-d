@@ -2,7 +2,7 @@
 	"name": "sokol-d",
 	"description": "D bindings for sokol",
 	"license": "Zlib",
-	"version": "0.3.0",
+	"version": "0.3.1",
 	"authors": [
 		"Matheus França",
 		"Andre Weissflog"
