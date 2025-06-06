@@ -1,0 +1,45 @@
+{
+    "name": "offscreen",
+    "sourceFiles": [
+        "../shaders/offscreen.d"
+    ],
+    "dependencies": {
+        "sokol-d": {
+            "path": "../.."
+        }
+    },
+    "environments": {
+        "SOKOL_ROOTPATH": "${SOKOL_D_PACKAGE_DIR}"
+    },
+    "targetPath": "build",
+    "targetName": "offscreen",
+    "configurations": [
+        {
+            "name": "native",
+            "targetType": "executable",
+            "subConfigurations": {
+                "sokol-d": "sokol-static"
+            }
+        },
+        {
+            "name": "wasm",
+            "targetType": "staticLibrary",
+            "postGenerateCommands": [
+                "$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=gles3 --link=offscreen --verbose"
+            ],
+            "subConfigurations": {
+                "sokol-d": "sokol-wgles3"
+            }
+        },
+        {
+            "name": "wgpu",
+            "targetType": "staticLibrary",
+            "postGenerateCommands": [
+                "$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=wgpu --link=offscreen --verbose"
+            ],
+            "subConfigurations": {
+                "sokol-d": "sokol-wgpu"
+            }
+        }
+    ]
+}

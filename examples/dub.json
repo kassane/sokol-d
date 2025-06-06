@@ -1,0 +1,64 @@
+{
+	"name": "examples",
+	"description": "D bindings for sokol",
+	"license": "Zlib",
+	"authors": [
+		"Matheus França",
+		"Andre Weissflog"
+	],
+	"buildTypes": {
+		"debug": {
+			"buildOptions": [
+				"debugMode",
+				"debugInfo"
+			]
+		},
+		"release": {
+			"buildOptions": [
+				"releaseMode",
+				"inline",
+				"optimize"
+			]
+		},
+		"release-nobounds": {
+			"buildOptions": [
+				"releaseMode",
+				"inline",
+				"noBoundsCheck",
+				"optimize"
+			]
+		},
+		"release-betterc": {
+			"buildOptions": [
+				"betterC",
+				"releaseMode",
+				"inline",
+				"noBoundsCheck",
+				"optimize"
+			]
+		}
+	},
+	"subPackages": [
+		"blend",
+		"bufferoffsets",
+		"clear",
+		"cube",
+		"debugtext",
+		"droptest",
+		"imgui",
+		"instancing",
+		"instancingcompute",
+		"mrt",
+		"noninterleaved",
+		"offscreen",
+		"quad",
+		"saudio",
+		"shapes",
+		"sglcontext",
+		"sglpoints",
+		"triangle",
+		"texcube",
+		"userdata",
+		"vertexpull"
+	]
+}

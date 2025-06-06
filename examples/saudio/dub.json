@@ -1,0 +1,42 @@
+{
+    "name": "saudio",
+    "dependencies": {
+        "sokol-d": {
+            "path": "../.."
+        }
+    },
+    "environments": {
+        "SOKOL_ROOTPATH": "${SOKOL_D_PACKAGE_DIR}"
+    },
+    "targetPath": "build",
+    "targetName": "saudio",
+    "configurations": [
+        {
+            "name": "native",
+            "targetType": "executable",
+            "subConfigurations": {
+                "sokol-d": "sokol-static"
+            }
+        },
+        {
+            "name": "wasm",
+            "targetType": "staticLibrary",
+            "postGenerateCommands": [
+                "$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=gles3 --link=saudio --verbose"
+            ],
+            "subConfigurations": {
+                "sokol-d": "sokol-wgles3"
+            }
+        },
+        {
+            "name": "wgpu",
+            "targetType": "staticLibrary",
+            "postGenerateCommands": [
+                "$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=wgpu --link=saudio --verbose"
+            ],
+            "subConfigurations": {
+                "sokol-d": "sokol-wgpu"
+            }
+        }
+    ]
+}

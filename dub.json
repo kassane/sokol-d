@@ -1,0 +1,765 @@
+{
+	"name": "sokol-d",
+	"description": "D bindings for sokol",
+	"license": "Zlib",
+	"version": "0.3.0",
+	"authors": [
+		"Matheus França",
+		"Andre Weissflog"
+	],
+	"toolchainRequirements": {
+		"frontend": ">=2.111.0"
+	},
+	"buildTypes": {
+		"debug": {
+			"buildOptions": [
+				"debugMode",
+				"debugInfo",
+				"debugInfoC"
+			]
+		},
+		"release": {
+			"buildOptions": [
+				"releaseMode",
+				"inline",
+				"optimize"
+			]
+		},
+		"release-nobounds": {
+			"buildOptions": [
+				"releaseMode",
+				"inline",
+				"noBoundsCheck",
+				"optimize"
+			]
+		},
+		"release-betterc": {
+			"buildOptions": [
+				"betterC",
+				"releaseMode",
+				"inline",
+				"noBoundsCheck",
+				"optimize"
+			]
+		},
+		"unittest": {
+			"buildOptions": [
+				"debugMode",
+				"debugInfo",
+				"unittests"
+			]
+		}
+	},
+	"dflags-gdc": [
+		"-fpreview=all"
+	],
+	"dflags-dmd": [
+		"-verrors=context",
+		"-preview=all"
+	],
+	"dflags-ldc": [
+		"--verrors-context",
+		"-preview=all"
+	],
+	"lflags-posix": [
+		"-L$PACKAGE_DIR/build"
+	],
+	"lflags-windows": [
+		"/LIBPATH:$PACKAGE_DIR\\build"
+	],
+	"configurations": [
+		{
+			"name": "sokol-static",
+			"excludedSourceFiles": [
+				"src/sokol/imgui.d",
+				"src/imgui/*.d",
+				"src/imgui/*.c"
+			],
+			"dflags": [
+				"-i=sokol",
+				"-i=shaders",
+				"-i=handmade"
+			],
+			"dflags-ldc": [
+				"-mcpu=native"
+			],
+			"targetName": "sokold",
+			"targetPath": "build",
+			"libs": [
+				"sokol"
+			],
+			"libs-osx": [
+				"objC"
+			],
+			"lflags-osx": [
+				"-framework",
+				"Cocoa",
+				"-framework",
+				"QuartzCore",
+				"-framework",
+				"Foundation",
+				"-framework",
+				"MetalKit",
+				"-framework",
+				"Metal",
+				"-framework",
+				"AudioToolbox"
+			],
+			"libs-linux": [
+				"X11",
+				"GL",
+				"Xi",
+				"Xcursor",
+				"asound"
+			],
+			"libs-windows": [
+				"dxgi",
+				"d3d11"
+			],
+			"preBuildCommands-linux": [
+				"mkdir -p $PACKAGE_DIR/build",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_log.o $PACKAGE_DIR/src/sokol/c/sokol_log.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_app.o $PACKAGE_DIR/src/sokol/c/sokol_app.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_gfx.o $PACKAGE_DIR/src/sokol/c/sokol_gfx.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_time.o $PACKAGE_DIR/src/sokol/c/sokol_time.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_audio.o $PACKAGE_DIR/src/sokol/c/sokol_audio.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_gl.o $PACKAGE_DIR/src/sokol/c/sokol_gl.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_debugtext.o $PACKAGE_DIR/src/sokol/c/sokol_debugtext.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_shape.o $PACKAGE_DIR/src/sokol/c/sokol_shape.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_glue.o $PACKAGE_DIR/src/sokol/c/sokol_glue.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_fetch.o $PACKAGE_DIR/src/sokol/c/sokol_fetch.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_memtrack.o $PACKAGE_DIR/src/sokol/c/sokol_memtrack.c",
+				"ar rcs $PACKAGE_DIR/build/libsokol.a $PACKAGE_DIR/build/*.o",
+				"rm $PACKAGE_DIR/build/*.o"
+			],
+			"preBuildCommands-osx": [
+				"mkdir -p $PACKAGE_DIR/build",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -ObjC -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_log.o $PACKAGE_DIR/src/sokol/c/sokol_log.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -ObjC -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_app.o $PACKAGE_DIR/src/sokol/c/sokol_app.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -ObjC -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_gfx.o $PACKAGE_DIR/src/sokol/c/sokol_gfx.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -ObjC -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_time.o $PACKAGE_DIR/src/sokol/c/sokol_time.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -ObjC -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_audio.o $PACKAGE_DIR/src/sokol/c/sokol_audio.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -ObjC -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_gl.o $PACKAGE_DIR/src/sokol/c/sokol_gl.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -ObjC -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_debugtext.o $PACKAGE_DIR/src/sokol/c/sokol_debugtext.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -ObjC -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_shape.o $PACKAGE_DIR/src/sokol/c/sokol_shape.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -ObjC -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_glue.o $PACKAGE_DIR/src/sokol/c/sokol_glue.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -ObjC -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_fetch.o $PACKAGE_DIR/src/sokol/c/sokol_fetch.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -ObjC -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_memtrack.o $PACKAGE_DIR/src/sokol/c/sokol_memtrack.c",
+				"ar rcs $PACKAGE_DIR/build/libsokol.a $PACKAGE_DIR/build/*.o",
+				"rm $PACKAGE_DIR/build/*.o"
+			],
+			"preBuildCommands-windows": [
+				"powershell -Command \"mkdir -Force $PACKAGE_DIR\\build\"",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /Fo$PACKAGE_DIR\\build\\sokol_log.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_log.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /Fo$PACKAGE_DIR\\build\\sokol_app.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_app.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /Fo$PACKAGE_DIR\\build\\sokol_gfx.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_gfx.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /Fo$PACKAGE_DIR\\build\\sokol_time.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_time.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /Fo$PACKAGE_DIR\\build\\sokol_audio.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_audio.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /Fo$PACKAGE_DIR\\build\\sokol_gl.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_gl.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /Fo$PACKAGE_DIR\\build\\sokol_debugtext.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_debugtext.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /Fo$PACKAGE_DIR\\build\\sokol_shape.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_shape.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /Fo$PACKAGE_DIR\\build\\sokol_glue.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_glue.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /Fo$PACKAGE_DIR\\build\\sokol_fetch.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_fetch.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /Fo$PACKAGE_DIR\\build\\sokol_memtrack.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_memtrack.c",
+				"lib.exe /nologo /OUT:$PACKAGE_DIR\\build\\sokol.lib $PACKAGE_DIR\\build\\*.obj",
+				"powershell -Command Remove-Item $PACKAGE_DIR\\build\\*.obj"
+			]
+		},
+		{
+			"name": "sokol-shared",
+			"excludedSourceFiles": [
+				"src/sokol/imgui.d",
+				"src/imgui/*.d",
+				"src/imgui/*.c"
+			],
+			"dflags": [
+				"-i=sokol",
+				"-i=shaders",
+				"-i=handmade"
+			],
+			"dflags-ldc": [
+				"-mcpu=native",
+				"--link-defaultlib-shared=false"
+			],
+			"targetName": "sokold",
+			"targetPath": "build",
+			"targetType": "dynamicLibrary",
+			"libs": [
+				"sokol"
+			],
+			"lflags-osx": [
+				"-framework",
+				"Cocoa",
+				"-framework",
+				"QuartzCore",
+				"-framework",
+				"Foundation",
+				"-framework",
+				"MetalKit",
+				"-framework",
+				"Metal",
+				"-framework",
+				"AudioToolbox"
+			],
+			"libs-osx": [
+				"objC"
+			],
+			"libs-linux": [
+				"X11",
+				"GL",
+				"Xi",
+				"Xcursor",
+				"asound"
+			],
+			"libs-windows": [
+				"dxgi",
+				"d3d11"
+			],
+			"preBuildCommands-linux": [
+				"mkdir -p $PACKAGE_DIR/build",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_log.o $PACKAGE_DIR/src/sokol/c/sokol_log.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_app.o $PACKAGE_DIR/src/sokol/c/sokol_app.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_gfx.o $PACKAGE_DIR/src/sokol/c/sokol_gfx.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_time.o $PACKAGE_DIR/src/sokol/c/sokol_time.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_audio.o $PACKAGE_DIR/src/sokol/c/sokol_audio.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_gl.o $PACKAGE_DIR/src/sokol/c/sokol_gl.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_debugtext.o $PACKAGE_DIR/src/sokol/c/sokol_debugtext.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_shape.o $PACKAGE_DIR/src/sokol/c/sokol_shape.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_glue.o $PACKAGE_DIR/src/sokol/c/sokol_glue.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_fetch.o $PACKAGE_DIR/src/sokol/c/sokol_fetch.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_memtrack.o $PACKAGE_DIR/src/sokol/c/sokol_memtrack.c",
+				"ar rcs $PACKAGE_DIR/build/libsokol.a $PACKAGE_DIR/build/*.o",
+				"rm $PACKAGE_DIR/build/*.o"
+			],
+			"preBuildCommands-osx": [
+				"mkdir -p $PACKAGE_DIR/build",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -ObjC -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_log.o $PACKAGE_DIR/src/sokol/c/sokol_log.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -ObjC -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_app.o $PACKAGE_DIR/src/sokol/c/sokol_app.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -ObjC -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_gfx.o $PACKAGE_DIR/src/sokol/c/sokol_gfx.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -ObjC -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_time.o $PACKAGE_DIR/src/sokol/c/sokol_time.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -ObjC -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_audio.o $PACKAGE_DIR/src/sokol/c/sokol_audio.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -ObjC -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_gl.o $PACKAGE_DIR/src/sokol/c/sokol_gl.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -ObjC -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_debugtext.o $PACKAGE_DIR/src/sokol/c/sokol_debugtext.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -ObjC -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_shape.o $PACKAGE_DIR/src/sokol/c/sokol_shape.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -ObjC -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_glue.o $PACKAGE_DIR/src/sokol/c/sokol_glue.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -ObjC -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_fetch.o $PACKAGE_DIR/src/sokol/c/sokol_fetch.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -ObjC -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_memtrack.o $PACKAGE_DIR/src/sokol/c/sokol_memtrack.c",
+				"ar rcs $PACKAGE_DIR/build/libsokol.a $PACKAGE_DIR/build/*.o",
+				"rm $PACKAGE_DIR/build/*.o"
+			],
+			"preBuildCommands-windows": [
+				"powershell -Command \"mkdir -Force $PACKAGE_DIR\\build\"",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /Fo$PACKAGE_DIR\\build\\sokol_log.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_log.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /Fo$PACKAGE_DIR\\build\\sokol_app.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_app.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /Fo$PACKAGE_DIR\\build\\sokol_gfx.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_gfx.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /Fo$PACKAGE_DIR\\build\\sokol_time.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_time.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /Fo$PACKAGE_DIR\\build\\sokol_audio.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_audio.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /Fo$PACKAGE_DIR\\build\\sokol_gl.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_gl.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /Fo$PACKAGE_DIR\\build\\sokol_debugtext.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_debugtext.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /Fo$PACKAGE_DIR\\build\\sokol_shape.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_shape.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /Fo$PACKAGE_DIR\\build\\sokol_glue.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_glue.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /Fo$PACKAGE_DIR\\build\\sokol_fetch.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_fetch.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /Fo$PACKAGE_DIR\\build\\sokol_memtrack.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_memtrack.c",
+				"lib.exe /nologo /OUT:$PACKAGE_DIR\\build\\sokol.lib $PACKAGE_DIR\\build\\*.obj",
+				"powershell -Command Remove-Item $PACKAGE_DIR\\build\\*.obj"
+			]
+		},
+		{
+			"name": "sokol-wayland-static",
+			"excludedSourceFiles": [
+				"src/sokol/imgui.d",
+				"src/imgui/*.d",
+				"src/imgui/*.c"
+			],
+			"dflags": [
+				"-i=sokol",
+				"-i=shaders",
+				"-i=handmade"
+			],
+			"dflags-ldc": [
+				"-mcpu=native"
+			],
+			"targetName": "sokold",
+			"targetPath": "build",
+			"libs": [
+				"sokol"
+			],
+			"libs-linux": [
+				"wayland-client",
+				"wayland-egl",
+				"wayland-cursor",
+				"xkbcommon",
+				"asound"
+			],
+			"preBuildCommands-linux": [
+				"mkdir -p $PACKAGE_DIR/build",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_log.o $PACKAGE_DIR/src/sokol/c/sokol_log.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_app.o $PACKAGE_DIR/src/sokol/c/sokol_app.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_gfx.o $PACKAGE_DIR/src/sokol/c/sokol_gfx.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_time.o $PACKAGE_DIR/src/sokol/c/sokol_time.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_audio.o $PACKAGE_DIR/src/sokol/c/sokol_audio.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_gl.o $PACKAGE_DIR/src/sokol/c/sokol_gl.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_debugtext.o $PACKAGE_DIR/src/sokol/c/sokol_debugtext.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_shape.o $PACKAGE_DIR/src/sokol/c/sokol_shape.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_glue.o $PACKAGE_DIR/src/sokol/c/sokol_glue.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_fetch.o $PACKAGE_DIR/src/sokol/c/sokol_fetch.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_memtrack.o $PACKAGE_DIR/src/sokol/c/sokol_memtrack.c",
+				"ar rcs $PACKAGE_DIR/build/libsokol.a $PACKAGE_DIR/build/*.o",
+				"rm $PACKAGE_DIR/build/*.o"
+			]
+		},
+		{
+			"name": "sokol-wayland-shared",
+			"excludedSourceFiles": [
+				"src/sokol/imgui.d",
+				"src/imgui/*.d",
+				"src/imgui/*.c"
+			],
+			"dflags": [
+				"-i=sokol",
+				"-i=shaders",
+				"-i=handmade"
+			],
+			"dflags-ldc": [
+				"-mcpu=native"
+			],
+			"targetType": "dynamicLibrary",
+			"targetName": "sokold",
+			"targetPath": "build",
+			"libs": [
+				"sokol"
+			],
+			"libs-linux": [
+				"wayland-client",
+				"wayland-egl",
+				"wayland-cursor",
+				"xkbcommon",
+				"asound"
+			],
+			"preBuildCommands-linux": [
+				"mkdir -p $PACKAGE_DIR/build",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_log.o $PACKAGE_DIR/src/sokol/c/sokol_log.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_app.o $PACKAGE_DIR/src/sokol/c/sokol_app.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_gfx.o $PACKAGE_DIR/src/sokol/c/sokol_gfx.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_time.o $PACKAGE_DIR/src/sokol/c/sokol_time.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_audio.o $PACKAGE_DIR/src/sokol/c/sokol_audio.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_gl.o $PACKAGE_DIR/src/sokol/c/sokol_gl.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_debugtext.o $PACKAGE_DIR/src/sokol/c/sokol_debugtext.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_shape.o $PACKAGE_DIR/src/sokol/c/sokol_shape.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_glue.o $PACKAGE_DIR/src/sokol/c/sokol_glue.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_fetch.o $PACKAGE_DIR/src/sokol/c/sokol_fetch.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_X11 -Wall -Wextra -Wno-unused-function -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_memtrack.o $PACKAGE_DIR/src/sokol/c/sokol_memtrack.c",
+				"ar rcs $PACKAGE_DIR/build/libsokol.a $PACKAGE_DIR/build/*.o",
+				"rm $PACKAGE_DIR/build/*.o"
+			]
+		},
+		{
+			"name": "imgui-static",
+			"targetName": "cimguid",
+			"targetPath": "build",
+			"versions": [
+				"has_imgui"
+			],
+			"dflags": [
+				"-i=sokol",
+				"-i=shaders",
+				"-i=handmade",
+				"-i=imgui"
+			],
+			"dflags-dmd": [
+				"-P-I$PACKAGE_DIR/vendor/imgui/src"
+			],
+			"dflags-gdc": [
+				"-I$PACKAGE_DIR/vendor/imgui/src"
+			],
+			"dflags-ldc": [
+				"-P-I$PACKAGE_DIR/vendor/imgui/src",
+				"-Xcc=-std=c99",
+				"-mcpu=native"
+			],
+			"libs": [
+				"sokol",
+				"cimgui"
+			],
+			"libs-linux": [
+				"stdc++",
+				"X11",
+				"GL",
+				"Xi",
+				"Xcursor",
+				"asound"
+			],
+			"libs-osx": [
+				"c++",
+				"objC"
+			],
+			"libs-windows": [
+				"imm32",
+				"dxgi",
+				"d3d11"
+			],
+			"lflags-osx": [
+				"-framework",
+				"Cocoa",
+				"-framework",
+				"QuartzCore",
+				"-framework",
+				"Foundation",
+				"-framework",
+				"MetalKit",
+				"-framework",
+				"Metal",
+				"-framework",
+				"AudioToolbox"
+			],
+			"preBuildCommands-linux": [
+				"mkdir -p $PACKAGE_DIR/build",
+				"$DC -run $PACKAGE_DIR/build.d --with-sokol-imgui",
+				"g++ -Wall -Wextra -Wno-unused-function -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR/build/imgui.o $PACKAGE_DIR/vendor/imgui/src/imgui.cpp",
+				"g++ -Wall -Wextra -Wno-unused-function -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR/build/imgui_demo.o $PACKAGE_DIR/vendor/imgui/src/imgui_demo.cpp",
+				"g++ -Wall -Wextra -Wno-unused-function -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR/build/imgui_draw.o $PACKAGE_DIR/vendor/imgui/src/imgui_draw.cpp",
+				"g++ -Wall -Wextra -Wno-unused-function -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR/build/imgui_tables.o $PACKAGE_DIR/vendor/imgui/src/imgui_tables.cpp",
+				"g++ -Wall -Wextra -Wno-unused-function -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR/build/imgui_widgets.o $PACKAGE_DIR/vendor/imgui/src/imgui_widgets.cpp",
+				"g++ -Wall -Wextra -Wno-unused-function -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR/build/cimgui.o $PACKAGE_DIR/vendor/imgui/src/cimgui.cpp",
+				"ar rcs $PACKAGE_DIR/build/libcimgui.a $PACKAGE_DIR/build/*.o",
+				"rm $PACKAGE_DIR/build/*.o",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -I$PACKAGE_DIR/vendor/imgui/src -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_log.o $PACKAGE_DIR/src/sokol/c/sokol_log.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -I$PACKAGE_DIR/vendor/imgui/src -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_app.o $PACKAGE_DIR/src/sokol/c/sokol_app.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -I$PACKAGE_DIR/vendor/imgui/src -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_time.o $PACKAGE_DIR/src/sokol/c/sokol_time.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -I$PACKAGE_DIR/vendor/imgui/src -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_gfx.o $PACKAGE_DIR/src/sokol/c/sokol_gfx.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -I$PACKAGE_DIR/vendor/imgui/src -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_audio.o $PACKAGE_DIR/src/sokol/c/sokol_audio.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -I$PACKAGE_DIR/vendor/imgui/src -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_gl.o $PACKAGE_DIR/src/sokol/c/sokol_gl.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -I$PACKAGE_DIR/vendor/imgui/src -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_debugtext.o $PACKAGE_DIR/src/sokol/c/sokol_debugtext.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -I$PACKAGE_DIR/vendor/imgui/src -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_shape.o $PACKAGE_DIR/src/sokol/c/sokol_shape.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -I$PACKAGE_DIR/vendor/imgui/src -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_glue.o $PACKAGE_DIR/src/sokol/c/sokol_glue.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -I$PACKAGE_DIR/vendor/imgui/src -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_fetch.o $PACKAGE_DIR/src/sokol/c/sokol_fetch.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -I$PACKAGE_DIR/vendor/imgui/src -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_imgui.o $PACKAGE_DIR/src/sokol/c/sokol_imgui.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -I$PACKAGE_DIR/vendor/imgui/src -O2 -fPIC -c -o $PACKAGE_DIR/build/sokol_memtrack.o $PACKAGE_DIR/src/sokol/c/sokol_memtrack.c",
+				"ar rcs $PACKAGE_DIR/build/libsokol.a $PACKAGE_DIR/build/*.o",
+				"rm $PACKAGE_DIR/build/*.o"
+			],
+			"preBuildCommands-osx": [
+				"mkdir -p $PACKAGE_DIR/build",
+				"$DC -run $PACKAGE_DIR/build.d --with-sokol-imgui",
+				"clang++ -std=c++14 -Wall -Wextra -Wno-return-type-c-linkage -Wno-unused-function -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR/build/imgui.o $PACKAGE_DIR/vendor/imgui/src/imgui.cpp",
+				"clang++ -std=c++14 -Wall -Wextra -Wno-return-type-c-linkage -Wno-unused-function -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR/build/imgui_demo.o $PACKAGE_DIR/vendor/imgui/src/imgui_demo.cpp",
+				"clang++ -std=c++14 -Wall -Wextra -Wno-return-type-c-linkage -Wno-unused-function -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR/build/imgui_draw.o $PACKAGE_DIR/vendor/imgui/src/imgui_draw.cpp",
+				"clang++ -std=c++14 -Wall -Wextra -Wno-return-type-c-linkage -Wno-unused-function -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR/build/imgui_tables.o $PACKAGE_DIR/vendor/imgui/src/imgui_tables.cpp",
+				"clang++ -std=c++14 -Wall -Wextra -Wno-return-type-c-linkage -Wno-unused-function -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR/build/imgui_widgets.o $PACKAGE_DIR/vendor/imgui/src/imgui_widgets.cpp",
+				"clang++ -std=c++14 -Wall -Wextra -Wno-return-type-c-linkage -Wno-unused-function -DNDEBUG -O2 -fPIE -c -o $PACKAGE_DIR/build/cimgui.o $PACKAGE_DIR/vendor/imgui/src/cimgui.cpp",
+				"ar rcs $PACKAGE_DIR/build/libcimgui.a $PACKAGE_DIR/build/*.o",
+				"rm $PACKAGE_DIR/build/*.o",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -I$PACKAGE_DIR/vendor/imgui/src -ObjC -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_log.o $PACKAGE_DIR/src/sokol/c/sokol_log.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -I$PACKAGE_DIR/vendor/imgui/src -ObjC -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_app.o $PACKAGE_DIR/src/sokol/c/sokol_app.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -I$PACKAGE_DIR/vendor/imgui/src -ObjC -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_gfx.o $PACKAGE_DIR/src/sokol/c/sokol_gfx.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -I$PACKAGE_DIR/vendor/imgui/src -ObjC -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_time.o $PACKAGE_DIR/src/sokol/c/sokol_time.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -I$PACKAGE_DIR/vendor/imgui/src -ObjC -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_audio.o $PACKAGE_DIR/src/sokol/c/sokol_audio.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -I$PACKAGE_DIR/vendor/imgui/src -ObjC -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_gl.o $PACKAGE_DIR/src/sokol/c/sokol_gl.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -I$PACKAGE_DIR/vendor/imgui/src -ObjC -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_debugtext.o $PACKAGE_DIR/src/sokol/c/sokol_debugtext.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -I$PACKAGE_DIR/vendor/imgui/src -ObjC -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_shape.o $PACKAGE_DIR/src/sokol/c/sokol_shape.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -I$PACKAGE_DIR/vendor/imgui/src -ObjC -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_glue.o $PACKAGE_DIR/src/sokol/c/sokol_glue.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -I$PACKAGE_DIR/vendor/imgui/src -ObjC -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_fetch.o $PACKAGE_DIR/src/sokol/c/sokol_fetch.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -I$PACKAGE_DIR/vendor/imgui/src -ObjC -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_imgui.o $PACKAGE_DIR/src/sokol/c/sokol_imgui.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -I$PACKAGE_DIR/vendor/imgui/src -ObjC -O2 -fPIE -c -o $PACKAGE_DIR/build/sokol_memtrack.o $PACKAGE_DIR/src/sokol/c/sokol_memtrack.c",
+				"ar rcs $PACKAGE_DIR/build/libsokol.a $PACKAGE_DIR/build/*.o",
+				"rm $PACKAGE_DIR/build/*.o"
+			],
+			"preBuildCommands-windows": [
+				"powershell -Command \"mkdir -Force $PACKAGE_DIR\\build\"",
+				"$DC -run $PACKAGE_DIR/build.d --with-sokol-imgui",
+				"cl.exe /DNDEBUG /O2 /nologo /c /Fo$PACKAGE_DIR\\build\\imgui.obj $PACKAGE_DIR\\vendor\\imgui\\src\\imgui.cpp",
+				"cl.exe /DNDEBUG /O2 /nologo /c /Fo$PACKAGE_DIR\\build\\imgui_demo.obj $PACKAGE_DIR\\vendor\\imgui\\src\\imgui_demo.cpp",
+				"cl.exe /DNDEBUG /O2 /nologo /c /Fo$PACKAGE_DIR\\build\\imgui_draw.obj $PACKAGE_DIR\\vendor\\imgui\\src\\imgui_draw.cpp",
+				"cl.exe /DNDEBUG /O2 /nologo /c /Fo$PACKAGE_DIR\\build\\imgui_tables.obj $PACKAGE_DIR\\vendor\\imgui\\src\\imgui_tables.cpp",
+				"cl.exe /DNDEBUG /O2 /nologo /c /Fo$PACKAGE_DIR\\build\\imgui_widgets.obj $PACKAGE_DIR\\vendor\\imgui\\src\\imgui_widgets.cpp",
+				"cl.exe /DNDEBUG /O2 /nologo /c /Fo$PACKAGE_DIR\\build\\cimgui.obj $PACKAGE_DIR\\vendor\\imgui\\src\\cimgui.cpp",
+				"lib.exe /nologo /OUT:$PACKAGE_DIR\\build\\cimgui.lib $PACKAGE_DIR\\build\\*.obj",
+				"powershell -Command \"Remove-Item $PACKAGE_DIR\\build\\*.obj\"",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /I\"$PACKAGE_DIR\\vendor\\imgui\\src\" /Fo$PACKAGE_DIR\\build\\sokol_log.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_log.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /I\"$PACKAGE_DIR\\vendor\\imgui\\src\" /Fo$PACKAGE_DIR\\build\\sokol_app.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_app.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /I\"$PACKAGE_DIR\\vendor\\imgui\\src\" /Fo$PACKAGE_DIR\\build\\sokol_gfx.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_gfx.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /I\"$PACKAGE_DIR\\vendor\\imgui\\src\" /Fo$PACKAGE_DIR\\build\\sokol_time.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_time.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /I\"$PACKAGE_DIR\\vendor\\imgui\\src\" /Fo$PACKAGE_DIR\\build\\sokol_audio.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_audio.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /I\"$PACKAGE_DIR\\vendor\\imgui\\src\" /Fo$PACKAGE_DIR\\build\\sokol_gl.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_gl.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /I\"$PACKAGE_DIR\\vendor\\imgui\\src\" /Fo$PACKAGE_DIR\\build\\sokol_debugtext.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_debugtext.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /I\"$PACKAGE_DIR\\vendor\\imgui\\src\" /Fo$PACKAGE_DIR\\build\\sokol_shape.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_shape.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /I\"$PACKAGE_DIR\\vendor\\imgui\\src\" /Fo$PACKAGE_DIR\\build\\sokol_glue.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_glue.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /I\"$PACKAGE_DIR\\vendor\\imgui\\src\" /Fo$PACKAGE_DIR\\build\\sokol_fetch.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_fetch.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /I\"$PACKAGE_DIR\\vendor\\imgui\\src\" /Fo$PACKAGE_DIR\\build\\sokol_imgui.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_imgui.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /I\"$PACKAGE_DIR\\vendor\\imgui\\src\" /Fo$PACKAGE_DIR\\build\\sokol_memtrack.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_memtrack.c",
+				"lib.exe /nologo /OUT:$PACKAGE_DIR\\build\\sokol.lib $PACKAGE_DIR\\build\\*.obj",
+				"powershell -Command Remove-Item $PACKAGE_DIR\\build\\*.obj"
+			]
+		},
+		{
+			"name": "imgui-shared",
+			"targetName": "cimguid",
+			"targetPath": "build",
+			"targetType": "dynamicLibrary",
+			"versions": [
+				"has_imgui"
+			],
+			"dflags": [
+				"-i=sokol",
+				"-i=shaders",
+				"-i=handmade",
+				"-i=imgui"
+			],
+			"dflags-dmd": [
+				"-P-I$PACKAGE_DIR/vendor/imgui/src"
+			],
+			"dflags-gdc": [
+				"-I$PACKAGE_DIR/vendor/imgui/src"
+			],
+			"dflags-ldc": [
+				"-P-I$PACKAGE_DIR/vendor/imgui/src",
+				"-Xcc=-std=c99",
+				"-mcpu=native",
+				"--link-defaultlib-shared=false"
+			],
+			"libs": [
+				"sokol",
+				"cimgui"
+			],
+			"libs-linux": [
+				"stdc++",
+				"X11",
+				"GL",
+				"Xi",
+				"Xcursor",
+				"asound"
+			],
+			"libs-osx": [
+				"c++",
+				"objC"
+			],
+			"libs-windows": [
+				"imm32",
+				"dxgi",
+				"d3d11"
+			],
+			"lflags-osx": [
+				"-framework",
+				"Cocoa",
+				"-framework",
+				"QuartzCore",
+				"-framework",
+				"Foundation",
+				"-framework",
+				"MetalKit",
+				"-framework",
+				"Metal",
+				"-framework",
+				"AudioToolbox"
+			],
+			"libs-windows-dmd": [
+				"imm32",
+				"dxgi",
+				"d3d11",
+				"msvcrt"
+			],
+			"preBuildCommands-linux": [
+				"mkdir -p $PACKAGE_DIR/build",
+				"$DC -run $PACKAGE_DIR/build.d --with-sokol-imgui",
+				"g++ -Wall -Wextra -Wno-unused-function -DNDEBUG -O2 -fPIC -c -o $PACKAGE_DIR/build/imgui.o $PACKAGE_DIR/vendor/imgui/src/imgui.cpp",
+				"g++ -Wall -Wextra -Wno-unused-function -DNDEBUG -O2 -fPIC -c -o $PACKAGE_DIR/build/imgui_demo.o $PACKAGE_DIR/vendor/imgui/src/imgui_demo.cpp",
+				"g++ -Wall -Wextra -Wno-unused-function -DNDEBUG -O2 -fPIC -c -o $PACKAGE_DIR/build/imgui_draw.o $PACKAGE_DIR/vendor/imgui/src/imgui_draw.cpp",
+				"g++ -Wall -Wextra -Wno-unused-function -DNDEBUG -O2 -fPIC -c -o $PACKAGE_DIR/build/imgui_tables.o $PACKAGE_DIR/vendor/imgui/src/imgui_tables.cpp",
+				"g++ -Wall -Wextra -Wno-unused-function -DNDEBUG -O2 -fPIC -c -o $PACKAGE_DIR/build/imgui_widgets.o $PACKAGE_DIR/vendor/imgui/src/imgui_widgets.cpp",
+				"g++ -Wall -Wextra -Wno-unused-function -DNDEBUG -O2 -fPIC -c -o $PACKAGE_DIR/build/cimgui.o $PACKAGE_DIR/vendor/imgui/src/cimgui.cpp",
+				"ar rcs $PACKAGE_DIR/build/libcimgui.a $PACKAGE_DIR/build/*.o",
+				"rm $PACKAGE_DIR/build/*.o",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -O2 -fPIC -I$PACKAGE_DIR/vendor/imgui/src -c -o $PACKAGE_DIR/build/sokol_app.o $PACKAGE_DIR/src/sokol/c/sokol_app.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -O2 -fPIC -I$PACKAGE_DIR/vendor/imgui/src -c -o $PACKAGE_DIR/build/sokol_log.o $PACKAGE_DIR/src/sokol/c/sokol_log.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -O2 -fPIC -I$PACKAGE_DIR/vendor/imgui/src -c -o $PACKAGE_DIR/build/sokol_gfx.o $PACKAGE_DIR/src/sokol/c/sokol_gfx.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -O2 -fPIC -I$PACKAGE_DIR/vendor/imgui/src -c -o $PACKAGE_DIR/build/sokol_time.o $PACKAGE_DIR/src/sokol/c/sokol_time.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -O2 -fPIC -I$PACKAGE_DIR/vendor/imgui/src -c -o $PACKAGE_DIR/build/sokol_audio.o $PACKAGE_DIR/src/sokol/c/sokol_audio.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -O2 -fPIC -I$PACKAGE_DIR/vendor/imgui/src -c -o $PACKAGE_DIR/build/sokol_gl.o $PACKAGE_DIR/src/sokol/c/sokol_gl.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -O2 -fPIC -I$PACKAGE_DIR/vendor/imgui/src -c -o $PACKAGE_DIR/build/sokol_debugtext.o $PACKAGE_DIR/src/sokol/c/sokol_debugtext.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -O2 -fPIC -I$PACKAGE_DIR/vendor/imgui/src -c -o $PACKAGE_DIR/build/sokol_shape.o $PACKAGE_DIR/src/sokol/c/sokol_shape.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -O2 -fPIC -I$PACKAGE_DIR/vendor/imgui/src -c -o $PACKAGE_DIR/build/sokol_glue.o $PACKAGE_DIR/src/sokol/c/sokol_glue.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -O2 -fPIC -I$PACKAGE_DIR/vendor/imgui/src -c -o $PACKAGE_DIR/build/sokol_fetch.o $PACKAGE_DIR/src/sokol/c/sokol_fetch.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -O2 -fPIC -I$PACKAGE_DIR/vendor/imgui/src -c -o $PACKAGE_DIR/build/sokol_imgui.o $PACKAGE_DIR/src/sokol/c/sokol_imgui.c",
+				"gcc -DNDEBUG -DIMPL -DSOKOL_GLCORE -DSOKOL_DISABLE_WAYLAND -Wall -Wextra -Wno-unused-function -O2 -fPIC -I$PACKAGE_DIR/vendor/imgui/src -c -o $PACKAGE_DIR/build/sokol_memtrack.o $PACKAGE_DIR/src/sokol/c/sokol_memtrack.c",
+				"ar rcs $PACKAGE_DIR/build/libsokol.a $PACKAGE_DIR/build/*.o",
+				"rm $PACKAGE_DIR/build/*.o"
+			],
+			"preBuildCommands-osx": [
+				"mkdir -p $PACKAGE_DIR/build",
+				"$DC -run $PACKAGE_DIR/build.d --with-sokol-imgui",
+				"clang++ -std=c++14 -Wall -Wextra -Wno-return-type-c-linkage -Wno-unused-function -DNDEBUG -O2 -fPIC -c -o $PACKAGE_DIR/build/imgui.o $PACKAGE_DIR/vendor/imgui/src/imgui.cpp",
+				"clang++ -std=c++14 -Wall -Wextra -Wno-return-type-c-linkage -Wno-unused-function -DNDEBUG -O2 -fPIC -c -o $PACKAGE_DIR/build/imgui_demo.o $PACKAGE_DIR/vendor/imgui/src/imgui_demo.cpp",
+				"clang++ -std=c++14 -Wall -Wextra -Wno-return-type-c-linkage -Wno-unused-function -DNDEBUG -O2 -fPIC -c -o $PACKAGE_DIR/build/imgui_draw.o $PACKAGE_DIR/vendor/imgui/src/imgui_draw.cpp",
+				"clang++ -std=c++14 -Wall -Wextra -Wno-return-type-c-linkage -Wno-unused-function -DNDEBUG -O2 -fPIC -c -o $PACKAGE_DIR/build/imgui_tables.o $PACKAGE_DIR/vendor/imgui/src/imgui_tables.cpp",
+				"clang++ -std=c++14 -Wall -Wextra -Wno-return-type-c-linkage -Wno-unused-function -DNDEBUG -O2 -fPIC -c -o $PACKAGE_DIR/build/imgui_widgets.o $PACKAGE_DIR/vendor/imgui/src/imgui_widgets.cpp",
+				"clang++ -std=c++14 -Wall -Wextra -Wno-return-type-c-linkage -Wno-unused-function -DNDEBUG -O2 -fPIC -c -o $PACKAGE_DIR/build/cimgui.o $PACKAGE_DIR/vendor/imgui/src/cimgui.cpp",
+				"ar rcs $PACKAGE_DIR/build/libcimgui.a $PACKAGE_DIR/build/*.o",
+				"rm $PACKAGE_DIR/build/*.o",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -ObjC -O2 -fPIC -I$PACKAGE_DIR/vendor/imgui/src -c -o $PACKAGE_DIR/build/sokol_log.o $PACKAGE_DIR/src/sokol/c/sokol_log.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -ObjC -O2 -fPIC -I$PACKAGE_DIR/vendor/imgui/src -c -o $PACKAGE_DIR/build/sokol_app.o $PACKAGE_DIR/src/sokol/c/sokol_app.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -ObjC -O2 -fPIC -I$PACKAGE_DIR/vendor/imgui/src -c -o $PACKAGE_DIR/build/sokol_gfx.o $PACKAGE_DIR/src/sokol/c/sokol_gfx.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -ObjC -O2 -fPIC -I$PACKAGE_DIR/vendor/imgui/src -c -o $PACKAGE_DIR/build/sokol_time.o $PACKAGE_DIR/src/sokol/c/sokol_time.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -ObjC -O2 -fPIC -I$PACKAGE_DIR/vendor/imgui/src -c -o $PACKAGE_DIR/build/sokol_audio.o $PACKAGE_DIR/src/sokol/c/sokol_audio.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -ObjC -O2 -fPIC -I$PACKAGE_DIR/vendor/imgui/src -c -o $PACKAGE_DIR/build/sokol_gl.o $PACKAGE_DIR/src/sokol/c/sokol_gl.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -ObjC -O2 -fPIC -I$PACKAGE_DIR/vendor/imgui/src -c -o $PACKAGE_DIR/build/sokol_debugtext.o $PACKAGE_DIR/src/sokol/c/sokol_debugtext.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -ObjC -O2 -fPIC -I$PACKAGE_DIR/vendor/imgui/src -c -o $PACKAGE_DIR/build/sokol_shape.o $PACKAGE_DIR/src/sokol/c/sokol_shape.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -ObjC -O2 -fPIC -I$PACKAGE_DIR/vendor/imgui/src -c -o $PACKAGE_DIR/build/sokol_glue.o $PACKAGE_DIR/src/sokol/c/sokol_glue.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -ObjC -O2 -fPIC -I$PACKAGE_DIR/vendor/imgui/src -c -o $PACKAGE_DIR/build/sokol_fetch.o $PACKAGE_DIR/src/sokol/c/sokol_fetch.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -ObjC -O2 -fPIC -I$PACKAGE_DIR/vendor/imgui/src -c -o $PACKAGE_DIR/build/sokol_imgui.o $PACKAGE_DIR/src/sokol/c/sokol_imgui.c",
+				"clang -DNDEBUG -DIMPL -DSOKOL_METAL -Wall -Wextra -Wno-unused-function -Wno-return-type-c-linkage -ObjC -O2 -fPIC -I$PACKAGE_DIR/vendor/imgui/src -c -o $PACKAGE_DIR/build/sokol_memtrack.o $PACKAGE_DIR/src/sokol/c/sokol_memtrack.c",
+				"ar rcs $PACKAGE_DIR/build/libsokol.a $PACKAGE_DIR/build/*.o",
+				"rm $PACKAGE_DIR/build/*.o"
+			],
+			"preBuildCommands-windows": [
+				"powershell -Command \"mkdir -Force $PACKAGE_DIR\\build\"",
+				"$DC -run $PACKAGE_DIR/build.d --with-sokol-imgui",
+				"cl.exe /DNDEBUG /O2 /nologo /c /Fo$PACKAGE_DIR\\build\\imgui.obj $PACKAGE_DIR\\vendor\\imgui\\src\\imgui.cpp",
+				"cl.exe /DNDEBUG /O2 /nologo /c /Fo$PACKAGE_DIR\\build\\imgui_demo.obj $PACKAGE_DIR\\vendor\\imgui\\src\\imgui_demo.cpp",
+				"cl.exe /DNDEBUG /O2 /nologo /c /Fo$PACKAGE_DIR\\build\\imgui_draw.obj $PACKAGE_DIR\\vendor\\imgui\\src\\imgui_draw.cpp",
+				"cl.exe /DNDEBUG /O2 /nologo /c /Fo$PACKAGE_DIR\\build\\imgui_tables.obj $PACKAGE_DIR\\vendor\\imgui\\src\\imgui_tables.cpp",
+				"cl.exe /DNDEBUG /O2 /nologo /c /Fo$PACKAGE_DIR\\build\\imgui_widgets.obj $PACKAGE_DIR\\vendor\\imgui\\src\\imgui_widgets.cpp",
+				"cl.exe /DNDEBUG /O2 /nologo /c /Fo$PACKAGE_DIR\\build\\cimgui.obj $PACKAGE_DIR\\vendor\\imgui\\src\\cimgui.cpp",
+				"lib.exe /nologo /OUT:$PACKAGE_DIR\\build\\cimgui.lib $PACKAGE_DIR\\build\\*.obj",
+				"powershell -Command \"Remove-Item $PACKAGE_DIR\\build\\*.obj\"",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /I\"$PACKAGE_DIR\\vendor\\imgui\\src\" /Fo$PACKAGE_DIR\\build\\sokol_log.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_log.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /I\"$PACKAGE_DIR\\vendor\\imgui\\src\" /Fo$PACKAGE_DIR\\build\\sokol_app.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_app.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /I\"$PACKAGE_DIR\\vendor\\imgui\\src\" /Fo$PACKAGE_DIR\\build\\sokol_gfx.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_gfx.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /I\"$PACKAGE_DIR\\vendor\\imgui\\src\" /Fo$PACKAGE_DIR\\build\\sokol_time.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_time.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /I\"$PACKAGE_DIR\\vendor\\imgui\\src\" /Fo$PACKAGE_DIR\\build\\sokol_audio.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_audio.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /I\"$PACKAGE_DIR\\vendor\\imgui\\src\" /Fo$PACKAGE_DIR\\build\\sokol_gl.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_gl.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /I\"$PACKAGE_DIR\\vendor\\imgui\\src\" /Fo$PACKAGE_DIR\\build\\sokol_debugtext.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_debugtext.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /I\"$PACKAGE_DIR\\vendor\\imgui\\src\" /Fo$PACKAGE_DIR\\build\\sokol_shape.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_shape.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /I\"$PACKAGE_DIR\\vendor\\imgui\\src\" /Fo$PACKAGE_DIR\\build\\sokol_glue.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_glue.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /I\"$PACKAGE_DIR\\vendor\\imgui\\src\" /Fo$PACKAGE_DIR\\build\\sokol_fetch.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_fetch.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /I\"$PACKAGE_DIR\\vendor\\imgui\\src\" /Fo$PACKAGE_DIR\\build\\sokol_imgui.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_imgui.c",
+				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /I\"$PACKAGE_DIR\\vendor\\imgui\\src\" /Fo$PACKAGE_DIR\\build\\sokol_memtrack.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_memtrack.c",
+				"lib.exe /nologo /OUT:$PACKAGE_DIR\\build\\sokol.lib $PACKAGE_DIR\\build\\*.obj",
+				"powershell -Command Remove-Item $PACKAGE_DIR\\build\\*.obj"
+			]
+		},
+		{
+			"name": "imgui-wgles3",
+			"libs": [
+				"sokol",
+				"cimgui"
+			],
+			"versions": [
+				"has_imgui"
+			],
+			"targetName": "cimguid",
+			"targetPath": "build",
+			"dflags": [
+				"-P-I$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/cache/sysroot/include",
+				"-P-I$PACKAGE_DIR/vendor/imgui/src",
+				"-i=sokol",
+				"-i=shaders",
+				"-i=handmade",
+				"-i=imgui",
+				"-i=emscripten",
+				"-defaultlib=",
+				"--disable-linker-strip-dead",
+				"-gcc=$PACKAGE_DIR/vendor/emsdk/upstream/bin/wasm32-clang"
+			],
+			"preGenerateCommands": [
+				"$DC -run $PACKAGE_DIR/build.d --target=wasm --with-sokol-imgui --verbose"
+			]
+		},
+		{
+			"name": "imgui-wgpu",
+			"libs": [
+				"sokol",
+				"cimgui"
+			],
+			"versions": [
+				"has_imgui"
+			],
+			"targetName": "cimguid",
+			"targetPath": "build",
+			"dflags": [
+				"-P-I$PACKAGE_DIR/vendor/emsdk/upstream/emscripten/cache/sysroot/include",
+				"-P-I$PACKAGE_DIR/vendor/imgui/src",
+				"-i=sokol",
+				"-i=shaders",
+				"-i=handmade",
+				"-i=imgui",
+				"-i=emscripten",
+				"-defaultlib=",
+				"--disable-linker-strip-dead",
+				"-gcc=$PACKAGE_DIR/vendor/emsdk/upstream/bin/wasm32-clang"
+			],
+			"preGenerateCommands": [
+				"$DC -run $PACKAGE_DIR/build.d --target=wasm --with-sokol-imgui --verbose"
+			]
+		},
+		{
+			"name": "sokol-wgles3",
+			"excludedSourceFiles": [
+				"src/sokol/imgui.d",
+				"src/imgui/*.d",
+				"src/imgui/*.c"
+			],
+			"dflags": [
+				"-i=sokol",
+				"-i=shaders",
+				"-i=handmade",
+				"-i=emscripten",
+				"--disable-linker-strip-dead",
+				"-defaultlib="
+			],
+			"libs": [
+				"sokol"
+			],
+			"lflags": [
+				"-L$PACKAGE_DIR/build"
+			],
+			"targetName": "sokold",
+			"targetPath": "build",
+			"preGenerateCommands": [
+				"$DC -run $PACKAGE_DIR/build.d --target=wasm --verbose"
+			]
+		},
+		{
+			"name": "sokol-wgpu",
+			"excludedSourceFiles": [
+				"src/sokol/imgui.d",
+				"src/imgui/*.d",
+				"src/imgui/*.c"
+			],
+			"dflags": [
+				"-i=sokol",
+				"-i=shaders",
+				"-i=handmade",
+				"-i=emscripten",
+				"--disable-linker-strip-dead",
+				"-defaultlib="
+			],
+			"libs": [
+				"sokol"
+			],
+			"targetName": "sokold",
+			"targetPath": "build",
+			"preGenerateCommands": [
+				"$DC -run $PACKAGE_DIR/build.d --target=wasm --verbose"
+			]
+		},
+		{
+			"name": "genshaders",
+			"excludedSourceFiles": [
+				"src/sokol/*.d",
+				"src/imgui/*.d"
+			],
+			"preGenerateCommands": [
+				"$DC -run $PACKAGE_DIR/build.d --download-sokol-tools"
+			],
+			"postBuildCommands-posix": [
+				"rm $PACKAGE_DIR/*.a"
+			],
+			"postBuildCommands-windows": [
+				"powershell -Command Remove-Item $PACKAGE_DIR\\*.lib"
+			]
+		}
+	],
+	"subPackages": [
+		"init-exec"
+	]
+}
