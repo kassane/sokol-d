@@ -1,7 +1,7 @@
 /++
 + Machine generated D bindings for Sokol library.
 + 
-+     Generated on: 2025-06-01 10:38:03
++     Generated on: 2025-06-07 08:25:53
 + 
 +     Source header: sokol_shape.h
 +     Module: sokol.shape
@@ -25,7 +25,7 @@ extern(C) struct Range {
 + a 4x4 matrix wrapper struct
 +/
 extern(C) struct Mat4 {
-    float[4][4] m = 0.0f;
+    float[4][4] m = [0.0f, 0.0f, 0.0f, 0.0f];
 }
 /++
 + vertex layout of the generated geometry
