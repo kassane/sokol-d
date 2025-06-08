@@ -112,3 +112,40 @@ jobs:
           dub build :userdata -c wasm -v --arch wasm32-unknown-emscripten-wasm
           dub build :vertexpull -c wasm -v --arch wasm32-unknown-emscripten-wasm
 
+  archlinux-gdc-15:
+    strategy:
+      fail-fast: false
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - name: prepare-linux
+        run: |
+            pacman -Syu --noconfirm
+            pacman -S --noconfirm glu mesa xorg alsa-lib gcc gdc dub      
+      - name: (dub) Build sokol examples
+        working-directory: examples
+        run: |
+          dub build :blend -f
+          dub build :bufferoffsets
+          dub build :clear
+          dub build :cube
+          dub build :debugtext
+          dub build :instancing
+          dub build :instancingcompute
+          dub build :mrt
+          dub build :noninterleaved
+          dub build :offscreen
+          dub build :quad
+          dub build :shapes
+          dub build :saudio
+          dub build :sglcontext
+          dub build :sglpoints
+          dub build :triangle
+          dub build :texcube
+          dub build :userdata
+          dub build :vertexpull
