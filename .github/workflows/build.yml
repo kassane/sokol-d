@@ -116,12 +116,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runs-on: [ubuntu-24.04-arm, ubuntu-latest]
+        runs-on: [ubuntu-latest]
     runs-on: ${{ matrix.runs-on }}
+    container:
+      image: archlinux:latest
+    defaults:
+      run:
+        shell: bash
     steps:
       - uses: actions/checkout@v4
-      - name: install gdc
-        run: sudo apt-get update && sudo apt-get install gdc dub
+      - name: prepare-linux
+        run: |
+            pacman -Syu --noconfirm
+            pacman -S --noconfirm glu mesa xorg alsa-lib gdc dub      
       - name: (dub) Build sokol examples
         working-directory: examples
         run: |
