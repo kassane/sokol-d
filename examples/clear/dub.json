@@ -64,7 +64,7 @@
             "name": "wgpu",
             "targetType": "staticLibrary",
             "postGenerateCommands": [
-                "$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=wgpu --enable-dawn --link=clear --verbose"
+                "$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --backend=wgpu --link=clear --verbose"
             ],
             "subConfigurations": {
                 "sokol-d": "sokol-wgpu"

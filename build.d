@@ -13,7 +13,6 @@ import std;
 
 // Dependency versions
 enum emsdk_version = "4.0.10";
-enum emdawnwebgpu_version = "v20250607.112309";
 enum imgui_version = "1.91.9";
 
 void main(string[] args) @safe
@@ -126,11 +125,7 @@ void main(string[] args) @safe
 
     // Setup dependencies
     if (opts.downloadEmsdk || opts.target.canFind("wasm"))
-    {
         getEmSDK(vendorPath);
-        if (opts.useDawn)
-            getEmDawnWebGPU(vendorPath);
-    }
     if (opts.withSokolImgui)
         getIMGUI(vendorPath);
 
@@ -190,20 +185,6 @@ void getEmSDK(string vendor) @safe
     downloadAndExtract("Emscripten SDK", vendor, "emsdk",
         format("https://github.com/emscripten-core/emsdk/archive/refs/tags/%s.zip", emsdk_version),
         (path) => emSdkSetupStep(path));
-}
-
-void getEmDawnWebGPU(string vendor) @safe
-{
-    writeln("Setting up emdawnwebgpu");
-    immutable path = absolutePath(buildPath(vendor, "emdawnwebgpu"));
-    immutable file = format("emdawnwebgpu-%s.remoteport.py", emdawnwebgpu_version);
-    immutable url = format("https://github.com/google/dawn/releases/download/%s/%s", emdawnwebgpu_version, file);
-
-    if (!exists(buildPath(path, file)))
-    {
-        mkdirRecurse(path);
-        download(url, buildPath(path, file));
-    }
 }
 
 void getIMGUI(string vendor) @safe
@@ -495,10 +476,6 @@ void emLinkStep(EmLinkOptions opts) @safe
     {
         if (opts.use_dawn)
         {
-            immutable portFile = buildPath(opts.vendor, "emdawnwebgpu", format(
-                    "emdawnwebgpu-%s.remoteport.py", emdawnwebgpu_version));
-            enforce(exists(portFile), format("emdawnwebgpu port file not found: %s", portFile));
-            // cmd ~= format("--use-port=%s", portFile);
             cmd ~= "--use-port=emdawnwebgpu";
         }
         else
