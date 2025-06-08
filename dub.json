@@ -113,7 +113,9 @@
 				"GL",
 				"Xi",
 				"Xcursor",
-				"asound"
+				"asound",
+				"m",
+				"dl"
 			],
 			"libs-windows": [
 				"dxgi",
@@ -215,7 +217,9 @@
 				"GL",
 				"Xi",
 				"Xcursor",
-				"asound"
+				"asound",
+				"m",
+				"dl"
 			],
 			"libs-windows": [
 				"dxgi",
@@ -298,7 +302,9 @@
 				"wayland-egl",
 				"wayland-cursor",
 				"xkbcommon",
-				"asound"
+				"asound",
+				"m",
+				"dl"
 			],
 			"preBuildCommands-linux": [
 				"mkdir -p $PACKAGE_DIR/build",
@@ -346,7 +352,9 @@
 				"wayland-egl",
 				"wayland-cursor",
 				"xkbcommon",
-				"asound"
+				"asound",
+				"m",
+				"dl"
 			],
 			"preBuildCommands-linux": [
 				"mkdir -p $PACKAGE_DIR/build",
@@ -400,7 +408,9 @@
 				"GL",
 				"Xi",
 				"Xcursor",
-				"asound"
+				"asound",
+				"m",
+				"dl"
 			],
 			"libs-osx": [
 				"c++",
@@ -541,7 +551,9 @@
 				"GL",
 				"Xi",
 				"Xcursor",
-				"asound"
+				"asound",
+				"m",
+				"dl"
 			],
 			"libs-osx": [
 				"c++",

@@ -112,7 +112,7 @@ jobs:
           dub build :userdata -c wasm -v --arch wasm32-unknown-emscripten-wasm
           dub build :vertexpull -c wasm -v --arch wasm32-unknown-emscripten-wasm
 
-  gdc:
+  gdc-15:
     strategy:
       fail-fast: false
       matrix:
@@ -128,7 +128,7 @@ jobs:
       - name: prepare-linux
         run: |
             pacman -Syu --noconfirm
-            pacman -S --noconfirm glu mesa xorg alsa-lib gdc dub      
+            pacman -S --noconfirm glu mesa xorg alsa-lib gcc gdc dub      
       - name: (dub) Build sokol examples
         working-directory: examples
         run: |
