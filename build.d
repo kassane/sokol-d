@@ -451,7 +451,7 @@ void emLinkStep(EmLinkOptions opts) @safe
     if (opts.use_imgui)
         cmd ~= "-lcimgui";
     if (opts.optimize == "debug")
-        cmd ~= ["-Og", "-sSAFE_HEAP=1", "-sSTACK_OVERFLOW_CHECK=1"];
+        cmd ~= ["-gsource-map", "-sSAFE_HEAP=1", "-sSTACK_OVERFLOW_CHECK=1"];
     else
     {
         cmd ~= "-sASSERTIONS=0";

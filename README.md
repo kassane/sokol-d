@@ -30,9 +30,9 @@ dub init -t sokol-d <project-name>
 1. build and run any example:
 ```bash
 cd examples
-dub :triangle -c native
-dub :cube -c native
-dub :imgui -c native
+dub :triangle
+dub :cube
+dub :imgui
 ```
 
 ## Building WebAssembly Examples
@@ -104,7 +104,7 @@ Checkout [sokol-tools](https://github.com/floooh/sokol-tools) for a sokol shader
 here have been compiled using it with `-f sokol_d`!
 
 ```bash
-dub -c genshaders
+dub build -c genshaders
 ```
 
 <br>

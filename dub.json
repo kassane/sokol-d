@@ -2,7 +2,7 @@
 	"name": "sokol-d",
 	"description": "D bindings for sokol",
 	"license": "Zlib",
-	"version": "0.3.3",
+	"version": "0.3.4",
 	"authors": [
 		"Matheus França",
 		"Andre Weissflog"
@@ -714,7 +714,7 @@
 				"-gcc=$PACKAGE_DIR/vendor/emsdk/upstream/bin/wasm32-clang"
 			],
 			"preGenerateCommands": [
-				"$DC -run $PACKAGE_DIR/build.d --target=wasm --with-sokol-imgui --verbose"
+				"$DC -run $PACKAGE_DIR/build.d --target=wasm --backend=wgpu --with-sokol-imgui --verbose"
 			]
 		},
 		{
@@ -765,7 +765,7 @@
 			"targetName": "sokold",
 			"targetPath": "build",
 			"preGenerateCommands": [
-				"$DC -run $PACKAGE_DIR/build.d --target=wasm --verbose"
+				"$DC -run $PACKAGE_DIR/build.d --target=wasm --backend=wgpu --verbose"
 			]
 		},
 		{
