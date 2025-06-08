@@ -75,12 +75,15 @@
 				"src/imgui/*.d",
 				"src/imgui/*.c"
 			],
-			"dflags": [
+			"dflags-dmd": [
 				"-i=sokol",
 				"-i=shaders",
 				"-i=handmade"
 			],
 			"dflags-ldc": [
+				"-i=sokol",
+				"-i=shaders",
+				"-i=handmade",
 				"-mcpu=native"
 			],
 			"targetName": "sokold",
@@ -172,12 +175,15 @@
 				"src/imgui/*.d",
 				"src/imgui/*.c"
 			],
-			"dflags": [
+			"dflags-dmd": [
 				"-i=sokol",
 				"-i=shaders",
 				"-i=handmade"
 			],
 			"dflags-ldc": [
+				"-i=sokol",
+				"-i=shaders",
+				"-i=handmade",
 				"-mcpu=native",
 				"--link-defaultlib-shared=false"
 			],
@@ -271,12 +277,15 @@
 				"src/imgui/*.d",
 				"src/imgui/*.c"
 			],
-			"dflags": [
+			"dflags-dmd": [
 				"-i=sokol",
 				"-i=shaders",
 				"-i=handmade"
 			],
 			"dflags-ldc": [
+				"-i=sokol",
+				"-i=shaders",
+				"-i=handmade",
 				"-mcpu=native"
 			],
 			"targetName": "sokold",
@@ -315,12 +324,15 @@
 				"src/imgui/*.d",
 				"src/imgui/*.c"
 			],
-			"dflags": [
+			"dflags-dmd": [
 				"-i=sokol",
 				"-i=shaders",
 				"-i=handmade"
 			],
 			"dflags-ldc": [
+				"-i=sokol",
+				"-i=shaders",
+				"-i=handmade",
 				"-mcpu=native"
 			],
 			"targetType": "dynamicLibrary",
@@ -360,21 +372,22 @@
 			"versions": [
 				"has_imgui"
 			],
-			"dflags": [
+			"dflags-dmd": [
 				"-i=sokol",
 				"-i=shaders",
 				"-i=handmade",
-				"-i=imgui"
-			],
-			"dflags-dmd": [
+				"-i=imgui",
 				"-P-I$PACKAGE_DIR/vendor/imgui/src"
 			],
 			"dflags-gdc": [
 				"-I$PACKAGE_DIR/vendor/imgui/src"
 			],
 			"dflags-ldc": [
+				"-i=sokol",
+				"-i=shaders",
+				"-i=handmade",
+				"-i=imgui",
 				"-P-I$PACKAGE_DIR/vendor/imgui/src",
-				"-Xcc=-std=c99",
 				"-mcpu=native"
 			],
 			"libs": [
@@ -499,21 +512,22 @@
 			"versions": [
 				"has_imgui"
 			],
-			"dflags": [
+			"dflags-dmd": [
 				"-i=sokol",
 				"-i=shaders",
 				"-i=handmade",
-				"-i=imgui"
-			],
-			"dflags-dmd": [
+				"-i=imgui",
 				"-P-I$PACKAGE_DIR/vendor/imgui/src"
 			],
 			"dflags-gdc": [
 				"-I$PACKAGE_DIR/vendor/imgui/src"
 			],
 			"dflags-ldc": [
+				"-i=sokol",
+				"-i=shaders",
+				"-i=handmade",
+				"-i=imgui",
 				"-P-I$PACKAGE_DIR/vendor/imgui/src",
-				"-Xcc=-std=c99",
 				"-mcpu=native",
 				"--link-defaultlib-shared=false"
 			],
