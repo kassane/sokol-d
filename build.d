@@ -12,7 +12,8 @@ module build;
 import std;
 
 // Dependency versions
-enum emsdk_version = "4.0.9";
+enum emsdk_version = "4.0.10";
+enum emdawnwebgpu_version = "v20250607.112309";
 enum imgui_version = "1.91.9";
 
 void main(string[] args) @safe
@@ -29,7 +30,7 @@ void main(string[] args) @safe
         bool help, verbose, downloadEmsdk, downloadShdc;
         string compiler, target = defaultTarget, optimize = "debug", linkExample, runExample, linkage = "static";
         SokolBackend backend;
-        bool useX11 = true, useWayland, useEgl, withSokolImgui;
+        bool useX11 = true, useWayland, useEgl, useDawn, useLTO, withSokolImgui;
     }
 
     Options opts;
@@ -46,6 +47,12 @@ void main(string[] args) @safe
         break;
     case "--verbose":
         verbose = true;
+        break;
+    case "--enable-wasm-lto":
+        useLTO = true;
+        break;
+    case "--enable-dawn":
+        useDawn = true;
         break;
     case "--download-emsdk":
         downloadEmsdk = true;
@@ -89,6 +96,8 @@ void main(string[] args) @safe
         writeln("  --toolchain=<compiler> Select C toolchain (e.g., gcc, clang, emcc)");
         writeln("  --optimize=<level>    Select optimization level (debug, release, small)");
         writeln("  --target=<target>     Select target (native, wasm, android)");
+        writeln("  --enable-wasm-lto     Enable Emscripten LTO");
+        writeln("  --enable-dawn         Use emdawnwebgpu bindings for WASM");
         writeln(
             "  --linkage=<type>      Specify library linkage (static or dynamic, default: static)");
         writeln("  --download-emsdk      Download Emscripten SDK");
@@ -117,7 +126,11 @@ void main(string[] args) @safe
 
     // Setup dependencies
     if (opts.downloadEmsdk || opts.target.canFind("wasm"))
+    {
         getEmSDK(vendorPath);
+        if (opts.useDawn)
+            getEmDawnWebGPU(vendorPath);
+    }
     if (opts.withSokolImgui)
         getIMGUI(vendorPath);
 
@@ -133,6 +146,8 @@ void main(string[] args) @safe
             vendor: vendorPath,
             backend: opts.backend,
             use_emmalloc: true,
+            release_use_lto: opts.useLTO,
+            use_dawn: opts.useDawn,
             use_imgui: opts.withSokolImgui,
             use_filesystem: false,
             shell_file_path: absolutePath(buildPath(sokolRoot, "src", "sokol", "web", "shell.html")),
@@ -175,6 +190,20 @@ void getEmSDK(string vendor) @safe
     downloadAndExtract("Emscripten SDK", vendor, "emsdk",
         format("https://github.com/emscripten-core/emsdk/archive/refs/tags/%s.zip", emsdk_version),
         (path) => emSdkSetupStep(path));
+}
+
+void getEmDawnWebGPU(string vendor) @safe
+{
+    writeln("Setting up emdawnwebgpu");
+    immutable path = absolutePath(buildPath(vendor, "emdawnwebgpu"));
+    immutable file = format("emdawnwebgpu-%s.remoteport.py", emdawnwebgpu_version);
+    immutable url = format("https://github.com/google/dawn/releases/download/%s/%s", emdawnwebgpu_version, file);
+
+    if (!exists(buildPath(path, file)))
+    {
+        mkdirRecurse(path);
+        download(url, buildPath(path, file));
+    }
 }
 
 void getIMGUI(string vendor) @safe
@@ -249,7 +278,7 @@ struct EmLinkOptions
 {
     string target, optimize, lib_main, vendor, shell_file_path;
     SokolBackend backend;
-    bool release_use_closure = true, release_use_lto, use_emmalloc, use_filesystem, use_imgui, verbose;
+    bool release_use_closure = true, release_use_lto, use_emmalloc, use_filesystem, use_imgui, use_dawn, verbose;
     string[] extra_args;
 }
 
@@ -463,7 +492,18 @@ void emLinkStep(EmLinkOptions opts) @safe
     }
 
     if (opts.backend == SokolBackend.wgpu)
-        cmd ~= "-sUSE_WEBGPU=1";
+    {
+        if (opts.use_dawn)
+        {
+            immutable portFile = buildPath(opts.vendor, "emdawnwebgpu", format(
+                    "emdawnwebgpu-%s.remoteport.py", emdawnwebgpu_version));
+            enforce(exists(portFile), format("emdawnwebgpu port file not found: %s", portFile));
+            // cmd ~= format("--use-port=%s", portFile);
+            cmd ~= "--use-port=emdawnwebgpu";
+        }
+        else
+            cmd ~= "-sUSE_WEBGPU=1";
+    }
     if (opts.backend == SokolBackend.gles3)
         cmd ~= "-sUSE_WEBGL2=1";
     if (!opts.use_filesystem)

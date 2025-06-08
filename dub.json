@@ -765,7 +765,7 @@
 			"targetName": "sokold",
 			"targetPath": "build",
 			"preGenerateCommands": [
-				"$DC -run $PACKAGE_DIR/build.d --target=wasm --backend=wgpu --verbose"
+				"$DC -run $PACKAGE_DIR/build.d --target=wasm --backend=wgpu --enable-dawn --verbose"
 			]
 		},
 		{
