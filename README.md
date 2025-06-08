@@ -27,12 +27,7 @@ dub init -t sokol-d <project-name>
 
 ## Building Native Examples
 
-1. First, build the sokol static library:
-```bash
-dub build -c sokol-static
-```
-
-2. Then build and run any example:
+1. build and run any example:
 ```bash
 cd examples
 dub :triangle -c native
@@ -42,16 +37,7 @@ dub :imgui -c native
 
 ## Building WebAssembly Examples
 
-1. First, build sokol for WebAssembly:
-```bash
-# For WebGL2
-dub build -c sokol-webgl
-
-# For WebGPU
-dub build -c sokol-wgpu
-```
-
-2. Then build any example for WASM:
+1. build any example for WASM:
 ```bash
 cd examples
 dub :triangle -c wasm     # for WebGL2
