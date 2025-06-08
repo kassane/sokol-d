@@ -25,25 +25,22 @@ dub init -t sokol-d <project-name>
 - C/C++ compiler (GCC/Clang/MSVC)
 - Linux dependencies: libglu1-mesa-dev, mesa-common-dev, xorg-dev, libasound-dev (for X11/Wayland, GL and ALSA development)
 
-## Building Native Examples
+## Available Examples
+- blend
+- bufferoffsets
+- clear
+- cube
+- debugtext
+- droptest
+- imgui
+- instancing
+- instancingcompute
+- saudio
+- sglcontext
+- sglpoints
+- triangle
 
-1. build and run any example:
-```bash
-cd examples
-dub :triangle
-dub :cube
-dub :imgui
-```
-
-## Building WebAssembly Examples
-
-1. build any example for WASM:
-```bash
-cd examples
-dub :triangle -c wasm     # for WebGL2
-# or
-dub :triangle -c wgpu     # for WebGPU
-```
+See [examples](examples)
 
 ### All Configurations
 
@@ -81,22 +78,6 @@ Available for all configurations:
 - Release (no bounds checking): `-b release-nobounds`
 - Release (better C): `-b release-betterc`
 
-## Available Examples
-- blend
-- bufferoffsets
-- clear
-- cube
-- debugtext
-- droptest
-- imgui
-- instancing
-- instancingcompute
-- saudio
-- sglcontext
-- sglpoints
-- triangle
-
-See [examples](examples)
 
 ## Shaders
 
