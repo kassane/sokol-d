@@ -1,7 +1,7 @@
 /++
 + Machine generated D bindings for Sokol library.
 + 
-+     Generated on: 2025-06-07 08:25:53
++     Generated on: 2025-06-08 13:24:25
 + 
 +     Source header: sokol_gfx.h
 +     Module: sokol.gfx
@@ -1872,6 +1872,7 @@ extern(C) struct TraceHooks {
 extern(C) struct SlotInfo {
     ResourceState state = ResourceState.Initial;
     uint res_id = 0;
+    uint uninit_count = 0;
 }
 extern(C) struct BufferInfo {
     SlotInfo slot = {};
@@ -2328,10 +2329,14 @@ enum LogItem {
     Validate_beginpass_attachments_valid,
     Validate_beginpass_computepass_storage_attachments_only,
     Validate_beginpass_renderpass_render_attachments_only,
-    Validate_beginpass_color_attachment_image,
-    Validate_beginpass_resolve_attachment_image,
-    Validate_beginpass_depthstencil_attachment_image,
-    Validate_beginpass_storage_attachment_image,
+    Validate_beginpass_color_attachment_image_alive,
+    Validate_beginpass_color_attachment_image_valid,
+    Validate_beginpass_resolve_attachment_image_alive,
+    Validate_beginpass_resolve_attachment_image_valid,
+    Validate_beginpass_depthstencil_attachment_image_alive,
+    Validate_beginpass_depthstencil_attachment_image_valid,
+    Validate_beginpass_storage_attachment_image_alive,
+    Validate_beginpass_storage_attachment_image_valid,
     Validate_beginpass_swapchain_expect_width,
     Validate_beginpass_swapchain_expect_width_notset,
     Validate_beginpass_swapchain_expect_height,
@@ -2366,39 +2371,45 @@ enum LogItem {
     Validate_apip_pipeline_exists,
     Validate_apip_pipeline_valid,
     Validate_apip_pass_expected,
-    Validate_apip_shader_exists,
-    Validate_apip_shader_valid,
+    Validate_apip_pipeline_shader_alive,
+    Validate_apip_pipeline_shader_valid,
     Validate_apip_computepass_expected,
     Validate_apip_renderpass_expected,
-    Validate_apip_curpass_attachments_exists,
+    Validate_apip_curpass_attachments_alive,
     Validate_apip_curpass_attachments_valid,
     Validate_apip_att_count,
+    Validate_apip_color_attachment_image_alive,
+    Validate_apip_color_attachment_image_valid,
+    Validate_apip_depthstencil_attachment_image_alive,
+    Validate_apip_depthstencil_attachment_image_valid,
     Validate_apip_color_format,
     Validate_apip_depth_format,
     Validate_apip_sample_count,
     Validate_apip_expected_storage_attachment_image,
-    Validate_apip_storage_attachment_image_exists,
+    Validate_apip_storage_attachment_image_alive,
     Validate_apip_storage_attachment_image_valid,
     Validate_apip_storage_attachment_pixelformat,
     Validate_apip_storage_attachment_image_type,
     Validate_abnd_pass_expected,
     Validate_abnd_empty_bindings,
-    Validate_abnd_pipeline,
-    Validate_abnd_pipeline_exists,
+    Validate_abnd_no_pipeline,
+    Validate_abnd_pipeline_alive,
     Validate_abnd_pipeline_valid,
+    Validate_abnd_pipeline_shader_alive,
+    Validate_abnd_pipeline_shader_valid,
     Validate_abnd_compute_expected_no_vbs,
     Validate_abnd_compute_expected_no_ib,
     Validate_abnd_expected_vb,
-    Validate_abnd_vb_exists,
+    Validate_abnd_vb_alive,
     Validate_abnd_vb_type,
     Validate_abnd_vb_overflow,
     Validate_abnd_no_ib,
     Validate_abnd_ib,
-    Validate_abnd_ib_exists,
+    Validate_abnd_ib_alive,
     Validate_abnd_ib_type,
     Validate_abnd_ib_overflow,
     Validate_abnd_expected_image_binding,
-    Validate_abnd_img_exists,
+    Validate_abnd_img_alive,
     Validate_abnd_image_type_mismatch,
     Validate_abnd_expected_multisampled_image,
     Validate_abnd_image_msaa,
@@ -2408,9 +2419,10 @@ enum LogItem {
     Validate_abnd_unexpected_sampler_compare_never,
     Validate_abnd_expected_sampler_compare_never,
     Validate_abnd_expected_nonfiltering_sampler,
-    Validate_abnd_smp_exists,
+    Validate_abnd_smp_alive,
+    Validate_abnd_smp_valid,
     Validate_abnd_expected_storagebuffer_binding,
-    Validate_abnd_storagebuffer_exists,
+    Validate_abnd_storagebuffer_alive,
     Validate_abnd_storagebuffer_binding_buffertype,
     Validate_abnd_storagebuffer_readwrite_immutable,
     Validate_abnd_image_binding_vs_depthstencil_attachment,
@@ -2419,6 +2431,10 @@ enum LogItem {
     Validate_abnd_image_binding_vs_storage_attachment,
     Validate_au_pass_expected,
     Validate_au_no_pipeline,
+    Validate_au_pipeline_alive,
+    Validate_au_pipeline_valid,
+    Validate_au_pipeline_shader_alive,
+    Validate_au_pipeline_shader_valid,
     Validate_au_no_uniformblock_at_slot,
     Validate_au_size,
     Validate_draw_renderpass_expected,
@@ -3132,7 +3148,6 @@ extern(C) struct D3d11PipelineInfo {
 }
 extern(C) struct D3d11AttachmentsInfo {
     const(void)*[4] color_rtv = null;
-    const(void)*[4] resolve_rtv = null;
     const(void)* dsv = null;
 }
 extern(C) struct MtlBufferInfo {
