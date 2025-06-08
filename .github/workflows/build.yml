@@ -137,8 +137,6 @@ jobs:
           dub build :clear
           dub build :cube
           dub build :debugtext
-          dub build :droptest
-          dub build :imgui
           dub build :instancing
           dub build :instancingcompute
           dub build :mrt
