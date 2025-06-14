@@ -12,7 +12,7 @@ module build;
 import std;
 
 // Dependency versions
-enum emsdk_version = "4.0.9";
+enum emsdk_version = "4.0.10";
 enum imgui_version = "1.91.9";
 
 void main(string[] args) @safe
@@ -29,7 +29,7 @@ void main(string[] args) @safe
         bool help, verbose, downloadEmsdk, downloadShdc;
         string compiler, target = defaultTarget, optimize = "debug", linkExample, runExample, linkage = "static";
         SokolBackend backend;
-        bool useX11 = true, useWayland, useEgl, withSokolImgui;
+        bool useX11 = true, useWayland, useEgl, useLTO, withSokolImgui;
     }
 
     Options opts;
@@ -46,6 +46,9 @@ void main(string[] args) @safe
         break;
     case "--verbose":
         verbose = true;
+        break;
+    case "--enable-wasm-lto":
+        useLTO = true;
         break;
     case "--download-emsdk":
         downloadEmsdk = true;
@@ -89,6 +92,8 @@ void main(string[] args) @safe
         writeln("  --toolchain=<compiler> Select C toolchain (e.g., gcc, clang, emcc)");
         writeln("  --optimize=<level>    Select optimization level (debug, release, small)");
         writeln("  --target=<target>     Select target (native, wasm, android)");
+        writeln("  --enable-wasm-lto     Enable Emscripten LTO");
+        writeln("  --enable-dawn         Use emdawnwebgpu bindings for WASM");
         writeln(
             "  --linkage=<type>      Specify library linkage (static or dynamic, default: static)");
         writeln("  --download-emsdk      Download Emscripten SDK");
@@ -133,6 +138,7 @@ void main(string[] args) @safe
             vendor: vendorPath,
             backend: opts.backend,
             use_emmalloc: true,
+            release_use_lto: opts.useLTO,
             use_imgui: opts.withSokolImgui,
             use_filesystem: false,
             shell_file_path: absolutePath(buildPath(sokolRoot, "src", "sokol", "web", "shell.html")),
@@ -259,6 +265,11 @@ struct EmRunOptions
     bool verbose;
 }
 
+struct EmbuilderOptions
+{
+    string port_name, vendor;
+}
+
 // Build Sokol and ImGui libraries
 void buildLibSokol(LibSokolOptions opts) @safe
 {
@@ -307,6 +318,17 @@ void buildLibSokol(LibSokolOptions opts) @safe
         break;
     case "wasm":
         cflags ~= ["-fPIE"];
+        if (opts.backend == SokolBackend.wgpu) // add include path to find emdawnwebgpu <webgpu/webgpu.h> before Emscripten SDK webgpu.h
+        {
+            //dfmt off
+            EmbuilderOptions embopts = {
+                port_name: "emdawnwebgpu",
+                vendor: opts.vendor,
+            };
+            //dfmt on
+            embuilderStep(embopts);
+            cflags ~= format("-I%s", buildPath(opts.vendor, "emsdk", "upstream", "emscripten", "cache", "ports", "emdawnwebgpu", "emdawnwebgpu_pkg", "webgpu", "include"));
+        }
         compiler = buildPath(opts.vendor, "emsdk", "upstream", "emscripten", "emcc") ~ (isWindows ? ".bat"
                 : "");
         break;
@@ -348,9 +370,12 @@ void buildLibSokol(LibSokolOptions opts) @safe
         ];
         cflags ~= format("-I%s", imguiRoot);
 
+        //dfmt off
         string imguiCompiler = opts.target.canFind("wasm") ? buildPath(opts.vendor, "emsdk", "upstream", "emscripten", "em++") ~ (
-            isWindows ? ".bat" : "") : compiler.canFind("clang") ? findProgram(compiler ~ "++") : compiler.canFind(
-            "gcc") ? findProgram("g++") : compiler;
+            isWindows ? ".bat" : "") :
+            compiler.canFind("clang") ? findProgram(compiler ~ "++") :
+            compiler.canFind("gcc") ? findProgram("g++") : compiler;
+        //dfmt on
 
         // Compile ImGui sources
         auto imguiObjs = compileSources(imguiSources, buildDir, imguiRoot, imguiCompiler, cflags ~ "-DNDEBUG", "imgui_", opts
@@ -463,7 +488,7 @@ void emLinkStep(EmLinkOptions opts) @safe
     }
 
     if (opts.backend == SokolBackend.wgpu)
-        cmd ~= "-sUSE_WEBGPU=1";
+        cmd ~= "--use-port=emdawnwebgpu";
     if (opts.backend == SokolBackend.gles3)
         cmd ~= "-sUSE_WEBGL2=1";
     if (!opts.use_filesystem)
@@ -509,6 +534,14 @@ void emSdkSetupStep(string emsdk) @safe
         executeOrFail([!isWindows ? "bash " ~ cmd: cmd, "install", "latest"], "emsdk install failed", true);
         executeOrFail([!isWindows ? "bash " ~ cmd: cmd, "activate", "latest"], "emsdk activate failed", true);
     }
+}
+
+void embuilderStep(EmbuilderOptions opts) @safe
+{
+    string embuilder = buildPath(opts.vendor, "emsdk", "upstream", "emscripten", "embuilder") ~ (
+        isWindows ? ".bat" : "");
+    string[] bFlags = ["build", opts.port_name];
+    executeOrFail(embuilder ~ bFlags, "embuilder failed to build " ~ opts.port_name, true);
 }
 
 // Utility functions
