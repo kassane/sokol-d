@@ -93,7 +93,6 @@ void main(string[] args) @safe
         writeln("  --optimize=<level>    Select optimization level (debug, release, small)");
         writeln("  --target=<target>     Select target (native, wasm, android)");
         writeln("  --enable-wasm-lto     Enable Emscripten LTO");
-        writeln("  --enable-dawn         Use emdawnwebgpu bindings for WASM");
         writeln(
             "  --linkage=<type>      Specify library linkage (static or dynamic, default: static)");
         writeln("  --download-emsdk      Download Emscripten SDK");
