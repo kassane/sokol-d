@@ -35,18 +35,10 @@ jobs:
 
       - name: (dub) Running shdc
         run: dub build -c genshaders -v
-      # - name: (dub) Build sokol-static (default)
-      #   run: dub build -v
-      # - name: (dub) Build imgui-static
-      #   run: dub build -c imgui-static -v
-      # - name: (dub) Build sokol-shared
-      #   run: dub build -c sokol-shared -v      
-      # - name: (dub) Build imgui-shared
-      #   run: dub build -c imgui-shared -v
       - name: (dub) Build sokol examples
         working-directory: examples
         run: |
-          dub build :blend -f
+          dub build :blend
           dub build :bufferoffsets
           dub build :clear
           dub build :cube
@@ -79,18 +71,10 @@ jobs:
       - uses: dlang-community/setup-dlang@v2
         with:
           compiler: ldc-master
-      # - name: (dub) Build sokol+imgui-wgles3
-      #   run: dub build -c imgui-wgles3 -v --arch wasm32-unknown-emscripten-wasm
-      # - name: (dub) Build sokol+imgui-wgpu
-      #   run: dub build -c imgui-wgpu -v --arch wasm32-unknown-emscripten-wasm
-      # - name: (dub) Build sokol-wgpu
-      #   run: dub build -c sokol-wgpu -v --arch wasm32-unknown-emscripten-wasm
-      # - name: (dub) Build sokol-wgles3
-      #   run: dub build -c sokol-wgles3 -v --arch wasm32-unknown-emscripten-wasm
       - name: (dub) Build sokol examples
         working-directory: examples
         run: |
-          dub build :blend -f -c wasm -v --arch wasm32-unknown-emscripten-wasm
+          dub build :blend -c wasm -v --arch wasm32-unknown-emscripten-wasm
           dub build :bufferoffsets -c wasm -v --arch wasm32-unknown-emscripten-wasm
           dub build :clear -c wasm -v --arch wasm32-unknown-emscripten-wasm
           dub build :cube -c wasm -v --arch wasm32-unknown-emscripten-wasm
@@ -112,7 +96,43 @@ jobs:
           dub build :userdata -c wasm -v --arch wasm32-unknown-emscripten-wasm
           dub build :vertexpull -c wasm -v --arch wasm32-unknown-emscripten-wasm
 
-  archlinux-gdc-15:
+  build-wgpu:
+    strategy:
+      fail-fast: false
+      matrix:
+        runs-on: [ubuntu-24.04-arm, ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.runs-on }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dlang-community/setup-dlang@v2
+        with:
+          compiler: ldc-master
+      - name: (dub) Build sokol examples
+        working-directory: examples
+        run: |
+          dub build :blend -c wgpu -v --arch wasm32-unknown-emscripten-wasm
+          dub build :bufferoffsets -c wgpu -v --arch wasm32-unknown-emscripten-wasm
+          dub build :clear -c wgpu -v --arch wasm32-unknown-emscripten-wasm
+          dub build :cube -c wgpu -v --arch wasm32-unknown-emscripten-wasm
+          dub build :debugtext -c wgpu -v --arch wasm32-unknown-emscripten-wasm
+          dub build :droptest -c wgpu -v --arch wasm32-unknown-emscripten-wasm
+          dub build :imgui -c wgpu -v --arch wasm32-unknown-emscripten-wasm
+          dub build :instancing -c wgpu -v --arch wasm32-unknown-emscripten-wasm
+          dub build :instancingcompute -c wgpu -v --arch wasm32-unknown-emscripten-wasm
+          dub build :mrt -c wgpu -v --arch wasm32-unknown-emscripten-wasm
+          dub build :noninterleaved -c wgpu -v --arch wasm32-unknown-emscripten-wasm
+          dub build :offscreen -c wgpu -v --arch wasm32-unknown-emscripten-wasm
+          dub build :quad -c wgpu -v --arch wasm32-unknown-emscripten-wasm
+          dub build :shapes -c wgpu -v --arch wasm32-unknown-emscripten-wasm
+          dub build :saudio -c wgpu -v --arch wasm32-unknown-emscripten-wasm
+          dub build :sglcontext -c wgpu -v --arch wasm32-unknown-emscripten-wasm
+          dub build :sglpoints -c wgpu -v --arch wasm32-unknown-emscripten-wasm
+          dub build :triangle -c wgpu -v --arch wasm32-unknown-emscripten-wasm
+          dub build :texcube -c wgpu -v --arch wasm32-unknown-emscripten-wasm
+          dub build :userdata -c wgpu -v --arch wasm32-unknown-emscripten-wasm
+          dub build :vertexpull -c wgpu -v --arch wasm32-unknown-emscripten-wasm
+
+  archlinux-gdc:
     strategy:
       fail-fast: false
     runs-on: ubuntu-latest
@@ -130,7 +150,7 @@ jobs:
       - name: (dub) Build sokol examples
         working-directory: examples
         run: |
-          dub build :blend -f
+          dub build :blend
           dub build :bufferoffsets
           dub build :clear
           dub build :cube
