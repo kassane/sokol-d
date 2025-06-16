@@ -15,15 +15,18 @@ public import imgui.c.dcimgui;
 pure @nogc nothrow:
 
 // Callback function types
-extern(C) alias ImGuiGetterCallback = const(char)* function(const(void)*, int);
-extern(C) alias ImGuiValues_getterCallback = float function(void*, int);
+extern(C) alias ImGuiGetterCallback = const(char)* function(void*, int);
 extern(C) alias ImGuiOld_callbackCallback = bool function(void*, int, const(char)**);
+extern(C) alias ImGuiValues_getterCallback = float function(void*, int);
 
 // D-friendly wrappers
 /++
-Context creation and access - Each context create its own ImFontAtlas by default. You may instance one yourself and pass it to CreateContext() to share a font atlas between contexts. - DLL users: heaps and globals are not shared across DLL boundaries! You will need to call SetCurrentContext() + SetAllocatorFunctions() for each static/DLL boundary you are calling from. Read "Context and Memory Allocators" section of imgui.cpp for details.
+Context creation and access
+- Each context create its own ImFontAtlas by default. You may instance one yourself and pass it to CreateContext() to share a font atlas between contexts.
+- DLL users: heaps and globals are not shared across DLL boundaries! You will need to call SetCurrentContext() + SetAllocatorFunctions()
+for each static/DLL boundary you are calling from. Read "Context and Memory Allocators" section of imgui.cpp for details.
 +/
-scope ImGuiContext* CreateContext(scope ImFontAtlas* shared_font_atlas) @trusted
+ImGuiContext* CreateContext(scope ImFontAtlas* shared_font_atlas) @trusted
 {
     return igCreateContext(shared_font_atlas);
 }
@@ -33,7 +36,7 @@ void DestroyContext(scope ImGuiContext* ctx) @trusted
     igDestroyContext(ctx);
 }
 
-scope ImGuiContext* GetCurrentContext() @trusted
+ImGuiContext* GetCurrentContext() @trusted
 {
     return igGetCurrentContext();
 }
@@ -46,17 +49,17 @@ void SetCurrentContext(scope ImGuiContext* ctx) @trusted
 /++
 Main
 +/
-scope ImGuiIO* GetIO() @trusted
+ImGuiIO* GetIO() @trusted
 {
     return igGetIO();
 }
 
-scope ImGuiPlatformIO* GetPlatformIO() @trusted
+ImGuiPlatformIO* GetPlatformIO() @trusted
 {
     return igGetPlatformIO();
 }
 
-scope ImGuiStyle* GetStyle() @trusted
+ImGuiStyle* GetStyle() @trusted
 {
     return igGetStyle();
 }
@@ -76,7 +79,7 @@ void Render() @trusted
     igRender();
 }
 
-scope ImDrawData* GetDrawData() @trusted
+ImDrawData* GetDrawData() @trusted
 {
     return igGetDrawData();
 }
@@ -134,7 +137,7 @@ void ShowUserGuide() @trusted
     igShowUserGuide();
 }
 
-scope const(char)* GetVersion() @trusted
+const(char)* GetVersion() @trusted
 {
     return igGetVersion();
 }
@@ -158,7 +161,18 @@ void StyleColorsClassic(scope ImGuiStyle* dst) @trusted
 }
 
 /++
-Windows - Begin() = push window to the stack and start appending to it. End() = pop window from the stack. - Passing 'bool* p_open != NULL' shows a window-closing widget in the upper-right corner of the window, which clicking will set the boolean to false when clicked. - You may append multiple times to the same window during the same frame by calling Begin()/End() pairs multiple times. Some information such as 'flags' or 'p_open' will only be considered by the first call to Begin(). - Begin() return false to indicate the window is collapsed or fully clipped, so you may early out and omit submitting anything to the window. Always call a matching End() for each Begin() call, regardless of its return value! [Important: due to legacy reason, Begin/End and BeginChild/EndChild are inconsistent with all other functions such as BeginMenu/EndMenu, BeginPopup/EndPopup, etc. where the EndXXX call should only be called if the corresponding BeginXXX function returned true. Begin and BeginChild are the only odd ones out. Will be fixed in a future update.] - Note that the bottom of window stack always contains a window called "Debug".
+Windows
+- Begin() = push window to the stack and start appending to it. End() = pop window from the stack.
+- Passing 'bool* p_open != NULL' shows a window-closing widget in the upper-right corner of the window,
+which clicking will set the boolean to false when clicked.
+- You may append multiple times to the same window during the same frame by calling Begin()/End() pairs multiple times.
+Some information such as 'flags' or 'p_open' will only be considered by the first call to Begin().
+- Begin() return false to indicate the window is collapsed or fully clipped, so you may early out and omit submitting
+anything to the window. Always call a matching End() for each Begin() call, regardless of its return value!
+[Important: due to legacy reason, Begin/End and BeginChild/EndChild are inconsistent with all other functions
+such as BeginMenu/EndMenu, BeginPopup/EndPopup, etc. where the EndXXX call should only be called if the corresponding
+BeginXXX function returned true. Begin and BeginChild are the only odd ones out. Will be fixed in a future update.]
+- Note that the bottom of window stack always contains a window called "Debug".
 +/
 bool Begin(scope const(char)* name, scope bool* p_open, ImGuiWindowFlags flags) @trusted
 {
@@ -171,7 +185,26 @@ void End() @trusted
 }
 
 /++
-Child Windows - Use child windows to begin into a self-contained independent scrolling/clipping regions within a host window. Child windows can embed their own child. - Before 1.90 (November 2023), the "ImGuiChildFlags child_flags = 0" parameter was "bool border = false". This API is backward compatible with old code, as we guarantee that ImGuiChildFlags_Borders == true. Consider updating your old code: BeginChild("Name", size, false)   -> Begin("Name", size, 0); or Begin("Name", size, ImGuiChildFlags_None); BeginChild("Name", size, true)    -> Begin("Name", size, ImGuiChildFlags_Borders); - Manual sizing (each axis can use a different setting e.g. ImVec2(0.0f, 400.0f)): == 0.0f: use remaining parent window size for this axis. > 0.0f: use specified size for this axis.  < 0.0f: right/bottom-align to specified distance from available content boundaries. - Specifying ImGuiChildFlags_AutoResizeX or ImGuiChildFlags_AutoResizeY makes the sizing automatic based on child contents. Combining both ImGuiChildFlags_AutoResizeX _and_ ImGuiChildFlags_AutoResizeY defeats purpose of a scrolling region and is NOT recommended. - BeginChild() returns false to indicate the window is collapsed or fully clipped, so you may early out and omit submitting anything to the window. Always call a matching EndChild() for each BeginChild() call, regardless of its return value. [Important: due to legacy reason, Begin/End and BeginChild/EndChild are inconsistent with all other functions such as BeginMenu/EndMenu, BeginPopup/EndPopup, etc. where the EndXXX call should only be called if the corresponding BeginXXX function returned true. Begin and BeginChild are the only odd ones out. Will be fixed in a future update.]
+Child Windows
+- Use child windows to begin into a self-contained independent scrolling/clipping regions within a host window. Child windows can embed their own child.
+- Before 1.90 (November 2023), the "ImGuiChildFlags child_flags = 0" parameter was "bool border = false".
+This API is backward compatible with old code, as we guarantee that ImGuiChildFlags_Borders == true.
+Consider updating your old code:
+BeginChild("Name", size, false)   -> Begin("Name", size, 0); or Begin("Name", size, ImGuiChildFlags_None);
+BeginChild("Name", size, true)    -> Begin("Name", size, ImGuiChildFlags_Borders);
+- Manual sizing (each axis can use a different setting e.g. ImVec2(0.0f, 400.0f)):
+== 0.0f: use remaining parent window size for this axis.
+> 0.0f: use specified size for this axis.
+
+<
+0.0f: right/bottom-align to specified distance from available content boundaries.
+- Specifying ImGuiChildFlags_AutoResizeX or ImGuiChildFlags_AutoResizeY makes the sizing automatic based on child contents.
+Combining both ImGuiChildFlags_AutoResizeX _and_ ImGuiChildFlags_AutoResizeY defeats purpose of a scrolling region and is NOT recommended.
+- BeginChild() returns false to indicate the window is collapsed or fully clipped, so you may early out and omit submitting
+anything to the window. Always call a matching EndChild() for each BeginChild() call, regardless of its return value.
+[Important: due to legacy reason, Begin/End and BeginChild/EndChild are inconsistent with all other functions
+such as BeginMenu/EndMenu, BeginPopup/EndPopup, etc. where the EndXXX call should only be called if the corresponding
+BeginXXX function returned true. Begin and BeginChild are the only odd ones out. Will be fixed in a future update.]
 +/
 bool BeginChild(scope const(char)* str_id, ImVec2 size, ImGuiChildFlags child_flags, ImGuiWindowFlags window_flags) @trusted
 {
@@ -189,7 +222,8 @@ void EndChild() @trusted
 }
 
 /++
-Windows Utilities - 'current window' = the window we are appending into while inside a Begin()/End() block. 'next window' = next window we will Begin() into.
+Windows Utilities
+- 'current window' = the window we are appending into while inside a Begin()/End() block. 'next window' = next window we will Begin() into.
 +/
 bool IsWindowAppearing() @trusted
 {
@@ -211,7 +245,7 @@ bool IsWindowHovered(ImGuiHoveredFlags flags) @trusted
     return igIsWindowHovered(flags);
 }
 
-scope ImDrawList* GetWindowDrawList() @trusted
+ImDrawList* GetWindowDrawList() @trusted
 {
     return igGetWindowDrawList();
 }
@@ -237,7 +271,8 @@ float GetWindowHeight() @trusted
 }
 
 /++
-Window manipulation - Prefer using SetNextXXX functions (before Begin) rather that SetXXX functions (after Begin).
+Window manipulation
+- Prefer using SetNextXXX functions (before Begin) rather that SetXXX functions (after Begin).
 +/
 void SetNextWindowPos(ImVec2 pos, ImGuiCond cond) @trusted
 {
@@ -330,7 +365,9 @@ void SetWindowFocusStr(scope const(char)* name) @trusted
 }
 
 /++
-Windows Scrolling - Any change of Scroll will be applied at the beginning of next frame in the first call to Begin(). - You may instead use SetNextWindowScroll() prior to calling Begin() to avoid this delay, as an alternative to using SetScrollX()/SetScrollY().
+Windows Scrolling
+- Any change of Scroll will be applied at the beginning of next frame in the first call to Begin().
+- You may instead use SetNextWindowScroll() prior to calling Begin() to avoid this delay, as an alternative to using SetScrollX()/SetScrollY().
 +/
 float GetScrollX() @trusted
 {
@@ -489,9 +526,10 @@ void PopTextWrapPos() @trusted
 }
 
 /++
-Style read access - Use the ShowStyleEditor() function to interactively see/edit the colors.
+Style read access
+- Use the ShowStyleEditor() function to interactively see/edit the colors.
 +/
-scope ImFont* GetFont() @trusted
+ImFont* GetFont() @trusted
 {
     return igGetFont();
 }
@@ -537,7 +575,16 @@ scope const(ImVec4)* GetStyleColorVec4(ImGuiCol idx) @trusted
 }
 
 /++
-Layout cursor positioning - By "cursor" we mean the current output position. - The typical widget behavior is to output themselves at the current cursor position, then move the cursor one line down. - You can call SameLine() between widgets to undo the last carriage return and output at the right of the preceding widget. - YOU CAN DO 99% OF WHAT YOU NEED WITH ONLY GetCursorScreenPos() and GetContentRegionAvail(). - Attention! We currently have inconsistencies between window-local and absolute positions we will aim to fix with future API: - Absolute coordinate:        GetCursorScreenPos(), SetCursorScreenPos(), all ImDrawList:: functions. -> this is the preferred way forward. - Window-local coordinates:   SameLine(offset), GetCursorPos(), SetCursorPos(), GetCursorStartPos(), PushTextWrapPos() - Window-local coordinates:   GetContentRegionMax(), GetWindowContentRegionMin(), GetWindowContentRegionMax() --> all obsoleted. YOU DON'T NEED THEM. - GetCursorScreenPos() = GetCursorPos() + GetWindowPos(). GetWindowPos() is almost only ever useful to convert from window-local to absolute coordinates. Try not to use it.
+Layout cursor positioning
+- By "cursor" we mean the current output position.
+- The typical widget behavior is to output themselves at the current cursor position, then move the cursor one line down.
+- You can call SameLine() between widgets to undo the last carriage return and output at the right of the preceding widget.
+- YOU CAN DO 99% OF WHAT YOU NEED WITH ONLY GetCursorScreenPos() and GetContentRegionAvail().
+- Attention! We currently have inconsistencies between window-local and absolute positions we will aim to fix with future API:
+- Absolute coordinate:        GetCursorScreenPos(), SetCursorScreenPos(), all ImDrawList:: functions. -> this is the preferred way forward.
+- Window-local coordinates:   SameLine(offset), GetCursorPos(), SetCursorPos(), GetCursorStartPos(), PushTextWrapPos()
+- Window-local coordinates:   GetContentRegionMax(), GetWindowContentRegionMin(), GetWindowContentRegionMax() --> all obsoleted. YOU DON'T NEED THEM.
+- GetCursorScreenPos() = GetCursorPos() + GetWindowPos(). GetWindowPos() is almost only ever useful to convert from window-local to absolute coordinates. Try not to use it.
 +/
 ImVec2 GetCursorScreenPos() @trusted
 {
@@ -678,7 +725,17 @@ float GetFrameHeightWithSpacing() @trusted
 }
 
 /++
-ID stack/scopes Read the FAQ (docs/FAQ.md or http://dearimgui.com/faq) for more details about how ID are handled in dear imgui. - Those questions are answered and impacted by understanding of the ID stack system: - "Q: Why is my widget not reacting when I click on it?" - "Q: How can I have widgets with an empty label?" - "Q: How can I have multiple widgets with the same label?" - Short version: ID are hashes of the entire ID stack. If you are creating widgets in a loop you most likely want to push a unique identifier (e.g. object pointer, loop index) to uniquely differentiate them. - You can also use the "Label##foobar" syntax within widget label to distinguish them from each others. - In this header file we use the "label"/"name" terminology to denote a string that will be displayed + used as an ID, whereas "str_id" denote a string that is only used as an ID and not normally displayed.
+ID stack/scopes
+Read the FAQ (docs/FAQ.md or http://dearimgui.com/faq) for more details about how ID are handled in dear imgui.
+- Those questions are answered and impacted by understanding of the ID stack system:
+- "Q: Why is my widget not reacting when I click on it?"
+- "Q: How can I have widgets with an empty label?"
+- "Q: How can I have multiple widgets with the same label?"
+- Short version: ID are hashes of the entire ID stack. If you are creating widgets in a loop you most likely
+want to push a unique identifier (e.g. object pointer, loop index) to uniquely differentiate them.
+- You can also use the "Label##foobar" syntax within widget label to distinguish them from each others.
+- In this header file we use the "label"/"name" terminology to denote a string that will be displayed + used as an ID,
+whereas "str_id" denote a string that is only used as an ID and not normally displayed.
 +/
 void PushID(scope const(char)* str_id) @trusted
 {
@@ -690,7 +747,7 @@ void PushIDStr(scope const(char)* str_id_begin, scope const(char)* str_id_end) @
     igPushIDStr(str_id_begin, str_id_end);
 }
 
-void PushIDPtr(scope const(void)* ptr_id) @trusted
+void PushIDPtr(scope const void* ptr_id) @trusted
 {
     igPushIDPtr(ptr_id);
 }
@@ -715,7 +772,7 @@ ImGuiID GetIDStr(scope const(char)* str_id_begin, scope const(char)* str_id_end)
     return igGetIDStr(str_id_begin, str_id_end);
 }
 
-ImGuiID GetIDPtr(scope const(void)* ptr_id) @trusted
+ImGuiID GetIDPtr(scope const void* ptr_id) @trusted
 {
     return igGetIDPtr(ptr_id);
 }
@@ -738,31 +795,19 @@ void TextUnformattedEx(scope const(char)* text, scope const(char)* text_end) @tr
     igTextUnformattedEx(text, text_end);
 }
 
-void Text(scope const(char)* fmt) @trusted
-{
-    igText(fmt);
-}
+alias Text = igText;
 
 alias TextV = igTextV;
 
-void TextColored(ImVec4 col, scope const(char)* fmt) @trusted
-{
-    igTextColored(col, fmt);
-}
+alias TextColored = igTextColored;
 
 alias TextColoredV = igTextColoredV;
 
-void TextDisabled(scope const(char)* fmt) @trusted
-{
-    igTextDisabled(fmt);
-}
+alias TextDisabled = igTextDisabled;
 
 alias TextDisabledV = igTextDisabledV;
 
-void TextWrapped(scope const(char)* fmt) @trusted
-{
-    igTextWrapped(fmt);
-}
+alias TextWrapped = igTextWrapped;
 
 alias TextWrappedV = igTextWrappedV;
 
@@ -786,7 +831,9 @@ void SeparatorText(scope const(char)* label) @trusted
 }
 
 /++
-Widgets: Main - Most widgets return true when the value has been changed or when pressed/selected - You may also use one of the many IsItemXXX functions (e.g. IsItemActive, IsItemHovered, etc.) to query widget state.
+Widgets: Main
+- Most widgets return true when the value has been changed or when pressed/selected
+- You may also use one of the many IsItemXXX functions (e.g. IsItemActive, IsItemHovered, etc.) to query widget state.
 +/
 bool Button(scope const(char)* label) @trusted
 {
@@ -864,7 +911,11 @@ void TextLinkOpenURLEx(scope const(char)* label, scope const(char)* url) @truste
 }
 
 /++
-Widgets: Images - Read about ImTextureID here: https://github.com/ocornut/imgui/wiki/Image-Loading-and-Displaying-Examples - 'uv0' and 'uv1' are texture coordinates. Read about them from the same link above. - Image() pads adds style.ImageBorderSize on each side, ImageButton() adds style.FramePadding on each side. - ImageButton() draws a background based on regular Button() color + optionally an inner background if specified.
+Widgets: Images
+- Read about ImTextureID here: https://github.com/ocornut/imgui/wiki/Image-Loading-and-Displaying-Examples
+- 'uv0' and 'uv1' are texture coordinates. Read about them from the same link above.
+- Image() pads adds style.ImageBorderSize on each side, ImageButton() adds style.FramePadding on each side.
+- ImageButton() draws a background based on regular Button() color + optionally an inner background if specified.
 +/
 void Image(ImTextureID user_texture_id, ImVec2 image_size) @trusted
 {
@@ -897,7 +948,9 @@ bool ImageButtonEx(scope const(char)* str_id, ImTextureID user_texture_id, ImVec
 }
 
 /++
-Widgets: Combo Box (Dropdown) - The BeginCombo()/EndCombo() api allows you to manage your contents and selection state however you want it, by creating e.g. Selectable() items. - The old Combo() api are helpers over BeginCombo()/EndCombo() which are kept available for convenience purpose. This is analogous to how ListBox are created.
+Widgets: Combo Box (Dropdown)
+- The BeginCombo()/EndCombo() api allows you to manage your contents and selection state however you want it, by creating e.g. Selectable() items.
+- The old Combo() api are helpers over BeginCombo()/EndCombo() which are kept available for convenience purpose. This is analogous to how ListBox are created.
 +/
 bool BeginCombo(scope const(char)* label, scope const(char)* preview_value, ImGuiComboFlags flags) @trusted
 {
@@ -940,7 +993,22 @@ bool ComboCallbackEx(scope const(char)* label, scope int* current_item, ImGuiGet
 }
 
 /++
-Widgets: Drag Sliders - CTRL+Click on any drag box to turn them into an input box. Manually input values aren't clamped by default and can go off-bounds. Use ImGuiSliderFlags_AlwaysClamp to always clamp. - For all the Float2/Float3/Float4/Int2/Int3/Int4 versions of every function, note that a 'float v[X]' function argument is the same as 'float* v', the array syntax is just a way to document the number of elements that are expected to be accessible. You can pass address of your first element out of a contiguous set, e.g. &myvector .x - Adjust format string to decorate the value with a prefix, a suffix, or adapt the editing and display precision e.g. "%.3f" -> 1.234; "%5.2f secs" -> 01.23 secs; "Biscuit: %.0f" -> Biscuit: 1; etc. - Format string may also be set to NULL or use the default format ("%f" or "%d"). - Speed are per-pixel of mouse movement (v_speed=0.2f: mouse needs to move by 5 pixels to increase value by 1). For keyboard/gamepad navigation, minimum speed is Max(v_speed, minimum_step_at_given_precision). - Use v_min < v_max to clamp edits to given limits. Note that CTRL+Click manual input can override those limits if ImGuiSliderFlags_AlwaysClamp is not used. - Use v_max = FLT_MAX / INT_MAX etc to avoid clamping to a maximum, same with v_min = -FLT_MAX / INT_MIN to avoid clamping to a minimum. - We use the same sets of flags for DragXXX() and SliderXXX() functions as the features are the same and it makes it easier to swap them. - Legacy: Pre-1.78 there are DragXXX() function signatures that take a final `float power=1.0f' argument instead of the `ImGuiSliderFlags flags=0' argument. If you get a warning converting a float to ImGuiSliderFlags, read https://github.com/ocornut/imgui/issues/3361
+Widgets: Drag Sliders
+- CTRL+Click on any drag box to turn them into an input box. Manually input values aren't clamped by default and can go off-bounds. Use ImGuiSliderFlags_AlwaysClamp to always clamp.
+- For all the Float2/Float3/Float4/Int2/Int3/Int4 versions of every function, note that a 'float v[X]' function argument is the same as 'float* v',
+the array syntax is just a way to document the number of elements that are expected to be accessible. You can pass address of your first element out of a contiguous set, e.g.
+&myvector
+.x
+- Adjust format string to decorate the value with a prefix, a suffix, or adapt the editing and display precision e.g. "%.3f" -> 1.234; "%5.2f secs" -> 01.23 secs; "Biscuit: %.0f" -> Biscuit: 1; etc.
+- Format string may also be set to NULL or use the default format ("%f" or "%d").
+- Speed are per-pixel of mouse movement (v_speed=0.2f: mouse needs to move by 5 pixels to increase value by 1). For keyboard/gamepad navigation, minimum speed is Max(v_speed, minimum_step_at_given_precision).
+- Use v_min
+<
+v_max to clamp edits to given limits. Note that CTRL+Click manual input can override those limits if ImGuiSliderFlags_AlwaysClamp is not used.
+- Use v_max = FLT_MAX / INT_MAX etc to avoid clamping to a maximum, same with v_min = -FLT_MAX / INT_MIN to avoid clamping to a minimum.
+- We use the same sets of flags for DragXXX() and SliderXXX() functions as the features are the same and it makes it easier to swap them.
+- Legacy: Pre-1.78 there are DragXXX() function signatures that take a final `float power=1.0f' argument instead of the `ImGuiSliderFlags flags=0' argument.
+If you get a warning converting a float to ImGuiSliderFlags, read https://github.com/ocornut/imgui/issues/3361
 +/
 bool DragFloat(scope const(char)* label, scope float* v) @trusted
 {
@@ -1047,7 +1115,7 @@ bool DragScalar(scope const(char)* label, ImGuiDataType data_type, scope void* p
     return igDragScalar(label, data_type, p_data);
 }
 
-bool DragScalarEx(scope const(char)* label, ImGuiDataType data_type, scope void* p_data, float v_speed, scope const(void)* p_min, scope const(void)* p_max, scope const(char)* format, ImGuiSliderFlags flags) @trusted
+bool DragScalarEx(scope const(char)* label, ImGuiDataType data_type, scope void* p_data, float v_speed, scope const void* p_min, scope const void* p_max, scope const(char)* format, ImGuiSliderFlags flags) @trusted
 {
     return igDragScalarEx(label, data_type, p_data, v_speed, p_min, p_max, format, flags);
 }
@@ -1057,13 +1125,18 @@ bool DragScalarN(scope const(char)* label, ImGuiDataType data_type, scope void* 
     return igDragScalarN(label, data_type, p_data, components);
 }
 
-bool DragScalarNEx(scope const(char)* label, ImGuiDataType data_type, scope void* p_data, int components, float v_speed, scope const(void)* p_min, scope const(void)* p_max, scope const(char)* format, ImGuiSliderFlags flags) @trusted
+bool DragScalarNEx(scope const(char)* label, ImGuiDataType data_type, scope void* p_data, int components, float v_speed, scope const void* p_min, scope const void* p_max, scope const(char)* format, ImGuiSliderFlags flags) @trusted
 {
     return igDragScalarNEx(label, data_type, p_data, components, v_speed, p_min, p_max, format, flags);
 }
 
 /++
-Widgets: Regular Sliders - CTRL+Click on any slider to turn them into an input box. Manually input values aren't clamped by default and can go off-bounds. Use ImGuiSliderFlags_AlwaysClamp to always clamp. - Adjust format string to decorate the value with a prefix, a suffix, or adapt the editing and display precision e.g. "%.3f" -> 1.234; "%5.2f secs" -> 01.23 secs; "Biscuit: %.0f" -> Biscuit: 1; etc. - Format string may also be set to NULL or use the default format ("%f" or "%d"). - Legacy: Pre-1.78 there are SliderXXX() function signatures that take a final `float power=1.0f' argument instead of the `ImGuiSliderFlags flags=0' argument. If you get a warning converting a float to ImGuiSliderFlags, read https://github.com/ocornut/imgui/issues/3361
+Widgets: Regular Sliders
+- CTRL+Click on any slider to turn them into an input box. Manually input values aren't clamped by default and can go off-bounds. Use ImGuiSliderFlags_AlwaysClamp to always clamp.
+- Adjust format string to decorate the value with a prefix, a suffix, or adapt the editing and display precision e.g. "%.3f" -> 1.234; "%5.2f secs" -> 01.23 secs; "Biscuit: %.0f" -> Biscuit: 1; etc.
+- Format string may also be set to NULL or use the default format ("%f" or "%d").
+- Legacy: Pre-1.78 there are SliderXXX() function signatures that take a final `float power=1.0f' argument instead of the `ImGuiSliderFlags flags=0' argument.
+If you get a warning converting a float to ImGuiSliderFlags, read https://github.com/ocornut/imgui/issues/3361
 +/
 bool SliderFloat(scope const(char)* label, scope float* v, float v_min, float v_max) @trusted
 {
@@ -1155,22 +1228,22 @@ bool SliderInt4Ex(scope const(char)* label, scope int* v, int v_min, int v_max, 
     return igSliderInt4Ex(label, v, v_min, v_max, format, flags);
 }
 
-bool SliderScalar(scope const(char)* label, ImGuiDataType data_type, scope void* p_data, scope const(void)* p_min, scope const(void)* p_max) @trusted
+bool SliderScalar(scope const(char)* label, ImGuiDataType data_type, scope void* p_data, scope const void* p_min, scope const void* p_max) @trusted
 {
     return igSliderScalar(label, data_type, p_data, p_min, p_max);
 }
 
-bool SliderScalarEx(scope const(char)* label, ImGuiDataType data_type, scope void* p_data, scope const(void)* p_min, scope const(void)* p_max, scope const(char)* format, ImGuiSliderFlags flags) @trusted
+bool SliderScalarEx(scope const(char)* label, ImGuiDataType data_type, scope void* p_data, scope const void* p_min, scope const void* p_max, scope const(char)* format, ImGuiSliderFlags flags) @trusted
 {
     return igSliderScalarEx(label, data_type, p_data, p_min, p_max, format, flags);
 }
 
-bool SliderScalarN(scope const(char)* label, ImGuiDataType data_type, scope void* p_data, int components, scope const(void)* p_min, scope const(void)* p_max) @trusted
+bool SliderScalarN(scope const(char)* label, ImGuiDataType data_type, scope void* p_data, int components, scope const void* p_min, scope const void* p_max) @trusted
 {
     return igSliderScalarN(label, data_type, p_data, components, p_min, p_max);
 }
 
-bool SliderScalarNEx(scope const(char)* label, ImGuiDataType data_type, scope void* p_data, int components, scope const(void)* p_min, scope const(void)* p_max, scope const(char)* format, ImGuiSliderFlags flags) @trusted
+bool SliderScalarNEx(scope const(char)* label, ImGuiDataType data_type, scope void* p_data, int components, scope const void* p_min, scope const void* p_max, scope const(char)* format, ImGuiSliderFlags flags) @trusted
 {
     return igSliderScalarNEx(label, data_type, p_data, components, p_min, p_max, format, flags);
 }
@@ -1195,18 +1268,20 @@ bool VSliderIntEx(scope const(char)* label, ImVec2 size, scope int* v, int v_min
     return igVSliderIntEx(label, size, v, v_min, v_max, format, flags);
 }
 
-bool VSliderScalar(scope const(char)* label, ImVec2 size, ImGuiDataType data_type, scope void* p_data, scope const(void)* p_min, scope const(void)* p_max) @trusted
+bool VSliderScalar(scope const(char)* label, ImVec2 size, ImGuiDataType data_type, scope void* p_data, scope const void* p_min, scope const void* p_max) @trusted
 {
     return igVSliderScalar(label, size, data_type, p_data, p_min, p_max);
 }
 
-bool VSliderScalarEx(scope const(char)* label, ImVec2 size, ImGuiDataType data_type, scope void* p_data, scope const(void)* p_min, scope const(void)* p_max, scope const(char)* format, ImGuiSliderFlags flags) @trusted
+bool VSliderScalarEx(scope const(char)* label, ImVec2 size, ImGuiDataType data_type, scope void* p_data, scope const void* p_min, scope const void* p_max, scope const(char)* format, ImGuiSliderFlags flags) @trusted
 {
     return igVSliderScalarEx(label, size, data_type, p_data, p_min, p_max, format, flags);
 }
 
 /++
-Widgets: Input with Keyboard - If you want to use InputText() with std::string or any custom dynamic string type, see misc/cpp/imgui_stdlib.h and comments in imgui_demo.cpp. - Most of the ImGuiInputTextFlags flags are only useful for InputText() and not for InputFloatX, InputIntX, InputDouble etc.
+Widgets: Input with Keyboard
+- If you want to use InputText() with std::string or any custom dynamic string type, see misc/cpp/imgui_stdlib.h and comments in imgui_demo.cpp.
+- Most of the ImGuiInputTextFlags flags are only useful for InputText() and not for InputFloatX, InputIntX, InputDouble etc.
 +/
 bool InputText(scope const(char)* label, scope char* buf, size_t buf_size, ImGuiInputTextFlags flags) @trusted
 {
@@ -1318,7 +1393,7 @@ bool InputScalar(scope const(char)* label, ImGuiDataType data_type, scope void* 
     return igInputScalar(label, data_type, p_data);
 }
 
-bool InputScalarEx(scope const(char)* label, ImGuiDataType data_type, scope void* p_data, scope const(void)* p_step, scope const(void)* p_step_fast, scope const(char)* format, ImGuiInputTextFlags flags) @trusted
+bool InputScalarEx(scope const(char)* label, ImGuiDataType data_type, scope void* p_data, scope const void* p_step, scope const void* p_step_fast, scope const(char)* format, ImGuiInputTextFlags flags) @trusted
 {
     return igInputScalarEx(label, data_type, p_data, p_step, p_step_fast, format, flags);
 }
@@ -1328,13 +1403,17 @@ bool InputScalarN(scope const(char)* label, ImGuiDataType data_type, scope void*
     return igInputScalarN(label, data_type, p_data, components);
 }
 
-bool InputScalarNEx(scope const(char)* label, ImGuiDataType data_type, scope void* p_data, int components, scope const(void)* p_step, scope const(void)* p_step_fast, scope const(char)* format, ImGuiInputTextFlags flags) @trusted
+bool InputScalarNEx(scope const(char)* label, ImGuiDataType data_type, scope void* p_data, int components, scope const void* p_step, scope const void* p_step_fast, scope const(char)* format, ImGuiInputTextFlags flags) @trusted
 {
     return igInputScalarNEx(label, data_type, p_data, components, p_step, p_step_fast, format, flags);
 }
 
 /++
-Widgets: Color Editor/Picker (tip: the ColorEdit* functions have a little color square that can be left-clicked to open a picker, and right-clicked to open an option menu.) - Note that in C++ a 'float v[X]' function argument is the _same_ as 'float* v', the array syntax is just a way to document the number of elements that are expected to be accessible. - You can pass the address of a first float element out of a contiguous structure, e.g. &myvector .x
+Widgets: Color Editor/Picker (tip: the ColorEdit* functions have a little color square that can be left-clicked to open a picker, and right-clicked to open an option menu.)
+- Note that in C++ a 'float v[X]' function argument is the _same_ as 'float* v', the array syntax is just a way to document the number of elements that are expected to be accessible.
+- You can pass the address of a first float element out of a contiguous structure, e.g.
+&myvector
+.x
 +/
 bool ColorEdit3(scope const(char)* label, scope float* col, ImGuiColorEditFlags flags) @trusted
 {
@@ -1351,7 +1430,7 @@ bool ColorPicker3(scope const(char)* label, scope float* col, ImGuiColorEditFlag
     return igColorPicker3(label, col, flags);
 }
 
-bool ColorPicker4(scope const(char)* label, scope float* col, ImGuiColorEditFlags flags, scope const(float)* ref_col) @trusted
+bool ColorPicker4(scope const(char)* label, scope float* col, ImGuiColorEditFlags flags, scope const float* ref_col) @trusted
 {
     return igColorPicker4(label, col, flags, ref_col);
 }
@@ -1372,7 +1451,8 @@ void SetColorEditOptions(ImGuiColorEditFlags flags) @trusted
 }
 
 /++
-Widgets: Trees - TreeNode functions return true when the node is open, in which case you need to also call TreePop() when you are finished displaying the tree node contents.
+Widgets: Trees
+- TreeNode functions return true when the node is open, in which case you need to also call TreePop() when you are finished displaying the tree node contents.
 +/
 bool TreeNode(scope const(char)* label) @trusted
 {
@@ -1384,7 +1464,7 @@ bool TreeNodeStr(scope const(char)* str_id, scope const(char)* fmt) @trusted
     return igTreeNodeStr(str_id, fmt);
 }
 
-bool TreeNodePtr(scope const(void)* ptr_id, scope const(char)* fmt) @trusted
+bool TreeNodePtr(scope const void* ptr_id, scope const(char)* fmt) @trusted
 {
     return igTreeNodePtr(ptr_id, fmt);
 }
@@ -1403,7 +1483,7 @@ bool TreeNodeExStr(scope const(char)* str_id, ImGuiTreeNodeFlags flags, scope co
     return igTreeNodeExStr(str_id, flags, fmt);
 }
 
-bool TreeNodeExPtr(scope const(void)* ptr_id, ImGuiTreeNodeFlags flags, scope const(char)* fmt) @trusted
+bool TreeNodeExPtr(scope const void* ptr_id, ImGuiTreeNodeFlags flags, scope const(char)* fmt) @trusted
 {
     return igTreeNodeExPtr(ptr_id, flags, fmt);
 }
@@ -1417,7 +1497,7 @@ void TreePush(scope const(char)* str_id) @trusted
     igTreePush(str_id);
 }
 
-void TreePushPtr(scope const(void)* ptr_id) @trusted
+void TreePushPtr(scope const void* ptr_id) @trusted
 {
     igTreePushPtr(ptr_id);
 }
@@ -1453,7 +1533,9 @@ void SetNextItemStorageID(ImGuiID storage_id) @trusted
 }
 
 /++
-Widgets: Selectables - A selectable highlights when hovered, and can display another color when selected. - Neighbors selectable extend their highlight bounds in order to leave no gap between them. This is so a series of selected Selectable appear contiguous.
+Widgets: Selectables
+- A selectable highlights when hovered, and can display another color when selected.
+- Neighbors selectable extend their highlight bounds in order to leave no gap between them. This is so a series of selected Selectable appear contiguous.
 +/
 bool Selectable(scope const(char)* label) @trusted
 {
@@ -1476,19 +1558,27 @@ bool SelectableBoolPtrEx(scope const(char)* label, scope bool* p_selected, ImGui
 }
 
 /++
-Multi-selection system for Selectable(), Checkbox(), TreeNode() functions [BETA] - This enables standard multi-selection/range-selection idioms (CTRL+Mouse/Keyboard, SHIFT+Mouse/Keyboard, etc.) in a way that also allow a clipper to be used. - ImGuiSelectionUserData is often used to store your item index within the current view (but may store something else). - Read comments near ImGuiMultiSelectIO for instructions/details and see 'Demo->Widgets->Selection State & Multi-Select' for demo. - TreeNode() is technically supported but... using this correctly is more complicated. You need some sort of linear/random access to your tree, which is suited to advanced trees setups already implementing filters and clipper. We will work simplifying the current demo. - 'selection_size' and 'items_count' parameters are optional and used by a few features. If they are costly for you to compute, you may avoid them.
+Multi-selection system for Selectable(), Checkbox(), TreeNode() functions [BETA]
+- This enables standard multi-selection/range-selection idioms (CTRL+Mouse/Keyboard, SHIFT+Mouse/Keyboard, etc.) in a way that also allow a clipper to be used.
+- ImGuiSelectionUserData is often used to store your item index within the current view (but may store something else).
+- Read comments near ImGuiMultiSelectIO for instructions/details and see 'Demo->Widgets->Selection State
+&
+Multi-Select' for demo.
+- TreeNode() is technically supported but... using this correctly is more complicated. You need some sort of linear/random access to your tree,
+which is suited to advanced trees setups already implementing filters and clipper. We will work simplifying the current demo.
+- 'selection_size' and 'items_count' parameters are optional and used by a few features. If they are costly for you to compute, you may avoid them.
 +/
-scope ImGuiMultiSelectIO* BeginMultiSelect(ImGuiMultiSelectFlags flags) @trusted
+ImGuiMultiSelectIO* BeginMultiSelect(ImGuiMultiSelectFlags flags) @trusted
 {
     return igBeginMultiSelect(flags);
 }
 
-scope ImGuiMultiSelectIO* BeginMultiSelectEx(ImGuiMultiSelectFlags flags, int selection_size, int items_count) @trusted
+ImGuiMultiSelectIO* BeginMultiSelectEx(ImGuiMultiSelectFlags flags, int selection_size, int items_count) @trusted
 {
     return igBeginMultiSelectEx(flags, selection_size, items_count);
 }
 
-scope ImGuiMultiSelectIO* EndMultiSelect() @trusted
+ImGuiMultiSelectIO* EndMultiSelect() @trusted
 {
     return igEndMultiSelect();
 }
@@ -1504,7 +1594,17 @@ bool IsItemToggledSelection() @trusted
 }
 
 /++
-Widgets: List Boxes - This is essentially a thin wrapper to using BeginChild/EndChild with the ImGuiChildFlags_FrameStyle flag for stylistic changes + displaying a label. - If you don't need a label you can probably simply use BeginChild() with the ImGuiChildFlags_FrameStyle flag for the same result. - You can submit contents and manage your selection state however you want it, by creating e.g. Selectable() or any other items. - The simplified/old ListBox() api are helpers over BeginListBox()/EndListBox() which are kept available for convenience purpose. This is analoguous to how Combos are created. - Choose frame width:   size.x > 0.0f: custom  /  size.x < 0.0f or -FLT_MIN: right-align   /  size.x = 0.0f (default): use current ItemWidth - Choose frame height:  size.y > 0.0f: custom  /  size.y < 0.0f or -FLT_MIN: bottom-align  /  size.y = 0.0f (default): arbitrary default height which can fit ~7 items
+Widgets: List Boxes
+- This is essentially a thin wrapper to using BeginChild/EndChild with the ImGuiChildFlags_FrameStyle flag for stylistic changes + displaying a label.
+- If you don't need a label you can probably simply use BeginChild() with the ImGuiChildFlags_FrameStyle flag for the same result.
+- You can submit contents and manage your selection state however you want it, by creating e.g. Selectable() or any other items.
+- The simplified/old ListBox() api are helpers over BeginListBox()/EndListBox() which are kept available for convenience purpose. This is analoguous to how Combos are created.
+- Choose frame width:   size.x > 0.0f: custom  /  size.x
+<
+0.0f or -FLT_MIN: right-align   /  size.x = 0.0f (default): use current ItemWidth
+- Choose frame height:  size.y > 0.0f: custom  /  size.y
+<
+0.0f or -FLT_MIN: bottom-align  /  size.y = 0.0f (default): arbitrary default height which can fit ~7 items
 +/
 bool BeginListBox(scope const(char)* label, ImVec2 size) @trusted
 {
@@ -1532,14 +1632,15 @@ bool ListBoxCallbackEx(scope const(char)* label, scope int* current_item, ImGuiG
 }
 
 /++
-Widgets: Data Plotting - Consider using ImPlot (https://github.com/epezent/implot) which is much better!
+Widgets: Data Plotting
+- Consider using ImPlot (https://github.com/epezent/implot) which is much better!
 +/
-void PlotLines(scope const(char)* label, scope const(float)* values, int values_count) @trusted
+void PlotLines(scope const(char)* label, scope const float* values, int values_count) @trusted
 {
     igPlotLines(label, values, values_count);
 }
 
-void PlotLinesEx(scope const(char)* label, scope const(float)* values, int values_count, int values_offset, scope const(char)* overlay_text, float scale_min, float scale_max, ImVec2 graph_size, int stride) @trusted
+void PlotLinesEx(scope const(char)* label, scope const float* values, int values_count, int values_offset, scope const(char)* overlay_text, float scale_min, float scale_max, ImVec2 graph_size, int stride) @trusted
 {
     igPlotLinesEx(label, values, values_count, values_offset, overlay_text, scale_min, scale_max, graph_size, stride);
 }
@@ -1554,12 +1655,12 @@ void PlotLinesCallbackEx(scope const(char)* label, ImGuiValues_getterCallback va
     igPlotLinesCallbackEx(label, values_getter, data, values_count, values_offset, overlay_text, scale_min, scale_max, graph_size);
 }
 
-void PlotHistogram(scope const(char)* label, scope const(float)* values, int values_count) @trusted
+void PlotHistogram(scope const(char)* label, scope const float* values, int values_count) @trusted
 {
     igPlotHistogram(label, values, values_count);
 }
 
-void PlotHistogramEx(scope const(char)* label, scope const(float)* values, int values_count, int values_offset, scope const(char)* overlay_text, float scale_min, float scale_max, ImVec2 graph_size, int stride) @trusted
+void PlotHistogramEx(scope const(char)* label, scope const float* values, int values_count, int values_offset, scope const(char)* overlay_text, float scale_min, float scale_max, ImVec2 graph_size, int stride) @trusted
 {
     igPlotHistogramEx(label, values, values_count, values_offset, overlay_text, scale_min, scale_max, graph_size, stride);
 }
@@ -1575,7 +1676,11 @@ void PlotHistogramCallbackEx(scope const(char)* label, ImGuiValues_getterCallbac
 }
 
 /++
-Widgets: Menus - Use BeginMenuBar() on a window ImGuiWindowFlags_MenuBar to append to its menu bar. - Use BeginMainMenuBar() to create a menu bar at the top of the screen and append to it. - Use BeginMenu() to create a menu. You can call BeginMenu() multiple time with the same identifier to append more items to it. - Not that MenuItem() keyboardshortcuts are displayed as a convenience but _not processed_ by Dear ImGui at the moment.
+Widgets: Menus
+- Use BeginMenuBar() on a window ImGuiWindowFlags_MenuBar to append to its menu bar.
+- Use BeginMainMenuBar() to create a menu bar at the top of the screen and append to it.
+- Use BeginMenu() to create a menu. You can call BeginMenu() multiple time with the same identifier to append more items to it.
+- Not that MenuItem() keyboardshortcuts are displayed as a convenience but _not processed_ by Dear ImGui at the moment.
 +/
 bool BeginMenuBar() @trusted
 {
@@ -1628,7 +1733,10 @@ bool MenuItemBoolPtr(scope const(char)* label, scope const(char)* shortcut, scop
 }
 
 /++
-Tooltips - Tooltips are windows following the mouse. They do not take focus away. - A tooltip window can contain items of any types. - SetTooltip() is more or less a shortcut for the 'if (BeginTooltip()) { Text(...); EndTooltip(); }' idiom (with a subtlety that it discard any previously submitted tooltip)
+Tooltips
+- Tooltips are windows following the mouse. They do not take focus away.
+- A tooltip window can contain items of any types.
+- SetTooltip() is more or less a shortcut for the 'if (BeginTooltip()) { Text(...); EndTooltip(); }' idiom (with a subtlety that it discard any previously submitted tooltip)
 +/
 bool BeginTooltip() @trusted
 {
@@ -1648,7 +1756,13 @@ void SetTooltip(scope const(char)* fmt) @trusted
 alias SetTooltipV = igSetTooltipV;
 
 /++
-Tooltips: helpers for showing a tooltip when hovering an item - BeginItemTooltip() is a shortcut for the 'if (IsItemHovered(ImGuiHoveredFlags_ForTooltip) & & BeginTooltip())' idiom. - SetItemTooltip() is a shortcut for the 'if (IsItemHovered(ImGuiHoveredFlags_ForTooltip)) { SetTooltip(...); }' idiom. - Where 'ImGuiHoveredFlags_ForTooltip' itself is a shortcut to use 'style.HoverFlagsForTooltipMouse' or 'style.HoverFlagsForTooltipNav' depending on active input type. For mouse it defaults to 'ImGuiHoveredFlags_Stationary | ImGuiHoveredFlags_DelayShort'.
+Tooltips: helpers for showing a tooltip when hovering an item
+- BeginItemTooltip() is a shortcut for the 'if (IsItemHovered(ImGuiHoveredFlags_ForTooltip)
+&
+&
+BeginTooltip())' idiom.
+- SetItemTooltip() is a shortcut for the 'if (IsItemHovered(ImGuiHoveredFlags_ForTooltip)) { SetTooltip(...); }' idiom.
+- Where 'ImGuiHoveredFlags_ForTooltip' itself is a shortcut to use 'style.HoverFlagsForTooltipMouse' or 'style.HoverFlagsForTooltipNav' depending on active input type. For mouse it defaults to 'ImGuiHoveredFlags_Stationary | ImGuiHoveredFlags_DelayShort'.
 +/
 bool BeginItemTooltip() @trusted
 {
@@ -1663,7 +1777,16 @@ void SetItemTooltip(scope const(char)* fmt) @trusted
 alias SetItemTooltipV = igSetItemTooltipV;
 
 /++
-Popups, Modals - They block normal mouse hovering detection (and therefore most mouse interactions) behind them. - If not modal: they can be closed by clicking anywhere outside them, or by pressing ESCAPE. - Their visibility state (~bool) is held internally instead of being held by the programmer as we are used to with regular Begin*() calls. - The 3 properties above are related: we need to retain popup visibility state in the library because popups may be closed as any time. - You can bypass the hovering restriction by using ImGuiHoveredFlags_AllowWhenBlockedByPopup when calling IsItemHovered() or IsWindowHovered(). - IMPORTANT: Popup identifiers are relative to the current ID stack, so OpenPopup and BeginPopup generally needs to be at the same level of the stack. This is sometimes leading to confusing mistakes. May rework this in the future. - BeginPopup(): query popup state, if open start appending into the window. Call EndPopup() afterwards if returned true. ImGuiWindowFlags are forwarded to the window. - BeginPopupModal(): block every interaction behind the window, cannot be closed by user, add a dimming background, has a title bar.
+Popups, Modals
+- They block normal mouse hovering detection (and therefore most mouse interactions) behind them.
+- If not modal: they can be closed by clicking anywhere outside them, or by pressing ESCAPE.
+- Their visibility state (~bool) is held internally instead of being held by the programmer as we are used to with regular Begin*() calls.
+- The 3 properties above are related: we need to retain popup visibility state in the library because popups may be closed as any time.
+- You can bypass the hovering restriction by using ImGuiHoveredFlags_AllowWhenBlockedByPopup when calling IsItemHovered() or IsWindowHovered().
+- IMPORTANT: Popup identifiers are relative to the current ID stack, so OpenPopup and BeginPopup generally needs to be at the same level of the stack.
+This is sometimes leading to confusing mistakes. May rework this in the future.
+- BeginPopup(): query popup state, if open start appending into the window. Call EndPopup() afterwards if returned true. ImGuiWindowFlags are forwarded to the window.
+- BeginPopupModal(): block every interaction behind the window, cannot be closed by user, add a dimming background, has a title bar.
 +/
 bool BeginPopup(scope const(char)* str_id, ImGuiWindowFlags flags) @trusted
 {
@@ -1681,7 +1804,14 @@ void EndPopup() @trusted
 }
 
 /++
-Popups: open/close functions - OpenPopup(): set popup state to open. ImGuiPopupFlags are available for opening options. - If not modal: they can be closed by clicking anywhere outside them, or by pressing ESCAPE. - CloseCurrentPopup(): use inside the BeginPopup()/EndPopup() scope to close manually. - CloseCurrentPopup() is called by default by Selectable()/MenuItem() when activated (FIXME: need some options). - Use ImGuiPopupFlags_NoOpenOverExistingPopup to avoid opening a popup if there's already one at the same level. This is equivalent to e.g. testing for !IsAnyPopupOpen() prior to OpenPopup(). - Use IsWindowAppearing() after BeginPopup() to tell if a window just opened. - IMPORTANT: Notice that for OpenPopupOnItemClick() we exceptionally default flags to 1 (== ImGuiPopupFlags_MouseButtonRight) for backward compatibility with older API taking 'int mouse_button = 1' parameter
+Popups: open/close functions
+- OpenPopup(): set popup state to open. ImGuiPopupFlags are available for opening options.
+- If not modal: they can be closed by clicking anywhere outside them, or by pressing ESCAPE.
+- CloseCurrentPopup(): use inside the BeginPopup()/EndPopup() scope to close manually.
+- CloseCurrentPopup() is called by default by Selectable()/MenuItem() when activated (FIXME: need some options).
+- Use ImGuiPopupFlags_NoOpenOverExistingPopup to avoid opening a popup if there's already one at the same level. This is equivalent to e.g. testing for !IsAnyPopupOpen() prior to OpenPopup().
+- Use IsWindowAppearing() after BeginPopup() to tell if a window just opened.
+- IMPORTANT: Notice that for OpenPopupOnItemClick() we exceptionally default flags to 1 (== ImGuiPopupFlags_MouseButtonRight) for backward compatibility with older API taking 'int mouse_button = 1' parameter
 +/
 void OpenPopup(scope const(char)* str_id, ImGuiPopupFlags popup_flags) @trusted
 {
@@ -1704,7 +1834,11 @@ void CloseCurrentPopup() @trusted
 }
 
 /++
-Popups: open+begin combined functions helpers - Helpers to do OpenPopup+BeginPopup where the Open action is triggered by e.g. hovering an item and right-clicking. - They are convenient to easily create context menus, hence the name. - IMPORTANT: Notice that BeginPopupContextXXX takes ImGuiPopupFlags just like OpenPopup() and unlike BeginPopup(). For full consistency, we may add ImGuiWindowFlags to the BeginPopupContextXXX functions in the future. - IMPORTANT: Notice that we exceptionally default their flags to 1 (== ImGuiPopupFlags_MouseButtonRight) for backward compatibility with older API taking 'int mouse_button = 1' parameter, so if you add other flags remember to re-add the ImGuiPopupFlags_MouseButtonRight.
+Popups: open+begin combined functions helpers
+- Helpers to do OpenPopup+BeginPopup where the Open action is triggered by e.g. hovering an item and right-clicking.
+- They are convenient to easily create context menus, hence the name.
+- IMPORTANT: Notice that BeginPopupContextXXX takes ImGuiPopupFlags just like OpenPopup() and unlike BeginPopup(). For full consistency, we may add ImGuiWindowFlags to the BeginPopupContextXXX functions in the future.
+- IMPORTANT: Notice that we exceptionally default their flags to 1 (== ImGuiPopupFlags_MouseButtonRight) for backward compatibility with older API taking 'int mouse_button = 1' parameter, so if you add other flags remember to re-add the ImGuiPopupFlags_MouseButtonRight.
 +/
 bool BeginPopupContextItem() @trusted
 {
@@ -1737,7 +1871,10 @@ bool BeginPopupContextVoidEx(scope const(char)* str_id, ImGuiPopupFlags popup_fl
 }
 
 /++
-Popups: query functions - IsPopupOpen(): return true if the popup is open at the current BeginPopup() level of the popup stack. - IsPopupOpen() with ImGuiPopupFlags_AnyPopupId: return true if any popup is open at the current BeginPopup() level of the popup stack. - IsPopupOpen() with ImGuiPopupFlags_AnyPopupId + ImGuiPopupFlags_AnyPopupLevel: return true if any popup is open.
+Popups: query functions
+- IsPopupOpen(): return true if the popup is open at the current BeginPopup() level of the popup stack.
+- IsPopupOpen() with ImGuiPopupFlags_AnyPopupId: return true if any popup is open at the current BeginPopup() level of the popup stack.
+- IsPopupOpen() with ImGuiPopupFlags_AnyPopupId + ImGuiPopupFlags_AnyPopupLevel: return true if any popup is open.
 +/
 bool IsPopupOpen(scope const(char)* str_id, ImGuiPopupFlags flags) @trusted
 {
@@ -1745,7 +1882,27 @@ bool IsPopupOpen(scope const(char)* str_id, ImGuiPopupFlags flags) @trusted
 }
 
 /++
-Tables - Full-featured replacement for old Columns API. - See Demo->Tables for demo code. See top of imgui_tables.cpp for general commentary. - See ImGuiTableFlags_ and ImGuiTableColumnFlags_ enums for a description of available flags. The typical call flow is: - 1. Call BeginTable(), early out if returning false. - 2. Optionally call TableSetupColumn() to submit column name/flags/defaults. - 3. Optionally call TableSetupScrollFreeze() to request scroll freezing of columns/rows. - 4. Optionally call TableHeadersRow() to submit a header row. Names are pulled from TableSetupColumn() data. - 5. Populate contents: - In most situations you can use TableNextRow() + TableSetColumnIndex(N) to start appending into a column. - If you are using tables as a sort of grid, where every column is holding the same type of contents, you may prefer using TableNextColumn() instead of TableNextRow() + TableSetColumnIndex(). TableNextColumn() will automatically wrap-around into the next row if needed. - IMPORTANT: Comparatively to the old Columns() API, we need to call TableNextColumn() for the first column! - Summary of possible call flow: - TableNextRow() -> TableSetColumnIndex(0) -> Text("Hello 0") -> TableSetColumnIndex(1) -> Text("Hello 1")  // OK - TableNextRow() -> TableNextColumn()      -> Text("Hello 0") -> TableNextColumn()      -> Text("Hello 1")  // OK -                   TableNextColumn()      -> Text("Hello 0") -> TableNextColumn()      -> Text("Hello 1")  // OK: TableNextColumn() automatically gets to next row! - TableNextRow()                           -> Text("Hello 0")                                               // Not OK! Missing TableSetColumnIndex() or TableNextColumn()! Text will not appear! - 5. Call EndTable()
+Tables
+- Full-featured replacement for old Columns API.
+- See Demo->Tables for demo code. See top of imgui_tables.cpp for general commentary.
+- See ImGuiTableFlags_ and ImGuiTableColumnFlags_ enums for a description of available flags.
+The typical call flow is:
+- 1. Call BeginTable(), early out if returning false.
+- 2. Optionally call TableSetupColumn() to submit column name/flags/defaults.
+- 3. Optionally call TableSetupScrollFreeze() to request scroll freezing of columns/rows.
+- 4. Optionally call TableHeadersRow() to submit a header row. Names are pulled from TableSetupColumn() data.
+- 5. Populate contents:
+- In most situations you can use TableNextRow() + TableSetColumnIndex(N) to start appending into a column.
+- If you are using tables as a sort of grid, where every column is holding the same type of contents,
+you may prefer using TableNextColumn() instead of TableNextRow() + TableSetColumnIndex().
+TableNextColumn() will automatically wrap-around into the next row if needed.
+- IMPORTANT: Comparatively to the old Columns() API, we need to call TableNextColumn() for the first column!
+- Summary of possible call flow:
+- TableNextRow() -> TableSetColumnIndex(0) -> Text("Hello 0") -> TableSetColumnIndex(1) -> Text("Hello 1")  // OK
+- TableNextRow() -> TableNextColumn()      -> Text("Hello 0") -> TableNextColumn()      -> Text("Hello 1")  // OK
+-                   TableNextColumn()      -> Text("Hello 0") -> TableNextColumn()      -> Text("Hello 1")  // OK: TableNextColumn() automatically gets to next row!
+- TableNextRow()                           -> Text("Hello 0")                                               // Not OK! Missing TableSetColumnIndex() or TableNextColumn()! Text will not appear!
+- 5. Call EndTable()
 +/
 bool BeginTable(scope const(char)* str_id, int columns, ImGuiTableFlags flags) @trusted
 {
@@ -1783,7 +1940,16 @@ bool TableSetColumnIndex(int column_n) @trusted
 }
 
 /++
-Tables: Headers & Columns declaration - Use TableSetupColumn() to specify label, resizing policy, default width/weight, id, various other flags etc. - Use TableHeadersRow() to create a header row and automatically submit a TableHeader() for each column. Headers are required to perform: reordering, sorting, and opening the context menu. The context menu can also be made available in columns body using ImGuiTableFlags_ContextMenuInBody. - You may manually submit headers using TableNextRow() + TableHeader() calls, but this is only useful in some advanced use cases (e.g. adding custom widgets in header row). - Use TableSetupScrollFreeze() to lock columns/rows so they stay visible when scrolled.
+Tables: Headers
+&
+Columns declaration
+- Use TableSetupColumn() to specify label, resizing policy, default width/weight, id, various other flags etc.
+- Use TableHeadersRow() to create a header row and automatically submit a TableHeader() for each column.
+Headers are required to perform: reordering, sorting, and opening the context menu.
+The context menu can also be made available in columns body using ImGuiTableFlags_ContextMenuInBody.
+- You may manually submit headers using TableNextRow() + TableHeader() calls, but this is only useful in
+some advanced use cases (e.g. adding custom widgets in header row).
+- Use TableSetupScrollFreeze() to lock columns/rows so they stay visible when scrolled.
 +/
 void TableSetupColumn(scope const(char)* label, ImGuiTableColumnFlags flags) @trusted
 {
@@ -1816,9 +1982,16 @@ void TableAngledHeadersRow() @trusted
 }
 
 /++
-Tables: Sorting & Miscellaneous functions - Sorting: call TableGetSortSpecs() to retrieve latest sort specs for the table. NULL when not sorting. When 'sort_specs->SpecsDirty == true' you should sort your data. It will be true when sorting specs have changed since last call, or the first time. Make sure to set 'SpecsDirty = false' after sorting, else you may wastefully sort your data every frame! - Functions args 'int column_n' treat the default value of -1 as the same as passing the current column index.
+Tables: Sorting
+&
+Miscellaneous functions
+- Sorting: call TableGetSortSpecs() to retrieve latest sort specs for the table. NULL when not sorting.
+When 'sort_specs->SpecsDirty == true' you should sort your data. It will be true when sorting specs have
+changed since last call, or the first time. Make sure to set 'SpecsDirty = false' after sorting,
+else you may wastefully sort your data every frame!
+- Functions args 'int column_n' treat the default value of -1 as the same as passing the current column index.
 +/
-scope ImGuiTableSortSpecs* TableGetSortSpecs() @trusted
+ImGuiTableSortSpecs* TableGetSortSpecs() @trusted
 {
     return igTableGetSortSpecs();
 }
@@ -1838,7 +2011,7 @@ int TableGetRowIndex() @trusted
     return igTableGetRowIndex();
 }
 
-scope const(char)* TableGetColumnName(int column_n) @trusted
+const(char)* TableGetColumnName(int column_n) @trusted
 {
     return igTableGetColumnName(column_n);
 }
@@ -1864,7 +2037,8 @@ void TableSetBgColor(ImGuiTableBgTarget target, ImU32 color, int column_n) @trus
 }
 
 /++
-Legacy Columns API (prefer using Tables!) - You can also use SameLine(pos_x) to mimic simplified columns.
+Legacy Columns API (prefer using Tables!)
+- You can also use SameLine(pos_x) to mimic simplified columns.
 +/
 void Columns() @trusted
 {
@@ -1912,7 +2086,8 @@ int GetColumnsCount() @trusted
 }
 
 /++
-Tab Bars, Tabs - Note: Tabs are automatically created by the docking system (when in 'docking' branch). Use this to create tab bars/tabs yourself.
+Tab Bars, Tabs
+- Note: Tabs are automatically created by the docking system (when in 'docking' branch). Use this to create tab bars/tabs yourself.
 +/
 bool BeginTabBar(scope const(char)* str_id, ImGuiTabBarFlags flags) @trusted
 {
@@ -1945,7 +2120,8 @@ void SetTabItemClosed(scope const(char)* tab_or_docked_window_label) @trusted
 }
 
 /++
-Logging/Capture - All text output from the interface can be captured into tty/file/clipboard. By default, tree nodes are automatically opened during logging.
+Logging/Capture
+- All text output from the interface can be captured into tty/file/clipboard. By default, tree nodes are automatically opened during logging.
 +/
 void LogToTTY(int auto_open_depth) @trusted
 {
@@ -1980,14 +2156,18 @@ void LogText(scope const(char)* fmt) @trusted
 alias LogTextV = igLogTextV;
 
 /++
-Drag and Drop - On source items, call BeginDragDropSource(), if it returns true also call SetDragDropPayload() + EndDragDropSource(). - On target candidates, call BeginDragDropTarget(), if it returns true also call AcceptDragDropPayload() + EndDragDropTarget(). - If you stop calling BeginDragDropSource() the payload is preserved however it won't have a preview tooltip (we currently display a fallback "..." tooltip, see #1725) - An item can be both drag source and drop target.
+Drag and Drop
+- On source items, call BeginDragDropSource(), if it returns true also call SetDragDropPayload() + EndDragDropSource().
+- On target candidates, call BeginDragDropTarget(), if it returns true also call AcceptDragDropPayload() + EndDragDropTarget().
+- If you stop calling BeginDragDropSource() the payload is preserved however it won't have a preview tooltip (we currently display a fallback "..." tooltip, see #1725)
+- An item can be both drag source and drop target.
 +/
 bool BeginDragDropSource(ImGuiDragDropFlags flags) @trusted
 {
     return igBeginDragDropSource(flags);
 }
 
-bool SetDragDropPayload(scope const(char)* type, scope const(void)* data, size_t sz, ImGuiCond cond) @trusted
+bool SetDragDropPayload(scope const(char)* type, scope const void* data, size_t sz, ImGuiCond cond) @trusted
 {
     return igSetDragDropPayload(type, data, sz, cond);
 }
@@ -2002,7 +2182,7 @@ bool BeginDragDropTarget() @trusted
     return igBeginDragDropTarget();
 }
 
-scope ImGuiPayload* AcceptDragDropPayload(const(char)* type, ImGuiDragDropFlags flags) @trusted
+scope const(ImGuiPayload)* AcceptDragDropPayload(const(char)* type, ImGuiDragDropFlags flags) @trusted
 {
     return igAcceptDragDropPayload(type, flags);
 }
@@ -2018,7 +2198,11 @@ scope const(ImGuiPayload)* GetDragDropPayload() @trusted
 }
 
 /++
-Disabling [BETA API] - Disable all user interactions and dim items visuals (applying style.DisabledAlpha over current colors) - Those can be nested but it cannot be used to enable an already disabled section (a single BeginDisabled(true) in the stack is enough to keep everything disabled) - Tooltips windows by exception are opted out of disabling. - BeginDisabled(false)/EndDisabled() essentially does nothing but is provided to facilitate use of boolean expressions (as a micro-optimization: if you have tens of thousands of BeginDisabled(false)/EndDisabled() pairs, you might want to reformulate your code to avoid making those calls)
+Disabling [BETA API]
+- Disable all user interactions and dim items visuals (applying style.DisabledAlpha over current colors)
+- Those can be nested but it cannot be used to enable an already disabled section (a single BeginDisabled(true) in the stack is enough to keep everything disabled)
+- Tooltips windows by exception are opted out of disabling.
+- BeginDisabled(false)/EndDisabled() essentially does nothing but is provided to facilitate use of boolean expressions (as a micro-optimization: if you have tens of thousands of BeginDisabled(false)/EndDisabled() pairs, you might want to reformulate your code to avoid making those calls)
 +/
 void BeginDisabled(bool disabled) @trusted
 {
@@ -2031,7 +2215,8 @@ void EndDisabled() @trusted
 }
 
 /++
-Clipping - Mouse hovering is affected by ImGui::PushClipRect() calls, unlike direct calls to ImDrawList::PushClipRect() which are render only.
+Clipping
+- Mouse hovering is affected by ImGui::PushClipRect() calls, unlike direct calls to ImDrawList::PushClipRect() which are render only.
 +/
 void PushClipRect(ImVec2 clip_rect_min, ImVec2 clip_rect_max, bool intersect_with_current_clip_rect) @trusted
 {
@@ -2078,7 +2263,9 @@ void SetNextItemAllowOverlap() @trusted
 }
 
 /++
-Item/Widgets Utilities and Query Functions - Most of the functions are referring to the previous Item that has been submitted. - See Demo Window under "Widgets->Querying Status" for an interactive visualization of most of those functions.
+Item/Widgets Utilities and Query Functions
+- Most of the functions are referring to the previous Item that has been submitted.
+- See Demo Window under "Widgets->Querying Status" for an interactive visualization of most of those functions.
 +/
 bool IsItemHovered(ImGuiHoveredFlags flags) @trusted
 {
@@ -2171,9 +2358,12 @@ ImVec2 GetItemRectSize() @trusted
 }
 
 /++
-Viewports - Currently represents the Platform Window created by the application which is hosting our Dear ImGui windows. - In 'docking' branch with multi-viewport enabled, we extend this concept to have multiple active viewports. - In the future we will extend this concept further to also represent Platform Monitor and support a "no main platform window" operation mode.
+Viewports
+- Currently represents the Platform Window created by the application which is hosting our Dear ImGui windows.
+- In 'docking' branch with multi-viewport enabled, we extend this concept to have multiple active viewports.
+- In the future we will extend this concept further to also represent Platform Monitor and support a "no main platform window" operation mode.
 +/
-scope ImGuiViewport* GetMainViewport() @trusted
+ImGuiViewport* GetMainViewport() @trusted
 {
     return igGetMainViewport();
 }
@@ -2181,12 +2371,12 @@ scope ImGuiViewport* GetMainViewport() @trusted
 /++
 Background/Foreground Draw Lists
 +/
-scope ImDrawList* GetBackgroundDrawList() @trusted
+ImDrawList* GetBackgroundDrawList() @trusted
 {
     return igGetBackgroundDrawList();
 }
 
-scope ImDrawList* GetForegroundDrawList() @trusted
+ImDrawList* GetForegroundDrawList() @trusted
 {
     return igGetForegroundDrawList();
 }
@@ -2214,12 +2404,12 @@ int GetFrameCount() @trusted
     return igGetFrameCount();
 }
 
-scope ImDrawListSharedData* GetDrawListSharedData() @trusted
+ImDrawListSharedData* GetDrawListSharedData() @trusted
 {
     return igGetDrawListSharedData();
 }
 
-scope const(char)* GetStyleColorName(ImGuiCol idx) @trusted
+const(char)* GetStyleColorName(ImGuiCol idx) @trusted
 {
     return igGetStyleColorName(idx);
 }
@@ -2229,7 +2419,7 @@ void SetStateStorage(scope ImGuiStorage* storage) @trusted
     igSetStateStorage(storage);
 }
 
-scope ImGuiStorage* GetStateStorage() @trusted
+ImGuiStorage* GetStateStorage() @trusted
 {
     return igGetStateStorage();
 }
@@ -2260,10 +2450,7 @@ ImU32 ColorConvertFloat4ToU32(ImVec4 in_) @trusted
     return igColorConvertFloat4ToU32(in_);
 }
 
-void ColorConvertRGBtoHSV(float r, float g, float b, scope float* out_h, scope float* out_s, scope float* out_v) @trusted
-{
-    igColorConvertRGBtoHSV(r, g, b, out_h, out_s, out_v);
-}
+alias ColorConvertRGBtoHSV = igColorConvertRGBtoHSV;
 
 void ColorConvertHSVtoRGB(float h, float s, float v, scope float* out_r, scope float* out_g, scope float* out_b) @trusted
 {
@@ -2271,7 +2458,12 @@ void ColorConvertHSVtoRGB(float h, float s, float v, scope float* out_r, scope f
 }
 
 /++
-Inputs Utilities: Keyboard/Mouse/Gamepad - the ImGuiKey enum contains all possible keyboard, mouse and gamepad inputs (e.g. ImGuiKey_A, ImGuiKey_MouseLeft, ImGuiKey_GamepadDpadUp...). - (legacy: before v1.87, we used ImGuiKey to carry native/user indices as defined by each backends. This was obsoleted in 1.87 (2022-02) and completely removed in 1.91.5 (2024-11). See https://github.com/ocornut/imgui/issues/4921) - (legacy: any use of ImGuiKey will assert when key < 512 to detect passing legacy native/user indices)
+Inputs Utilities: Keyboard/Mouse/Gamepad
+- the ImGuiKey enum contains all possible keyboard, mouse and gamepad inputs (e.g. ImGuiKey_A, ImGuiKey_MouseLeft, ImGuiKey_GamepadDpadUp...).
+- (legacy: before v1.87, we used ImGuiKey to carry native/user indices as defined by each backends. This was obsoleted in 1.87 (2022-02) and completely removed in 1.91.5 (2024-11). See https://github.com/ocornut/imgui/issues/4921)
+- (legacy: any use of ImGuiKey will assert when key
+<
+512 to detect passing legacy native/user indices)
 +/
 bool IsKeyDown(ImGuiKey key) @trusted
 {
@@ -2303,7 +2495,7 @@ int GetKeyPressedAmount(ImGuiKey key, float repeat_delay, float rate) @trusted
     return igGetKeyPressedAmount(key, repeat_delay, rate);
 }
 
-scope const(char)* GetKeyName(ImGuiKey key) @trusted
+const(char)* GetKeyName(ImGuiKey key) @trusted
 {
     return igGetKeyName(key);
 }
@@ -2314,7 +2506,23 @@ void SetNextFrameWantCaptureKeyboard(bool want_capture_keyboard) @trusted
 }
 
 /++
-Inputs Utilities: Shortcut Testing & Routing [BETA] - ImGuiKeyChord = a ImGuiKey + optional ImGuiMod_Alt/ImGuiMod_Ctrl/ImGuiMod_Shift/ImGuiMod_Super. ImGuiKey_C                          // Accepted by functions taking ImGuiKey or ImGuiKeyChord arguments) ImGuiMod_Ctrl | ImGuiKey_C          // Accepted by functions taking ImGuiKeyChord arguments) only ImGuiMod_XXX values are legal to combine with an ImGuiKey. You CANNOT combine two ImGuiKey values. - The general idea is that several callers may register interest in a shortcut, and only one owner gets it. Parent   -> call Shortcut(Ctrl+S)    // When Parent is focused, Parent gets the shortcut. Child1 -> call Shortcut(Ctrl+S)    // When Child1 is focused, Child1 gets the shortcut (Child1 overrides Parent shortcuts) Child2 -> no call                  // When Child2 is focused, Parent gets the shortcut. The whole system is order independent, so if Child1 makes its calls before Parent, results will be identical. This is an important property as it facilitate working with foreign code or larger codebase. - To understand the difference: - IsKeyChordPressed() compares mods and call IsKeyPressed() -> function has no side-effect. - Shortcut() submits a route, routes are resolved, if it currently can be routed it calls IsKeyChordPressed() -> function has (desirable) side-effects as it can prevents another call from getting the route. - Visualize registered routes in 'Metrics/Debugger->Inputs'.
+Inputs Utilities: Shortcut Testing
+&
+Routing [BETA]
+- ImGuiKeyChord = a ImGuiKey + optional ImGuiMod_Alt/ImGuiMod_Ctrl/ImGuiMod_Shift/ImGuiMod_Super.
+ImGuiKey_C                          // Accepted by functions taking ImGuiKey or ImGuiKeyChord arguments)
+ImGuiMod_Ctrl | ImGuiKey_C          // Accepted by functions taking ImGuiKeyChord arguments)
+only ImGuiMod_XXX values are legal to combine with an ImGuiKey. You CANNOT combine two ImGuiKey values.
+- The general idea is that several callers may register interest in a shortcut, and only one owner gets it.
+Parent   -> call Shortcut(Ctrl+S)    // When Parent is focused, Parent gets the shortcut.
+Child1 -> call Shortcut(Ctrl+S)    // When Child1 is focused, Child1 gets the shortcut (Child1 overrides Parent shortcuts)
+Child2 -> no call                  // When Child2 is focused, Parent gets the shortcut.
+The whole system is order independent, so if Child1 makes its calls before Parent, results will be identical.
+This is an important property as it facilitate working with foreign code or larger codebase.
+- To understand the difference:
+- IsKeyChordPressed() compares mods and call IsKeyPressed() -> function has no side-effect.
+- Shortcut() submits a route, routes are resolved, if it currently can be routed it calls IsKeyChordPressed() -> function has (desirable) side-effects as it can prevents another call from getting the route.
+- Visualize registered routes in 'Metrics/Debugger->Inputs'.
 +/
 bool Shortcut(ImGuiKeyChord key_chord, ImGuiInputFlags flags) @trusted
 {
@@ -2327,7 +2535,12 @@ void SetNextItemShortcut(ImGuiKeyChord key_chord, ImGuiInputFlags flags) @truste
 }
 
 /++
-Inputs Utilities: Key/Input Ownership [BETA] - One common use case would be to allow your items to disable standard inputs behaviors such as Tab or Alt key handling, Mouse Wheel scrolling, etc. e.g. Button(...); SetItemKeyOwner(ImGuiKey_MouseWheelY); to make hovering/activating a button disable wheel for scrolling. - Reminder ImGuiKey enum include access to mouse buttons and gamepad, so key ownership can apply to them. - Many related features are still in imgui_internal.h. For instance, most IsKeyXXX()/IsMouseXXX() functions have an owner-id-aware version.
+Inputs Utilities: Key/Input Ownership [BETA]
+- One common use case would be to allow your items to disable standard inputs behaviors such
+as Tab or Alt key handling, Mouse Wheel scrolling, etc.
+e.g. Button(...); SetItemKeyOwner(ImGuiKey_MouseWheelY); to make hovering/activating a button disable wheel for scrolling.
+- Reminder ImGuiKey enum include access to mouse buttons and gamepad, so key ownership can apply to them.
+- Many related features are still in imgui_internal.h. For instance, most IsKeyXXX()/IsMouseXXX() functions have an owner-id-aware version.
 +/
 void SetItemKeyOwner(ImGuiKey key) @trusted
 {
@@ -2335,7 +2548,10 @@ void SetItemKeyOwner(ImGuiKey key) @trusted
 }
 
 /++
-Inputs Utilities: Mouse - To refer to a mouse button, you may use named enums in your code e.g. ImGuiMouseButton_Left, ImGuiMouseButton_Right. - You can also use regular integer: it is forever guaranteed that 0=Left, 1=Right, 2=Middle. - Dragging operations are only reported after mouse has moved a certain distance away from the initial clicking position (see 'lock_threshold' and 'io.MouseDraggingThreshold')
+Inputs Utilities: Mouse
+- To refer to a mouse button, you may use named enums in your code e.g. ImGuiMouseButton_Left, ImGuiMouseButton_Right.
+- You can also use regular integer: it is forever guaranteed that 0=Left, 1=Right, 2=Middle.
+- Dragging operations are only reported after mouse has moved a certain distance away from the initial clicking position (see 'lock_threshold' and 'io.MouseDraggingThreshold')
 +/
 bool IsMouseDown(ImGuiMouseButton button) @trusted
 {
@@ -2438,9 +2654,10 @@ void SetNextFrameWantCaptureMouse(bool want_capture_mouse) @trusted
 }
 
 /++
-Clipboard Utilities - Also see the LogToClipboard() function to capture GUI into clipboard, or easily output text data to the clipboard.
+Clipboard Utilities
+- Also see the LogToClipboard() function to capture GUI into clipboard, or easily output text data to the clipboard.
 +/
-scope const(char)* GetClipboardText() @trusted
+const(char)* GetClipboardText() @trusted
 {
     return igGetClipboardText();
 }
@@ -2451,7 +2668,10 @@ void SetClipboardText(scope const(char)* text) @trusted
 }
 
 /++
-Settings/.Ini Utilities - The disk functions are automatically called if io.IniFilename != NULL (default is "imgui.ini"). - Set io.IniFilename to NULL to load/save manually. Read io.WantSaveIniSettings description about handling .ini saving manually. - Important: default value "imgui.ini" is relative to current working dir! Most apps will want to lock this to an absolute path (e.g. same path as executables).
+Settings/.Ini Utilities
+- The disk functions are automatically called if io.IniFilename != NULL (default is "imgui.ini").
+- Set io.IniFilename to NULL to load/save manually. Read io.WantSaveIniSettings description about handling .ini saving manually.
+- Important: default value "imgui.ini" is relative to current working dir! Most apps will want to lock this to an absolute path (e.g. same path as executables).
 +/
 void LoadIniSettingsFromDisk(scope const(char)* ini_filename) @trusted
 {
@@ -2468,13 +2688,14 @@ void SaveIniSettingsToDisk(scope const(char)* ini_filename) @trusted
     igSaveIniSettingsToDisk(ini_filename);
 }
 
-scope const(char)* SaveIniSettingsToMemory(size_t* out_ini_size) @trusted
+const(char)* SaveIniSettingsToMemory(size_t* out_ini_size) @trusted
 {
     return igSaveIniSettingsToMemory(out_ini_size);
 }
 
 /++
-Debug Utilities - Your main debugging friend is the ShowMetricsWindow() function, which is also accessible from Demo->Tools->Metrics Debugger
+Debug Utilities
+- Your main debugging friend is the ShowMetricsWindow() function, which is also accessible from Demo->Tools->Metrics Debugger
 +/
 void DebugTextEncoding(scope const(char)* text) @trusted
 {
@@ -2504,7 +2725,10 @@ void DebugLog(scope const(char)* fmt) @trusted
 alias DebugLogV = igDebugLogV;
 
 /++
-Memory Allocators - Those functions are not reliant on the current context. - DLL users: heaps and globals are not shared across DLL boundaries! You will need to call SetCurrentContext() + SetAllocatorFunctions() for each static/DLL boundary you are calling from. Read "Context and Memory Allocators" section of imgui.cpp for more details.
+Memory Allocators
+- Those functions are not reliant on the current context.
+- DLL users: heaps and globals are not shared across DLL boundaries! You will need to call SetCurrentContext() + SetAllocatorFunctions()
+for each static/DLL boundary you are calling from. Read "Context and Memory Allocators" section of imgui.cpp for more details.
 +/
 void SetAllocatorFunctions(ImGuiMemAllocFunc alloc_func, ImGuiMemFreeFunc free_func, scope void* user_data) @trusted
 {
@@ -2516,7 +2740,7 @@ void GetAllocatorFunctions(scope ImGuiMemAllocFunc* p_alloc_func, scope ImGuiMem
     igGetAllocatorFunctions(p_alloc_func, p_free_func, p_user_data);
 }
 
-scope void* MemAlloc(size_t size) @trusted
+void* MemAlloc(size_t size) @trusted
 {
     return igMemAlloc(size);
 }
@@ -2591,7 +2815,12 @@ void EndChildFrame() @trusted
 }
 
 /++
-static inline bool BeginChild(const char* str_id, const ImVec2 & size_arg, bool borders, ImGuiWindowFlags window_flags){ return BeginChild(str_id, size_arg, borders ? ImGuiChildFlags_Borders : ImGuiChildFlags_None, window_flags); } // Unnecessary as true == ImGuiChildFlags_Borders static inline bool BeginChild(ImGuiID id, const ImVec2 & size_arg, bool borders, ImGuiWindowFlags window_flags)        { return BeginChild(id, size_arg, borders ? ImGuiChildFlags_Borders : ImGuiChildFlags_None, window_flags);     } // Unnecessary as true == ImGuiChildFlags_Borders
+static inline bool BeginChild(const char* str_id, const ImVec2
+&
+size_arg, bool borders, ImGuiWindowFlags window_flags){ return BeginChild(str_id, size_arg, borders ? ImGuiChildFlags_Borders : ImGuiChildFlags_None, window_flags); } // Unnecessary as true == ImGuiChildFlags_Borders
+static inline bool BeginChild(ImGuiID id, const ImVec2
+&
+size_arg, bool borders, ImGuiWindowFlags window_flags)        { return BeginChild(id, size_arg, borders ? ImGuiChildFlags_Borders : ImGuiChildFlags_None, window_flags);     } // Unnecessary as true == ImGuiChildFlags_Borders
 +/
 void ShowStackToolWindow(scope bool* p_open) @trusted
 {
