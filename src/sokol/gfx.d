@@ -1,7 +1,7 @@
 /++
 + Machine generated D bindings for Sokol library.
 + 
-+     Generated on: 2025-06-27 17:51:25
++     Generated on: 2025-06-28 11:47:55
 + 
 +     Source header: sokol_gfx.h
 +     Module: sokol.gfx
@@ -1461,6 +1461,8 @@ extern(C) struct SamplerDesc {
 +     source code, you can provide an optional target string via
 +     sg_shader_stage_desc.d3d11_target, the default target is "vs_4_0" for the
 +     vertex shader stage and "ps_4_0" for the pixel shader stage.
++     You may optionally provide the file path to enable the default #include handler
++     behavior when compiling source code.
 +/
 enum ShaderStage {
     None,
@@ -1473,6 +1475,7 @@ extern(C) struct ShaderFunction {
     Range bytecode = {};
     const(char)* entry = null;
     const(char)* d3d11_target = null;
+    const(char)* d3d11_filepath = null;
 }
 enum ShaderAttrBaseType {
     Undefined,
