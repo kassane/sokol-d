@@ -1,4 +1,4 @@
-// Generated on 2025-06-16
+// Generated on 2025-06-28
 /++
 D wrapper for cimgui (Dear ImGui).
 Provides bindings for Dear ImGui immediate mode GUI library.
@@ -339,11 +339,6 @@ void SetWindowFocus() @trusted
     igSetWindowFocus();
 }
 
-void SetWindowFontScale(float scale) @trusted
-{
-    igSetWindowFontScale(scale);
-}
-
 void SetWindowPosStr(scope const(char)* name, ImVec2 pos, ImGuiCond cond) @trusted
 {
     igSetWindowPosStr(name, pos, cond);
@@ -420,11 +415,26 @@ void SetScrollFromPosY(float local_y, float center_y_ratio) @trusted
 }
 
 /++
-Parameters stacks (shared)
+Parameters stacks (font)
+- PushFont(font, 0.0f)                       // Change font and keep current size
+- PushFont(NULL, 20.0f)                      // Keep font and change current size
+- PushFont(font, 20.0f)                      // Change font and set size to 20.0f
+- PushFont(font, style.FontSizeBase * 2.0f)  // Change font and set size to be twice bigger than current size.
+- PushFont(font, font->LegacySize)           // Change font and set size to size passed to AddFontXXX() function. Same as pre-1.92 behavior.
+*IMPORTANT* before 1.92, fonts had a single size. They can now be dynamically be adjusted.
+- In 1.92 we have REMOVED the single parameter version of PushFont() because it seems like the easiest way to provide an error-proof transition.
+- PushFont(font) before 1.92 = PushFont(font, font->LegacySize) after 1.92          // Use default font size as passed to AddFontXXX() function.
+*IMPORTANT* global scale factors are applied over the provided size.
+- Global scale factors are: 'style.FontScaleMain', 'style.FontScaleDpi' and maybe more.
+-  If you want to apply a factor to the _current_ font size:
+- CORRECT:   PushFont(NULL, style.FontSizeBase)         // use current unscaled size    == does nothing
+- CORRECT:   PushFont(NULL, style.FontSizeBase * 2.0f)  // use current unscaled size x2 == make text twice bigger
+- INCORRECT: PushFont(NULL, GetFontSize())              // INCORRECT! using size after global factors already applied == GLOBAL SCALING FACTORS WILL APPLY TWICE!
+- INCORRECT: PushFont(NULL, GetFontSize() * 2.0f)       // INCORRECT! using size after global factors already applied == GLOBAL SCALING FACTORS WILL APPLY TWICE!
 +/
-void PushFont(scope ImFont* font) @trusted
+void PushFontFloat(scope ImFont* font, float font_size_base_unscaled) @trusted
 {
-    igPushFont(font);
+    igPushFontFloat(font, font_size_base_unscaled);
 }
 
 void PopFont() @trusted
@@ -432,6 +442,24 @@ void PopFont() @trusted
     igPopFont();
 }
 
+ImFont* GetFont() @trusted
+{
+    return igGetFont();
+}
+
+float GetFontSize() @trusted
+{
+    return igGetFontSize();
+}
+
+ImFontBaked* GetFontBaked() @trusted
+{
+    return igGetFontBaked();
+}
+
+/++
+Parameters stacks (shared)
++/
 void PushStyleColor(ImGuiCol idx, ImU32 col) @trusted
 {
     igPushStyleColor(idx, col);
@@ -529,16 +557,6 @@ void PopTextWrapPos() @trusted
 Style read access
 - Use the ShowStyleEditor() function to interactively see/edit the colors.
 +/
-ImFont* GetFont() @trusted
-{
-    return igGetFont();
-}
-
-float GetFontSize() @trusted
-{
-    return igGetFontSize();
-}
-
 ImVec2 GetFontTexUvWhitePixel() @trusted
 {
     return igGetFontTexUvWhitePixel();
@@ -900,51 +918,52 @@ bool TextLink(scope const(char)* label) @trusted
     return igTextLink(label);
 }
 
-void TextLinkOpenURL(scope const(char)* label) @trusted
+bool TextLinkOpenURL(scope const(char)* label) @trusted
 {
-    igTextLinkOpenURL(label);
+    return igTextLinkOpenURL(label);
 }
 
-void TextLinkOpenURLEx(scope const(char)* label, scope const(char)* url) @trusted
+bool TextLinkOpenURLEx(scope const(char)* label, scope const(char)* url) @trusted
 {
-    igTextLinkOpenURLEx(label, url);
+    return igTextLinkOpenURLEx(label, url);
 }
 
 /++
 Widgets: Images
-- Read about ImTextureID here: https://github.com/ocornut/imgui/wiki/Image-Loading-and-Displaying-Examples
+- Read about ImTextureID/ImTextureRef  here: https://github.com/ocornut/imgui/wiki/Image-Loading-and-Displaying-Examples
 - 'uv0' and 'uv1' are texture coordinates. Read about them from the same link above.
 - Image() pads adds style.ImageBorderSize on each side, ImageButton() adds style.FramePadding on each side.
 - ImageButton() draws a background based on regular Button() color + optionally an inner background if specified.
+- An obsolete version of Image(), before 1.91.9 (March 2025), had a 'tint_col' parameter which is now supported by the ImageWithBg() function.
 +/
-void Image(ImTextureID user_texture_id, ImVec2 image_size) @trusted
+void Image(ImTextureRef tex_ref, ImVec2 image_size) @trusted
 {
-    igImage(user_texture_id, image_size);
+    igImage(tex_ref, image_size);
 }
 
-void ImageEx(ImTextureID user_texture_id, ImVec2 image_size, ImVec2 uv0, ImVec2 uv1) @trusted
+void ImageEx(ImTextureRef tex_ref, ImVec2 image_size, ImVec2 uv0, ImVec2 uv1) @trusted
 {
-    igImageEx(user_texture_id, image_size, uv0, uv1);
+    igImageEx(tex_ref, image_size, uv0, uv1);
 }
 
-void ImageWithBg(ImTextureID user_texture_id, ImVec2 image_size) @trusted
+void ImageWithBg(ImTextureRef tex_ref, ImVec2 image_size) @trusted
 {
-    igImageWithBg(user_texture_id, image_size);
+    igImageWithBg(tex_ref, image_size);
 }
 
-void ImageWithBgEx(ImTextureID user_texture_id, ImVec2 image_size, ImVec2 uv0, ImVec2 uv1, ImVec4 bg_col, ImVec4 tint_col) @trusted
+void ImageWithBgEx(ImTextureRef tex_ref, ImVec2 image_size, ImVec2 uv0, ImVec2 uv1, ImVec4 bg_col, ImVec4 tint_col) @trusted
 {
-    igImageWithBgEx(user_texture_id, image_size, uv0, uv1, bg_col, tint_col);
+    igImageWithBgEx(tex_ref, image_size, uv0, uv1, bg_col, tint_col);
 }
 
-bool ImageButton(scope const(char)* str_id, ImTextureID user_texture_id, ImVec2 image_size) @trusted
+bool ImageButton(scope const(char)* str_id, ImTextureRef tex_ref, ImVec2 image_size) @trusted
 {
-    return igImageButton(str_id, user_texture_id, image_size);
+    return igImageButton(str_id, tex_ref, image_size);
 }
 
-bool ImageButtonEx(scope const(char)* str_id, ImTextureID user_texture_id, ImVec2 image_size, ImVec2 uv0, ImVec2 uv1, ImVec4 bg_col, ImVec4 tint_col) @trusted
+bool ImageButtonEx(scope const(char)* str_id, ImTextureRef tex_ref, ImVec2 image_size, ImVec2 uv0, ImVec2 uv1, ImVec4 bg_col, ImVec4 tint_col) @trusted
 {
-    return igImageButtonEx(str_id, user_texture_id, image_size, uv0, uv1, bg_col, tint_col);
+    return igImageButtonEx(str_id, tex_ref, image_size, uv0, uv1, bg_col, tint_col);
 }
 
 /++
@@ -1598,7 +1617,7 @@ Widgets: List Boxes
 - This is essentially a thin wrapper to using BeginChild/EndChild with the ImGuiChildFlags_FrameStyle flag for stylistic changes + displaying a label.
 - If you don't need a label you can probably simply use BeginChild() with the ImGuiChildFlags_FrameStyle flag for the same result.
 - You can submit contents and manage your selection state however you want it, by creating e.g. Selectable() or any other items.
-- The simplified/old ListBox() api are helpers over BeginListBox()/EndListBox() which are kept available for convenience purpose. This is analoguous to how Combos are created.
+- The simplified/old ListBox() api are helpers over BeginListBox()/EndListBox() which are kept available for convenience purpose. This is analogous to how Combos are created.
 - Choose frame width:   size.x > 0.0f: custom  /  size.x
 <
 0.0f or -FLT_MIN: right-align   /  size.x = 0.0f (default): use current ItemWidth
@@ -2598,7 +2617,7 @@ bool IsMouseHoveringRectEx(ImVec2 r_min, ImVec2 r_max, bool clip) @trusted
     return igIsMouseHoveringRectEx(r_min, r_max, clip);
 }
 
-bool IsMousePosValid(scope ImVec2* mouse_pos) @trusted
+bool IsMousePosValid(scope const(ImVec2)* mouse_pos) @trusted
 {
     return igIsMousePosValid(mouse_pos);
 }
@@ -2751,11 +2770,24 @@ void MemFree(scope void* ptr) @trusted
 }
 
 /++
+OBSOLETED in 1.92.0 (from June 2025)
++/
+void PushFont(scope ImFont* font) @trusted
+{
+    igPushFont(font);
+}
+
+void SetWindowFontScale(float scale) @trusted
+{
+    igSetWindowFontScale(scale);
+}
+
+/++
 OBSOLETED in 1.91.9 (from February 2025)
 +/
-void ImageImVec4(ImTextureID user_texture_id, ImVec2 image_size, ImVec2 uv0, ImVec2 uv1, ImVec4 tint_col, ImVec4 border_col) @trusted
+void ImageImVec4(ImTextureRef tex_ref, ImVec2 image_size, ImVec2 uv0, ImVec2 uv1, ImVec4 tint_col, ImVec4 border_col) @trusted
 {
-    igImageImVec4(user_texture_id, image_size, uv0, uv1, tint_col, border_col);
+    igImageImVec4(tex_ref, image_size, uv0, uv1, tint_col, border_col);
 }
 
 /++
@@ -2853,17 +2885,4 @@ OBSOLETED in 1.89.7 (from June 2023)
 void SetItemAllowOverlap() @trusted
 {
     igSetItemAllowOverlap();
-}
-
-/++
-OBSOLETED in 1.89.4 (from March 2023)
-+/
-void PushAllowKeyboardFocus(bool tab_stop) @trusted
-{
-    igPushAllowKeyboardFocus(tab_stop);
-}
-
-void PopAllowKeyboardFocus() @trusted
-{
-    igPopAllowKeyboardFocus();
 }
