@@ -1,7 +1,7 @@
 /++
 + Machine generated D bindings for Sokol library.
 + 
-+     Generated on: 2025-06-28 11:47:56
++     Generated on: 2025-06-29 15:39:38
 + 
 +     Source header: sokol_imgui.h
 +     Module: sokol.imgui
@@ -142,12 +142,4 @@ int mapKeycode(sapp.Keycode keycode) @trusted @nogc nothrow pure {
 extern(C) void simgui_shutdown() @system @nogc nothrow pure;
 void shutdown() @trusted @nogc nothrow pure {
     simgui_shutdown();
-}
-extern(C) void simgui_create_fonts_texture(const FontTexDesc* desc) @system @nogc nothrow pure;
-void createFontsTexture(scope ref FontTexDesc desc) @trusted @nogc nothrow pure {
-    simgui_create_fonts_texture(&desc);
-}
-extern(C) void simgui_destroy_fonts_texture() @system @nogc nothrow pure;
-void destroyFontsTexture() @trusted @nogc nothrow pure {
-    simgui_destroy_fonts_texture();
 }
