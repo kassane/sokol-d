@@ -1,7 +1,7 @@
 /++
 + Machine generated D bindings for Sokol library.
 + 
-+     Generated on: 2025-06-29 15:39:38
++     Generated on: 2025-06-29 13:29:17
 + 
 +     Source header: sokol_audio.h
 +     Module: sokol.audio
