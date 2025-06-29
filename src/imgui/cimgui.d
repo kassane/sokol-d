@@ -2617,7 +2617,7 @@ bool IsMouseHoveringRectEx(ImVec2 r_min, ImVec2 r_max, bool clip) @trusted
     return igIsMouseHoveringRectEx(r_min, r_max, clip);
 }
 
-bool IsMousePosValid(scope const(ImVec2)* mouse_pos) @trusted
+bool IsMousePosValid(scope ImVec2* mouse_pos) @trusted
 {
     return igIsMousePosValid(mouse_pos);
 }
