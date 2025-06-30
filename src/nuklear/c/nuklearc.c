@@ -1,7 +1,7 @@
 // include nuklear.h before the sokol_nuklear.h implementation
-// #define NK_INCLUDE_FIXED_TYPES
+#define NK_INCLUDE_FIXED_TYPES
 #define NK_INCLUDE_STANDARD_IO
-// #define NK_INCLUDE_DEFAULT_ALLOCATOR
+#define NK_INCLUDE_DEFAULT_ALLOCATOR
 #define NK_INCLUDE_VERTEX_BUFFER_OUTPUT
 #define NK_INCLUDE_FONT_BAKING
 #define NK_INCLUDE_DEFAULT_FONT
@@ -30,9 +30,13 @@
 #pragma warning(disable : 4116) // unnamed type definition in parentheses`
 #endif
 // Use importC to import the C header files.
+#if defined(__IMPORTC__)
 #pragma attribute(push, nogc, nothrow, pure) // dmd-frontend-2.111.x feature
+#endif
 #include <nuklear.h>
+#if defined(__IMPORTC__)
 #pragma attribute(pop)
+#endif
 #if defined(_MSC_VER)
 #pragma warning(pop)
 #endif
