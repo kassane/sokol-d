@@ -200,9 +200,6 @@ void getNuklear(string vendor) @safe
     writeln("Setting up Nuklear");
     string path = absolutePath(buildPath(vendor, "nuklear"));
     string file = "nuklear.h";
-    scope (exit)
-        if (exists(file))
-            remove(file);
 
     if (!exists(path))
     {
