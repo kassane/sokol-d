@@ -8,6 +8,27 @@
 #define NK_INCLUDE_STANDARD_VARARGS
 #define NK_IMPLEMENTATION
 
+// Hack: avoid <math.h> in importC to aarch64-linux
+#if defined(__IMPORTC__) && (defined(__linux__) && defined(__aarch64__))
+extern double sqrt(double x);
+extern double pow(double x, double y);
+extern double fmod(double x, double y);
+extern double cos(double x);
+extern double acos(double x);
+extern double fabs(double x);
+extern double ceil(double x);
+extern double floor(double x);
+
+#define STBTT_ifloor(x) ((int)floor(x))
+#define STBTT_iceil(x) ((int)ceil(x))
+#define STBTT_sqrt(x) sqrt(x)
+#define STBTT_pow(x, y) pow(x, y)
+#define STBTT_fmod(x, y) fmod(x, y)
+#define STBTT_cos(x) cos(x)
+#define STBTT_acos(x) acos(x)
+#define STBTT_fabs(x) fabs(x)
+#endif
+
 #if defined(__clang__)
 #pragma GCC diagnostic ignored "-Wunknown-warning-option"
 #pragma GCC diagnostic ignored "-Wunused-parameter"
