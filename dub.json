@@ -898,7 +898,7 @@
 			"preBuildCommands-windows": [
 				"powershell -Command \"mkdir -Force $PACKAGE_DIR\\build\"",
 				"$DC -run $PACKAGE_DIR/build.d --with-sokol-nuklear",
-				"cl.exe /DNDEBUG /O2 /nologo /c /I\"$PACKAGE_DIR\\vendor\\nuklear\" /Fo$PACKAGE_DIR\\build\\nuklear.obj $PACKAGE_DIR\\src\\nuklear\\c\\nuklear.c",
+				"cl.exe /DNDEBUG /O2 /nologo /c /I\"$PACKAGE_DIR\\vendor\\nuklear\" /Fo$PACKAGE_DIR\\build\\nuklear.obj $PACKAGE_DIR\\src\\nuklear\\c\\nuklearc.c",
 				"lib.exe /nologo /OUT:$PACKAGE_DIR\\build\\nuklear.lib $PACKAGE_DIR\\build\\*.obj",
 				"powershell -Command \"Remove-Item $PACKAGE_DIR\\build\\*.obj\"",
 				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /I\"$PACKAGE_DIR\\vendor\\nuklear\" /Fo$PACKAGE_DIR\\build\\sokol_log.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_log.c",
@@ -1033,7 +1033,7 @@
 			"preBuildCommands-windows": [
 				"powershell -Command \"mkdir -Force $PACKAGE_DIR\\build\"",
 				"$DC -run $PACKAGE_DIR/build.d --with-sokol-nuklear",
-				"cl.exe /DNDEBUG /O2 /nologo /c /I\"$PACKAGE_DIR\\vendor\\nuklear\" /Fo$PACKAGE_DIR\\build\\nuklear.obj $PACKAGE_DIR\\src\\nuklear\\c\\nuklear.c",
+				"cl.exe /DNDEBUG /O2 /nologo /c /I\"$PACKAGE_DIR\\vendor\\nuklear\" /Fo$PACKAGE_DIR\\build\\nuklear.obj $PACKAGE_DIR\\src\\nuklear\\c\\nuklearc.c",
 				"lib.exe /nologo /OUT:$PACKAGE_DIR\\build\\nuklear.lib $PACKAGE_DIR\\build\\*.obj",
 				"powershell -Command \"Remove-Item $PACKAGE_DIR\\build\\*.obj\"",
 				"cl.exe /DNDEBUG /DIMPL /DSOKOL_D3D11 /nologo /wd4190 /O2 /c /I\"$PACKAGE_DIR\\vendor\\nuklear\" /Fo$PACKAGE_DIR\\build\\sokol_log.obj $PACKAGE_DIR\\src\\sokol\\c\\sokol_log.c",
