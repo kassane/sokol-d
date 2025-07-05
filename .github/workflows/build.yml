@@ -49,6 +49,7 @@ jobs:
           dub build :instancingcompute
           dub build :mrt
           dub build :noninterleaved
+          dub build :nuklear
           dub build :offscreen
           dub build :quad
           dub build :shapes
@@ -85,6 +86,7 @@ jobs:
           dub build :instancingcompute -c wasm -v --arch wasm32-unknown-emscripten-wasm
           dub build :mrt -c wasm -v --arch wasm32-unknown-emscripten-wasm
           dub build :noninterleaved -c wasm -v --arch wasm32-unknown-emscripten-wasm
+          dub build :nuklear -c wasm -v --arch wasm32-unknown-emscripten-wasm
           dub build :offscreen -c wasm -v --arch wasm32-unknown-emscripten-wasm
           dub build :quad -c wasm -v --arch wasm32-unknown-emscripten-wasm
           dub build :shapes -c wasm -v --arch wasm32-unknown-emscripten-wasm
@@ -121,6 +123,7 @@ jobs:
           dub build :instancingcompute -c wgpu -v --arch wasm32-unknown-emscripten-wasm
           dub build :mrt -c wgpu -v --arch wasm32-unknown-emscripten-wasm
           dub build :noninterleaved -c wgpu -v --arch wasm32-unknown-emscripten-wasm
+          dub build :nuklear -c wgpu -v --arch wasm32-unknown-emscripten-wasm
           dub build :offscreen -c wgpu -v --arch wasm32-unknown-emscripten-wasm
           dub build :quad -c wgpu -v --arch wasm32-unknown-emscripten-wasm
           dub build :shapes -c wgpu -v --arch wasm32-unknown-emscripten-wasm

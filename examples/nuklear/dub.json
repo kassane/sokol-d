@@ -1,0 +1,74 @@
+{
+    "name": "nuklear",
+    "dependencies": {
+        "sokol-d": {
+            "path": "../.."
+        }
+    },
+    "environments": {
+        "SOKOL_ROOTPATH": "${SOKOL_D_PACKAGE_DIR}"
+    },
+    "targetPath": "build",
+    "targetName": "nuklear",
+    "buildTypes": {
+        "debug": {
+            "buildOptions": [
+                "debugMode",
+                "debugInfo"
+            ]        
+        },
+        "release": {
+            "buildOptions": [
+                "releaseMode",
+                "inline",
+                "optimize"
+            ]
+        },
+        "release-nobounds": {
+            "buildOptions": [
+                "releaseMode",
+                "inline",
+                "noBoundsCheck",
+                "optimize"
+            ]
+        },
+        "release-betterc": {
+            "buildOptions": [
+                "betterC",
+                "releaseMode",
+                "inline",
+                "noBoundsCheck",
+                "optimize"
+            ]
+        }
+    },
+    "configurations": [
+        {
+            "name": "native",
+            "targetType": "executable",
+            "subConfigurations": {
+                "sokol-d": "nuklear-static"
+            }
+        },
+        {
+            "name": "wasm",
+            "targetType": "staticLibrary",
+            "postGenerateCommands": [
+                "$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --with-sokol-nuklear --backend=gles3 --link=nuklear --verbose"
+            ],
+            "subConfigurations": {
+                "sokol-d": "nuklear-wgles3"
+            }
+        },
+        {
+            "name": "wgpu",
+            "targetType": "staticLibrary",
+            "postGenerateCommands": [
+                "$DC -run ${SOKOL_D_PACKAGE_DIR}/build.d -- --target=wasm --with-sokol-nuklear --backend=wgpu --link=nuklear --verbose"
+            ],
+            "subConfigurations": {
+                "sokol-d": "nuklear-wgpu"
+            }
+        }
+    ]
+}

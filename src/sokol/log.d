@@ -1,7 +1,7 @@
 /++
 + Machine generated D bindings for Sokol library.
 + 
-+     Generated on: 2025-06-29 15:07:23
++     Generated on: 2025-06-30 14:41:18
 + 
 +     Source header: sokol_log.h
 +     Module: sokol.log
