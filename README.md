@@ -57,6 +57,10 @@ Available configurations:
     imgui-wgpu               # Sokol + Dear ImGui WebGPU build
     sokol-wgles3             # WebGL ES3 build
     sokol-wgpu               # WebGPU build
+    nuklear-static           # Sokol + Nuklear static build
+    nuklear-shared           # Sokol + Nuklear shared build  
+    nuklear-wgles3           # Sokol + Nuklear WebGL ES3 build
+    nuklear-wgpu             # Sokol + Nuklear WebGPU build
     genshaders               # [re]Generate shader code
 ```
 

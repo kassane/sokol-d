@@ -8,9 +8,9 @@
 #define NK_INCLUDE_DEFAULT_FONT
 #define NK_INCLUDE_STANDARD_VARARGS
 #define NK_IMPLEMENTATION
+#include "nuklear.h"
 #endif
 #include "sokol_defines.h"
 #include "sokol_app.h"
 #include "sokol_gfx.h"
-#include "nuklear.h"
 #include "sokol_nuklear.h"
