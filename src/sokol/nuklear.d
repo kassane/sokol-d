@@ -1,7 +1,7 @@
 /++
 + Machine generated D bindings for Sokol library.
 + 
-+     Generated on: 2025-06-30 14:41:21
++     Generated on: 2025-07-06 12:35:39
 + 
 +     Source header: sokol_nuklear.h
 +     Module: sokol.nuklear
@@ -14,8 +14,7 @@ import sapp = sokol.app;
 
 /++ Nuklear external type declarations +/
 extern(C) struct NkContext;
-extern(C)
-union NkHandle {
+extern(C) union NkHandle {
     void* ptr;
     int id;
 }
