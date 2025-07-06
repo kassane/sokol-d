@@ -14,10 +14,10 @@ import std;
 // Dependency versions
 enum emsdk_version = "4.0.10";
 enum imgui_version = "1.92.0";
+enum nuklear_version = "4.12.7";
 
 void main(string[] args) @safe
 {
-
     static if (__VERSION__ < 2111)
     {
         static assert(false, "This project requires DMD-frontend 2.111.0 or newer");
@@ -29,7 +29,7 @@ void main(string[] args) @safe
         bool help, verbose, downloadEmsdk, downloadShdc;
         string compiler, target = defaultTarget, optimize = "debug", linkExample, runExample, linkage = "static";
         SokolBackend backend;
-        bool useX11 = true, useWayland, useEgl, useLTO, withSokolImgui;
+        bool useX11 = true, useWayland, useEgl, useLTO, withSokolImgui, withSokolNuklear;
     }
 
     Options opts;
@@ -58,6 +58,9 @@ void main(string[] args) @safe
         break;
     case "--with-sokol-imgui":
         withSokolImgui = true;
+        break;
+    case "--with-sokol-nuklear":
+        withSokolNuklear = true;
         break;
     default:
         if (arg.startsWith("--backend="))
@@ -100,6 +103,7 @@ void main(string[] args) @safe
         writeln("  --link=<example>      Link WASM example (e.g., triangle)");
         writeln("  --run=<example>       Run WASM example (e.g., triangle)");
         writeln("  --with-sokol-imgui    Enable sokol_imgui integration");
+        writeln("  --with-sokol-nuklear  Enable sokol_nuklear integration");
         return;
     }
 
@@ -114,8 +118,8 @@ void main(string[] args) @safe
         writeln("  Target: ", opts.target, ", Optimize: ", opts.optimize, ", Backend: ", opts
                 .backend);
         writeln("  Linkage: ", opts.linkage);
-        writeln("  Download: Emscripten=", opts.downloadEmsdk, ", ImGui=", opts.withSokolImgui, ", Sokol-tools=", opts
-                .downloadShdc);
+        writeln("  Download: Emscripten=", opts.downloadEmsdk, ", ImGui=", opts.withSokolImgui,
+            ", Nuklear=", opts.withSokolNuklear, ", Sokol-tools=", opts.downloadShdc);
         writeln("  Verbose: ", opts.verbose);
     }
 
@@ -124,6 +128,8 @@ void main(string[] args) @safe
         getEmSDK(vendorPath);
     if (opts.withSokolImgui)
         getIMGUI(vendorPath);
+    if (opts.withSokolNuklear)
+        getNuklear(vendorPath);
 
     // Execute build steps
     if (opts.downloadShdc)
@@ -139,6 +145,7 @@ void main(string[] args) @safe
             use_emmalloc: true,
             release_use_lto: opts.useLTO,
             use_imgui: opts.withSokolImgui,
+            use_nuklear: opts.withSokolNuklear,
             use_filesystem: false,
             shell_file_path: absolutePath(buildPath(sokolRoot, "src", "sokol", "web", "shell.html")),
             extra_args: [
@@ -165,10 +172,10 @@ void main(string[] args) @safe
             use_wayland: opts.useWayland,
             use_egl: opts.useEgl,
             with_sokol_imgui: opts.withSokolImgui,
+            with_sokol_nuklear: opts.withSokolNuklear,
             linkageStatic: opts.target.canFind("wasm") ? true : opts.linkage == "static",
             verbose: opts.verbose
         };
-        //FIXME: enable in all targets
         if (opts.target.canFind("wasm"))
             buildLibSokol(libOpts);
     }
@@ -186,6 +193,20 @@ void getIMGUI(string vendor) @safe
 {
     downloadAndExtract("ImGui", vendor, "imgui",
         format("https://github.com/floooh/dcimgui/archive/refs/tags/v%s.zip", imgui_version));
+}
+
+void getNuklear(string vendor) @safe
+{
+    writeln("Setting up Nuklear");
+    string path = absolutePath(buildPath(vendor, "nuklear"));
+    string file = "nuklear.h";
+
+    if (!exists(path))
+    {
+        mkdirRecurse(path);
+        download(format("https://raw.githubusercontent.com/Immediate-Mode-UI/Nuklear/refs/tags/%s/nuklear.h", nuklear_version), file);
+        std.file.write(buildPath(path, "nuklear.h"), read(file));
+    }
 }
 
 void buildShaders(string vendor) @safe
@@ -247,14 +268,14 @@ struct LibSokolOptions
 {
     string target, optimize, toolchain, vendor, sokolSrcPath;
     SokolBackend backend;
-    bool use_egl, use_x11 = true, use_wayland, with_sokol_imgui, linkageStatic, verbose;
+    bool use_egl, use_x11 = true, use_wayland, with_sokol_imgui, with_sokol_nuklear, linkageStatic, verbose;
 }
 
 struct EmLinkOptions
 {
     string target, optimize, lib_main, vendor, shell_file_path;
     SokolBackend backend;
-    bool release_use_closure = true, release_use_lto, use_emmalloc, use_filesystem, use_imgui, verbose;
+    bool release_use_closure = true, release_use_lto, use_emmalloc, use_filesystem, use_imgui, use_nuklear, verbose;
     string[] extra_args;
 }
 
@@ -269,7 +290,7 @@ struct EmbuilderOptions
     string port_name, vendor;
 }
 
-// Build Sokol and ImGui libraries
+// Build Sokol, ImGui, and Nuklear libraries
 void buildLibSokol(LibSokolOptions opts) @safe
 {
     immutable buildDir = absolutePath("build");
@@ -317,7 +338,7 @@ void buildLibSokol(LibSokolOptions opts) @safe
         break;
     case "wasm":
         cflags ~= ["-fPIE"];
-        if (opts.backend == SokolBackend.wgpu) // add include path to find emdawnwebgpu <webgpu/webgpu.h> before Emscripten SDK webgpu.h
+        if (opts.backend == SokolBackend.wgpu)
         {
             //dfmt off
             EmbuilderOptions embopts = {
@@ -340,12 +361,18 @@ void buildLibSokol(LibSokolOptions opts) @safe
     if (!opts.linkageStatic && !opts.target.canFind("wasm"))
         cflags ~= "-fPIC";
 
+    // Add Nuklear include path if enabled
+    if (opts.with_sokol_nuklear)
+    {
+        immutable nuklearRoot = absolutePath(buildPath(opts.vendor, "nuklear"));
+        cflags ~= format("-I%s", nuklearRoot);
+    }
+
     // Compile Sokol sources
     immutable sokolSources = [
         "sokol_log.c", "sokol_app.c", "sokol_gfx.c", "sokol_time.c",
-        "sokol_audio.c",
-        "sokol_gl.c", "sokol_debugtext.c", "sokol_shape.c", "sokol_glue.c",
-        "sokol_fetch.c", "sokol_memtrack.c"
+        "sokol_audio.c", "sokol_gl.c", "sokol_debugtext.c", "sokol_shape.c",
+        "sokol_glue.c", "sokol_fetch.c", "sokol_memtrack.c", "sokol_args.c",
     ];
     auto sokolObjs = compileSources(sokolSources, buildDir, opts.sokolSrcPath, compiler, cflags, "sokol_", opts
             .verbose);
@@ -369,12 +396,9 @@ void buildLibSokol(LibSokolOptions opts) @safe
         ];
         cflags ~= format("-I%s", imguiRoot);
 
-        //dfmt off
         string imguiCompiler = opts.target.canFind("wasm") ? buildPath(opts.vendor, "emsdk", "upstream", "emscripten", "em++") ~ (
-            isWindows ? ".bat" : "") :
-            compiler.canFind("clang") ? findProgram(compiler ~ "++") :
-            compiler.canFind("gcc") ? findProgram("g++") : compiler;
-        //dfmt on
+            isWindows ? ".bat" : "") : compiler.canFind("clang") ? findProgram(compiler ~ "++") : compiler.canFind(
+            "gcc") ? findProgram("g++") : compiler;
 
         // Compile ImGui sources
         auto imguiObjs = compileSources(imguiSources, buildDir, imguiRoot, imguiCompiler, cflags ~ "-DNDEBUG", "imgui_", opts
@@ -393,6 +417,39 @@ void buildLibSokol(LibSokolOptions opts) @safe
         linkLibrary(imguiLib, imguiObjs, opts.target, opts.linkageStatic, opts.vendor, lflags, opts
                 .verbose);
         imguiObjs.each!(obj => exists(obj) && remove(obj));
+    }
+
+    // Handle Nuklear
+    if (opts.with_sokol_nuklear)
+    {
+        immutable nuklearRoot = absolutePath(buildPath(opts.vendor, "nuklear"));
+        enforce(exists(nuklearRoot), "Nuklear source not found. Ensure it is downloaded.");
+
+        // Define Nuklear sources
+        string[] nuklearObjs;
+
+        // Compile sokol_nuklear.c
+        immutable sokolNuklearPath = buildPath(opts.sokolSrcPath, "sokol_nuklear.c");
+        enforce(exists(sokolNuklearPath), "sokol_nuklear.c not found");
+        immutable sokolNuklearObj = buildPath(buildDir, "sokol_nuklear.o");
+        compileSource(sokolNuklearPath, sokolNuklearObj, compiler, cflags, opts
+                .verbose);
+        nuklearObjs ~= sokolNuklearObj;
+
+        // Compile nuklearc.c
+        immutable nuklearcPath = absolutePath(buildPath("src", "nuklear", "c", "nuklearc.c"));
+        enforce(exists(nuklearcPath), "nuklearc.c not found in src/nuklear/c");
+        immutable nuklearcObj = buildPath(buildDir, "nuklearc.o");
+        compileSource(nuklearcPath, nuklearcObj, compiler, cflags, opts
+                .verbose);
+        nuklearObjs ~= nuklearcObj;
+
+        // Create Nuklear library
+        immutable nuklearLib = buildPath(buildDir, opts.linkageStatic ? "libnuklear.a" : (opts.target.canFind("darwin") ? "libnuklear.dylib" : opts
+                .target.canFind("windows") ? "nuklear.dll" : "libnuklear.so"));
+        linkLibrary(nuklearLib, nuklearObjs, opts.target, opts.linkageStatic, opts.vendor, lflags, opts
+                .verbose);
+        nuklearObjs.each!(obj => exists(obj) && remove(obj));
     }
 }
 
@@ -468,12 +525,14 @@ void linkLibrary(string libPath, string[] objFiles, string target, bool linkageS
 // Link WASM executable
 void emLinkStep(EmLinkOptions opts) @safe
 {
-    string emcc = buildPath(opts.vendor, "emsdk", "upstream", "emscripten", opts.use_imgui ? "em++"
-            : "emcc") ~ (isWindows ? ".bat" : "");
+    string emcc = buildPath(opts.vendor, "emsdk", "upstream", "emscripten", opts.use_imgui ? "em++" : "emcc") ~ (
+        isWindows ? ".bat" : "");
     string[] cmd = [emcc];
 
     if (opts.use_imgui)
         cmd ~= "-lcimgui";
+    if (opts.use_nuklear)
+        cmd ~= "-lnuklear";
     if (opts.optimize == "debug")
         cmd ~= ["-gsource-map", "-sSAFE_HEAP=1", "-sSTACK_OVERFLOW_CHECK=1"];
     else

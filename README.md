@@ -11,7 +11,7 @@ By default, the backend 3D API will be selected based on the target platform:
 - macOS: Metal
 - Windows: D3D11
 - Linux: GL/Wayland
-- Wasm (LDC2 required) - WebGL3/WebGPU support
+- Wasm (LDC2 required) - WebGL2/WebGPU support
 
 #### Usage - template project
 
@@ -57,6 +57,10 @@ Available configurations:
     imgui-wgpu               # Sokol + Dear ImGui WebGPU build
     sokol-wgles3             # WebGL ES3 build
     sokol-wgpu               # WebGPU build
+    nuklear-static           # Sokol + Nuklear static build
+    nuklear-shared           # Sokol + Nuklear shared build  
+    nuklear-wgles3           # Sokol + Nuklear WebGL ES3 build
+    nuklear-wgpu             # Sokol + Nuklear WebGPU build
     genshaders               # [re]Generate shader code
 ```
 
