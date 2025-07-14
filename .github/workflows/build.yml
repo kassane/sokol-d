@@ -10,11 +10,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runs-on: [ubuntu-24.04-arm, ubuntu-latest, macos-latest, windows-latest]
+        runs-on: [ubuntu-latest, macos-latest, windows-latest]
         compiler: [ldc-master, dmd-master]
         exclude:
-          - runs-on: ubuntu-24.04-arm
-            compiler: dmd-master
+          # - runs-on: ubuntu-24.04-arm
+          #   compiler: dmd-master
           - runs-on: macos-latest
             compiler: dmd-master
     runs-on: ${{ matrix.runs-on }}
