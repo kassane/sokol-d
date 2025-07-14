@@ -8,9 +8,12 @@
 
 #if defined(__linux__) && defined(__aarch64__)
 #define IMGUI_DISABLE_DEFAULT_MATH_FUNCTIONS
+
+typedef __Float32x4_t __f32x4_t;
+
 extern float acosf(float x);
 extern float atan2f(float x, float y);
-extern float atof(const char *str);
+extern double atof(const char *str);
 extern float ceilf(float x);
 extern float cosf(float x);
 extern float fabsf(float x);
