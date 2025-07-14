@@ -52,26 +52,24 @@ class TypeMapper:
 
         # Apply pointer and const
         if pointer_level:
-            if base_type in self.struct_names or base_type in self._type_map:
-                # Struct or primitive pointers (except char)
-                if base_type == 'char' and is_const:
-                    d_type = f"const({d_type}){'*' * pointer_level}"
-                else:
-                    d_type = f"{d_type}{'*' * pointer_level}"
-                    if is_const:
-                        d_type = f"const {d_type}"
+            # Special case for char pointers: use 'const(char)*' for const char pointers
+            if base_type == 'char' and is_const:
+                d_type = f"const(char){'*' * pointer_level}"
+            # Special case for specific types: force scope T* despite const in C
+            elif (is_param and base_type in {'ImVec2', 'ImGuiTreeNodeStackData', 'ImGuiErrorRecoveryState', 
+                                            'ImDrawList', 'ImFontGlyph', 'ImFontAtlasRect', 'ImDrawCmd'} and not is_output):
+                d_type = f"scope {d_type}{'*' * pointer_level}"
             else:
-                # Non-struct, non-primitive pointers
-                # d_type = f"{d_type}
-                if is_const:
-                    d_type = f"scope const({d_type}){'*' * pointer_level}"
+                if is_const and not is_output:
+                    d_type = f"const({d_type}){'*' * pointer_level}"
                 else:
                     d_type = f"{d_type}{'*' * pointer_level}"
         elif is_const:
             d_type = f"const({d_type})"
 
-        # Add scope for non-callback, non-output pointer parameters
-        if is_param and pointer_level and not is_callback and not is_output and d_type not in self.callback_aliases:
+        # Add scope for non-callback, non-output pointer parameters, except for special cases
+        if (is_param and pointer_level and not is_callback and not is_output and 
+                d_type not in self.callback_aliases and not d_type.startswith('scope ') and not d_type.startswith('const(char)')):
             d_type = f"scope {d_type}"
 
         return d_type
@@ -107,15 +105,26 @@ def extract_comment(node: Dict, source: str) -> Optional[str]:
             if inner.get('kind') == 'ParagraphComment':
                 text = ''.join(n.get('text', '').strip() + '\n' for n in inner.get('inner', []) if n.get('kind') == 'TextComment').strip()
                 if text:
-                    parts.append(text)
+                    # Split by newlines, remove '-', and preserve empty lines
+                    lines = text.split('\n')
+                    formatted_lines = [line.replace('-', '') if line.strip() else '' for line in lines]
+                    parts.append('\n'.join(formatted_lines))
             elif inner.get('kind') in ('BlockTextComment', 'BlockCommandComment'):
                 if text := inner.get('text', '').strip():
-                    parts.append(text)
+                    # Remove '-' in block comments
+                    parts.append(text.replace('-', ''))
             elif inner.get('kind') == 'ParamCommandComment':
                 if param_text := f"param {inner.get('param', '')}: {inner.get('text', '').strip()}".strip():
-                    parts.append(param_text)
+                    # Remove '-' in param comments
+                    parts.append(param_text.replace('-', ''))
         if parts:
-            return f"/++\n{'\n'.join(parts).rstrip()}\n+/"
+            # Ensure each line (including empty ones) starts with '+' and add empty '+' line between parts
+            formatted_parts = []
+            for part in parts:
+                lines = part.split('\n')
+                formatted_lines = [f"+ {line}" if line.strip() else "+" for line in lines]
+                formatted_parts.append('\n'.join(formatted_lines))
+            return f"/++\n{'\n+\n'.join(formatted_parts)}\n+/"
     return None
 
 def collect_struct_names(ast: Dict) -> Set[str]:
@@ -147,17 +156,70 @@ def generate_function(node: Dict, source: str, mapper: TypeMapper) -> Optional[D
     name = node['name']
     return_type = mapper.clean(node['type']['qualType'].split('(')[0].strip())
     params = []
-    d_keywords = {'in', 'out', 'ref', 'interface'}
+    d_keywords = {'in', 'out', 'ref', 'interface', 'align'}
     has_args_param = False
     has_fmt_param = False
 
     # Functions where scope is avoided for pointer parameters or that return pointer params
-    no_scope_functions = {'igIsMousePosValid'}
-    output_param_functions = {'igAcceptDragDropPayload', 'igSaveIniSettingsToMemory'}
+    no_scope_functions = {
+        'igIsMousePosValid',
+        'igAddContextHook',
+        'igAddSettingsHandler',
+        'igLocalizeRegisterEntries',
+        'igItemAddEx',
+        'igLogRenderedText',
+        'igLogRenderedTextEx',
+        'igNavMoveRequestResolveWithPastTreeNode',
+        'igGetColumnOffsetFromNorm',
+        'igGetColumnNormFromOffset',
+        'igTableAngledHeadersRowEx',
+        'igTableGetCellBgRect',
+        'igTableGetColumnNameImGuiTablePtr',
+        'igTableCalcMaxColumnWidth',
+        'igRenderTextClipped',
+        'igRenderTextClippedEx',
+        'igRenderTextClippedWithDrawList',
+        'igRenderTextClippedWithDrawListEx',
+        'igRenderTextEllipsis',
+        'igAcceptDragDropPayload',  # Returns pointer, avoid scope
+        'igFindWindowByName',  # Returns pointer, avoid scope
+        'igFindSettingsHandler',  # Returns pointer, avoid scope
+        'igCreateNewWindowSettings',  # Returns pointer, avoid scope
+        'igFindRenderedTextEnd',  # Returns pointer, avoid scope
+        'igFindRenderedTextEndEx'  # Returns pointer, avoid scope
+    }
+    output_param_functions = {
+        'igAddContextHook',
+        'igAddSettingsHandler',
+        'igLocalizeRegisterEntries',
+        'igItemAddEx',
+        'igLogRenderedText',
+        'igLogRenderedTextEx',
+        'igNavMoveRequestResolveWithPastTreeNode',
+        'igGetColumnOffsetFromNorm',
+        'igGetColumnNormFromOffset',
+        'igTableAngledHeadersRowEx',
+        'igTableGetCellBgRect',
+        'igTableGetColumnNameImGuiTablePtr',
+        'igTableCalcMaxColumnWidth',
+        'igRenderTextClipped',
+        'igRenderTextClippedEx',
+        'igRenderTextClippedWithDrawList',
+        'igRenderTextClippedWithDrawListEx',
+        'igRenderTextEllipsis',
+        'igAcceptDragDropPayload',  # Has output parameters
+        'igSaveIniSettingsToMemory'  # Has output parameters
+    }
     output_param_names = set()
     if name in output_param_functions:
-        output_param_names = {param.get('name', f"arg{i}") for i, param in enumerate(node.get('inner', [])) 
-                              if param.get('kind') == 'ParmVarDecl' and '*' in param['type']['qualType']}
+        for i, param in enumerate(node.get('inner', [])):
+            if param.get('kind') != 'ParmVarDecl':
+                continue
+            param_type_raw = param['type']['qualType']
+            param_name = param.get('name', f"arg{i}")
+            # Mark parameters as output if they lack 'const' in C declaration
+            if '*' in param_type_raw and not param_type_raw.startswith('const '):
+                output_param_names.add(param_name)
 
     for i, param in enumerate(node.get('inner', [])):
         if param.get('kind') != 'ParmVarDecl':
@@ -194,17 +256,20 @@ def generate_function(node: Dict, source: str, mapper: TypeMapper) -> Optional[D
 
 def generate_d_code(functions: List[Dict], callback_aliases: Dict[str, str]) -> str:
     """Generate D wrapper code."""
+    comment_lines = [
+        "+ D wrapper for cimgui (Dear ImGui).",
+        "+ Provides bindings for Dear ImGui immediate mode GUI library.",
+        "+",
+        "+ Features:",
+        "+   Full ImGui API coverage",
+        "+   @trusted wrapper functions",
+        "+   Preserves ImGui naming conventions",
+        "+   Handles memory management",
+    ]
     output = [
         f"// Generated on {date.today()}",
         "/++",
-        "D wrapper for cimgui (Dear ImGui).",
-        "Provides bindings for Dear ImGui immediate mode GUI library.",
-        "",
-        "Features:",
-        "- Full ImGui API coverage",
-        "- @trusted wrapper functions",
-        "- Preserves ImGui naming conventions",
-        "- Handles memory management",
+        *comment_lines,
         "+/",
         "module imgui.cimgui;",
         "public import imgui.c.dcimgui;",
@@ -240,7 +305,7 @@ def generate_d_code(functions: List[Dict], callback_aliases: Dict[str, str]) -> 
 
 def main():
     """Generate D bindings from cimgui header."""
-    header_path = '../../vendor/imgui/src/cimgui.h'
+    header_path = '../../vendor/imgui/src/cimgui_all.h'
     output_path = 'cimgui.d'
 
     try:

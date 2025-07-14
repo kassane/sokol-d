@@ -13,7 +13,7 @@ import std;
 
 // Dependency versions
 enum emsdk_version = "4.0.10";
-enum imgui_version = "1.92.0";
+enum imgui_version = "3b98e0a57fc17cc72fdda6934bd932426778a16e";
 enum nuklear_version = "4.12.7";
 
 void main(string[] args) @safe
@@ -191,8 +191,17 @@ void getEmSDK(string vendor) @safe
 
 void getIMGUI(string vendor) @safe
 {
-    downloadAndExtract("ImGui", vendor, "imgui",
-        format("https://github.com/floooh/dcimgui/archive/refs/tags/v%s.zip", imgui_version));
+    string url;
+    enum commitHashRegex = ctRegex!`^[0-9a-fA-F]{7,40}$`;
+    if (matchFirst(imgui_version, commitHashRegex))
+    {
+        url = format("https://github.com/floooh/dcimgui/archive/%s.zip", imgui_version);
+    }
+    else
+    {
+        url = format("https://github.com/floooh/dcimgui/archive/refs/tags/v%s.zip", imgui_version);
+    }
+    downloadAndExtract("ImGui", vendor, "imgui", url);
 }
 
 void getNuklear(string vendor) @safe
@@ -392,7 +401,7 @@ void buildLibSokol(LibSokolOptions opts) @safe
 
         immutable imguiSources = [
             "cimgui.cpp", "imgui.cpp", "imgui_demo.cpp", "imgui_draw.cpp",
-            "imgui_tables.cpp", "imgui_widgets.cpp"
+            "imgui_tables.cpp", "imgui_widgets.cpp", "cimgui_internal.cpp"
         ];
         cflags ~= format("-I%s", imguiRoot);
 
@@ -525,7 +534,8 @@ void linkLibrary(string libPath, string[] objFiles, string target, bool linkageS
 // Link WASM executable
 void emLinkStep(EmLinkOptions opts) @safe
 {
-    string emcc = buildPath(opts.vendor, "emsdk", "upstream", "emscripten", opts.use_imgui ? "em++" : "emcc") ~ (
+    string emcc = buildPath(opts.vendor, "emsdk", "upstream", "emscripten", opts.use_imgui ? "em++"
+            : "emcc") ~ (
         isWindows ? ".bat" : "");
     string[] cmd = [emcc];
 
