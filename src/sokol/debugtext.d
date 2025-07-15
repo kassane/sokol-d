@@ -1,7 +1,7 @@
 /++
 + Machine generated D bindings for Sokol library.
 + 
-+     Generated on: 2025-07-06 12:35:38
++     Generated on: 2025-07-15 17:11:06
 + 
 +     Source header: sokol_debugtext.h
 +     Module: sokol.debugtext
@@ -285,4 +285,11 @@ void puts(const(char)* str) @trusted @nogc nothrow pure {
 extern(C) void sdtx_putr(const(char)* str, int len) @system @nogc nothrow pure;
 void putr(const(char)* str, int len) @trusted @nogc nothrow pure {
     sdtx_putr(str, len);
+}
+/++
++ language bindings helper: get the internal printf format buffer
++/
+extern(C) Range sdtx_get_cleared_fmt_buffer() @system @nogc nothrow pure;
+Range getClearedFmtBuffer() @trusted @nogc nothrow pure {
+    return sdtx_get_cleared_fmt_buffer();
 }
