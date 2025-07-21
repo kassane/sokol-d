@@ -1,6 +1,7 @@
 [![CI Build](https://github.com/kassane/sokol-d/actions/workflows/build.yml/badge.svg)](https://github.com/kassane/sokol-d/actions/workflows/build.yml)
 ![Latest release](https://img.shields.io/github/v/release/kassane/sokol-d?include_prereleases&label=latest)
 [![Static Badge](https://img.shields.io/badge/v2.111.0%20(stable)-f8240e?logo=d&logoColor=f8240e&label=frontend)](https://dlang.org/download.html)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/kassane/sokol-d)
 
 Auto-generated [D](https://dlang.org) bindings for the [sokol headers](https://github.com/floooh/sokol).
 
