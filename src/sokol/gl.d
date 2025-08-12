@@ -1,7 +1,7 @@
 /++
 + Machine generated D bindings for Sokol library.
 + 
-+     Generated on: 2025-08-03 10:17:49
++     Generated on: 2025-08-12 18:30:18
 + 
 +     Source header: sokol_gl.h
 +     Module: sokol.gl
@@ -222,9 +222,9 @@ extern(C) void sgl_disable_texture() @system @nogc nothrow pure;
 void disableTexture() @trusted @nogc nothrow pure {
     sgl_disable_texture();
 }
-extern(C) void sgl_texture(sg.Image img, sg.Sampler smp) @system @nogc nothrow pure;
-void texture(sg.Image img, sg.Sampler smp) @trusted @nogc nothrow pure {
-    sgl_texture(img, smp);
+extern(C) void sgl_texture(sg.View tex_view, sg.Sampler smp) @system @nogc nothrow pure;
+void texture(sg.View tex_view, sg.Sampler smp) @trusted @nogc nothrow pure {
+    sgl_texture(tex_view, smp);
 }
 extern(C) void sgl_layer(int layer_id) @system @nogc nothrow pure;
 void layer(int layer_id) @trusted @nogc nothrow pure {
