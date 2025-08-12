@@ -20,23 +20,24 @@ extern (C):
 
 struct Offscreen
 {
-    sg.Attachments attachments;
-    sg.Image img;
     sgl.Context sgl_ctx;
-    sg.PassAction pass_action = {
-        colors: [
-            {
-                load_action: sg.LoadAction.Clear, clear_value: {
-                    r: 0, g: 0, b: 0, a: 1
-                }
-            },
-        ]
+    sg.Pass pass = {
+        action: {
+            colors: [
+                {
+                    load_action: sg.LoadAction.Clear, clear_value: {
+                        r: 0, g: 0, b: 0, a: 1
+                    }
+                },
+            ],
+        },
     };
 }
 
 struct Display
 {
     sg.Sampler smp;
+    sg.View tex_view;
     sgl.Pipeline sgl_pip;
     sg.PassAction pass_action = {
         colors: [
@@ -100,29 +101,28 @@ void init()
     };
     state.offscreen.sgl_ctx = sgl.makeContext(ctd);
 
-    // create an offscreen render target texture, pass-attachments object and pass-action
-    sg.ImageDesc imgd = {
-        usage: { render_attachment: true },
+    // setup offscreen render pass attachment image and view objects
+    sg.ImageDesc img_desc = {
+        usage: { color_attachment: true },
         width: offscreen_width,
         height: offscreen_height,
         pixel_format: offscreen_pixel_format,
         sample_count: offscreen_sample_count
     };
-    state.offscreen.img = sg.makeImage(imgd);
-
-    sg.AttachmentsDesc attd = {colors: [
-        {image: state.offscreen.img}
-    ]};
-    state.offscreen.attachments = sg.makeAttachments(attd);
+    auto img = sg.makeImage(img_desc);
+    sg.ViewDesc att_view_desc = { color_attachment: { image: img } };
+    state.offscreen.pass.attachments.colors[0] = sg.makeView(att_view_desc);
+    sg.ViewDesc tex_view_desc = { texture: { image: img } };
+    state.display.tex_view = sg.makeView(tex_view_desc);
 
     // sampler for sampling the offscreen render target
-    sg.SamplerDesc smd = {
+    sg.SamplerDesc smp_desc = {
         wrap_u: sg.Wrap.Clamp_to_edge,
         wrap_v: sg.Wrap.Clamp_to_edge,
         min_filter: sg.Filter.Nearest,
         mag_filter: sg.Filter.Nearest
     };
-    state.display.smp = sg.makeSampler(smd);
+    state.display.smp = sg.makeSampler(smp_desc);
 }
 
 void frame()
@@ -140,7 +140,7 @@ void frame()
     sgl.setContext(sgl.defaultContext());
     sgl.defaults();
     sgl.enableTexture();
-    sgl.texture(state.offscreen.img, state.display.smp);
+    sgl.texture(state.display.tex_view, state.display.smp);
     sgl.loadPipeline(state.display.sgl_pip);
     sgl.matrixModeProjection();
     sgl.perspective(sgl.asRadians(45.0), sapp.widthf() / sapp.heightf(), 0.1, 100.0);
@@ -150,11 +150,7 @@ void frame()
     draw_cube();
 
     // do the actual offscreen and display rendering in sokol-gfx passes
-    sg.Pass offscreen_pass = {
-        action: state.offscreen.pass_action,
-        attachments: state.offscreen.attachments
-    };
-    sg.beginPass(offscreen_pass);
+    sg.beginPass(state.offscreen.pass);
     sgl.contextDraw(state.offscreen.sgl_ctx);
     sg.endPass();
     sg.Pass display_pass = {

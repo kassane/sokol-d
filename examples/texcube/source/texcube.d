@@ -120,20 +120,24 @@ void init()
             compare: sg.CompareFunc.Less_equal
         },
     };
+    // create a small checker-board image and texture view
     sg.ImageData img_data = {
         subimage: [[{
             ptr: cast(ubyte*)colors.ptr,
             size: colors.sizeof,
         }]]
     };
-    // create a small checker-board texture
     sg.ImageDesc img_desc = {
         width: 4,
         height: 4,
         data: img_data,
     };
     // dfmt on
-    state.bind.images[shd.IMG_TEX] = sg.makeImage(img_desc);
+    auto img = sg.makeImage(img_desc);
+    sg.ViewDesc view_desc = {
+        texture: { image: img },
+    };
+    state.bind.views[shd.VIEW_TEX] = sg.makeView(view_desc);
 
     sg.SamplerDesc smpld = {};
     state.bind.samplers[shd.SMP_SMP] = sg.makeSampler(smpld);

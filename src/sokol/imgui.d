@@ -1,7 +1,7 @@
 /++
 + Machine generated D bindings for Sokol library.
 + 
-+     Generated on: 2025-08-03 10:17:49
++     Generated on: 2025-08-12 18:30:18
 + 
 +     Source header: sokol_imgui.h
 +     Module: sokol.imgui
@@ -79,17 +79,17 @@ extern(C) void simgui_render() @system @nogc nothrow pure;
 void render() @trusted @nogc nothrow pure {
     simgui_render();
 }
-extern(C) ulong simgui_imtextureid(sg.Image img) @system @nogc nothrow pure;
-ulong imtextureid(sg.Image img) @trusted @nogc nothrow pure {
-    return simgui_imtextureid(img);
+extern(C) ulong simgui_imtextureid(sg.View tex_view) @system @nogc nothrow pure;
+ulong imtextureid(sg.View tex_view) @trusted @nogc nothrow pure {
+    return simgui_imtextureid(tex_view);
 }
-extern(C) ulong simgui_imtextureid_with_sampler(sg.Image img, sg.Sampler smp) @system @nogc nothrow pure;
-ulong imtextureidWithSampler(sg.Image img, sg.Sampler smp) @trusted @nogc nothrow pure {
-    return simgui_imtextureid_with_sampler(img, smp);
+extern(C) ulong simgui_imtextureid_with_sampler(sg.View tex_view, sg.Sampler smp) @system @nogc nothrow pure;
+ulong imtextureidWithSampler(sg.View tex_view, sg.Sampler smp) @trusted @nogc nothrow pure {
+    return simgui_imtextureid_with_sampler(tex_view, smp);
 }
-extern(C) sg.Image simgui_image_from_imtextureid(ulong imtex_id) @system @nogc nothrow pure;
-sg.Image imageFromImtextureid(ulong imtex_id) @trusted @nogc nothrow pure {
-    return simgui_image_from_imtextureid(imtex_id);
+extern(C) sg.View simgui_texture_view_from_imtextureid(ulong imtex_id) @system @nogc nothrow pure;
+sg.View textureViewFromImtextureid(ulong imtex_id) @trusted @nogc nothrow pure {
+    return simgui_texture_view_from_imtextureid(imtex_id);
 }
 extern(C) sg.Sampler simgui_sampler_from_imtextureid(ulong imtex_id) @system @nogc nothrow pure;
 sg.Sampler samplerFromImtextureid(ulong imtex_id) @trusted @nogc nothrow pure {

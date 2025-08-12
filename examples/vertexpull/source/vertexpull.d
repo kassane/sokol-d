@@ -86,7 +86,7 @@ void init()
     ];
 
     // dfmt off
-    sg.BufferDesc vbufd = {
+    sg.BufferDesc sbuf_desc = {
         usage: { storage_buffer: true },
         data:
         {
@@ -96,8 +96,11 @@ void init()
         label: "vertices",
     };
     // dfmt on
-
-    state.bind.storage_buffers[shd.SBUF_SSBO] = sg.makeBuffer(vbufd);
+    auto sbuf = sg.makeBuffer(sbuf_desc);
+    sg.ViewDesc sbuf_view_desc = {
+        storage_buffer: { buffer: sbuf },
+    };
+    state.bind.views[shd.VIEW_SSBO] = sg.makeView(sbuf_view_desc);
 
     ushort[36] indices = [
         0, 1, 2, 0, 2, 3,
