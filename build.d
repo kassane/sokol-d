@@ -12,7 +12,7 @@ module build;
 import std;
 
 // Dependency versions
-enum emsdk_version = "4.0.10";
+enum emsdk_version = "4.0.13";
 enum imgui_version = "3b98e0a57fc17cc72fdda6934bd932426778a16e";
 enum nuklear_version = "4.12.7";
 
@@ -419,6 +419,12 @@ void buildLibSokol(LibSokolOptions opts) @safe
         immutable sokolImguiObj = buildPath(buildDir, "sokol_imgui.o");
         compileSource(sokolImguiPath, sokolImguiObj, compiler, cflags, opts.verbose);
         imguiObjs ~= sokolImguiObj;
+        // Compile sokol_gfx_imgui.c
+        immutable sokolGfxImguiPath = buildPath(opts.sokolSrcPath, "sokol_gfx_imgui.c");
+        enforce(exists(sokolGfxImguiPath), "sokol_gfx_imgui.c not found");
+        immutable sokolGfxImguiObj = buildPath(buildDir, "sokol_gfx_imgui.o");
+        compileSource(sokolGfxImguiPath, sokolGfxImguiObj, compiler, cflags, opts.verbose);
+        imguiObjs ~= sokolGfxImguiObj;
 
         // Create ImGui library
         immutable imguiLib = buildPath(buildDir, opts.linkageStatic ? "libcimgui.a" : (opts.target.canFind("darwin") ? "libcimgui.dylib" : opts
