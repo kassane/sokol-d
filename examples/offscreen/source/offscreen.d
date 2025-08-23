@@ -23,24 +23,23 @@ struct State
 {
     float rx = 0;
     float ry = 0;
-    struct OffScreen
+    struct Offscreen
     {
         sg.Pipeline pip;
         sg.Bindings bind;
-        sg.Attachments attachments;
-        sg.PassAction passAction;
+        sg.Pass pass;
     }
 
-    OffScreen offScreen;
+    Offscreen offscreen;
 
-    struct Default
+    struct Display
     {
         sg.Pipeline pip;
         sg.Bindings bind;
-        sg.PassAction passAction;
+        sg.PassAction pass_action;
     }
 
-    Default default_;
+    Display display;
 
     sshape.ElementRange sphere, donut;
 }
@@ -54,36 +53,54 @@ void init()
     sg.setup(gfxd);
 
     // default pass action: clear to blue-ish
-    state.default_.passAction.colors[0].load_action = sg.LoadAction.Clear;
-    state.default_.passAction.colors[0].clear_value.r = 0.25;
-    state.default_.passAction.colors[0].clear_value.g = 0.45;
-    state.default_.passAction.colors[0].clear_value.b = 0.65;
-    state.default_.passAction.colors[0].clear_value.a = 1.0;
+    state.display.pass_action.colors[0].load_action = sg.LoadAction.Clear;
+    state.display.pass_action.colors[0].clear_value.r = 0.25;
+    state.display.pass_action.colors[0].clear_value.g = 0.45;
+    state.display.pass_action.colors[0].clear_value.b = 0.65;
+    state.display.pass_action.colors[0].clear_value.a = 1.0;
     // offscreen pass action: clear to black
-    state.offScreen.passAction.colors[0].load_action = sg.LoadAction.Clear;
-    state.offScreen.passAction.colors[0].clear_value.r = 0.25;
-    state.offScreen.passAction.colors[0].clear_value.g = 0.25;
-    state.offScreen.passAction.colors[0].clear_value.b = 0.25;
-    state.offScreen.passAction.colors[0].clear_value.a = 1.0;
+    state.offscreen.pass.action.colors[0].load_action = sg.LoadAction.Clear;
+    state.offscreen.pass.action.colors[0].clear_value.r = 0.25;
+    state.offscreen.pass.action.colors[0].clear_value.g = 0.25;
+    state.offscreen.pass.action.colors[0].clear_value.b = 0.25;
+    state.offscreen.pass.action.colors[0].clear_value.a = 1.0;
 
-    // dfmt off
-    // a render pass with one color- and one depth-attachment image
-    sg.ImageDesc img_desc = {
-        usage: { render_attachment: true },
-        width: 256,
-        height: 256,
+    // setup the color- and depth-stencil-attachment images and views
+    int offscreen_width = 256;
+    int offscreen_height = 256;
+    int offscreen_sample_count = 1;
+    sg.ImageDesc color_img_desc = {
+        usage: { color_attachment: true },
+        width: offscreen_width,
+        height: offscreen_height,
         pixel_format: sg.PixelFormat.Rgba8,
-        sample_count: 1,
+        sample_count: offscreen_sample_count,
     };
-    // dfmt on
+    const color_img = sg.makeImage(color_img_desc);
+    sg.ImageDesc depth_img_desc = {
+        usage: { depth_stencil_attachment: true },
+        width: offscreen_width,
+        height: offscreen_height,
+        pixel_format: sg.PixelFormat.Depth,
+        sample_count: offscreen_sample_count,
+    };
+    const depth_img = sg.makeImage(depth_img_desc);
 
-    const color_img = sg.makeImage(img_desc);
-    img_desc.pixel_format = sg.PixelFormat.Depth;
-    const depth_img = sg.makeImage(img_desc);
-    sg.AttachmentsDesc atts_desc = {};
-    atts_desc.colors[0].image = color_img;
-    atts_desc.depth_stencil.image = depth_img;
-    state.offScreen.attachments = sg.makeAttachments(atts_desc);
+    // the offscreen render pass needs a color- and depth-stencil-attachment view
+    sg.ViewDesc color_attview_desc = {
+        color_attachment: { image: color_img },
+    };
+    state.offscreen.pass.attachments.colors[0] = sg.makeView(color_attview_desc);
+    sg.ViewDesc depth_attview_desc = {
+        depth_stencil_attachment: { image: depth_img },
+    };
+    state.offscreen.pass.attachments.depth_stencil = sg.makeView(depth_attview_desc);
+
+    // the display render pass needs a texture view on the color image
+    sg.ViewDesc color_texview_desc = {
+        texture: { image: color_img },
+    };
+    state.display.bind.views[shd.VIEW_TEX] = sg.makeView(color_texview_desc);
 
     // a donut shape which is rendered into the offscreen render target, and
     // a sphere shape which is rendered into the default framebuffer
@@ -95,7 +112,7 @@ void init()
         indices: { buffer: sshape.Range(&indices, indices.sizeof) },
     };
     buf = sshape.buildTorus(buf, sshape.Torus(
-        radius: 0.5, 
+        radius: 0.5,
         ring_radius: 0.3,
         sides: 20,
         rings: 36,
@@ -112,7 +129,11 @@ void init()
     state.sphere = sshape.elementRange(buf);
 
     const vbuf = sg.makeBuffer(sshape.vertexBufferDesc(buf));
+    state.offscreen.bind.vertex_buffers[0] = vbuf;
+    state.display.bind.vertex_buffers[0] = vbuf;
     const ibuf = sg.makeBuffer(sshape.indexBufferDesc(buf));
+    state.offscreen.bind.index_buffer = ibuf;
+    state.display.bind.index_buffer = ibuf;
 
     // dfmt off
     // shader and pipeline object for offscreen rendering
@@ -153,12 +174,12 @@ void init()
         },
     };
     // dfmt on
-    state.offScreen.pip = sg.makePipeline(offscreen_pip_desc);
-    state.default_.pip = sg.makePipeline(default_pip_desc);
+    state.offscreen.pip = sg.makePipeline(offscreen_pip_desc);
+    state.display.pip = sg.makePipeline(default_pip_desc);
 
     // dfmt off
     // a sampler object for sampling the render target texture
-    auto smp = sg.makeSampler (
+    state.display.bind.samplers[shd.SMP_SMP] = sg.makeSampler (
         sg.SamplerDesc(
         min_filter: sg.Filter.Linear,
         mag_filter: sg.Filter.Linear,
@@ -166,15 +187,6 @@ void init()
         wrap_v: sg.Wrap.Repeat)
     );
     // dfmt on
-    // resource bindings to render a non-textured cube (into the offscreen render target)
-    state.offScreen.bind.vertex_buffers[0] = vbuf;
-    state.offScreen.bind.index_buffer = ibuf;
-
-    // resource bindings to render a textured cube, using the offscreen render target as texture
-    state.default_.bind.vertex_buffers[0] = vbuf;
-    state.default_.bind.index_buffer = ibuf;
-    state.default_.bind.images[shd.IMG_TEX] = color_img;
-    state.default_.bind.samplers[shd.SMP_SMP] = smp;
 }
 
 void frame()
@@ -188,26 +200,21 @@ void frame()
     shd.VsParams offscreenVsParams = computeMvp(state.rx, state.ry, 1.0, 2.5);
     shd.VsParams defaultVsParams = computeMvp(-state.rx * 0.25, state.ry * 0.25, aspect, 2);
 
-    // dfmt off
-    sg.beginPass(sg.Pass(
-        action: state.offScreen.passAction,
-        attachments: state.offScreen.attachments
-    ));
-    // dfmt on
-    sg.applyPipeline(state.offScreen.pip);
-    sg.applyBindings(state.offScreen.bind);
+    sg.beginPass(state.offscreen.pass);
+    sg.applyPipeline(state.offscreen.pip);
+    sg.applyBindings(state.offscreen.bind);
     sg.applyUniforms(shd.UB_VS_PARAMS, sg.Range(&offscreenVsParams, offscreenVsParams.sizeof));
     sg.draw(state.donut.base_element, state.donut.num_elements, 1);
     sg.endPass();
 
     // dfmt off
     sg.beginPass(sg.Pass(
-        action: state.default_.passAction,
+        action: state.display.pass_action,
         swapchain: sglue.swapchain
     ));
     // dfmt on
-    sg.applyPipeline(state.default_.pip);
-    sg.applyBindings(state.default_.bind);
+    sg.applyPipeline(state.display.pip);
+    sg.applyBindings(state.display.bind);
     sg.applyUniforms(shd.UB_VS_PARAMS, sg.Range(&defaultVsParams, defaultVsParams.sizeof));
     sg.draw(state.sphere.base_element, state.sphere.num_elements, 1);
     sg.endPass();

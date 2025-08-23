@@ -1,7 +1,7 @@
 /++
 + Machine generated D bindings for Sokol library.
 + 
-+     Generated on: 2025-08-15 16:07:10
++     Generated on: 2025-08-23 16:13:58
 + 
 +     Source header: sokol_nuklear.h
 +     Module: sokol.nuklear
@@ -24,7 +24,7 @@ enum invalid_id = 0;
 /++
 + snk_image_t
 + 
-+     A combined image-sampler pair used to inject custom images and samplers into Nuklear
++     A combined texture-view / sampler pair used to inject custom images and samplers into Nuklear.
 + 
 +     Create with snk_make_image(), and convert to an nk_handle via snk_nkhandle().
 +/
@@ -35,12 +35,12 @@ extern(C) struct Image {
 + snk_image_desc_t
 + 
 +     Descriptor struct for snk_make_image(). You must provide
-+     at least an sg_image handle. Keeping the sg_sampler handle
++     at least an sg_view handle. Keeping the sg_sampler handle
 +     zero-initialized will select the builtin default sampler
 +     which uses linear filtering.
 +/
 extern(C) struct ImageDesc {
-    sg.Image image = {};
+    sg.View texture_view = {};
     sg.Sampler sampler = {};
 }
 enum LogItem {

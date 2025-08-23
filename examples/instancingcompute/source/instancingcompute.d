@@ -73,8 +73,12 @@ void init() {
         label: "particle-buffer",
     };
     sg.Buffer sbuf = sg.makeBuffer(sbufd);
-    state.compute.bind.storage_buffers[shd.SBUF_CS_SSBO] = sbuf;
-    state.display.bind.storage_buffers[shd.SBUF_VS_SSBO] = sbuf;
+    sg.ViewDesc sbufviewd = {
+        storage_buffer: { buffer: sbuf },
+    };
+    sg.View sbuf_view = sg.makeView(sbufviewd);
+    state.compute.bind.views[shd.VIEW_CS_SSBO] = sbuf_view;
+    state.display.bind.views[shd.VIEW_VS_SSBO] = sbuf_view;
 
     // a compute shader and pipeline object for updating the particle state
     sg.PipelineDesc upipd = {
