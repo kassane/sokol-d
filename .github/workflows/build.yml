@@ -11,12 +11,12 @@ jobs:
       fail-fast: false
       matrix:
         runs-on: [ubuntu-latest, macos-latest, windows-latest]
-        compiler: [ldc-master, dmd-master]
+        compiler: [ldc-master, dmd-latest]
         exclude:
           # - runs-on: ubuntu-24.04-arm
-          #   compiler: dmd-master
+          #   compiler: dmd-latest
           - runs-on: macos-latest
-            compiler: dmd-master
+            compiler: dmd-latest
     runs-on: ${{ matrix.runs-on }}
     steps:
       - uses: actions/checkout@v5
