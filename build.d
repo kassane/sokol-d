@@ -308,7 +308,7 @@ void buildLibSokol(LibSokolOptions opts) @safe
     // Compiler setup
     string compiler = opts.toolchain ? opts.toolchain : defaultCompiler(opts.target);
     string[] cflags = [
-        "-DNDEBUG", "-DIMPL",
+        "-std=c99", "-DNDEBUG", "-DIMPL",
         format("-DSOKOL_%s", resolveSokolBackend(opts.backend, opts.target).to!string.toUpper)
     ];
     string[] lflags;
