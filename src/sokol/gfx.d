@@ -1,7 +1,7 @@
 /++
 + Machine generated D bindings for Sokol library.
 + 
-+     Generated on: 2025-08-23 15:33:56
++     Generated on: 2025-08-23 15:53:09
 + 
 +     Source header: sokol_gfx.h
 +     Module: sokol.gfx
