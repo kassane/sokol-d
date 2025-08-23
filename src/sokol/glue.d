@@ -1,8 +1,6 @@
 /++
 + Machine generated D bindings for Sokol library.
 + 
-+     Generated on: 2025-08-23 16:36:02
-+ 
 +     Source header: sokol_glue.h
 +     Module: sokol.glue
 + 

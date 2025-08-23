@@ -2,7 +2,7 @@
 	"name": "sokol-d",
 	"description": "D bindings for sokol",
 	"license": "Zlib",
-	"version": "0.3.8",
+	"version": "0.3.9",
 	"authors": [
 		"Matheus França",
 		"Andre Weissflog"
@@ -71,7 +71,7 @@
 		{
 			"name": "sokol-static",
 			"excludedSourceFiles": [
-				"src/sokol/imgui.d",
+				"src/sokol/*imgui.d",
 				"src/sokol/nuklear.d",
 				"src/emscripten/*.d",
 				"src/imgui/*.d",
@@ -181,7 +181,7 @@
 		{
 			"name": "sokol-shared",
 			"excludedSourceFiles": [
-				"src/sokol/imgui.d",
+				"src/sokol/*imgui.d",
 				"src/sokol/nuklear.d",
 				"src/emscripten/*.d",
 				"src/imgui/*.d",
@@ -292,7 +292,7 @@
 		{
 			"name": "sokol-wayland-static",
 			"excludedSourceFiles": [
-				"src/sokol/imgui.d",
+				"src/sokol/*imgui.d",
 				"src/sokol/nuklear.d",
 				"src/emscripten/*.d",
 				"src/imgui/*.d",
@@ -346,7 +346,7 @@
 		{
 			"name": "sokol-wayland-shared",
 			"excludedSourceFiles": [
-				"src/sokol/imgui.d",
+				"src/sokol/*imgui.d",
 				"src/sokol/nuklear.d",
 				"src/emscripten/*.d",
 				"src/imgui/*.d",
@@ -757,7 +757,7 @@
 		{
 			"name": "sokol-wgles3",
 			"excludedSourceFiles": [
-				"src/sokol/imgui.d",
+				"src/sokol/*imgui.d",
 				"src/sokol/nuklear.d",
 				"src/imgui/*.d",
 				"src/imgui/*.c",
@@ -787,7 +787,7 @@
 		{
 			"name": "sokol-wgpu",
 			"excludedSourceFiles": [
-				"src/sokol/imgui.d",
+				"src/sokol/*imgui.d",
 				"src/sokol/nuklear.d",
 				"src/imgui/*.d",
 				"src/imgui/*.c",
@@ -816,7 +816,7 @@
 			"targetName": "nuklear_d",
 			"targetPath": "build",
 			"excludedSourceFiles": [
-				"src/sokol/imgui.d",
+				"src/sokol/*imgui.d",
 				"src/imgui/*.d",
 				"src/imgui/*.c"
 			],
@@ -946,7 +946,7 @@
 			"targetPath": "build",
 			"targetType": "dynamicLibrary",
 			"excludedSourceFiles": [
-				"src/sokol/imgui.d",
+				"src/sokol/*imgui.d",
 				"src/imgui/*.d",
 				"src/imgui/*.c"
 			],
@@ -1084,7 +1084,7 @@
 			"targetName": "nuklear_d",
 			"targetPath": "build",
 			"excludedSourceFiles": [
-				"src/sokol/imgui.d",
+				"src/sokol/*imgui.d",
 				"src/imgui/*.d",
 				"src/imgui/*.c"
 			],
@@ -1113,7 +1113,7 @@
 			"targetName": "nuklear_d",
 			"targetPath": "build",
 			"excludedSourceFiles": [
-				"src/sokol/imgui.d",
+				"src/sokol/*imgui.d",
 				"src/imgui/*.d",
 				"src/imgui/*.c"
 			],
