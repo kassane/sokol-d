@@ -232,16 +232,23 @@ void buildShaders(string vendor) @safe
         enum glsl = "glsl410";
     else
         enum glsl = "glsl430";
-    immutable slang = glsl ~ ":metal_macos:hlsl5:glsl300es:wgsl";
+
+    immutable slangTemplate = glsl ~ ":metal_macos:hlsl5:%s:wgsl";
 
     version (Posix)
         executeOrFail(["chmod", "+x", shdcPath], "Failed to set shader permissions", true);
 
     foreach (shader; shaders)
+    {
+        immutable essl = (shader == "instancingcompute" || shader == "vertexpull")
+            ? "glsl310es" : "glsl300es";
+        immutable slang = slangTemplate.format(essl);
         executeOrFail([
-        shdcPath, "-i", buildPath(shadersDir, shader ~ ".glsl"),
-        "-o", buildPath(shadersDir, shader ~ ".d"), "-l", slang, "-f", "sokol_d"
-    ], "Shader compilation failed for " ~ shader, true);
+            shdcPath, "-i", buildPath(shadersDir, shader ~ ".glsl"),
+            "-o", buildPath(shadersDir, shader ~ ".d"), "-l", slang, "-f",
+            "sokol_d"
+        ], "Shader compilation failed for " ~ shader, true);
+    }
 }
 
 // Download and extract utility
