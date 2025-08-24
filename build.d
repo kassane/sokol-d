@@ -223,8 +223,9 @@ void buildShaders(string vendor) @safe
     immutable shdcPath = getSHDC(vendor);
     immutable shadersDir = "examples/shaders";
     immutable shaders = [
-        "triangle", "bufferoffsets", "cube", "instancing", "mrt",
-        "noninterleaved", "offscreen", "quad", "shapes", "texcube", "blend"
+        "triangle", "bufferoffsets", "cube", "instancing", "instancingcompute",
+        "mrt", "noninterleaved", "offscreen", "quad", "shapes", "texcube", "blend",
+        "vertexpull"
     ];
 
     version (OSX)
