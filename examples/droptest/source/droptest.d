@@ -14,7 +14,6 @@ import sfetch = sokol.fetch;
 import simgui = sokol.imgui;
 import log = sokol.log;
 import imgui.cimgui;
-import imgui.dbgui;
 
 enum MAX_FILE_SIZE = 1024 * 1024;
 
@@ -42,7 +41,6 @@ extern (C) void init() @safe @nogc nothrow
         logger: {func: &log.slog_func}
     };
     sg.setup(gfx);
-    debug __dbgui_setup(1);
     simgui.Desc imgui_desc = {0};
     simgui.setup(imgui_desc);
 
@@ -108,14 +106,12 @@ extern (C) void frame() @trusted @nogc nothrow
     sg.Pass pass = {swapchain: sgapp.swapchain};
     sg.beginPass(pass);
     simgui.render;
-    debug __dbgui_draw;
     sg.endPass;
     sg.commit;
 }
 
 extern (C) void event(const(sapp.Event)* ev) @trusted @nogc nothrow
 {
-    debug __dbgui_event(ev);
     simgui.simgui_handle_event(ev);
     if (ev.type == sapp.EventType.Files_dropped)
     {
@@ -150,7 +146,6 @@ extern (C) void cleanup() @safe @nogc nothrow
         sfetch.shutdown;
     }
     // dfmt on
-    debug __dbgui_shutdown;
     simgui.shutdown;
     sg.shutdown;
 }
