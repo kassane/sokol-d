@@ -14,6 +14,7 @@ import sfetch = sokol.fetch;
 import simgui = sokol.imgui;
 import log = sokol.log;
 import imgui.cimgui;
+import imgui.dbgui;
 
 enum MAX_FILE_SIZE = 1024 * 1024;
 
@@ -41,6 +42,7 @@ extern (C) void init() @safe @nogc nothrow
         logger: {func: &log.slog_func}
     };
     sg.setup(gfx);
+    debug __dbgui_setup(1);
     simgui.Desc imgui_desc = {0};
     simgui.setup(imgui_desc);
 
@@ -58,7 +60,7 @@ extern (C) void init() @safe @nogc nothrow
     // dfmt on
 }
 
-extern (C) void frame() @trusted
+extern (C) void frame() @trusted @nogc nothrow
 {
     // ifndef emscripten
     // dfmt off
@@ -106,12 +108,14 @@ extern (C) void frame() @trusted
     sg.Pass pass = {swapchain: sgapp.swapchain};
     sg.beginPass(pass);
     simgui.render;
+    debug __dbgui_draw;
     sg.endPass;
     sg.commit;
 }
 
 extern (C) void event(const(sapp.Event)* ev) @trusted @nogc nothrow
 {
+    debug __dbgui_event(ev);
     simgui.simgui_handle_event(ev);
     if (ev.type == sapp.EventType.Files_dropped)
     {
@@ -146,6 +150,7 @@ extern (C) void cleanup() @safe @nogc nothrow
         sfetch.shutdown;
     }
     // dfmt on
+    debug __dbgui_shutdown;
     simgui.shutdown;
     sg.shutdown;
 }
@@ -170,7 +175,7 @@ extern (C) void main() @safe @nogc nothrow
     sapp.run(runner);
 }
 
-void renderFileContent()
+void renderFileContent() @trusted @nogc nothrow
 {
     immutable int bytes_per_line = 16; // keep this 2^N
     immutable int num_lines = (state.size + (bytes_per_line - 1)) / bytes_per_line;
@@ -178,9 +183,9 @@ void renderFileContent()
     BeginChild("##scrolling", sz, false, ImGuiWindowFlags_
             .ImGuiWindowFlags_NoMove | ImGuiWindowFlags_
             .ImGuiWindowFlags_NoNav);
-    ImGuiListClipper* clipper = null;
-    ImGuiListClipper_Begin(clipper, num_lines, GetTextLineHeight());
-    ImGuiListClipper_Step(clipper);
+    ImGuiListClipper clipper = {};
+    ImGuiListClipper_Begin(&clipper, num_lines, GetTextLineHeight);
+    ImGuiListClipper_Step(&clipper);
     for (int line_i = clipper.DisplayStart; line_i < clipper.DisplayEnd; line_i++)
     {
         int start_offset = line_i * bytes_per_line;
@@ -192,7 +197,7 @@ void renderFileContent()
         Text("%04X: ", start_offset);
         for (int i = start_offset; i < end_offset; i++)
         {
-            SameLineEx(0.0f, 0.0f);
+            SameLine;
             Text("%02X ", state.buffer[i]);
         }
         SameLineEx((6 * 7.0f) + (bytes_per_line * 3 * 7.0f) + (2 * 7.0f), 0.0f);
@@ -200,7 +205,7 @@ void renderFileContent()
         {
             if (i != start_offset)
             {
-                SameLineEx(0.0f, 0.0f);
+                SameLine;
             }
             ubyte c = state.buffer[i];
             if ((c < 32) || (c > 127))
@@ -211,14 +216,14 @@ void renderFileContent()
         }
     }
     Text("EOF\n");
-    ImGuiListClipper_End(clipper);
+    ImGuiListClipper_End(&clipper);
     EndChild();
 }
 
 version (Emscripten)
 {
     // the async-loading callback for sapp_html5_fetch_dropped_file
-    extern (C) void emsc_load_callback(const(sapp.Html5FetchResponse*) response) @nogc nothrow
+    extern (C) void emsc_load_callback(const(sapp.Html5FetchResponse*) response) @safe @nogc nothrow
     {
         if (response.succeeded)
         {
@@ -238,7 +243,7 @@ version (Emscripten)
 else
 {
     // the async-loading callback for native platforms
-    extern (C) void native_load_callback(const(sfetch.Response*) response) @nogc nothrow
+    extern (C) void native_load_callback(const(sfetch.Response*) response) @safe @nogc nothrow
     {
         if (response.fetched)
         {
