@@ -12,7 +12,7 @@ module build;
 import std;
 
 // Dependency versions
-enum emsdk_version = "4.0.10";
+enum emsdk_version = "4.0.13";
 enum imgui_version = "3b98e0a57fc17cc72fdda6934bd932426778a16e";
 enum nuklear_version = "4.12.7";
 
@@ -223,24 +223,32 @@ void buildShaders(string vendor) @safe
     immutable shdcPath = getSHDC(vendor);
     immutable shadersDir = "examples/shaders";
     immutable shaders = [
-        "triangle", "bufferoffsets", "cube", "instancing", "mrt",
-        "noninterleaved", "offscreen", "quad", "shapes", "texcube", "blend"
+        "triangle", "bufferoffsets", "cube", "instancing", "instancingcompute",
+        "mrt", "noninterleaved", "offscreen", "quad", "shapes", "texcube", "blend",
+        "vertexpull"
     ];
 
     version (OSX)
         enum glsl = "glsl410";
     else
         enum glsl = "glsl430";
-    immutable slang = glsl ~ ":metal_macos:hlsl5:glsl300es:wgsl";
+
+    immutable slangTemplate = glsl ~ ":metal_macos:hlsl5:%s:wgsl";
 
     version (Posix)
         executeOrFail(["chmod", "+x", shdcPath], "Failed to set shader permissions", true);
 
     foreach (shader; shaders)
+    {
+        immutable essl = (shader == "instancingcompute" || shader == "vertexpull")
+            ? "glsl310es" : "glsl300es";
+        immutable slang = slangTemplate.format(essl);
         executeOrFail([
-        shdcPath, "-i", buildPath(shadersDir, shader ~ ".glsl"),
-        "-o", buildPath(shadersDir, shader ~ ".d"), "-l", slang, "-f", "sokol_d"
-    ], "Shader compilation failed for " ~ shader, true);
+            shdcPath, "-i", buildPath(shadersDir, shader ~ ".glsl"),
+            "-o", buildPath(shadersDir, shader ~ ".d"), "-l", slang, "-f",
+            "sokol_d"
+        ], "Shader compilation failed for " ~ shader, true);
+    }
 }
 
 // Download and extract utility
@@ -419,6 +427,12 @@ void buildLibSokol(LibSokolOptions opts) @safe
         immutable sokolImguiObj = buildPath(buildDir, "sokol_imgui.o");
         compileSource(sokolImguiPath, sokolImguiObj, compiler, cflags, opts.verbose);
         imguiObjs ~= sokolImguiObj;
+        // Compile sokol_gfx_imgui.c
+        immutable sokolGfxImguiPath = buildPath(opts.sokolSrcPath, "sokol_gfx_imgui.c");
+        enforce(exists(sokolGfxImguiPath), "sokol_gfx_imgui.c not found");
+        immutable sokolGfxImguiObj = buildPath(buildDir, "sokol_gfx_imgui.o");
+        compileSource(sokolGfxImguiPath, sokolGfxImguiObj, compiler, cflags, opts.verbose);
+        imguiObjs ~= sokolGfxImguiObj;
 
         // Create ImGui library
         immutable imguiLib = buildPath(buildDir, opts.linkageStatic ? "libcimgui.a" : (opts.target.canFind("darwin") ? "libcimgui.dylib" : opts
