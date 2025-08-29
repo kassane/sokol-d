@@ -1,7 +1,7 @@
 /++
 + Machine generated D bindings for Sokol library.
 + 
-+     Generated on: 2025-08-28 15:51:47
++     Generated on: 2025-08-29 15:43:31
 + 
 +     Source header: sokol_time.h
 +     Module: sokol.time
