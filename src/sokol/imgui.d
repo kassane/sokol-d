@@ -1,7 +1,7 @@
 /++
 + Machine generated D bindings for Sokol library.
 + 
-+     Generated on: 2025-09-01 10:39:08
++     Generated on: 2025-09-01 12:08:04
 + 
 +     Source header: sokol_imgui.h
 +     Module: sokol.imgui

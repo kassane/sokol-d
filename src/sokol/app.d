@@ -1,7 +1,7 @@
 /++
 + Machine generated D bindings for Sokol library.
 + 
-+     Generated on: 2025-09-01 10:39:07
++     Generated on: 2025-09-01 12:08:04
 + 
 +     Source header: sokol_app.h
 +     Module: sokol.app
@@ -281,16 +281,18 @@ extern(C) struct Range {
 /++
 + sapp_image_desc
 + 
-+     This is used to describe image data to sokol_app.h (at first, window
-+     icons, later maybe cursor images).
++     This is used to describe image data to sokol_app.h (window icons and cursor images).
 + 
-+     Note that the actual image pixel format depends on the use case:
++     The pixel format is RGBA8.
 + 
-+     - window icon pixels are RGBA8
++     cursor_hotspot_x and _y are used only for cursors, to define which pixel
++     of the image should be aligned with the mouse position.
 +/
 extern(C) struct ImageDesc {
     int width = 0;
     int height = 0;
+    int cursor_hotspot_x = 0;
+    int cursor_hotspot_y = 0;
     Range pixels = {};
 }
 /++
@@ -355,6 +357,7 @@ enum LogItem {
     Win32_register_raw_input_devices_failed_mouse_lock,
     Win32_register_raw_input_devices_failed_mouse_unlock,
     Win32_get_raw_input_data_failed,
+    Win32_destroyicon_for_cursor_failed,
     Linux_glx_load_libgl_failed,
     Linux_glx_load_entry_points_failed,
     Linux_glx_extension_not_found,
@@ -533,6 +536,22 @@ enum MouseCursor {
     Resize_nesw,
     Resize_all,
     Not_allowed,
+    Custom_0,
+    Custom_1,
+    Custom_2,
+    Custom_3,
+    Custom_4,
+    Custom_5,
+    Custom_6,
+    Custom_7,
+    Custom_8,
+    Custom_9,
+    Custom_10,
+    Custom_11,
+    Custom_12,
+    Custom_13,
+    Custom_14,
+    Custom_15,
     Num,
 }
 /++
@@ -674,6 +693,20 @@ void setMouseCursor(MouseCursor cursor) @trusted @nogc nothrow pure {
 extern(C) MouseCursor sapp_get_mouse_cursor() @system @nogc nothrow pure;
 MouseCursor getMouseCursor() @trusted @nogc nothrow pure {
     return sapp_get_mouse_cursor();
+}
+/++
++ associate a custom mouse cursor image to a sapp_mouse_cursor enum entry
++/
+extern(C) MouseCursor sapp_bind_mouse_cursor_image(MouseCursor cursor, const ImageDesc* desc) @system @nogc nothrow pure;
+MouseCursor bindMouseCursorImage(MouseCursor cursor, scope ref ImageDesc desc) @trusted @nogc nothrow pure {
+    return sapp_bind_mouse_cursor_image(cursor, &desc);
+}
+/++
++ restore the sapp_mouse_cursor enum entry to it's default system appearance
++/
+extern(C) void sapp_unbind_mouse_cursor_image(MouseCursor cursor) @system @nogc nothrow pure;
+void unbindMouseCursorImage(MouseCursor cursor) @trusted @nogc nothrow pure {
+    sapp_unbind_mouse_cursor_image(cursor);
 }
 /++
 + return the userdata pointer optionally provided in sapp_desc
