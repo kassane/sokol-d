@@ -1,7 +1,7 @@
 /++
 + Machine generated D bindings for Sokol library.
 + 
-+     Generated on: 2025-09-08 15:29:13
++     Generated on: 2025-09-08 16:30:47
 + 
 +     Source header: sokol_memtrack.h
 +     Module: sokol.memtrack
