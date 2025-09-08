@@ -1,7 +1,7 @@
 /++
 + Machine generated D bindings for Sokol library.
 + 
-+     Generated on: 2025-09-03 13:27:48
++     Generated on: 2025-09-08 15:29:12
 + 
 +     Source header: sokol_app.h
 +     Module: sokol.app
@@ -416,6 +416,9 @@ enum LogItem {
     Android_native_activity_oncreate,
     Android_create_thread_pipe_failed,
     Android_native_activity_create_success,
+    Wgpu_device_lost,
+    Wgpu_device_log,
+    Wgpu_device_uncaptured_error,
     Wgpu_swapchain_create_surface_failed,
     Wgpu_swapchain_surface_get_capabilities_failed,
     Wgpu_swapchain_create_depth_stencil_texture_failed,
