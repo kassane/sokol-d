@@ -58,7 +58,7 @@ extern (C) void init() @safe @nogc nothrow
     // dfmt on
 }
 
-extern (C) void frame() @trusted
+extern (C) void frame() @trusted @nogc nothrow
 {
     // ifndef emscripten
     // dfmt off
@@ -170,7 +170,7 @@ extern (C) void main() @safe @nogc nothrow
     sapp.run(runner);
 }
 
-void renderFileContent()
+void renderFileContent() @trusted @nogc nothrow
 {
     immutable int bytes_per_line = 16; // keep this 2^N
     immutable int num_lines = (state.size + (bytes_per_line - 1)) / bytes_per_line;
@@ -178,9 +178,9 @@ void renderFileContent()
     BeginChild("##scrolling", sz, false, ImGuiWindowFlags_
             .ImGuiWindowFlags_NoMove | ImGuiWindowFlags_
             .ImGuiWindowFlags_NoNav);
-    ImGuiListClipper* clipper = null;
-    ImGuiListClipper_Begin(clipper, num_lines, GetTextLineHeight());
-    ImGuiListClipper_Step(clipper);
+    ImGuiListClipper clipper = {};
+    ImGuiListClipper_Begin(&clipper, num_lines, GetTextLineHeight);
+    ImGuiListClipper_Step(&clipper);
     for (int line_i = clipper.DisplayStart; line_i < clipper.DisplayEnd; line_i++)
     {
         int start_offset = line_i * bytes_per_line;
@@ -192,7 +192,7 @@ void renderFileContent()
         Text("%04X: ", start_offset);
         for (int i = start_offset; i < end_offset; i++)
         {
-            SameLineEx(0.0f, 0.0f);
+            SameLine;
             Text("%02X ", state.buffer[i]);
         }
         SameLineEx((6 * 7.0f) + (bytes_per_line * 3 * 7.0f) + (2 * 7.0f), 0.0f);
@@ -200,7 +200,7 @@ void renderFileContent()
         {
             if (i != start_offset)
             {
-                SameLineEx(0.0f, 0.0f);
+                SameLine;
             }
             ubyte c = state.buffer[i];
             if ((c < 32) || (c > 127))
@@ -211,14 +211,14 @@ void renderFileContent()
         }
     }
     Text("EOF\n");
-    ImGuiListClipper_End(clipper);
+    ImGuiListClipper_End(&clipper);
     EndChild();
 }
 
 version (Emscripten)
 {
     // the async-loading callback for sapp_html5_fetch_dropped_file
-    extern (C) void emsc_load_callback(const(sapp.Html5FetchResponse*) response) @nogc nothrow
+    extern (C) void emsc_load_callback(const(sapp.Html5FetchResponse*) response) @safe @nogc nothrow
     {
         if (response.succeeded)
         {
@@ -238,7 +238,7 @@ version (Emscripten)
 else
 {
     // the async-loading callback for native platforms
-    extern (C) void native_load_callback(const(sfetch.Response*) response) @nogc nothrow
+    extern (C) void native_load_callback(const(sfetch.Response*) response) @safe @nogc nothrow
     {
         if (response.fetched)
         {
