@@ -1,4 +1,4 @@
-// Generated on 2025-07-13
+// Generated on 2025-09-13
 /++
 + D wrapper for cimgui (Dear ImGui).
 + Provides bindings for Dear ImGui immediate mode GUI library.
@@ -2849,10 +2849,10 @@ void EndChildFrame() @trusted
 }
 
 /++
-+ static inline bool BeginChild(const char* str_id, const ImVec2
++ inline bool       BeginChild(const char* str_id, const ImVec2
 + &
 + size_arg, bool borders, ImGuiWindowFlags window_flags){ return BeginChild(str_id, size_arg, borders ? ImGuiChildFlags_Borders : ImGuiChildFlags_None, window_flags); } // Unnecessary as true == ImGuiChildFlags_Borders
-+ static inline bool BeginChild(ImGuiID id, const ImVec2
++ inline bool       BeginChild(ImGuiID id, const ImVec2
 + &
 + size_arg, bool borders, ImGuiWindowFlags window_flags)        { return BeginChild(id, size_arg, borders ? ImGuiChildFlags_Borders : ImGuiChildFlags_None, window_flags);     } // Unnecessary as true == ImGuiChildFlags_Borders
 +/
@@ -3181,6 +3181,11 @@ void StartMouseMovingWindow(scope ImGuiWindow* window) @trusted
     igStartMouseMovingWindow(window);
 }
 
+void StopMouseMovingWindow() @trusted
+{
+    igStopMouseMovingWindow();
+}
+
 void UpdateMouseMovingWindowNewFrame() @trusted
 {
     igUpdateMouseMovingWindowNewFrame();
@@ -3481,9 +3486,9 @@ void PushMultiItemsWidths(int components, float width_full) @trusted
     igPushMultiItemsWidths(components, width_full);
 }
 
-void ShrinkWidths(scope ImGuiShrinkWidthItem* items, int count, float width_excess) @trusted
+void ShrinkWidths(scope ImGuiShrinkWidthItem* items, int count, float width_excess, float width_min) @trusted
 {
-    igShrinkWidths(items, count, width_excess);
+    igShrinkWidths(items, count, width_excess, width_min);
 }
 
 /++
