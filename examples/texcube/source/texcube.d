@@ -122,10 +122,10 @@ void init()
     };
     // create a small checker-board image and texture view
     sg.ImageData img_data = {
-        subimage: [[{
+        mip_levels: [{
             ptr: cast(ubyte*)colors.ptr,
             size: colors.sizeof,
-        }]]
+        }]
     };
     sg.ImageDesc img_desc = {
         width: 4,
