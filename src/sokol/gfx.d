@@ -885,7 +885,7 @@ extern(C) struct PassAction {
 +     On all other backends you shouldn't need to mess with the reference count.
 + 
 +     It's a good practice to write a helper function which returns an initialized
-+     sg_swapchain structs, which can then be plugged directly into
++     sg_swapchain struct, which can then be plugged directly into
 +     sg_pass.swapchain. Look at the function sglue_swapchain() in the sokol_glue.h
 +     as an example.
 +/
@@ -996,7 +996,6 @@ extern(C) struct Pass {
 /++
 + sg_bindings
 + 
-+ 
 +     The sg_bindings structure defines the resource bindings for
 +     the next draw call.
 + 
@@ -1095,11 +1094,11 @@ extern(C) struct Bindings {
 +     Describes how a buffer object is going to be used:
 + 
 +     .vertex_buffer (default: true)
-+         the buffer will bound as vertex buffer via sg_bindings.vertex_buffers[]
++         the buffer will be bound as vertex buffer via sg_bindings.vertex_buffers[]
 +     .index_buffer (default: false)
-+         the buffer will bound as index buffer via sg_bindings.index_buffer
++         the buffer will be bound as index buffer via sg_bindings.index_buffer
 +     .storage_buffer (default: false)
-+         the buffer will bound as storage buffer via storage-buffer-view
++         the buffer will be bound as storage buffer via storage-buffer-view
 +         in sg_bindings.views[]
 +     .immutable (default: true)
 +         the buffer content will never be updated from the CPU side (but
@@ -1125,7 +1124,7 @@ extern(C) struct BufferUsage {
 +     The default configuration is:
 + 
 +     .size:      0       (*must* be >0 for buffers without data)
-+     .usage              .vertex_buffer = true, .immutable = true
++     .usage      { .vertex_buffer = true, .immutable = true }
 +     .data.ptr   0       (*must* be valid for immutable buffers without storage buffer usage)
 +     .data.size  0       (*must* be > 0 for immutable buffers without storage buffer usage)
 +     .label      0       (optional string label)
@@ -1244,30 +1243,32 @@ enum ViewType {
 /++
 + sg_image_data
 + 
-+     Defines the content of an image through an array of sg_range struct,
-+     each range pointing to one mip-level. For array-, cubemap- and 3D-images
-+     each mip-level contains all slice-surfaces for that mip-level in a single
-+     tightly packed memory block.
++     Defines the content of an image through an array of sg_range structs, each
++     range pointing to the pixel data for one mip-level. For array-, cubemap- and
++     3D-images each mip-level contains all slice-surfaces for that mip-level in a
++     single tightly packed memory block.
 + 
 +     The size of a single surface in a mip-level for a regular 2D texture
 +     can be computed via:
 + 
-+         sg_query_surface_pitch(pixel_format, width, height, 1);
++         sg_query_surface_pitch(pixel_format, mip_width, mip_height, 1);
 + 
 +     For array- and 3d-images the size of a single miplevel is:
 + 
-+         num_slices * sg_query_surface_pitch(pixel_format, width, height, 1);
++         num_slices * sg_query_surface_pitch(pixel_format, mip_width, mip_height, 1);
 + 
 +     For cubemap-images the size of a single mip-level is:
 + 
-+         6 * sg_query_surface_pitch(pixel_format, width, height, 1);
++         6 * sg_query_surface_pitch(pixel_format, mip_width, mip_height, 1);
 + 
-+     The order of cubemap-faces is:
++     The order of cubemap-faces is in a mip-level data chunk is:
 + 
-+         slice   direction
-+         0, 1 => +X, -X
-+         2, 3 => +Y, -Y
-+         4, 5 => +Z, -Z
++         [0] => +X
++         [1] => -X
++         [2] => +Y
++         [3] => -Y
++         [4] => +Z
++         [5] => -Z
 +/
 extern(C) struct ImageData {
     Range[16] mip_levels = [];
