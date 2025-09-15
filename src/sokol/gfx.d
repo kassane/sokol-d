@@ -68,7 +68,6 @@ enum max_color_attachments = 4;
 enum max_uniformblock_members = 16;
 enum max_vertex_attributes = 16;
 enum max_mipmaps = 16;
-enum max_texturearray_layers = 128;
 enum max_vertexbuffer_bindslots = 8;
 enum max_uniformblock_bindslots = 8;
 enum max_view_bindslots = 28;
@@ -369,21 +368,6 @@ enum SamplerType {
     Filtering,
     Nonfiltering,
     Comparison,
-    Num,
-}
-/++
-+ sg_cube_face
-+ 
-+     The cubemap faces. Use these as indices in the sg_image_desc.content
-+     array.
-+/
-enum CubeFace {
-    Pos_x,
-    Neg_x,
-    Pos_y,
-    Neg_y,
-    Pos_z,
-    Neg_z,
     Num,
 }
 /++
@@ -1260,12 +1244,33 @@ enum ViewType {
 /++
 + sg_image_data
 + 
-+     Defines the content of an image through a 2D array of sg_range structs.
-+     The first array dimension is the cubemap face, and the second array
-+     dimension the mipmap level.
++     Defines the content of an image through an array of sg_range struct,
++     each range pointing to one mip-level. For array-, cubemap- and 3D-images
++     each mip-level contains all slice-surfaces for that mip-level in a single
++     tightly packed memory block.
++ 
++     The size of a single surface in a mip-level for a regular 2D texture
++     can be computed via:
++ 
++         sg_query_surface_pitch(pixel_format, width, height, 1);
++ 
++     For array- and 3d-images the size of a single miplevel is:
++ 
++         num_slices * sg_query_surface_pitch(pixel_format, width, height, 1);
++ 
++     For cubemap-images the size of a single mip-level is:
++ 
++         6 * sg_query_surface_pitch(pixel_format, width, height, 1);
++ 
++     The order of cubemap-faces is:
++ 
++         slice   direction
++         0, 1 => +X, -X
++         2, 3 => +Y, -Y
++         4, 5 => +Z, -Z
 +/
 extern(C) struct ImageData {
-    Range[6][16] subimage = [];
+    Range[16] mip_levels = [];
 }
 /++
 + sg_image_desc
@@ -2288,6 +2293,11 @@ enum LogItem {
     Validate_imagedata_data_size,
     Validate_imagedesc_canary,
     Validate_imagedesc_immutable_dynamic_stream,
+    Validate_imagedesc_imagetype_2d_numslices,
+    Validate_imagedesc_imagetype_cube_numslices,
+    Validate_imagedesc_imagetype_array_numslices,
+    Validate_imagedesc_imagetype_3d_numslices,
+    Validate_imagedesc_numslices,
     Validate_imagedesc_width,
     Validate_imagedesc_height,
     Validate_imagedesc_nonrt_pixelformat,
