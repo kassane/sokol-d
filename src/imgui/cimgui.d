@@ -1,4 +1,4 @@
-// Generated on 2025-09-13
+// Generated on 2025-09-18
 /++
 + D wrapper for cimgui (Dear ImGui).
 + Provides bindings for Dear ImGui immediate mode GUI library.
@@ -2531,8 +2531,8 @@ void SetNextFrameWantCaptureKeyboard(bool want_capture_keyboard) @trusted
 + &
 + Routing [BETA]
 +  ImGuiKeyChord = a ImGuiKey + optional ImGuiMod_Alt/ImGuiMod_Ctrl/ImGuiMod_Shift/ImGuiMod_Super.
-+ ImGuiKey_C                          // Accepted by functions taking ImGuiKey or ImGuiKeyChord arguments)
-+ ImGuiMod_Ctrl | ImGuiKey_C          // Accepted by functions taking ImGuiKeyChord arguments)
++ ImGuiKey_C                          // Accepted by functions taking ImGuiKey or ImGuiKeyChord arguments
++ ImGuiMod_Ctrl | ImGuiKey_C          // Accepted by functions taking ImGuiKeyChord arguments
 + only ImGuiMod_XXX values are legal to combine with an ImGuiKey. You CANNOT combine two ImGuiKey values.
 +  The general idea is that several callers may register interest in a shortcut, and only one owner gets it.
 + Parent   > call Shortcut(Ctrl+S)    // When Parent is focused, Parent gets the shortcut.
@@ -3489,6 +3489,11 @@ void PushMultiItemsWidths(int components, float width_full) @trusted
 void ShrinkWidths(scope ImGuiShrinkWidthItem* items, int count, float width_excess, float width_min) @trusted
 {
     igShrinkWidths(items, count, width_excess, width_min);
+}
+
+void CalcClipRectVisibleItemsY(ImRect clip_rect, ImVec2 pos, float items_height, scope int* out_visible_start, scope int* out_visible_end) @trusted
+{
+    igCalcClipRectVisibleItemsY(clip_rect, pos, items_height, out_visible_start, out_visible_end);
 }
 
 /++
@@ -4520,6 +4525,16 @@ ImGuiTableSettings* TableSettingsFindByID(ImGuiID id) @trusted
 ImGuiTabBar* GetCurrentTabBar() @trusted
 {
     return igGetCurrentTabBar();
+}
+
+ImGuiTabBar* TabBarFindByID(ImGuiID id) @trusted
+{
+    return igTabBarFindByID(id);
+}
+
+void TabBarRemove(scope ImGuiTabBar* tab_bar) @trusted
+{
+    igTabBarRemove(tab_bar);
 }
 
 bool BeginTabBarEx(scope ImGuiTabBar* tab_bar, ImRect bb, ImGuiTabBarFlags flags) @trusted

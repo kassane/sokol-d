@@ -13,7 +13,7 @@ import std;
 
 // Dependency versions
 enum emsdk_version = "4.0.13";
-enum imgui_version = "1.92.2b";
+enum imgui_version = "1.92.3";
 enum nuklear_version = "4.12.7";
 
 void main(string[] args) @safe
