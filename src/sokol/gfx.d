@@ -2135,6 +2135,14 @@ extern(C) struct FrameStatsWgpu {
     FrameStatsWgpuUniforms uniforms = {};
     FrameStatsWgpuBindings bindings = {};
 }
+extern(C) struct ResourceStats {
+    uint total_alive = 0;
+    uint total_free = 0;
+    uint allocated = 0;
+    uint deallocated = 0;
+    uint inited = 0;
+    uint uninited = 0;
+}
 extern(C) struct FrameStats {
     uint frame_index = 0;
     uint num_passes = 0;
@@ -2152,6 +2160,12 @@ extern(C) struct FrameStats {
     uint size_update_buffer = 0;
     uint size_append_buffer = 0;
     uint size_update_image = 0;
+    ResourceStats buffers = {};
+    ResourceStats images = {};
+    ResourceStats samplers = {};
+    ResourceStats views = {};
+    ResourceStats shaders = {};
+    ResourceStats pipelines = {};
     FrameStatsGl gl = {};
     FrameStatsD3d11 d3d11 = {};
     FrameStatsMetal metal = {};
