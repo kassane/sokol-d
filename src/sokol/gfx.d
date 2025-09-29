@@ -64,15 +64,19 @@ extern(C) struct Range {
 +/
 enum invalid_id = 0;
 enum num_inflight_frames = 2;
-enum max_color_attachments = 4;
+enum max_color_attachments = 8;
 enum max_uniformblock_members = 16;
 enum max_vertex_attributes = 16;
 enum max_mipmaps = 16;
 enum max_vertexbuffer_bindslots = 8;
 enum max_uniformblock_bindslots = 8;
-enum max_view_bindslots = 28;
-enum max_sampler_bindslots = 16;
-enum max_texture_sampler_pairs = 16;
+enum max_view_bindslots = 32;
+enum max_sampler_bindslots = 12;
+enum max_texture_sampler_pairs = 32;
+enum max_portable_color_attachments = 4;
+enum max_portable_texture_bindings_per_stage = 16;
+enum max_portable_storagebuffer_bindings_per_stage = 8;
+enum max_portable_storageimage_bindings_per_stage = 4;
 /++
 + sg_color
 + 
@@ -251,8 +255,13 @@ extern(C) struct Limits {
     int max_image_size_array = 0;
     int max_image_array_layers = 0;
     int max_vertex_attrs = 0;
+    int max_color_attachments = 0;
+    int max_texture_bindings_per_stage = 0;
+    int max_storage_buffer_bindings_per_stage = 0;
+    int max_storage_image_bindings_per_stage = 0;
     int gl_max_vertex_uniform_components = 0;
     int gl_max_combined_texture_image_units = 0;
+    int d3d11_max_unordered_access_views = 0;
 }
 /++
 + sg_resource_state
@@ -820,7 +829,7 @@ extern(C) struct StencilAttachmentAction {
     ubyte clear_value = 0;
 }
 extern(C) struct PassAction {
-    ColorAttachmentAction[4] colors = [];
+    ColorAttachmentAction[8] colors = [];
     DepthAttachmentAction depth = {};
     StencilAttachmentAction stencil = {};
 }
@@ -946,8 +955,8 @@ extern(C) struct Swapchain {
 +         });
 +/
 extern(C) struct Attachments {
-    View[4] colors = [];
-    View[4] resolves = [];
+    View[8] colors = [];
+    View[8] resolves = [];
     View depth_stencil = {};
 }
 /++
@@ -1084,8 +1093,8 @@ extern(C) struct Bindings {
     int[8] vertex_buffer_offsets = [0, 0, 0, 0, 0, 0, 0, 0];
     Buffer index_buffer = {};
     int index_buffer_offset = 0;
-    View[28] views = [];
-    Sampler[16] samplers = [];
+    View[32] views = [];
+    Sampler[12] samplers = [];
     uint _end_canary = 0;
 }
 /++
@@ -1454,8 +1463,8 @@ extern(C) struct SamplerDesc {
 +         - the image-sample type (SG_IMAGESAMPLETYPE_*)
 +         - whether the texture is multisampled
 +         - backend specific bindslots:
-+             - HLSL: the texture register `register(t0..23)`
-+             - MSL: the texture attribute `[[texture(0..19)]]`
++             - HLSL: the texture register `register(t0..31)`
++             - MSL: the texture attribute `[[texture(0..31)]]`
 +             - WGSL: the binding in `@group(1) @binding(0..127)`
 + 
 +     - storage-buffer bindings must provide the following information:
@@ -1463,11 +1472,11 @@ extern(C) struct SamplerDesc {
 +         - whether the storage buffer is readonly
 +         - backend specific bindslots:
 +             - HLSL:
-+                 - for readonly storage buffer bindings: `register(t0..23)`
-+                 - for read/write storage buffer bindings: `register(u0..11)`
-+             - MSL: the buffer attribute `[[buffer(8..15)]]`
++                 - for storage buffer bindings: `register(t0..31)`
++                 - for read/write storage buffer bindings: `register(u0..31)`
++             - MSL: the buffer attribute `[[buffer(8..23)]]`
 +             - WGSL: the binding in `@group(1) @binding(0..127)`
-+             - GL: the binding in `layout(binding=0..7)`
++             - GL: the binding in `layout(binding=0..sg_limits.max_storage_buffer_bindings_per_stage)`
 + 
 +     - storage-image bindings must provide the following information:
 +         - the shader stage (*must* be SG_SHADERSTAGE_COMPUTE)
@@ -1478,17 +1487,17 @@ extern(C) struct SamplerDesc {
 +           note that only a subset of pixel formats is allowed for storage image
 +           bindings
 +         - backend specific bindslots:
-+             - HLSL: the UAV register `register(u0..11)`
-+             - MSL: the texture attribute `[[texture(0..19)]]`
++             - HLSL: the UAV register `register(u0..31)`
++             - MSL: the texture attribute `[[texture(0..31)]]`
 +             - WGSL: the binding in `@group(1) @binding(0..127)`
-+             - GLSL: the binding in `layout(binding=0..3, [access_format])`
++             - GLSL: the binding in `layout(binding=0..sg_imits.max_storage_buffer_bindings_per_stage, [access_format])`
 + 
 +     - reflection information for each sampler used by the shader:
 +         - the shader stage the sampler appears in (SG_SHADERSTAGE_*)
 +         - the sampler type (SG_SAMPLERTYPE_*)
 +         - backend specific bindslots:
-+             - HLSL: the sampler register `register(s0..15)`
-+             - MSL: the sampler attribute `[[sampler(0..15)]]`
++             - HLSL: the sampler register `register(s0..11)`
++             - MSL: the sampler attribute `[[sampler(0..11)]]`
 +             - WGSL: the binding in `@group(0) @binding(0..127)`
 + 
 +     - reflection information for each texture-sampler pair used by
@@ -1625,9 +1634,9 @@ extern(C) struct ShaderDesc {
     ShaderFunction compute_func = {};
     ShaderVertexAttr[16] attrs = [];
     ShaderUniformBlock[8] uniform_blocks = [];
-    ShaderView[28] views = [];
-    ShaderSampler[16] samplers = [];
-    ShaderTextureSamplerPair[16] texture_sampler_pairs = [];
+    ShaderView[32] views = [];
+    ShaderSampler[12] samplers = [];
+    ShaderTextureSamplerPair[32] texture_sampler_pairs = [];
     MtlShaderThreadsPerThreadgroup mtl_threads_per_threadgroup = {};
     const(char)* label = null;
     uint _end_canary = 0;
@@ -1773,7 +1782,7 @@ extern(C) struct PipelineDesc {
     DepthState depth = {};
     StencilState stencil = {};
     int color_count = 0;
-    ColorTargetState[4] colors = [];
+    ColorTargetState[8] colors = [];
     PrimitiveType primitive_type = PrimitiveType.Default;
     IndexType index_type = IndexType.Default;
     CullMode cull_mode = CullMode.Default;
@@ -2190,6 +2199,7 @@ enum LogItem {
     Gl_framebuffer_status_unsupported,
     Gl_framebuffer_status_incomplete_multisample,
     Gl_framebuffer_status_unknown,
+    D3d11_feature_level_0_detected,
     D3d11_create_buffer_failed,
     D3d11_create_buffer_srv_failed,
     D3d11_create_buffer_uav_failed,
@@ -2292,8 +2302,22 @@ enum LogItem {
     Shader_pool_exhausted,
     Pipeline_pool_exhausted,
     View_pool_exhausted,
+    Beginpass_too_many_color_attachments,
+    Beginpass_too_many_resolve_attachments,
     Beginpass_attachments_alive,
     Draw_without_bindings,
+    Shaderdesc_too_many_vertexstage_textures,
+    Shaderdesc_too_many_fragmentstage_textures,
+    Shaderdesc_too_many_computestage_textures,
+    Shaderdesc_too_many_vertexstage_storagebuffers,
+    Shaderdesc_too_many_fragmentstage_storagebuffers,
+    Shaderdesc_too_many_computestage_storagebuffers,
+    Shaderdesc_too_many_vertexstage_storageimages,
+    Shaderdesc_too_many_fragmentstage_storageimages,
+    Shaderdesc_too_many_computestage_storageimages,
+    Shaderdesc_too_many_vertexstage_texturesamplerpairs,
+    Shaderdesc_too_many_fragmentstage_texturesamplerpairs,
+    Shaderdesc_too_many_computestage_texturesamplerpairs,
     Validate_bufferdesc_canary,
     Validate_bufferdesc_immutable_dynamic_stream,
     Validate_bufferdesc_separate_buffer_types,
@@ -2347,47 +2371,29 @@ enum LogItem {
     Validate_shaderdesc_metal_threads_per_threadgroup_multiple_32,
     Validate_shaderdesc_uniformblock_no_cont_members,
     Validate_shaderdesc_uniformblock_size_is_zero,
-    Validate_shaderdesc_uniformblock_metal_buffer_slot_out_of_range,
     Validate_shaderdesc_uniformblock_metal_buffer_slot_collision,
-    Validate_shaderdesc_uniformblock_hlsl_register_b_out_of_range,
     Validate_shaderdesc_uniformblock_hlsl_register_b_collision,
-    Validate_shaderdesc_uniformblock_wgsl_group0_binding_out_of_range,
     Validate_shaderdesc_uniformblock_wgsl_group0_binding_collision,
     Validate_shaderdesc_uniformblock_no_members,
     Validate_shaderdesc_uniformblock_uniform_glsl_name,
     Validate_shaderdesc_uniformblock_size_mismatch,
     Validate_shaderdesc_uniformblock_array_count,
     Validate_shaderdesc_uniformblock_std140_array_type,
-    Validate_shaderdesc_view_storagebuffer_metal_buffer_slot_out_of_range,
     Validate_shaderdesc_view_storagebuffer_metal_buffer_slot_collision,
-    Validate_shaderdesc_view_storagebuffer_hlsl_register_t_out_of_range,
     Validate_shaderdesc_view_storagebuffer_hlsl_register_t_collision,
-    Validate_shaderdesc_view_storagebuffer_hlsl_register_u_out_of_range,
     Validate_shaderdesc_view_storagebuffer_hlsl_register_u_collision,
-    Validate_shaderdesc_view_storagebuffer_glsl_binding_out_of_range,
     Validate_shaderdesc_view_storagebuffer_glsl_binding_collision,
-    Validate_shaderdesc_view_storagebuffer_wgsl_group1_binding_out_of_range,
     Validate_shaderdesc_view_storagebuffer_wgsl_group1_binding_collision,
     Validate_shaderdesc_view_storageimage_expect_compute_stage,
-    Validate_shaderdesc_view_storageimage_metal_texture_slot_out_of_range,
     Validate_shaderdesc_view_storageimage_metal_texture_slot_collision,
-    Validate_shaderdesc_view_storageimage_hlsl_register_u_out_of_range,
     Validate_shaderdesc_view_storageimage_hlsl_register_u_collision,
-    Validate_shaderdesc_view_storageimage_glsl_binding_out_of_range,
     Validate_shaderdesc_view_storageimage_glsl_binding_collision,
-    Validate_shaderdesc_view_storageimage_wgsl_group1_binding_out_of_range,
     Validate_shaderdesc_view_storageimage_wgsl_group1_binding_collision,
-    Validate_shaderdesc_view_texture_metal_texture_slot_out_of_range,
     Validate_shaderdesc_view_texture_metal_texture_slot_collision,
-    Validate_shaderdesc_view_texture_hlsl_register_t_out_of_range,
     Validate_shaderdesc_view_texture_hlsl_register_t_collision,
-    Validate_shaderdesc_view_texture_wgsl_group1_binding_out_of_range,
     Validate_shaderdesc_view_texture_wgsl_group1_binding_collision,
-    Validate_shaderdesc_sampler_metal_sampler_slot_out_of_range,
     Validate_shaderdesc_sampler_metal_sampler_slot_collision,
-    Validate_shaderdesc_sampler_hlsl_register_s_out_of_range,
     Validate_shaderdesc_sampler_hlsl_register_s_collision,
-    Validate_shaderdesc_sampler_wgsl_group1_binding_out_of_range,
     Validate_shaderdesc_sampler_wgsl_group1_binding_collision,
     Validate_shaderdesc_texture_sampler_pair_view_slot_out_of_range,
     Validate_shaderdesc_texture_sampler_pair_sampler_slot_out_of_range,
@@ -2747,6 +2753,7 @@ extern(C) struct Desc {
     int uniform_buffer_size = 0;
     int max_commit_listeners = 0;
     bool disable_validation = false;
+    bool enforce_portable_limits = false;
     bool d3d11_shader_debugging = false;
     bool mtl_force_managed_storage_mode = false;
     bool mtl_use_command_buffer_with_retained_references = false;

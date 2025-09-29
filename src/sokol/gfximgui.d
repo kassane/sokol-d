@@ -36,7 +36,7 @@ extern(C) struct Shader {
     Str vs_d3d11_target = {};
     Str fs_entry = {};
     Str fs_d3d11_target = {};
-    Str[16] glsl_texture_sampler_name = [];
+    Str[32] glsl_texture_sampler_name = [];
     Str[8][16] glsl_uniform_name = [];
     Str[16] attr_glsl_name = [];
     Str[16] attr_hlsl_sem_name = [];
