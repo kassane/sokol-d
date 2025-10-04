@@ -243,6 +243,8 @@ extern(C) struct Features {
     bool compute = false;
     bool msaa_texture_bindings = false;
     bool separate_buffer_types = false;
+    bool draw_base_vertex = false;
+    bool draw_base_instance = false;
     bool gl_texture_views = false;
 }
 /++
@@ -1912,6 +1914,7 @@ extern(C) struct TraceHooks {
     extern(C) void function(const Bindings*, void*) apply_bindings = null;
     extern(C) void function(int, const Range*, void*) apply_uniforms = null;
     extern(C) void function(int, int, int, void*) draw = null;
+    extern(C) void function(int, int, int, int, int, void*) draw_ex = null;
     extern(C) void function(int, int, int, void*) dispatch = null;
     extern(C) void function(void*) end_pass = null;
     extern(C) void function(void*) commit = null;
@@ -2161,6 +2164,7 @@ extern(C) struct FrameStats {
     uint num_apply_bindings = 0;
     uint num_apply_uniforms = 0;
     uint num_draw = 0;
+    uint num_draw_ex = 0;
     uint num_dispatch = 0;
     uint num_update_buffer = 0;
     uint num_append_buffer = 0;
@@ -2571,9 +2575,18 @@ enum LogItem {
     Validate_au_no_uniformblock_at_slot,
     Validate_au_size,
     Validate_draw_renderpass_expected,
-    Validate_draw_baseelement,
-    Validate_draw_numelements,
-    Validate_draw_numinstances,
+    Validate_draw_baseelement_ge_zero,
+    Validate_draw_numelements_ge_zero,
+    Validate_draw_numinstances_ge_zero,
+    Validate_draw_ex_renderpass_expected,
+    Validate_draw_ex_baseelement_ge_zero,
+    Validate_draw_ex_numelements_ge_zero,
+    Validate_draw_ex_numinstances_ge_zero,
+    Validate_draw_ex_baseinstance_ge_zero,
+    Validate_draw_ex_basevertex_vs_indexed,
+    Validate_draw_ex_baseinstance_vs_instanced,
+    Validate_draw_ex_basevertex_not_supported,
+    Validate_draw_ex_baseinstance_not_supported,
     Validate_draw_required_bindings_or_uniforms_missing,
     Validate_dispatch_computepass_expected,
     Validate_dispatch_numgroupsx,
@@ -2912,6 +2925,10 @@ void applyUniforms(uint ub_slot, scope ref Range data) @trusted @nogc nothrow pu
 extern(C) void sg_draw(uint base_element, uint num_elements, uint num_instances) @system @nogc nothrow pure;
 void draw(uint base_element, uint num_elements, uint num_instances) @trusted @nogc nothrow pure {
     sg_draw(base_element, num_elements, num_instances);
+}
+extern(C) void sg_draw_ex(int base_element, int num_elements, int num_instances, int base_vertex, int base_instance) @system @nogc nothrow pure;
+void drawEx(int base_element, int num_elements, int num_instances, int base_vertex, int base_instance) @trusted @nogc nothrow pure {
+    sg_draw_ex(base_element, num_elements, num_instances, base_vertex, base_instance);
 }
 extern(C) void sg_dispatch(uint num_groups_x, uint num_groups_y, uint num_groups_z) @system @nogc nothrow pure;
 void dispatch(uint num_groups_x, uint num_groups_y, uint num_groups_z) @trusted @nogc nothrow pure {

@@ -114,6 +114,7 @@ enum Cmd {
     Apply_bindings,
     Apply_uniforms,
     Draw,
+    Draw_ex,
     Dispatch,
     End_pass,
     Commit,
@@ -231,6 +232,13 @@ extern(C) struct ArgsDraw {
     int base_element = 0;
     int num_elements = 0;
     int num_instances = 0;
+}
+extern(C) struct ArgsDrawEx {
+    int base_element = 0;
+    int num_elements = 0;
+    int num_instances = 0;
+    int base_vertex = 0;
+    int base_instance = 0;
 }
 extern(C) struct ArgsDispatch {
     int num_groups_x = 0;
@@ -353,6 +361,7 @@ extern(C) struct Args {
     ArgsApplyBindings apply_bindings = {};
     ArgsApplyUniforms apply_uniforms = {};
     ArgsDraw draw = {};
+    ArgsDrawEx draw_ex = {};
     ArgsDispatch dispatch = {};
     ArgsAllocBuffer alloc_buffer = {};
     ArgsAllocImage alloc_image = {};
