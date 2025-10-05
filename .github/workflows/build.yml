@@ -26,6 +26,7 @@ jobs:
       - uses: dlang-community/setup-dlang@v2
         with:
           compiler: ${{ matrix.compiler }}
+          verify_sig: false # skip dmd-latest (for windows) gpg check
 
       - name: prepare-linux
         if: runner.os == 'Linux'
