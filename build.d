@@ -12,7 +12,7 @@ module build;
 import std;
 
 // Dependency versions
-enum emsdk_version = "4.0.13";
+enum emsdk_version = "4.0.16";
 enum imgui_version = "1.92.3";
 enum nuklear_version = "4.12.7";
 
@@ -558,7 +558,7 @@ void emLinkStep(EmLinkOptions opts) @safe
     if (opts.use_nuklear)
         cmd ~= "-lnuklear";
     if (opts.optimize == "debug")
-        cmd ~= ["-gsource-map", "-sSAFE_HEAP=1", "-sSTACK_OVERFLOW_CHECK=1"];
+        cmd ~= ["-Og", "-sSAFE_HEAP=1", "-sSTACK_OVERFLOW_CHECK=1"];
     else
     {
         cmd ~= "-sASSERTIONS=0";
