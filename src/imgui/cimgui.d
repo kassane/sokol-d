@@ -1,4 +1,4 @@
-// Generated on 2025-09-18
+// Generated on 2025-10-16
 /++
 + D wrapper for cimgui (Dear ImGui).
 + Provides bindings for Dear ImGui immediate mode GUI library.
@@ -4091,6 +4091,16 @@ bool BeginDragDropTargetCustom(ImRect bb, ImGuiID id) @trusted
     return igBeginDragDropTargetCustom(bb, id);
 }
 
+bool BeginDragDropTargetViewport(scope ImGuiViewport* viewport) @trusted
+{
+    return igBeginDragDropTargetViewport(viewport);
+}
+
+bool BeginDragDropTargetViewportEx(scope ImGuiViewport* viewport, scope ImRect* p_bb) @trusted
+{
+    return igBeginDragDropTargetViewportEx(viewport, p_bb);
+}
+
 void ClearDragDrop() @trusted
 {
     igClearDragDrop();
@@ -4101,9 +4111,14 @@ bool IsDragDropPayloadBeingAccepted() @trusted
     return igIsDragDropPayloadBeingAccepted();
 }
 
-void RenderDragDropTargetRect(ImRect bb, ImRect item_clip_rect) @trusted
+void RenderDragDropTargetRectForItem(ImRect bb) @trusted
 {
-    igRenderDragDropTargetRect(bb, item_clip_rect);
+    igRenderDragDropTargetRectForItem(bb);
+}
+
+void RenderDragDropTargetRectEx(scope ImDrawList* draw_list, ImRect bb) @trusted
+{
+    igRenderDragDropTargetRectEx(draw_list, bb);
 }
 
 /++
