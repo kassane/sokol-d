@@ -36,6 +36,8 @@ enum LogItem {
     Coreaudio_allocate_buffer_failed,
     Coreaudio_start_failed,
     Backend_buffer_size_isnt_multiple_of_packet_size,
+    Vita_sceaudio_open_failed,
+    Vita_pthread_create_failed,
 }
 /++
 + saudio_logger
